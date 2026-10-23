@@ -2,16 +2,20 @@
  * Crea el primer administrador y los datos de ejemplo de CJ Club.
  *
  * Uso (Firebase real, con la clave de la cuenta de servicio):
- *   GOOGLE_APPLICATION_CREDENTIALS=service-account.json npm run seed -- --admin-email=correo@ejemplo.com --admin-name="Nombre"
+ *   npm run seed -- --admin-email=correo@ejemplo.com --admin-name="Nombre"
+ *   (necesita la variable FIREBASE_SERVICE_ACCOUNT_JSON; ver scripts/credentials.ts)
+ * Solo algunas colecciones, sin tocar el resto ni los usuarios:
+ *   npm run seed -- --only=settings
  * Uso (Firebase de pruebas local):
  *   npm run seed:emulator -- --admin-email=... [--client-email=...]
  *
  * Se puede repetir sin duplicar nada: usa siempre los mismos identificadores.
  */
-import { applicationDefault, initializeApp } from 'firebase-admin/app'
+import { initializeApp } from 'firebase-admin/app'
 import { getAuth } from 'firebase-admin/auth'
 import { getFirestore, Timestamp } from 'firebase-admin/firestore'
 import { randomBytes } from 'node:crypto'
+import { adminCredential } from './credentials'
 
 const args = Object.fromEntries(
   process.argv.slice(2).map((a) => {
@@ -20,6 +24,8 @@ const args = Object.fromEntries(
   }),
 )
 
+// --only=settings,deals: escribe solo esas colecciones y no crea usuarios
+const only = args['only'] ? args['only'].split(',') : null
 const adminEmail = args['admin-email']
 const adminName = args['admin-name'] || 'Administrador CJ'
 // Opcional (útil en pruebas): si no se indica, se envía un enlace para que elija la suya
@@ -28,13 +34,13 @@ const adminPassword = args['admin-password']
 const clientEmail = args['client-email']
 const clientPassword = args['client-password']
 
-if (!adminEmail) {
+if (!adminEmail && !only) {
   console.error('Falta --admin-email=...')
   process.exit(1)
 }
 
 const emulator = Boolean(process.env.FIRESTORE_EMULATOR_HOST)
-const app = initializeApp(emulator ? { projectId: 'cj-club' } : { credential: applicationDefault(), projectId: 'cj-club' })
+const app = initializeApp(emulator ? { projectId: 'cj-club' } : { credential: adminCredential(), projectId: 'cj-club' })
 const auth = getAuth(app)
 const db = getFirestore(app)
 
@@ -313,16 +319,24 @@ async function main() {
   console.log(emulator ? 'Usando el Firebase de pruebas local' : 'Usando el proyecto real cj-club')
 
   const batch = db.batch()
-  const put = (col: string, data: Record<string, object>) =>
+  const put = (col: string, data: Record<string, object>) => {
+    if (only && !only.includes(col)) return
     Object.entries(data).forEach(([id, d]) => batch.set(db.collection(col).doc(id), d))
+  }
   put('partners', partners)
   put('clients', clients)
   put('generalContacts', generalContacts)
   put('places', places)
   put('deals', deals)
-  batch.set(db.collection('settings').doc('tipOfTheWeek'), tipOfTheWeek)
+  put('settings', { tipOfTheWeek })
 
-  const admin = await ensureAuthUser(adminEmail, adminName, adminPassword)
+  if (only) {
+    await batch.commit()
+    console.log(`Guardado: ${only.join(', ')}`)
+    return
+  }
+
+  const admin = await ensureAuthUser(adminEmail!, adminName, adminPassword)
   batch.set(db.collection('users').doc(admin.uid), {
     role: 'admin',
     name: adminName,
@@ -345,7 +359,7 @@ async function main() {
   console.log('Datos de ejemplo guardados.')
   console.log(`Administrador: ${adminEmail}`)
   if (!emulator) {
-    const link = await auth.generatePasswordResetLink(adminEmail)
+    const link = await auth.generatePasswordResetLink(adminEmail!)
     console.log(`Enlace para elegir la contraseña del administrador:\n${link}`)
   }
 }

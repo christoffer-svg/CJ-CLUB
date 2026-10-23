@@ -11,7 +11,7 @@
     "emulators": "firebase emulators:start --only auth,firestore --project cj-club",
     "seed": "tsx scripts/seed.ts",
     "seed:emulator": "FIRESTORE_EMULATOR_HOST=127.0.0.1:8080 FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099 tsx scripts/seed.ts",
-    "deploy:rules": "firebase deploy --only firestore --project cj-club"
+    "deploy:rules": "tsx scripts/deploy-rules.ts"
   },
   "dependencies": {
     "firebase": "^13.1.0",

@@ -20,6 +20,12 @@ service cloud.firestore {
       return isMember() && me().role == 'admin';
     }
 
+    // Colaboradores asignados en la ficha del cliente que hace la petición
+    function isMyPartner(partnerId) {
+      return isMember() && 'clientId' in me()
+        && partnerId in get(/databases/$(database)/documents/clients/$(me().clientId)).data.contacts.values();
+    }
+
     match /users/{uid} {
       allow read: if (signedIn() && request.auth.uid == uid) || isAdmin();
       // Cada persona solo puede cambiar su idioma; el rol lo asigna CJ.
@@ -35,8 +41,10 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
+    // Un cliente solo ve los colaboradores asignados a él (lectura de uno en uno)
     match /partners/{id} {
-      allow read: if isMember();
+      allow get: if isAdmin() || isMyPartner(id);
+      allow list: if isAdmin();
       allow write: if isAdmin();
     }
 
