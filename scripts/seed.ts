@@ -3,7 +3,7 @@
  *
  * Uso (Firebase real, con la clave de la cuenta de servicio):
  *   npm run seed -- --admin-email=correo@ejemplo.com --admin-name="Nombre"
- *   (necesita la variable FIREBASE_SERVICE_ACCOUNT_JSON; ver scripts/credentials.ts)
+ *   (necesita la clave en el entorno; ver scripts/credentials.ts)
  * Solo algunas colecciones, sin tocar el resto ni los usuarios:
  *   npm run seed -- --only=settings
  * Uso (Firebase de pruebas local):
