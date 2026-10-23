@@ -4,6 +4,7 @@ Aplicación web privada de CJ Real Estate & Services (inmobiliaria en la Costa B
 
 ## Quién la usa
 - Clientes de CJ (rol "client"): normalmente extranjeros, la usan en el móvil, en español o inglés.
+- Trato al cliente: por su nombre siempre que se pueda (p. ej. "Familia Jansen"); en el resto, de usted. Nunca de tú.
 - Equipo de CJ (rol "admin"): gestiona clientes, contactos, lugares y descuentos desde el panel, en español.
 - La persona que te da las instrucciones es el dueño de la empresa, no es programador: explícale las cosas sin tecnicismos y pídele confirmación antes de cualquier paso que cueste dinero o borre datos.
 

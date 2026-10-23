@@ -62,7 +62,7 @@ export default function Login() {
           Costa Blanca
         </span>
         <hr className="gold-rule" />
-        <h1 className="login__title">Tu vida en la Costa Blanca, más fácil.</h1>
+        <h1 className="login__title">Su vida en la Costa Blanca, más fácil.</h1>
       </div>
 
       <form className="login__form" onSubmit={submit} noValidate>

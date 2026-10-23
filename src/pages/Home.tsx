@@ -5,10 +5,14 @@ import { RowCard, Section } from '../components/Card'
 import { CompassIcon, GuideIcon, KeyIcon, StarIcon } from '../components/Icons'
 
 export default function Home() {
-  const { logout } = useAuth()
+  const { profile, logout } = useAuth()
   return (
     <>
-      <Header eyebrow="Bienvenido" title="Su vida en la Costa Blanca" subtitle="Todo lo que necesita, en un solo lugar." />
+      <Header
+        eyebrow="Le damos la bienvenida"
+        title={profile?.name || 'Su vida en la Costa Blanca'}
+        subtitle="Su vida en la Costa Blanca, más fácil."
+      />
       <main className="page">
         <Section eyebrow="Su casa" title="Su gestor en CJ">
           <RowCard icon={<KeyIcon />} title="Equipo CJ" text="Su persona de contacto aparecerá aquí" />
