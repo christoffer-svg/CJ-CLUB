@@ -17,7 +17,8 @@ const app = initializeApp({
 export const auth = getAuth(app)
 auth.languageCode = 'es'
 
-export const db = getFirestore(app)
+// La base de datos del proyecto se creó con el nombre "default"
+export const db = getFirestore(app, env.VITE_FIRESTORE_DATABASE_ID || 'default')
 
 if (useEmulators) {
   connectAuthEmulator(auth, 'http://127.0.0.1:9099', { disableWarnings: true })

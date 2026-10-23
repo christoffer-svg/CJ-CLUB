@@ -34,9 +34,10 @@ if (!adminEmail) {
 }
 
 const emulator = Boolean(process.env.FIRESTORE_EMULATOR_HOST)
-initializeApp(emulator ? { projectId: 'cj-club' } : { credential: applicationDefault(), projectId: 'cj-club' })
-const auth = getAuth()
-const db = getFirestore()
+const app = initializeApp(emulator ? { projectId: 'cj-club' } : { credential: applicationDefault(), projectId: 'cj-club' })
+const auth = getAuth(app)
+// La base de datos del proyecto se creó con el nombre "default"
+const db = getFirestore(app, process.env.FIRESTORE_DATABASE_ID || 'default')
 
 async function ensureAuthUser(email: string, displayName: string, password?: string) {
   try {
