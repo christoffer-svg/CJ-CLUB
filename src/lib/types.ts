@@ -69,3 +69,9 @@ export type Deal = {
   active: boolean
   order: number
 }
+
+/** settings/tipOfTheWeek */
+export type TipOfTheWeek = {
+  text_es: string
+  text_en: string
+}

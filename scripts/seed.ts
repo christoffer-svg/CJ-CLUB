@@ -303,6 +303,12 @@ const deals = {
   },
 }
 
+const tipOfTheWeek = {
+  text_es:
+    'En verano, riegue el jardín a primera hora de la mañana o al anochecer: ahorrará agua y las plantas lo agradecerán.',
+  text_en: 'In summer, water the garden early in the morning or after sunset: you will save water and your plants will thank you.',
+}
+
 async function main() {
   console.log(emulator ? 'Usando el Firebase de pruebas local' : 'Usando el proyecto real cj-club')
 
@@ -314,6 +320,7 @@ async function main() {
   put('generalContacts', generalContacts)
   put('places', places)
   put('deals', deals)
+  batch.set(db.collection('settings').doc('tipOfTheWeek'), tipOfTheWeek)
 
   const admin = await ensureAuthUser(adminEmail, adminName, adminPassword)
   batch.set(db.collection('users').doc(admin.uid), {

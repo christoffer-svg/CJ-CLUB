@@ -1,42 +1,77 @@
 import { Link } from 'react-router-dom'
 import { useAuth } from '../auth/AuthProvider'
 import Header from '../components/Header'
-import { RowCard, Section } from '../components/Card'
-import { CompassIcon, GuideIcon, KeyIcon, StarIcon } from '../components/Icons'
+import { AlertIcon, ChatIcon, CrossIcon, DishIcon, PhoneIcon, StarIcon } from '../components/Icons'
+import { useActiveDealsCount, useDoc } from '../lib/data'
+import { greetingName, monthYear, telLink, whatsappLink } from '../lib/format'
+import type { Client, TipOfTheWeek } from '../lib/types'
 
 export default function Home() {
   const { profile, logout } = useAuth()
+  const client = useDoc<Client>(profile?.clientId ? `clients/${profile.clientId}` : null)
+  const tip = useDoc<TipOfTheWeek>('settings/tipOfTheWeek')
+  const dealsCount = useActiveDealsCount()
+  const c = client.data
+
+  const title = c ? `Hola, ${greetingName(c.familyName)}` : client.loading ? '' : 'Hola'
+  const subtitle = c ? [c.property, c.clientSince && `Clientes desde ${monthYear(c.clientSince)}`].filter(Boolean).join(' · ') : ''
+
   return (
     <>
-      <Header
-        eyebrow="Le damos la bienvenida"
-        title={profile?.name || 'Su vida en la Costa Blanca'}
-        subtitle="Su vida en la Costa Blanca, más fácil."
-      />
-      <main className="page">
-        <Section eyebrow="Su casa" title="Su gestor en CJ">
-          <RowCard icon={<KeyIcon />} title="Equipo CJ" text="Su persona de contacto aparecerá aquí" />
-        </Section>
+      <Header title={title} subtitle={subtitle} overlap />
+      <main className="page page--overlap">
+        <section className="card agent-card" aria-label="Su agente">
+          <img className="agent-card__logo" src="/logo.png" alt="" />
+          <div className="card__body">
+            <span className="eyebrow">Su agente</span>
+            <span className="card__title">{c?.agentName || (client.loading ? '' : 'Equipo CJ')}</span>
+          </div>
+          {c?.agentWhatsapp && (
+            <a className="round-btn" href={whatsappLink(c.agentWhatsapp)} target="_blank" rel="noreferrer" aria-label="Escribir por WhatsApp">
+              <ChatIcon size={20} />
+            </a>
+          )}
+          {c?.agentPhone && (
+            <a className="round-btn" href={telLink(c.agentPhone)} aria-label="Llamar">
+              <PhoneIcon size={20} />
+            </a>
+          )}
+        </section>
 
-        <Section eyebrow="CJ Club" title="Explore">
+        <section className="section">
+          <h2 className="section__title">¿Qué necesita?</h2>
           <div className="grid-2">
-            <Link to="/guia" className="card tile" style={{ textDecoration: 'none' }}>
-              <span className="card__icon"><GuideIcon size={20} /></span>
-              <span className="card__title">Guía</span>
-              <span className="card__text">Contactos de confianza</span>
+            <Link to="/guia" className="card quick quick--emergency">
+              <span className="quick__icon"><AlertIcon size={22} /></span>
+              <span className="quick__title">Emergencia</span>
+              <span className="quick__text">112 y urgencias</span>
             </Link>
-            <Link to="/descubrir" className="card tile" style={{ textDecoration: 'none' }}>
-              <span className="card__icon"><CompassIcon size={20} /></span>
-              <span className="card__title">Descubrir</span>
-              <span className="card__text">Restaurantes, golf y planes</span>
+            <Link to="/guia" className="card quick">
+              <span className="quick__icon"><CrossIcon size={22} /></span>
+              <span className="quick__title">Salud</span>
+              <span className="quick__text">Médicos y clínicas</span>
             </Link>
-            <Link to="/ventajas" className="card tile" style={{ textDecoration: 'none' }}>
-              <span className="card__icon"><StarIcon size={20} /></span>
-              <span className="card__title">Ventajas</span>
-              <span className="card__text">Descuentos exclusivos</span>
+            <Link to="/descubrir?categoria=restaurants" className="card quick">
+              <span className="quick__icon"><DishIcon size={22} /></span>
+              <span className="quick__title">Dónde comer</span>
+              <span className="quick__text">Nuestros restaurantes</span>
+            </Link>
+            <Link to="/ventajas" className="card quick">
+              <span className="quick__icon"><StarIcon size={22} /></span>
+              <span className="quick__title">Mis ventajas</span>
+              <span className="quick__text">
+                {dealsCount === null ? 'Descuentos exclusivos' : `${dealsCount} ${dealsCount === 1 ? 'descuento activo' : 'descuentos activos'}`}
+              </span>
             </Link>
           </div>
-        </Section>
+        </section>
+
+        {tip.data?.text_es && (
+          <section className="tip">
+            <span className="eyebrow">Consejo de la semana</span>
+            <p className="tip__text">{tip.data.text_es}</p>
+          </section>
+        )}
 
         <button className="link-btn link-btn--dark" onClick={logout}>
           Cerrar sesión

@@ -55,6 +55,12 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
+    // Ajustes generales, p. ej. settings/tipOfTheWeek
+    match /settings/{id} {
+      allow read: if isMember();
+      allow write: if isAdmin();
+    }
+
     match /{document=**} {
       allow read, write: if false;
     }

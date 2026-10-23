@@ -113,3 +113,23 @@ export const ChevronIcon = (p: IconProps) => (
     <path d="m9 6 6 6-6 6" />
   </Svg>
 )
+
+export const ChatIcon = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M4.5 19.5 5.6 16A7.5 7.5 0 1 1 8.4 18.6z" />
+    <path d="M9 10.5h6M9 13.5h4" />
+  </Svg>
+)
+
+export const CrossIcon = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M9.5 4.5h5v5h5v5h-5v5h-5v-5h-5v-5h5z" />
+  </Svg>
+)
+
+export const AlertIcon = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M12 4 21 19.5H3z" />
+    <path d="M12 10v4.5M12 17v.01" />
+  </Svg>
+)
