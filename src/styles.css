@@ -1,0 +1,381 @@
+:root {
+  /* Paleta CJ */
+  --black: #000000;
+  --espresso: #493b34;
+  --gold: #b79a68;
+  --sand: #e8ddcb;
+  --white: #ffffff;
+  --stone: #887f73;
+
+  --card: #fbf8f3;
+  --card-border: #d3c4aa;
+  --text: #1a1512;
+  --text-2: #6f665b;
+
+  --font-title: 'Playfair Display', Georgia, serif;
+  --font-body: 'Montserrat', system-ui, sans-serif;
+
+  --radius: 7px;
+  --max-width: 440px;
+  --nav-height: 64px;
+
+  color-scheme: light only;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  background: var(--sand);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* El fondo es Warm Sand también con el móvil en modo oscuro */
+@media (prefers-color-scheme: dark) {
+  html,
+  body {
+    background: var(--sand);
+    color: var(--text);
+  }
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-title);
+  font-weight: 500;
+  margin: 0;
+  letter-spacing: 0.01em;
+}
+
+p {
+  margin: 0;
+}
+
+button {
+  font: inherit;
+}
+
+/* Marco centrado de ancho móvil */
+.app-frame {
+  max-width: var(--max-width);
+  min-height: 100dvh;
+  margin: 0 auto;
+  background: var(--sand);
+  position: relative;
+}
+
+@media (min-width: 480px) {
+  .app-frame {
+    border-left: 1px solid var(--card-border);
+    border-right: 1px solid var(--card-border);
+  }
+}
+
+/* Etiqueta pequeña tipo papelería */
+.eyebrow {
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.gold-rule {
+  width: 36px;
+  height: 1px;
+  background: var(--gold);
+  border: 0;
+  margin: 0;
+}
+
+/* Cabecera */
+.header {
+  background: linear-gradient(160deg, var(--espresso) 0%, var(--black) 100%);
+  color: var(--white);
+  padding: calc(env(safe-area-inset-top) + 20px) 20px 26px;
+}
+
+.header__brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header__logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: block;
+}
+
+.header__tagline {
+  line-height: 1.8;
+}
+
+.header__title {
+  margin-top: 22px;
+  font-size: 28px;
+  line-height: 1.2;
+  color: var(--white);
+}
+
+.header__subtitle {
+  margin-top: 8px;
+  font-size: 13px;
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+/* Contenido */
+.page {
+  padding: 24px 16px calc(var(--nav-height) + env(safe-area-inset-bottom) + 28px);
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.section__head {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.section__title {
+  font-size: 20px;
+  color: var(--text);
+}
+
+/* Tarjetas */
+.card {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 16px;
+}
+
+.card--row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.card__icon {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--card-border);
+  display: grid;
+  place-items: center;
+  color: var(--gold);
+}
+
+.card__body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.card__title {
+  font-family: var(--font-title);
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.card__text {
+  font-size: 13px;
+  color: var(--text-2);
+}
+
+.card__chevron {
+  flex: none;
+  color: var(--stone);
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.tile {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tile .card__icon {
+  width: 36px;
+  height: 36px;
+}
+
+/* Descuentos */
+.perk {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.perk__value {
+  flex: none;
+  min-width: 64px;
+  padding-right: 16px;
+  border-right: 1px solid var(--card-border);
+  font-family: var(--font-title);
+  font-size: 26px;
+  color: var(--gold);
+  text-align: center;
+  font-variant-numeric: lining-nums;
+}
+
+/* Botones */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 48px;
+  border-radius: var(--radius);
+  border: 1px solid var(--gold);
+  background: var(--gold);
+  color: var(--black);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.btn--ghost {
+  background: transparent;
+  color: var(--gold);
+}
+
+/* Navegación inferior */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: var(--max-width);
+  height: calc(var(--nav-height) + env(safe-area-inset-bottom));
+  padding-bottom: env(safe-area-inset-bottom);
+  background: var(--black);
+  border-top: 1px solid rgba(183, 154, 104, 0.35);
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  z-index: 10;
+}
+
+.bottom-nav__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  color: var(--stone);
+  text-decoration: none;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.bottom-nav__item.active {
+  color: var(--gold);
+}
+
+/* Acceso */
+.login {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(170deg, var(--espresso) 0%, var(--black) 62%);
+  color: var(--white);
+  padding: calc(env(safe-area-inset-top) + 56px) 28px calc(env(safe-area-inset-bottom) + 32px);
+}
+
+.login__brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 18px;
+}
+
+.login__logo {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+}
+
+.login__title {
+  font-size: 34px;
+  color: var(--white);
+}
+
+.login__form {
+  margin-top: auto;
+  padding-top: 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field__label {
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.field__input {
+  height: 48px;
+  border-radius: var(--radius);
+  border: 1px solid rgba(183, 154, 104, 0.45);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--white);
+  padding: 0 14px;
+  font: inherit;
+  font-size: 15px;
+  outline: none;
+}
+
+.field__input:focus {
+  border-color: var(--gold);
+}
+
+.login__note {
+  margin-top: 6px;
+  text-align: center;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+}
