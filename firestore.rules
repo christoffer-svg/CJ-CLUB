@@ -1,0 +1,62 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Solo entran personas invitadas por CJ: deben tener su ficha en users/{uid}.
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function me() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    function isMember() {
+      return signedIn() && exists(/databases/$(database)/documents/users/$(request.auth.uid));
+    }
+
+    function isAdmin() {
+      return isMember() && me().role == 'admin';
+    }
+
+    match /users/{uid} {
+      allow read: if (signedIn() && request.auth.uid == uid) || isAdmin();
+      // Cada persona solo puede cambiar su idioma; el rol lo asigna CJ.
+      allow update: if isAdmin()
+        || (signedIn() && request.auth.uid == uid
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['language'])
+            && request.resource.data.language in ['es', 'en']);
+      allow create, delete: if isAdmin();
+    }
+
+    match /clients/{clientId} {
+      allow read: if isAdmin() || (isMember() && me().clientId == clientId);
+      allow write: if isAdmin();
+    }
+
+    match /partners/{id} {
+      allow read: if isMember();
+      allow write: if isAdmin();
+    }
+
+    match /generalContacts/{id} {
+      allow read: if isMember();
+      allow write: if isAdmin();
+    }
+
+    match /places/{id} {
+      allow read: if isMember();
+      allow write: if isAdmin();
+    }
+
+    match /deals/{id} {
+      allow read: if isMember();
+      allow write: if isAdmin();
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

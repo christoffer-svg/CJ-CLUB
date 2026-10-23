@@ -7,9 +7,14 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "emulators": "firebase emulators:start --only auth,firestore --project cj-club",
+    "seed": "tsx scripts/seed.ts",
+    "seed:emulator": "FIRESTORE_EMULATOR_HOST=127.0.0.1:8080 FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099 tsx scripts/seed.ts",
+    "deploy:rules": "firebase deploy --only firestore:rules,firestore:indexes --project cj-club"
   },
   "dependencies": {
+    "firebase": "^13.1.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
     "react-router-dom": "^7.18.4",
@@ -20,7 +25,10 @@
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.1.2",
+    "firebase-admin": "^14.5.0",
+    "firebase-tools": "^15.34.1",
     "oxlint": "^1.88.0",
+    "tsx": "^4.23.15",
     "typescript": "~6.0.3",
     "vite": "^8.3.4"
   }
