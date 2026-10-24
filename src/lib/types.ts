@@ -1,6 +1,9 @@
 import type { Timestamp } from 'firebase/firestore'
 
 export type Role = 'admin' | 'client'
+
+/** Coordenadas de un punto en el mapa */
+export type GeoPoint = { lat: number; lng: number }
 export type { Language } from '../i18n/translations'
 import type { Language } from '../i18n/translations'
 
@@ -27,6 +30,8 @@ export type Client = {
   agentPhone: string
   agentWhatsapp: string
   contacts: Partial<Record<ContactType, string>>
+  /** ubicación de la vivienda, para calcular distancias */
+  location?: GeoPoint
 }
 
 /** partners/{partnerId} */
@@ -60,8 +65,9 @@ export type Place = {
   meta_en: string
   cjNote_es: string
   cjNote_en: string
-  discountPercent?: number
+  discountPercent?: number | null
   active: boolean
+  location?: GeoPoint
 }
 
 /** deals/{dealId} */

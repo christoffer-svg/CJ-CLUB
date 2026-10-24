@@ -130,6 +130,7 @@ const clients = {
     agentName: 'Equipo CJ',
     agentPhone: '+34 600 000 001',
     agentWhatsapp: '+34600000001',
+    location: { lat: 38.7745, lng: 0.1601 },
     contacts: {
       lawyer: 'lawyer-ruiz',
       gestoria: 'gestoria-marina',
@@ -146,6 +147,7 @@ const clients = {
     agentName: 'Equipo CJ',
     agentPhone: '+34 600 000 002',
     agentWhatsapp: '+34600000002',
+    location: { lat: 37.9787, lng: -0.6822 },
     contacts: {
       lawyer: 'lawyer-ruiz',
       gestoria: 'gestoria-vega',
@@ -228,6 +230,7 @@ const places = {
     cjNote_en: 'Order the rice of the day and book a terrace table at sunset.',
     discountPercent: 10,
     active: true,
+    location: { lat: 38.7953, lng: 0.1802 },
   },
   'rest-casa-olivo': {
     category: 'restaurants',
@@ -237,6 +240,7 @@ const places = {
     cjNote_es: 'Un lugar tranquilo para comer los domingos en familia.',
     cjNote_en: 'A quiet spot for Sunday family lunch.',
     active: true,
+    location: { lat: 38.7896, lng: 0.1062 },
   },
   'golf-las-colinas': {
     category: 'golf',
@@ -247,6 +251,7 @@ const places = {
     cjNote_en: 'A course with sea views. Best early in the morning.',
     discountPercent: 15,
     active: true,
+    location: { lat: 38.7341, lng: 0.1325 },
   },
   'golf-pinar': {
     category: 'golf',
@@ -256,6 +261,7 @@ const places = {
     cjNote_es: 'Tienen clases en inglés para toda la familia.',
     cjNote_en: 'They offer lessons in English for the whole family.',
     active: true,
+    location: { lat: 38.6935, lng: 0.0905 },
   },
   'beach-cala-serena': {
     category: 'beaches',
@@ -265,6 +271,7 @@ const places = {
     cjNote_es: 'Llegue antes de las 10 en verano: el aparcamiento es pequeño.',
     cjNote_en: 'Arrive before 10am in summer: parking is limited.',
     active: true,
+    location: { lat: 38.7385, lng: 0.2205 },
   },
   'plan-ruta-faro': {
     category: 'plans',
@@ -274,6 +281,7 @@ const places = {
     cjNote_es: 'Paseo sencillo con vistas espectaculares. Lleve agua.',
     cjNote_en: 'An easy walk with spectacular views. Bring water.',
     active: true,
+    location: { lat: 38.8019, lng: 0.2343 },
   },
 }
 

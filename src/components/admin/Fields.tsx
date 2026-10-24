@@ -10,6 +10,17 @@ export function Field({ label, children, hint }: { label: string; children: Reac
   )
 }
 
+/** Como Field, pero sin <label> envolvente: para grupos con varios controles (p. ej. un mapa) */
+export function FieldGroup({ label, children, hint }: { label: string; children: ReactNode; hint?: string }) {
+  return (
+    <div className="a-field" role="group" aria-label={label}>
+      <span className="a-field__label">{label}</span>
+      {children}
+      {hint && <span className="a-field__hint">{hint}</span>}
+    </div>
+  )
+}
+
 export const Input = (props: InputHTMLAttributes<HTMLInputElement>) => <input className="a-input" {...props} />
 export const Textarea = (props: TextareaHTMLAttributes<HTMLTextAreaElement>) => (
   <textarea className="a-input a-textarea" rows={3} {...props} />

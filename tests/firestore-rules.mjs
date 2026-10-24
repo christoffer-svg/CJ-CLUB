@@ -28,7 +28,7 @@ if (!l.localId) l = await signIn('lindqvist@prueba.test', 'Prueba1234')
 await ownerPatch(`users/${l.localId}`, { role: str('client'), name: str('Familia Lindqvist'), email: str('lindqvist@prueba.test'), language: str('en'), clientId: str('lindqvist') })
 const j = await signIn('jansen@prueba.test', 'Prueba1234'), a = await signIn('admin@prueba.test', 'Admin1234'), x = await signIn('intruso@prueba.test', 'Intruso1234')
 const J = j.idToken, L = l.idToken, AD = a.idToken, X = x.idToken
-const use = (cid, did) => ({ fields: { clientId: str(cid), dealId: str(did), date: { timestampValue: new Date().toISOString() } } })
+const dealUse = (cid, did) => ({ fields: { clientId: str(cid), dealId: str(did), date: { timestampValue: new Date().toISOString() } } })
 
 // Sin sesión / sin invitación: nada
 for (const p of ['users/' + j.localId, 'clients/jansen', 'partners/lawyer-ruiz', 'generalContacts/emergencias', 'places/golf-pinar', 'deals/deal-golf', 'settings/tipOfTheWeek', 'dealUses']) {
@@ -91,11 +91,11 @@ for (const [col, id] of [['generalContacts', 'emergencias'], ['places', 'golf-pi
 }
 
 // dealUses
-ok(await req(J, 'dealUses', 'POST', use('lindqvist', 'deal-golf')), 403, 'cliente registra uso a nombre de otra familia')
-ok(await req(J, 'dealUses', 'POST', use('jansen', 'no-existe')), 403, 'cliente registra uso de descuento inexistente')
-ok(await req(J, 'dealUses', 'POST', use('jansen', 'deal-golf')), 403, 'cliente registra uso con fecha inventada')
-ok(await req(J, 'dealUses', 'POST', { fields: { ...use('jansen', 'deal-golf').fields, extra: str('x') } }), 403, 'cliente añade campos extra')
-ok(await req(AD, 'dealUses', 'POST', use('jansen', 'deal-golf')), 403, 'admin registra usos como si fuera cliente')
+ok(await req(J, 'dealUses', 'POST', dealUse('lindqvist', 'deal-golf')), 403, 'cliente registra uso a nombre de otra familia')
+ok(await req(J, 'dealUses', 'POST', dealUse('jansen', 'no-existe')), 403, 'cliente registra uso de descuento inexistente')
+ok(await req(J, 'dealUses', 'POST', dealUse('jansen', 'deal-golf')), 403, 'cliente registra uso con fecha inventada')
+ok(await req(J, 'dealUses', 'POST', { fields: { ...dealUse('jansen', 'deal-golf').fields, extra: str('x') } }), 403, 'cliente añade campos extra')
+ok(await req(AD, 'dealUses', 'POST', dealUse('jansen', 'deal-golf')), 403, 'admin registra usos como si fuera cliente')
 // creación válida con la hora del servidor (commit con transformación)
 const commit = (t, cid) => fetch(`${F}:commit`, { method: 'POST', headers: { ...H, authorization: 'Bearer ' + t }, body: JSON.stringify({ writes: [{ update: { name: `projects/cj-club/databases/(default)/documents/dealUses/u-${cid}-${Date.now()}`, fields: { clientId: str(cid), dealId: str('deal-golf') } }, updateTransforms: [{ fieldPath: 'date', setToServerValue: 'REQUEST_TIME' }], currentDocument: { exists: false } }] }) }).then(r => r.status)
 ok(await commit(J, 'jansen'), 200, 'cliente registra su uso con la hora del servidor')

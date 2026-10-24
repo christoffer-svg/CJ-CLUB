@@ -1,10 +1,11 @@
 import { PageTitle } from '../../components/admin/AdminLayout'
 import Dialog from '../../components/admin/Dialog'
-import { Bilingual, Field, Input, Select, Toggle } from '../../components/admin/Fields'
+import { Bilingual, Field, FieldGroup, Input, Select, Toggle } from '../../components/admin/Fields'
 import { useToast } from '../../components/admin/Toast'
+import LocationPicker from '../../components/admin/LocationPicker'
 import { useEditor } from '../../components/admin/useEditor'
 import { patchDoc, useLiveCollection } from '../../lib/admin'
-import type { Place } from '../../lib/types'
+import type { GeoPoint, Place } from '../../lib/types'
 
 const categories: [Place['category'], string][] = [
   ['restaurants', 'Restaurantes'],
@@ -13,7 +14,7 @@ const categories: [Place['category'], string][] = [
   ['plans', 'Planes'],
 ]
 
-type Draft = Omit<Place, 'discountPercent'> & { discountPercent: string }
+type Draft = Omit<Place, 'discountPercent' | 'location'> & { discountPercent: string; location: GeoPoint | null }
 const empty: Draft = {
   category: 'restaurants',
   name: '',
@@ -23,6 +24,7 @@ const empty: Draft = {
   cjNote_en: '',
   discountPercent: '',
   active: true,
+  location: null,
 }
 
 export default function Places() {
@@ -52,7 +54,9 @@ export default function Places() {
                       {p.name}
                       {p.discountPercent ? <span className="a-badge">{p.discountPercent}%</span> : null}
                     </span>
-                    <span className="card__text">{p.meta_es}</span>
+                    <span className="card__text">
+                      {[p.meta_es, p.location ? null : 'sin ubicación en el mapa'].filter(Boolean).join(' · ')}
+                    </span>
                   </div>
                   <Toggle
                     checked={p.active}
@@ -65,7 +69,13 @@ export default function Places() {
                   />
                   <button
                     className="a-link"
-                    onClick={() => editor.openEdit(p.id, { ...p, discountPercent: p.discountPercent ? String(p.discountPercent) : '' })}
+                    onClick={() =>
+                      editor.openEdit(p.id, {
+                        ...p,
+                        discountPercent: p.discountPercent ? String(p.discountPercent) : '',
+                        location: p.location ?? null,
+                      })
+                    }
                   >
                     Editar
                   </button>
@@ -130,6 +140,9 @@ export default function Places() {
               onChange={(e) => editor.set('discountPercent', e.target.value)}
             />
           </Field>
+          <FieldGroup label="Ubicación en el mapa">
+            <LocationPicker label={`Ubicación de ${d.name || 'el lugar'}`} value={d.location} onChange={(v) => editor.set('location', v)} />
+          </FieldGroup>
           <Toggle checked={d.active} label="Visible para los clientes" onChange={(v) => editor.set('active', v)} />
         </Dialog>
       )}

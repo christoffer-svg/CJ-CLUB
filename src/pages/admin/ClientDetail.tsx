@@ -2,7 +2,8 @@ import { deleteField } from 'firebase/firestore'
 import { Link, useParams } from 'react-router-dom'
 import { PageTitle } from '../../components/admin/AdminLayout'
 import AutoInput from '../../components/admin/AutoInput'
-import { Field, Input, Select } from '../../components/admin/Fields'
+import LocationPicker from '../../components/admin/LocationPicker'
+import { Field, FieldGroup, Input, Select } from '../../components/admin/Fields'
 import { useToast } from '../../components/admin/Toast'
 import {
   contactTypeLabels,
@@ -83,6 +84,13 @@ export default function ClientDetail() {
             <AutoInput type="tel" value={c.agentWhatsapp} onCommit={(v) => saveClient({ agentWhatsapp: v })} />
           </Field>
         </div>
+        <FieldGroup label="Ubicación de la vivienda" hint="Sirve para mostrar al cliente a qué distancia está cada lugar.">
+          <LocationPicker
+            label={`Vivienda de ${c.familyName}`}
+            value={c.location}
+            onChange={(v) => saveClient({ location: v ?? deleteField() })}
+          />
+        </FieldGroup>
         <Field label="Correo de acceso" hint="El correo de acceso no se puede cambiar desde aquí.">
           <div className="a-inline">
             <Input value={user?.email ?? ''} readOnly />

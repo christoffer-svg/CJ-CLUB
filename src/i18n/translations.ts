@@ -108,6 +108,13 @@ const es = {
   'discover.discount': 'CJ Club · {n}% descuento',
   'discover.save': 'Guardar {name}',
   'discover.unsave': 'Quitar {name} de guardados',
+  'discover.view': 'Ver como lista o mapa',
+  'discover.view.list': 'Lista',
+  'discover.view.map': 'Mapa',
+  'discover.directions': 'Cómo llegar',
+  'discover.distance': 'A {km} km de su casa',
+  'discover.home': 'Su casa',
+  'discover.mapHint': 'Toque un punto del mapa para ver el sitio.',
 
   // Ventajas
   'benefits.eyebrow': 'Ventajas',
@@ -212,6 +219,13 @@ const en: Record<TranslationKey, string> = {
   'discover.discount': 'CJ Club · {n}% off',
   'discover.save': 'Save {name}',
   'discover.unsave': 'Remove {name} from saved',
+  'discover.view': 'View as list or map',
+  'discover.view.list': 'List',
+  'discover.view.map': 'Map',
+  'discover.directions': 'Directions',
+  'discover.distance': '{km} km from your home',
+  'discover.home': 'Your home',
+  'discover.mapHint': 'Tap a point on the map to see the place.',
 
   'benefits.eyebrow': 'Benefits',
   'benefits.title': 'Your benefits',
