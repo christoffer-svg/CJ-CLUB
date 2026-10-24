@@ -22,7 +22,8 @@ Pruebas: `tests/firestore-rules.mjs` (89 comprobaciones; ver instrucciones en el
 
 ### Funciones de servidor (`functions/`)
 - `createClient` (Madrid, `europe-southwest1`): comprueba que quien llama es `admin`, valida los datos, crea la cuenta con contraseña aleatoria, la ficha y el perfil; si algo falla, no deja cuentas sueltas. Límite de 5 instancias.
-- El alta de clientes no se puede hacer desde el navegador: no hay registro público en la app.
+- `deleteClient`: baja de un cliente (derecho de supresión). Solo `admin`; borra sus cuentas de acceso, perfiles, ficha y registros de uso. Se niega si hay una cuenta del equipo vinculada.
+- El alta y la baja de clientes no se pueden hacer desde el navegador: no hay registro público en la app.
 
 ### Código que descarga el navegador
 - Revisado `dist/` tras `npm run build`: sin claves privadas, cuentas de servicio ni tokens.
@@ -55,5 +56,4 @@ Antes de publicar:
 Riesgos menores conocidos (aceptados por ahora):
 - Un cliente puede leer lugares y descuentos desactivados si consulta la base de datos directamente (la app solo muestra los activos). No son datos personales.
 - Un cliente podría crear muchos registros de uso de descuentos a su nombre; solo afecta a las estadísticas. Se puede limitar con una función si hiciera falta.
-- Para ejercer el derecho de supresión todavía no hay botón en el panel: hay que borrar a mano la cuenta en Authentication y sus documentos en `users` y `clients`.
 - Valorar una Content-Security-Policy completa (scripts, estilos y conexiones permitidos) tras publicar, probándola antes en modo informe.

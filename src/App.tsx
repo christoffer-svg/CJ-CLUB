@@ -19,6 +19,7 @@ import GeneralContacts from './pages/admin/GeneralContacts'
 import Places from './pages/admin/Places'
 import Deals from './pages/admin/Deals'
 import Tip from './pages/admin/Tip'
+import Summary from './pages/admin/Summary'
 
 export default function App() {
   const { pathname } = useLocation()
@@ -54,6 +55,7 @@ export default function App() {
           </Route>
           <Route path="admin" element={<AdminLayout />}>
             <Route index element={<AdminHome />} />
+            <Route path="resumen" element={<Summary />} />
             <Route path="clientes" element={<Clients />} />
             <Route path="clientes/nuevo" element={<ClientNew />} />
             <Route path="clientes/:id" element={<ClientDetail />} />

@@ -7,6 +7,7 @@ export default function Dialog({
   onSubmit,
   busy,
   submitLabel = 'Guardar',
+  danger,
   children,
 }: {
   title: string
@@ -14,6 +15,8 @@ export default function Dialog({
   onSubmit: () => void
   busy?: boolean
   submitLabel?: string
+  /** botón rojo, para borrar */
+  danger?: boolean
   children: ReactNode
 }) {
   useEffect(() => {
@@ -41,7 +44,7 @@ export default function Dialog({
           <button type="button" className="btn btn--ghost a-btn" onClick={onClose}>
             Cancelar
           </button>
-          <button type="submit" className="btn a-btn" disabled={busy}>
+          <button type="submit" className={danger ? 'btn a-btn a-btn--danger' : 'btn a-btn'} disabled={busy}>
             {submitLabel}
           </button>
         </div>

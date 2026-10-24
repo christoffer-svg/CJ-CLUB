@@ -100,3 +100,39 @@ export const createClient = onCall(async (request) => {
 
   return { clientId: clientRef.id, uid: user.uid, memberNumber }
 })
+
+/**
+ * Baja de un cliente (derecho de supresión): borra sus cuentas de acceso, sus perfiles,
+ * su ficha y sus registros de uso de descuentos. No se puede deshacer.
+ */
+export const deleteClient = onCall(async (request) => {
+  await requireAdmin(request.auth?.uid)
+  const clientId = text((request.data ?? {}).clientId, 'cliente')
+
+  const clientRef = db.doc(`clients/${clientId}`)
+  const client = await clientRef.get()
+  if (!client.exists) throw new HttpsError('not-found', 'Este cliente ya no existe.')
+
+  const users = await db.collection('users').where('clientId', '==', clientId).get()
+  if (users.docs.some((u) => u.get('role') !== 'client')) {
+    throw new HttpsError('failed-precondition', 'Este cliente tiene una cuenta del equipo de CJ vinculada. Revísela antes de darle de baja.')
+  }
+
+  const auth = getAuth()
+  for (const u of users.docs) {
+    await auth.deleteUser(u.id).catch((e: { code?: string }) => {
+      if (e.code !== 'auth/user-not-found') throw e
+    })
+  }
+
+  // Borrado en lotes (máx. 500 operaciones por lote)
+  const uses = await db.collection('dealUses').where('clientId', '==', clientId).get()
+  const refs = [...users.docs.map((d) => d.ref), ...uses.docs.map((d) => d.ref), clientRef]
+  for (let i = 0; i < refs.length; i += 450) {
+    const batch = db.batch()
+    refs.slice(i, i + 450).forEach((r) => batch.delete(r))
+    await batch.commit()
+  }
+
+  return { accounts: users.size, dealUses: uses.size }
+})

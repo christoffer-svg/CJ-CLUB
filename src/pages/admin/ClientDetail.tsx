@@ -1,12 +1,16 @@
 import { deleteField } from 'firebase/firestore'
-import { Link, useParams } from 'react-router-dom'
+import { FirebaseError } from 'firebase/app'
+import { useState } from 'react'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { PageTitle } from '../../components/admin/AdminLayout'
 import AutoInput from '../../components/admin/AutoInput'
+import Dialog from '../../components/admin/Dialog'
 import LocationPicker from '../../components/admin/LocationPicker'
 import { Field, FieldGroup, Input, Select } from '../../components/admin/Fields'
 import { useToast } from '../../components/admin/Toast'
 import {
   contactTypeLabels,
+  deleteClient,
   fromDateInput,
   patchDoc,
   sendInvitation,
@@ -19,6 +23,11 @@ import type { Client, ContactType, Language, Partner, UserProfile } from '../../
 export default function ClientDetail() {
   const { id = '' } = useParams()
   const toast = useToast()
+  const navigate = useNavigate()
+  const [removing, setRemoving] = useState(false)
+  const [confirmName, setConfirmName] = useState('')
+  const [busy, setBusy] = useState(false)
+  const [removeError, setRemoveError] = useState('')
   const client = useLiveDoc<Client>(`clients/${id}`)
   const users = useLiveCollection<UserProfile>('users')
   const partners = useLiveCollection<Partner>('partners')
@@ -34,6 +43,22 @@ export default function ClientDetail() {
     }
   }
   const saveClient = (data: Record<string, unknown>) => save(`clients/${id}`, data, (data.familyName as string) || c?.familyName)
+
+  async function remove() {
+    if (!c || confirmName.trim() !== c.familyName) return
+    setBusy(true)
+    setRemoveError('')
+    try {
+      const name = c.familyName
+      await deleteClient(id)
+      toast(`${name} dada de baja. Sus datos se han borrado.`)
+      navigate('/admin/clientes')
+    } catch (err) {
+      const msg = err instanceof FirebaseError ? err.message.replace(/\s*\[\d+\]$/, '') : ''
+      setRemoveError(msg && !msg.startsWith('internal') ? msg : 'No se pudo dar de baja. Inténtelo de nuevo.')
+      setBusy(false)
+    }
+  }
 
   if (client.loading) return null
   if (!c) return <p className="a-empty">Este cliente no existe.</p>
@@ -141,6 +166,47 @@ export default function ClientDetail() {
           )
         })}
       </section>
+
+      <section className="card a-form a-danger">
+        <h2 className="a-section-title">Dar de baja</h2>
+        <p className="card__text">
+          Borra su acceso a la app, su ficha, sus contactos asignados, sus favoritos y sus registros de uso de descuentos.
+          Úselo cuando el cliente pida que se borren sus datos. No se puede deshacer.
+        </p>
+        <div className="a-actions">
+          <button
+            type="button"
+            className="btn a-btn a-btn--danger"
+            onClick={() => {
+              setConfirmName('')
+              setRemoveError('')
+              setRemoving(true)
+            }}
+          >
+            Dar de baja a {c.familyName}
+          </button>
+        </div>
+      </section>
+
+      {removing && (
+        <Dialog
+          title={`Dar de baja a ${c.familyName}`}
+          submitLabel={busy ? 'Borrando…' : 'Borrar todos sus datos'}
+          busy={busy || confirmName.trim() !== c.familyName}
+          danger
+          onClose={() => !busy && setRemoving(false)}
+          onSubmit={remove}
+        >
+          <p className="card__text">
+            Se borrarán para siempre la cuenta de acceso y todos los datos de {c.familyName}. Para confirmar, escriba su nombre
+            exactamente: <strong>{c.familyName}</strong>
+          </p>
+          <Field label="Nombre de la familia">
+            <Input value={confirmName} onChange={(e) => setConfirmName(e.target.value)} autoComplete="off" />
+          </Field>
+          {removeError && <p className="a-error">{removeError}</p>}
+        </Dialog>
+      )}
     </>
   )
 }

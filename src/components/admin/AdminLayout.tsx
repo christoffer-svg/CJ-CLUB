@@ -3,6 +3,7 @@ import { useAuth } from '../../auth/AuthProvider'
 import { ToastProvider } from './Toast'
 
 export const adminSections = [
+  { to: '/admin/resumen', label: 'Resumen del mes', text: 'Clientes, descuentos usados y lugares guardados' },
   { to: '/admin/clientes', label: 'Clientes', text: 'Fichas, contactos asignados e invitaciones' },
   { to: '/admin/colaboradores', label: 'Colaboradores', text: 'Abogados, gestorías, piscinas y más' },
   { to: '/admin/contactos', label: 'Contactos generales', text: 'Urgencias, salud y transporte' },

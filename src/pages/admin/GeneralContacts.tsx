@@ -156,6 +156,7 @@ export default function GeneralContacts() {
         <Dialog
           title="Borrar contacto"
           submitLabel="Borrar"
+          danger
           onClose={() => setDeleting(null)}
           onSubmit={() =>
             removeDoc(`generalContacts/${deleting.id}`)

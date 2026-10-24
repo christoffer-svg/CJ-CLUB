@@ -99,6 +99,12 @@ export async function createClient(data: NewClient) {
   return res.data
 }
 
+/** Da de baja a un cliente en el servidor (función deleteClient): borra cuenta, ficha y registros */
+export async function deleteClient(clientId: string) {
+  const call = httpsCallable<{ clientId: string }, { accounts: number; dealUses: number }>(functions, 'deleteClient')
+  return (await call({ clientId })).data
+}
+
 /**
  * Envía al cliente el correo de Firebase para elegir contraseña (sirve de invitación).
  * El texto del correo se personaliza en la consola de Firebase > Authentication > Plantillas.
