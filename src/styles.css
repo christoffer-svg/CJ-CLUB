@@ -1746,3 +1746,61 @@ button {
   font-weight: 600;
   font-variant-numeric: tabular-nums;
 }
+
+/* Selector de idioma con más de tres idiomas */
+.lang-menu {
+  position: relative;
+  flex: none;
+}
+
+.lang-trigger {
+  align-items: center;
+  gap: 2px;
+  background: transparent;
+  cursor: pointer;
+  font: inherit;
+}
+
+.lang-trigger .lang-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lang-trigger__caret {
+  padding: 0 6px 0 2px;
+  font-size: 10px;
+  color: var(--gold);
+}
+
+.lang-menu__list {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 25;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  width: 232px;
+  padding: 6px;
+  border: 1px solid var(--gold);
+  border-radius: 12px;
+  background: var(--black);
+}
+
+.lang-menu__list .lang-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 34px;
+  padding: 0 10px;
+  border-radius: 8px;
+  text-align: left;
+}
+
+.lang-pill__name {
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  text-transform: none;
+}

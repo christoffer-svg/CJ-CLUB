@@ -119,6 +119,16 @@ export async function sendInvitation(email: string, language: Language) {
   }
 }
 
+/** Idiomas de la app de clientes, para el selector "Idioma preferido" del panel */
+export const languageOptions: [Language, string][] = [
+  ['en', 'Inglés'],
+  ['es', 'Español'],
+  ['nl', 'Neerlandés'],
+  ['sv', 'Sueco'],
+  ['de', 'Alemán'],
+  ['fr', 'Francés'],
+]
+
 export const contactTypeLabels: [ContactType, string][] = [
   ['lawyer', 'Abogado'],
   ['gestoria', 'Gestoría'],

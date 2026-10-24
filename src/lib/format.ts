@@ -1,5 +1,4 @@
 import type { Timestamp } from 'firebase/firestore'
-import type { Language } from './types'
 
 /** "abril 2026" / "April 2026" */
 export function monthYear(ts: Timestamp | undefined, locale = 'es-ES') {
@@ -8,14 +7,14 @@ export function monthYear(ts: Timestamp | undefined, locale = 'es-ES') {
 }
 
 /**
- * Nombre de la familia según el idioma. En la base de datos se guarda en español
- * ("Familia Jansen"); en inglés se muestra "Jansen Family" (o "Jansen family" en mitad de frase).
- * En español, en mitad de frase "familia" va en minúscula: "Hola, familia Jansen".
+ * Nombre de la familia en el idioma de la app. En la base de datos se guarda en español
+ * ("Familia Jansen"); el formato de cada idioma está en las traducciones (family.title / family.inSentence),
+ * p. ej. "Jansen Family", "Familjen Jansen", "Hola, familia Jansen".
  */
-export function familyName(name: string, lang: Language, inSentence = false) {
+export function familyName(name: string, t: (key: 'family.title' | 'family.inSentence', p: { name: string }) => string, inSentence = false) {
   const m = name.match(/^Familia\s+(.+)$/i)
-  if (lang === 'en') return m ? `${m[1]} ${inSentence ? 'family' : 'Family'}` : name
-  return inSentence ? name.replace(/^Familia\b/, 'familia') : name
+  if (!m) return name
+  return t(inSentence ? 'family.inSentence' : 'family.title', { name: m[1] })
 }
 
 /** Enlace de WhatsApp: wa.me solo admite dígitos */

@@ -2,7 +2,7 @@ import { doc, updateDoc } from 'firebase/firestore'
 import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from 'react'
 import { useAuth } from '../auth/AuthProvider'
 import { auth, db } from '../lib/firebase'
-import { defaultLanguage, languages, translations, type Language, type TranslationKey } from './translations'
+import { dataFallback, defaultLanguage, languages, translations, type Language, type TranslationKey } from './translations'
 
 export { languages, type Language } from './translations'
 
@@ -11,7 +11,7 @@ type I18n = {
   setLang: (lang: Language) => void
   /** Texto fijo traducido; {n}, {name}... se sustituyen por params */
   t: (key: TranslationKey, params?: Record<string, string | number>) => string
-  /** Campo de datos en el idioma actual (p. ej. name_en), con el español como reserva */
+  /** Campo de datos en el idioma actual (p. ej. name_en); si falta, en inglés y después en español */
   pick: (item: object | null | undefined, field: string) => string
   locale: string
 }
@@ -45,8 +45,11 @@ function build(lang: Language, setLang: (l: Language) => void): I18n {
     },
     pick: (item, field) => {
       const rec = (item ?? {}) as Record<string, unknown>
-      const value = rec[`${field}_${lang}`]
-      return typeof value === 'string' && value.trim() ? value : ((rec[`${field}_${defaultLanguage}`] as string) ?? '')
+      for (const l of dataFallback(lang)) {
+        const value = rec[`${field}_${l}`]
+        if (typeof value === 'string' && value.trim()) return value
+      }
+      return ''
     },
   }
 }

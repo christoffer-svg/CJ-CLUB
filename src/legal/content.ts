@@ -18,7 +18,8 @@ const company = {
   en: '[Legal name of CJ Real Estate & Services]',
 }
 
-const legal: Record<Language, Record<LegalPageKey, LegalDoc>> = {
+// Español e inglés; los demás idiomas muestran la versión en inglés hasta que el abogado apruebe sus traducciones
+const legal: Partial<Record<Language, Record<LegalPageKey, LegalDoc>>> & Record<'es' | 'en', Record<LegalPageKey, LegalDoc>> = {
   es: {
     privacy: {
       title: 'Política de privacidad',
@@ -242,5 +243,5 @@ const legal: Record<Language, Record<LegalPageKey, LegalDoc>> = {
 }
 
 export function legalDoc(lang: Language, key: LegalPageKey): LegalDoc {
-  return legal[lang]?.[key] ?? legal.es[key]
+  return legal[lang]?.[key] ?? legal.en[key]
 }

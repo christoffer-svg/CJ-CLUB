@@ -19,7 +19,7 @@ function memberSince(ts: Timestamp) {
 
 export default function Benefits() {
   const { clientId, preview } = useViewer()
-  const { t, pick, lang } = useI18n()
+  const { t, pick } = useI18n()
   // "Gratis" se guarda en español; el resto de etiquetas (20%, 2x1...) no se traducen
   const label = (l: string) => (l.trim().toLowerCase() === 'gratis' ? t('benefits.free') : l)
   const client = useDoc<Client>(clientId ? `clients/${clientId}` : null)
@@ -45,7 +45,7 @@ export default function Benefits() {
               <span className="eyebrow">{t('benefits.member')}</span>
             </div>
             <div className="member-card__bottom">
-              <span className="member-card__name">{c ? familyName(c.familyName, lang) : '\u00a0'}</span>
+              <span className="member-card__name">{c ? familyName(c.familyName, t) : '\u00a0'}</span>
               <div className="member-card__row">
                 <span className="member-card__number">{c?.memberNumber ?? '\u00a0'}</span>
                 {c?.clientSince && <span className="member-card__since">{t('benefits.memberSince', { date: memberSince(c.clientSince) })}</span>}
@@ -55,7 +55,7 @@ export default function Benefits() {
           <button
             className="btn"
             disabled={!c}
-            onClick={() => c && setShown({ name: familyName(c.familyName, lang), code: c.memberNumber })}
+            onClick={() => c && setShown({ name: familyName(c.familyName, t), code: c.memberNumber })}
           >
             {t('benefits.showCard')}
           </button>

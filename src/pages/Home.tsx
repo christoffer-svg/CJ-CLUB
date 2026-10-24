@@ -11,13 +11,13 @@ import type { Client, TipOfTheWeek } from '../lib/types'
 export default function Home() {
   const { logout } = useAuth()
   const { clientId, base, preview } = useViewer()
-  const { t, pick, lang, locale } = useI18n()
+  const { t, pick, locale } = useI18n()
   const client = useDoc<Client>(clientId ? `clients/${clientId}` : null)
   const tip = useDoc<TipOfTheWeek>('settings/tipOfTheWeek')
   const dealsCount = useActiveDealsCount()
   const c = client.data
 
-  const title = c ? t('home.greeting', { name: familyName(c.familyName, lang, true) }) : client.loading ? '' : t('home.hello')
+  const title = c ? t('home.greeting', { name: familyName(c.familyName, t, true) }) : client.loading ? '' : t('home.hello')
   const subtitle = c
     ? [c.property, c.clientSince && t('home.clientsSince', { date: monthYear(c.clientSince, locale) })].filter(Boolean).join(' · ')
     : ''

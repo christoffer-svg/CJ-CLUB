@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { PageTitle } from '../../components/admin/AdminLayout'
 import { Field, Input, Select } from '../../components/admin/Fields'
 import { useToast } from '../../components/admin/Toast'
-import { createClient, type NewClient } from '../../lib/admin'
+import { createClient, languageOptions, type NewClient } from '../../lib/admin'
 
 const today = () => new Date().toISOString().slice(0, 10)
 
@@ -61,8 +61,11 @@ export default function ClientNew() {
           </Field>
           <Field label="Idioma preferido">
             <Select value={form.language} onChange={set('language')}>
-              <option value="en">Inglés</option>
-              <option value="es">Español</option>
+              {languageOptions.map(([code, name]) => (
+                <option key={code} value={code}>
+                  {name}
+                </option>
+              ))}
             </Select>
           </Field>
         </div>

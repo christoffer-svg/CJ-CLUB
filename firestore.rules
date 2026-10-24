@@ -52,7 +52,7 @@ service cloud.firestore {
       // Un cliente solo puede cambiar su idioma y sus favoritos
       allow update: if signedIn() && request.auth.uid == uid && !isAdmin()
         && changedKeys().hasOnly(['language', 'favorites'])
-        && request.resource.data.language in ['es', 'en']
+        && request.resource.data.language in ['es', 'en', 'nl', 'sv', 'de', 'fr']
         && (!('favorites' in request.resource.data)
             || (request.resource.data.favorites is list && request.resource.data.favorites.size() <= 200));
 

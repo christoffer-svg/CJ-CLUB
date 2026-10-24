@@ -12,6 +12,7 @@ import {
   contactTypeLabels,
   deleteClient,
   fromDateInput,
+  languageOptions,
   patchDoc,
   sendInvitation,
   toDateInput,
@@ -93,8 +94,11 @@ export default function ClientDetail() {
               disabled={!user}
               onChange={(e) => user && save(`users/${user.id}`, { language: e.target.value as Language })}
             >
-              <option value="en">Inglés</option>
-              <option value="es">Español</option>
+              {languageOptions.map(([code, name]) => (
+                <option key={code} value={code}>
+                  {name}
+                </option>
+              ))}
             </Select>
           </Field>
         </div>

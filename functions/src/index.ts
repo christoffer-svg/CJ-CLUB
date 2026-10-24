@@ -54,7 +54,8 @@ export const createClient = onCall(async (request) => {
   const agentName = text(data.agentName, 'agente', false)
   const agentPhone = text(data.agentPhone, 'teléfono del agente', false)
   const agentWhatsapp = text(data.agentWhatsapp, 'WhatsApp del agente', false)
-  const language = data.language === 'en' ? 'en' : 'es'
+  const languages = ['es', 'en', 'nl', 'sv', 'de', 'fr']
+  const language = typeof data.language === 'string' && languages.includes(data.language) ? data.language : 'en'
   const since = new Date(text(data.clientSince, 'fecha de alta'))
   if (Number.isNaN(since.getTime())) throw new HttpsError('invalid-argument', 'La fecha de alta no es válida.')
 
