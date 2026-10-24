@@ -46,7 +46,8 @@ export function useAssignedPartners(client: Client | null, types: ContactType[])
         const id = client.contacts[type]!
         try {
           const snap = await getDoc(doc(db, 'partners', id))
-          return snap.exists() ? { ...(snap.data() as Partner), id, type } : null
+          // Los colaboradores desactivados por CJ no se muestran
+          return snap.exists() && snap.get('active') !== false ? { ...(snap.data() as Partner), id, type } : null
         } catch {
           return null
         }

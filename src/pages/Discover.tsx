@@ -1,9 +1,9 @@
 import { useSearchParams } from 'react-router-dom'
-import { useAuth } from '../auth/AuthProvider'
 import Header from '../components/Header'
 import { HeartIcon } from '../components/Icons'
 import { useActivePlaces } from '../lib/data'
 import type { Place } from '../lib/types'
+import { useViewer } from '../lib/viewer'
 
 type Filter = 'all' | Place['category'] | 'saved'
 
@@ -23,8 +23,7 @@ export default function Discover() {
   const param = params.get('categoria') as Filter | null
   const active: Filter = filters.some(([f]) => f === param) ? param! : 'all'
 
-  const { profile, toggleFavorite } = useAuth()
-  const favorites = profile?.favorites ?? []
+  const { favorites, toggleFavorite } = useViewer()
   const places = useActivePlaces()
 
   const shown = places.data

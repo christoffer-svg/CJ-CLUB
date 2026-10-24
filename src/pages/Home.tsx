@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useAuth } from '../auth/AuthProvider'
+import { useViewer } from '../lib/viewer'
 import Header from '../components/Header'
 import { AlertIcon, ChatIcon, CrossIcon, DishIcon, PhoneIcon, StarIcon } from '../components/Icons'
 import { useActiveDealsCount, useDoc } from '../lib/data'
@@ -7,8 +8,9 @@ import { greetingName, monthYear, telLink, whatsappLink } from '../lib/format'
 import type { Client, TipOfTheWeek } from '../lib/types'
 
 export default function Home() {
-  const { profile, logout } = useAuth()
-  const client = useDoc<Client>(profile?.clientId ? `clients/${profile.clientId}` : null)
+  const { logout } = useAuth()
+  const { clientId, base, preview } = useViewer()
+  const client = useDoc<Client>(clientId ? `clients/${clientId}` : null)
   const tip = useDoc<TipOfTheWeek>('settings/tipOfTheWeek')
   const dealsCount = useActiveDealsCount()
   const c = client.data
@@ -41,22 +43,22 @@ export default function Home() {
         <section className="section">
           <h2 className="section__title">¿Qué necesita?</h2>
           <div className="grid-2">
-            <Link to="/guia" className="card quick quick--emergency">
+            <Link to={`${base}/guia`} className="card quick quick--emergency">
               <span className="quick__icon"><AlertIcon size={22} /></span>
               <span className="quick__title">Emergencia</span>
               <span className="quick__text">112 y urgencias</span>
             </Link>
-            <Link to="/guia" className="card quick">
+            <Link to={`${base}/guia`} className="card quick">
               <span className="quick__icon"><CrossIcon size={22} /></span>
               <span className="quick__title">Salud</span>
               <span className="quick__text">Médicos y clínicas</span>
             </Link>
-            <Link to="/descubrir?categoria=restaurants" className="card quick">
+            <Link to={`${base}/descubrir?categoria=restaurants`} className="card quick">
               <span className="quick__icon"><DishIcon size={22} /></span>
               <span className="quick__title">Dónde comer</span>
               <span className="quick__text">Nuestros restaurantes</span>
             </Link>
-            <Link to="/ventajas" className="card quick">
+            <Link to={`${base}/ventajas`} className="card quick">
               <span className="quick__icon"><StarIcon size={22} /></span>
               <span className="quick__title">Mis ventajas</span>
               <span className="quick__text">
@@ -73,9 +75,11 @@ export default function Home() {
           </section>
         )}
 
-        <button className="link-btn link-btn--dark" onClick={logout}>
-          Cerrar sesión
-        </button>
+        {!preview && (
+          <button className="link-btn link-btn--dark" onClick={logout}>
+            Cerrar sesión
+          </button>
+        )}
       </main>
     </>
   )

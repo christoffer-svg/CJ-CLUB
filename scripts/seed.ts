@@ -69,6 +69,7 @@ const partners = {
     phone: '+34 965 000 101',
     description_es: 'Abogados especializados en compraventa, herencias y residencia.',
     description_en: 'Lawyers specialised in property, inheritance and residency.',
+    active: true,
   },
   'gestoria-marina': {
     name: 'Gestoría Marina Alta',
@@ -76,6 +77,7 @@ const partners = {
     phone: '+34 965 000 102',
     description_es: 'Impuestos, NIE, empadronamiento y trámites con la administración.',
     description_en: 'Taxes, NIE, town hall registration and paperwork.',
+    active: true,
   },
   'gestoria-vega': {
     name: 'Gestoría Vega Baja',
@@ -83,6 +85,7 @@ const partners = {
     phone: '+34 966 000 103',
     description_es: 'Trámites, impuestos y declaración de no residentes.',
     description_en: 'Paperwork, taxes and non-resident tax returns.',
+    active: true,
   },
   'pool-azul': {
     name: 'Piscinas Azul Costa',
@@ -90,6 +93,7 @@ const partners = {
     phone: '+34 600 000 104',
     description_es: 'Mantenimiento semanal de piscinas y reparaciones.',
     description_en: 'Weekly pool maintenance and repairs.',
+    active: true,
   },
   'maintenance-casa': {
     name: 'Mantenimiento Casa Blanca',
@@ -97,6 +101,7 @@ const partners = {
     phone: '+34 600 000 105',
     description_es: 'Fontanería, electricidad, pintura y pequeñas reparaciones.',
     description_en: 'Plumbing, electrical work, painting and small repairs.',
+    active: true,
   },
   'garden-verde': {
     name: 'Jardines Verde Mar',
@@ -104,6 +109,7 @@ const partners = {
     phone: '+34 600 000 106',
     description_es: 'Cuidado de jardines, riego y poda.',
     description_en: 'Garden care, irrigation and pruning.',
+    active: true,
   },
   'community-fincas': {
     name: 'Administración de Fincas Levante',
@@ -111,6 +117,7 @@ const partners = {
     phone: '+34 966 000 107',
     description_es: 'Administración de comunidades de propietarios.',
     description_en: 'Homeowners’ association management.',
+    active: true,
   },
 }
 

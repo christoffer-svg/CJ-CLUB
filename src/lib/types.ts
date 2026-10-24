@@ -35,6 +35,8 @@ export type Partner = {
   phone: string
   description_es: string
   description_en: string
+  /** false = desactivado por CJ (no se muestra a los clientes) */
+  active?: boolean
 }
 
 /** generalContacts/{id} */

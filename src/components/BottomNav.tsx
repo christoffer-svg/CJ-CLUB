@@ -1,4 +1,5 @@
 import { NavLink } from 'react-router-dom'
+import { useViewer } from '../lib/viewer'
 import { CompassIcon, GuideIcon, HomeIcon, StarIcon } from './Icons'
 
 const tabs = [
@@ -9,10 +10,11 @@ const tabs = [
 ]
 
 export default function BottomNav() {
+  const { base } = useViewer()
   return (
     <nav className="bottom-nav" aria-label="Navegación principal">
       {tabs.map(({ to, label, Icon }) => (
-        <NavLink key={to} to={to} end={to === '/'} className="bottom-nav__item">
+        <NavLink key={to} to={base + (to === '/' && base ? '' : to)} end={to === '/'} className="bottom-nav__item">
           <Icon size={22} />
           {label}
         </NavLink>

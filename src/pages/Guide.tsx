@@ -1,8 +1,8 @@
-import { useAuth } from '../auth/AuthProvider'
 import Header from '../components/Header'
 import { useAssignedPartners, useDoc, useGeneralContacts } from '../lib/data'
 import { telLink } from '../lib/format'
 import type { Client, ContactType, GeneralContact } from '../lib/types'
+import { useViewer } from '../lib/viewer'
 
 const contactLabels: [ContactType, string][] = [
   ['lawyer', 'Su abogado'],
@@ -45,8 +45,8 @@ function ContactRow({ label, name, description, phone, emergency }: RowProps) {
 }
 
 export default function Guide() {
-  const { profile } = useAuth()
-  const client = useDoc<Client>(profile?.clientId ? `clients/${profile.clientId}` : null)
+  const { clientId } = useViewer()
+  const client = useDoc<Client>(clientId ? `clients/${clientId}` : null)
   const partners = useAssignedPartners(client.data, contactTypes)
   const general = useGeneralContacts()
 

@@ -1,10 +1,10 @@
 import { useCallback, useState } from 'react'
-import { useAuth } from '../auth/AuthProvider'
 import Header from '../components/Header'
 import QrCode from '../components/QrCode'
 import Sheet from '../components/Sheet'
 import { logDealUse, useActiveDeals, useDoc } from '../lib/data'
 import type { Client } from '../lib/types'
+import { useViewer } from '../lib/viewer'
 import type { Timestamp } from 'firebase/firestore'
 
 type Shown = { name: string; code: string }
@@ -16,8 +16,8 @@ function memberSince(ts: Timestamp) {
 }
 
 export default function Benefits() {
-  const { profile } = useAuth()
-  const client = useDoc<Client>(profile?.clientId ? `clients/${profile.clientId}` : null)
+  const { clientId, preview } = useViewer()
+  const client = useDoc<Client>(clientId ? `clients/${clientId}` : null)
   const deals = useActiveDeals()
   const [shown, setShown] = useState<Shown | null>(null)
   const close = useCallback(() => setShown(null), [])
@@ -70,8 +70,8 @@ export default function Benefits() {
                   className="use-btn"
                   onClick={() => {
                     setShown({ name: d.title, code: d.code })
-                    // Registro para CJ; si falla, el cliente puede usar el descuento igualmente
-                    if (profile?.clientId) logDealUse(d.id, profile.clientId).catch(() => {})
+                    // Registro para CJ (no en la vista previa); si falla, el cliente puede usar el descuento igualmente
+                    if (clientId && !preview) logDealUse(d.id, clientId).catch(() => {})
                   }}
                 >
                   Usar
