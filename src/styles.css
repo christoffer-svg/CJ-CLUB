@@ -604,3 +604,116 @@ button {
   border-color: var(--emergency);
   color: var(--white);
 }
+
+/* Descubrir: filtros */
+.pills {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  margin: 0 -16px;
+  padding: 0 16px 2px;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.pills::-webkit-scrollbar {
+  display: none;
+}
+
+.pill {
+  flex: none;
+  height: 36px;
+  padding: 0 16px;
+  border-radius: 18px;
+  border: 1px solid var(--card-border);
+  background: var(--card);
+  color: var(--text-2);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+}
+
+.pill--active {
+  background: var(--black);
+  border-color: var(--gold);
+  color: var(--white);
+}
+
+/* Descubrir: lugares */
+.place-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: -12px;
+}
+
+.place {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.place__head {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.place__name {
+  flex: 1;
+  font-size: 19px;
+  line-height: 1.3;
+  color: var(--text);
+}
+
+.place__note {
+  margin-top: 4px;
+  font-size: 13.5px;
+  font-style: italic;
+  color: var(--text);
+}
+
+.place__note-mark {
+  font-style: normal;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--gold);
+}
+
+.tag {
+  align-self: flex-start;
+  margin-top: 6px;
+  padding: 4px 10px;
+  border-radius: 4px;
+  background: var(--sand);
+  color: var(--espresso);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+
+.heart {
+  flex: none;
+  margin: -6px -6px 0 0;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  background: none;
+  color: var(--stone);
+  cursor: pointer;
+}
+
+.heart--on {
+  color: var(--gold);
+}
+
+.empty {
+  margin-top: -12px;
+  padding: 24px 8px;
+  text-align: center;
+  font-size: 14px;
+  color: var(--text-2);
+}

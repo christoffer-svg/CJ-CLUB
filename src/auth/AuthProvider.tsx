@@ -1,5 +1,5 @@
 import { onAuthStateChanged, signOut, type User } from 'firebase/auth'
-import { doc, getDoc } from 'firebase/firestore'
+import { arrayRemove, arrayUnion, doc, getDoc, updateDoc } from 'firebase/firestore'
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
 import { auth, db } from '../lib/firebase'
 import type { UserProfile } from '../lib/types'
@@ -11,12 +11,14 @@ type AuthState = {
   /** ficha users/{uid}; null si la persona no ha sido invitada por CJ */
   profile: UserProfile | null
   logout: () => Promise<void>
+  /** Guarda o quita un lugar de los favoritos del usuario */
+  toggleFavorite: (placeId: string) => Promise<void>
 }
 
 const AuthContext = createContext<AuthState | null>(null)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [state, setState] = useState<Omit<AuthState, 'logout'>>({ loading: true, user: null, profile: null })
+  const [state, setState] = useState<Omit<AuthState, 'logout' | 'toggleFavorite'>>({ loading: true, user: null, profile: null })
 
   useEffect(() => {
     return onAuthStateChanged(auth, async (user) => {
@@ -36,7 +38,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     })
   }, [])
 
-  return <AuthContext.Provider value={{ ...state, logout: () => signOut(auth) }}>{children}</AuthContext.Provider>
+  async function toggleFavorite(placeId: string) {
+    const { user, profile } = state
+    if (!user || !profile) return
+    const saved = profile.favorites?.includes(placeId)
+    const favorites = saved
+      ? (profile.favorites ?? []).filter((id) => id !== placeId)
+      : [...(profile.favorites ?? []), placeId]
+    // Se muestra al momento; si falla al guardar, se deshace
+    setState((s) => ({ ...s, profile: s.profile && { ...s.profile, favorites } }))
+    try {
+      await updateDoc(doc(db, 'users', user.uid), { favorites: saved ? arrayRemove(placeId) : arrayUnion(placeId) })
+    } catch {
+      setState((s) => ({ ...s, profile: s.profile && { ...s.profile, favorites: profile.favorites } }))
+    }
+  }
+
+  return (
+    <AuthContext.Provider value={{ ...state, logout: () => signOut(auth), toggleFavorite }}>{children}</AuthContext.Provider>
+  )
 }
 
 // oxlint-disable-next-line react/only-export-components

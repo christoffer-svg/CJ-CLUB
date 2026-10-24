@@ -28,11 +28,13 @@ service cloud.firestore {
 
     match /users/{uid} {
       allow read: if (signedIn() && request.auth.uid == uid) || isAdmin();
-      // Cada persona solo puede cambiar su idioma; el rol lo asigna CJ.
+      // Cada persona solo puede cambiar su idioma y sus favoritos; el rol lo asigna CJ.
       allow update: if isAdmin()
         || (signedIn() && request.auth.uid == uid
-            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['language'])
-            && request.resource.data.language in ['es', 'en']);
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['language', 'favorites'])
+            && request.resource.data.language in ['es', 'en']
+            && (!('favorites' in request.resource.data)
+                || (request.resource.data.favorites is list && request.resource.data.favorites.size() <= 200)));
       allow create, delete: if isAdmin();
     }
 

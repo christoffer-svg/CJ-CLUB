@@ -133,3 +133,18 @@ export const AlertIcon = (p: IconProps) => (
     <path d="M12 10v4.5M12 17v.01" />
   </Svg>
 )
+
+export const HeartIcon = ({ size = 22, filled }: IconProps & { filled?: boolean }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill={filled ? 'currentColor' : 'none'}
+    stroke="currentColor"
+    strokeWidth={1.3}
+    strokeLinejoin="round"
+    aria-hidden="true"
+  >
+    <path d="M12 19.5s-7.5-4.4-7.5-9.7A4.3 4.3 0 0 1 12 7.3a4.3 4.3 0 0 1 7.5 2.5c0 5.3-7.5 9.7-7.5 9.7z" />
+  </svg>
+)

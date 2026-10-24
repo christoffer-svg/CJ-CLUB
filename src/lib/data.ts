@@ -1,7 +1,7 @@
 import { collection, doc, getCountFromServer, getDoc, getDocs, orderBy, query, where } from 'firebase/firestore'
 import { useEffect, useState } from 'react'
 import { db } from './firebase'
-import type { Client, ContactType, GeneralContact, Partner } from './types'
+import type { Client, ContactType, GeneralContact, Partner, Place } from './types'
 
 type Result<T> = { loading: boolean; data: T | null; error: boolean }
 
@@ -67,6 +67,17 @@ export function useGeneralContacts() {
   useEffect(() => {
     getDocs(query(collection(db, 'generalContacts'), orderBy('order')))
       .then((snap) => setState({ loading: false, data: snap.docs.map((d) => ({ ...(d.data() as GeneralContact), id: d.id })) }))
+      .catch(() => setState({ loading: false, data: [] }))
+  }, [])
+  return state
+}
+
+/** Lugares activos */
+export function useActivePlaces() {
+  const [state, setState] = useState<{ loading: boolean; data: (Place & { id: string })[] }>({ loading: true, data: [] })
+  useEffect(() => {
+    getDocs(query(collection(db, 'places'), where('active', '==', true)))
+      .then((snap) => setState({ loading: false, data: snap.docs.map((d) => ({ ...(d.data() as Place), id: d.id })) }))
       .catch(() => setState({ loading: false, data: [] }))
   }, [])
   return state

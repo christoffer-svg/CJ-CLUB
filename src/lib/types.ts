@@ -10,6 +10,8 @@ export type UserProfile = {
   email: string
   language: Language
   clientId?: string
+  /** ids de places guardados como favoritos */
+  favorites?: string[]
 }
 
 export type ContactType = 'lawyer' | 'gestoria' | 'pool' | 'maintenance' | 'garden' | 'communityAdmin'

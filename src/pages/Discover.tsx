@@ -1,30 +1,85 @@
 import { useSearchParams } from 'react-router-dom'
+import { useAuth } from '../auth/AuthProvider'
 import Header from '../components/Header'
-import { RowCard, Section } from '../components/Card'
-import { DishIcon, GolfIcon, SunIcon, WaveIcon } from '../components/Icons'
+import { HeartIcon } from '../components/Icons'
+import { useActivePlaces } from '../lib/data'
+import type { Place } from '../lib/types'
 
-const categories = [
-  { key: 'restaurants', Icon: DishIcon, title: 'Restaurantes', text: 'Ejemplo · Cocina mediterránea' },
-  { key: 'golf', Icon: GolfIcon, title: 'Golf', text: 'Ejemplo · Campos cercanos' },
-  { key: 'beaches', Icon: WaveIcon, title: 'Playas', text: 'Ejemplo · Calas y playas' },
-  { key: 'plans', Icon: SunIcon, title: 'Planes', text: 'Ejemplo · Excursiones y cultura' },
+type Filter = 'all' | Place['category'] | 'saved'
+
+const filters: [Filter, string][] = [
+  ['all', 'Todo'],
+  ['restaurants', 'Restaurantes'],
+  ['golf', 'Golf'],
+  ['beaches', 'Playas'],
+  ['plans', 'Planes'],
+  ['saved', 'Guardados'],
 ]
+const categoryOrder: Place['category'][] = ['restaurants', 'golf', 'beaches', 'plans']
 
 export default function Discover() {
-  // ?categoria=restaurants muestra solo esa categoría (p. ej. desde "Dónde comer" en Inicio)
-  const [params] = useSearchParams()
-  const selected = params.get('categoria')
-  const shown = categories.filter((c) => !selected || c.key === selected)
+  // ?categoria=restaurants abre el filtro indicado (p. ej. desde "Dónde comer" en Inicio)
+  const [params, setParams] = useSearchParams()
+  const param = params.get('categoria') as Filter | null
+  const active: Filter = filters.some(([f]) => f === param) ? param! : 'all'
+
+  const { profile, toggleFavorite } = useAuth()
+  const favorites = profile?.favorites ?? []
+  const places = useActivePlaces()
+
+  const shown = places.data
+    .filter((p) => (active === 'all' ? true : active === 'saved' ? favorites.includes(p.id) : p.category === active))
+    .sort((a, b) => categoryOrder.indexOf(a.category) - categoryOrder.indexOf(b.category) || a.name.localeCompare(b.name))
 
   return (
     <>
-      <Header eyebrow="Descubrir" title="Lo mejor de la zona" subtitle="Nuestras recomendaciones personales." />
+      <Header eyebrow="Descubrir" title="Lo que nos gusta" subtitle="Seleccionado por el equipo CJ" />
       <main className="page">
-        <Section eyebrow="Recomendaciones" title="Categorías">
-          {shown.map(({ key, Icon, title, text }) => (
-            <RowCard key={key} icon={<Icon />} title={title} text={text} />
+        <div className="pills" role="tablist" aria-label="Filtrar lugares">
+          {filters.map(([key, label]) => (
+            <button
+              key={key}
+              role="tab"
+              aria-selected={active === key}
+              className={active === key ? 'pill pill--active' : 'pill'}
+              onClick={() => setParams(key === 'all' ? {} : { categoria: key }, { replace: true })}
+            >
+              {label}
+            </button>
           ))}
-        </Section>
+        </div>
+
+        {!places.loading && active === 'saved' && shown.length === 0 && (
+          <p className="empty">Aún no ha guardado nada. Toque el corazón de un sitio para tenerlo aquí.</p>
+        )}
+
+        <div className="place-list">
+          {shown.map((p) => {
+            const saved = favorites.includes(p.id)
+            return (
+              <article key={p.id} className="card place">
+                <div className="place__head">
+                  <h2 className="place__name">{p.name}</h2>
+                  <button
+                    className={saved ? 'heart heart--on' : 'heart'}
+                    aria-pressed={saved}
+                    aria-label={saved ? `Quitar ${p.name} de guardados` : `Guardar ${p.name}`}
+                    onClick={() => toggleFavorite(p.id)}
+                  >
+                    <HeartIcon filled={saved} />
+                  </button>
+                </div>
+                {p.meta_es && <p className="card__text">{p.meta_es}</p>}
+                {p.cjNote_es && (
+                  <p className="place__note">
+                    <span className="place__note-mark">CJ ·</span> {p.cjNote_es}
+                  </p>
+                )}
+                {p.discountPercent ? <span className="tag">CJ Club · {p.discountPercent}% descuento</span> : null}
+              </article>
+            )
+          })}
+        </div>
       </main>
     </>
   )
