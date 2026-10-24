@@ -1,55 +1,84 @@
 rules_version = '2';
 
+// Reglas de seguridad de Firestore de CJ Club.
+// Principio: todo está denegado salvo lo que se permite expresamente aquí.
+// Las funciones de servidor (carpeta functions/) usan permisos de administrador y no pasan por estas reglas.
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Solo entran personas invitadas por CJ: deben tener su ficha en users/{uid}.
+    // ---------- Quién hace la petición ----------
+
     function signedIn() {
       return request.auth != null;
     }
 
-    function me() {
-      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    function userPath(uid) {
+      return /databases/$(database)/documents/users/$(uid);
     }
 
+    // Ficha users/{uid} de quien hace la petición
+    function me() {
+      return get(userPath(request.auth.uid)).data;
+    }
+
+    // Persona invitada por CJ: tiene sesión y ficha en users/
     function isMember() {
-      return signedIn() && exists(/databases/$(database)/documents/users/$(request.auth.uid));
+      return signedIn() && exists(userPath(request.auth.uid));
     }
 
     function isAdmin() {
       return isMember() && me().role == 'admin';
     }
 
-    // Colaboradores asignados en la ficha del cliente que hace la petición
+    function isClient() {
+      return isMember() && me().role == 'client' && me().clientId is string;
+    }
+
+    // Colaborador asignado en el mapa contacts de la ficha del cliente
     function isMyPartner(partnerId) {
-      return isMember() && 'clientId' in me()
+      return isClient()
         && partnerId in get(/databases/$(database)/documents/clients/$(me().clientId)).data.contacts.values();
     }
 
-    match /users/{uid} {
-      allow read: if (signedIn() && request.auth.uid == uid) || isAdmin();
-      // Cada persona solo puede cambiar su idioma y sus favoritos; el rol lo asigna CJ.
-      allow update: if isAdmin()
-        || (signedIn() && request.auth.uid == uid
-            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['language', 'favorites'])
-            && request.resource.data.language in ['es', 'en']
-            && (!('favorites' in request.resource.data)
-                || (request.resource.data.favorites is list && request.resource.data.favorites.size() <= 200)));
-      allow create, delete: if isAdmin();
+    function changedKeys() {
+      return request.resource.data.diff(resource.data).affectedKeys();
     }
 
+    // ---------- users/{uid} ----------
+    match /users/{uid} {
+      // Cada persona lee solo su ficha; el equipo de CJ, todas
+      allow read: if (signedIn() && request.auth.uid == uid) || isAdmin();
+
+      // Un cliente solo puede cambiar su idioma y sus favoritos
+      allow update: if signedIn() && request.auth.uid == uid && !isAdmin()
+        && changedKeys().hasOnly(['language', 'favorites'])
+        && request.resource.data.language in ['es', 'en']
+        && (!('favorites' in request.resource.data)
+            || (request.resource.data.favorites is list && request.resource.data.favorites.size() <= 200));
+
+      // El equipo de CJ gestiona las fichas, pero nadie puede cambiarse su propio rol ni borrarse a sí mismo
+      allow update: if isAdmin()
+        && request.resource.data.role in ['admin', 'client']
+        && (uid != request.auth.uid || !changedKeys().hasAny(['role']));
+      allow create: if isAdmin() && uid != request.auth.uid && request.resource.data.role in ['admin', 'client'];
+      allow delete: if isAdmin() && uid != request.auth.uid;
+    }
+
+    // ---------- clients/{clientId} ----------
     match /clients/{clientId} {
-      allow read: if isAdmin() || (isMember() && me().clientId == clientId);
+      allow read: if isAdmin() || (isClient() && me().clientId == clientId);
       allow write: if isAdmin();
     }
 
-    // Un cliente solo ve los colaboradores asignados a él (lectura de uno en uno)
+    // ---------- partners/{id} ----------
+    // Un cliente solo lee, de uno en uno, los colaboradores asignados a él; nunca la lista completa
     match /partners/{id} {
       allow get: if isAdmin() || isMyPartner(id);
       allow list: if isAdmin();
       allow write: if isAdmin();
     }
 
+    // ---------- Contenido común: lectura con sesión, escritura solo CJ ----------
     match /generalContacts/{id} {
       allow read: if isMember();
       allow write: if isAdmin();
@@ -65,9 +94,17 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
-    // Registro de usos de descuentos: el cliente solo puede crear los suyos; solo CJ los lee
+    // Ajustes generales, p. ej. settings/tipOfTheWeek
+    match /settings/{id} {
+      allow read: if isMember();
+      allow write: if isAdmin();
+    }
+
+    // ---------- dealUses/{id} ----------
+    // El cliente solo crea registros a su nombre, de un descuento que existe y con la hora del servidor.
+    // No puede leerlos, cambiarlos ni borrarlos; solo CJ los lee.
     match /dealUses/{id} {
-      allow create: if isMember() && me().role == 'client'
+      allow create: if isClient()
         && request.resource.data.keys().hasOnly(['dealId', 'clientId', 'date'])
         && request.resource.data.clientId == me().clientId
         && request.resource.data.dealId is string
@@ -76,12 +113,7 @@ service cloud.firestore {
       allow read, delete: if isAdmin();
     }
 
-    // Ajustes generales, p. ej. settings/tipOfTheWeek
-    match /settings/{id} {
-      allow read: if isMember();
-      allow write: if isAdmin();
-    }
-
+    // ---------- Todo lo demás: denegado ----------
     match /{document=**} {
       allow read, write: if false;
     }

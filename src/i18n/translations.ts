@@ -46,6 +46,13 @@ const es = {
   'login.error.network': 'Sin conexión. Compruebe su internet.',
   'login.error.disabled': 'Este acceso está desactivado. Contacte con CJ.',
 
+  // Textos legales
+  'legal.privacy': 'Privacidad',
+  'legal.notice': 'Aviso legal',
+  'legal.back': 'Volver',
+  'legal.links': 'Información legal',
+  'legal.draft': 'Borrador pendiente de revisión legal. El texto definitivo puede cambiar.',
+
   // Inicio
   'home.hello': 'Hola',
   'home.greeting': 'Hola, {name}',
@@ -146,6 +153,12 @@ const en: Record<TranslationKey, string> = {
   'login.error.tooMany': 'Too many attempts. Please wait a few minutes and try again.',
   'login.error.network': 'No connection. Please check your internet.',
   'login.error.disabled': 'This account has been disabled. Please contact CJ.',
+
+  'legal.privacy': 'Privacy',
+  'legal.notice': 'Legal notice',
+  'legal.back': 'Back',
+  'legal.links': 'Legal information',
+  'legal.draft': 'Draft pending legal review. The final text may change.',
 
   'home.hello': 'Hello',
   'home.greeting': 'Hello, {name}',

@@ -1,7 +1,7 @@
 import { sendPasswordResetEmail, signInWithEmailAndPassword } from 'firebase/auth'
 import { FirebaseError } from 'firebase/app'
 import { useState, type FormEvent } from 'react'
-import { Navigate } from 'react-router-dom'
+import { Link, Navigate } from 'react-router-dom'
 import { useAuth } from '../auth/AuthProvider'
 import { homeFor, Splash } from '../auth/guards'
 import LanguagePills from '../components/LanguagePills'
@@ -124,6 +124,11 @@ export default function Login() {
         </button>
         <p className="login__note">{t('login.note')}</p>
       </form>
+      <nav className="login__legal" aria-label={t('legal.links')}>
+        <Link to="/privacidad">{t('legal.privacy')}</Link>
+        <span aria-hidden="true">·</span>
+        <Link to="/aviso-legal">{t('legal.notice')}</Link>
+      </nav>
     </main>
   )
 }
