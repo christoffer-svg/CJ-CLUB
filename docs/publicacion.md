@@ -100,6 +100,7 @@ Qué suele significar:
 - **Permission denied** o **403**, al publicar la web o las reglas. Falta un permiso de la lista de arriba. Los que necesita la web son Firebase Admin y Service Usage Consumer.
 - Un enlace a `console.cloud.google.com/apis/library`. Ese servicio no está activado. Ábralo, pulse **Activar** y repita la publicación a mano. La cuenta automática puede comprobar los servicios, no encenderlos.
 - **Blaze** o **billing**, en el paso de las funciones. La variable `DEPLOY_FUNCTIONS` está en `true` y el proyecto sigue en el plan gratuito. O pase a Blaze, o borre la variable si todavía no quiere las funciones. La web no depende de ese plan.
+- Un aviso en amarillo sobre la limpieza de imágenes. La web y las funciones sí se han publicado. Si el aviso nombra Artifact Registry Administrator, añada ese permiso; está en «Permisos solo para las funciones».
 - El fallo está en **Revisar el código** o **Construir la app**. El cambio tiene un error. No se ha publicado. Hay que corregir el código y volver a guardarlo en `main`.
 
 Si **Publicar la web, las reglas y los índices** está en verde y **Publicar las funciones** está en rojo, la web sí se ha actualizado. Las funciones no.
@@ -118,6 +119,10 @@ Estas funciones son del tipo nuevo de Google (se apoyan en Cloud Run). Si el inf
 - **Cloud Run Admin** (`roles/run.admin`)
 - **Artifact Registry Administrator** (`roles/artifactregistry.admin`)
 - **Cloud Build Editor** (`roles/cloudbuild.builds.editor`)
+
+Cada publicación de las funciones guarda una imagen. Sin una norma de limpieza, esas imágenes se acumulan y pueden costar un poco cada mes. Tras publicarlas, el flujo intenta dejar esa norma en la región de Madrid: borra las imágenes con más de un día. No borra las funciones ni la web.
+
+Para eso hace falta **Artifact Registry Administrator** (Administrador de Artifact Registry) en la misma cuenta, en [IAM](https://console.cloud.google.com/iam-admin/iam?project=cj-club). Si falta, la publicación sigue y el informe deja un aviso en amarillo con este permiso y el enlace. Añádalo y publique a mano otra vez.
 
 Si el informe dice que no puede crear la identidad de un servicio (`generating the service identity`), añada **Service Usage Admin** (`roles/serviceusage.serviceUsageAdmin`). Ese permiso puede encender y apagar servicios de Google: póngalo solo si el enlace de «Activar» no ha bastado.
 
