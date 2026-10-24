@@ -65,6 +65,17 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
+    // Registro de usos de descuentos: el cliente solo puede crear los suyos; solo CJ los lee
+    match /dealUses/{id} {
+      allow create: if isMember() && me().role == 'client'
+        && request.resource.data.keys().hasOnly(['dealId', 'clientId', 'date'])
+        && request.resource.data.clientId == me().clientId
+        && request.resource.data.dealId is string
+        && exists(/databases/$(database)/documents/deals/$(request.resource.data.dealId))
+        && request.resource.data.date == request.time;
+      allow read, delete: if isAdmin();
+    }
+
     // Ajustes generales, p. ej. settings/tipOfTheWeek
     match /settings/{id} {
       allow read: if isMember();

@@ -77,3 +77,10 @@ export type TipOfTheWeek = {
   text_es: string
   text_en: string
 }
+
+/** dealUses/{id}: cada vez que un cliente pulsa "Usar" en un descuento */
+export type DealUse = {
+  dealId: string
+  clientId: string
+  date: Timestamp
+}

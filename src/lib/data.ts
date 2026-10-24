@@ -1,7 +1,7 @@
-import { collection, doc, getCountFromServer, getDoc, getDocs, orderBy, query, where } from 'firebase/firestore'
+import { addDoc, collection, doc, getCountFromServer, getDoc, getDocs, orderBy, query, serverTimestamp, where } from 'firebase/firestore'
 import { useEffect, useState } from 'react'
 import { db } from './firebase'
-import type { Client, ContactType, GeneralContact, Partner, Place } from './types'
+import type { Client, ContactType, Deal, GeneralContact, Partner, Place } from './types'
 
 type Result<T> = { loading: boolean; data: T | null; error: boolean }
 
@@ -81,4 +81,25 @@ export function useActivePlaces() {
       .catch(() => setState({ loading: false, data: [] }))
   }, [])
   return state
+}
+
+/** Descuentos activos ordenados por "order" */
+export function useActiveDeals() {
+  const [state, setState] = useState<{ loading: boolean; data: (Deal & { id: string })[] }>({ loading: true, data: [] })
+  useEffect(() => {
+    getDocs(query(collection(db, 'deals'), where('active', '==', true)))
+      .then((snap) =>
+        setState({
+          loading: false,
+          data: snap.docs.map((d) => ({ ...(d.data() as Deal), id: d.id })).sort((a, b) => a.order - b.order),
+        }),
+      )
+      .catch(() => setState({ loading: false, data: [] }))
+  }, [])
+  return state
+}
+
+/** Registra que un cliente ha pulsado "Usar" en un descuento */
+export function logDealUse(dealId: string, clientId: string) {
+  return addDoc(collection(db, 'dealUses'), { dealId, clientId, date: serverTimestamp() })
 }
