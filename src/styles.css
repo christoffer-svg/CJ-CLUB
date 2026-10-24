@@ -700,47 +700,113 @@ button {
   color: var(--text-2);
 }
 
-/* Ventajas: tarjeta de socio */
+/* Ventajas: tarjeta de socio, acabado metálico tipo platino */
+.member {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
 .member-card {
   position: relative;
   overflow: hidden;
+  aspect-ratio: 1.586;
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  padding: 22px 20px 20px;
-  border-radius: 10px;
-  border: 1px solid var(--gold);
-  background: linear-gradient(135deg, #1c1714 0%, var(--black) 55%, #14110f 100%);
+  justify-content: space-between;
+  padding: 22px 22px 20px;
+  border-radius: 14px;
+  border: 1px solid rgba(183, 154, 104, 0.75);
+  /* metal cepillado: vetas finas sobre un degradado grafito */
+  background:
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.022) 0 1px, transparent 1px 3px),
+    linear-gradient(135deg, #34302b 0%, #121110 42%, #26231f 68%, #070707 100%);
+  box-shadow: 0 10px 24px rgba(26, 21, 18, 0.18);
   color: var(--white);
+}
+
+/* filete interior dorado, como el grabado de una tarjeta metálica */
+.member-card::after {
+  content: '';
+  position: absolute;
+  inset: 7px;
+  border: 1px solid rgba(183, 154, 104, 0.22);
+  border-radius: 9px;
+  pointer-events: none;
+}
+
+.member-card__guilloche {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: var(--gold);
+  stroke-width: 0.5;
+  opacity: 0.16;
+  pointer-events: none;
+}
+
+.member-card__sheen {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, transparent 28%, rgba(255, 255, 255, 0.09) 44%, rgba(255, 255, 255, 0.02) 52%, transparent 62%);
+  pointer-events: none;
 }
 
 .member-card__logo {
   position: absolute;
-  top: -18px;
-  right: -18px;
-  width: 132px;
-  height: 132px;
+  top: 16px;
+  right: 18px;
+  width: 64px;
+  height: 64px;
   border-radius: 50%;
-  opacity: 0.22;
-  pointer-events: none;
+  opacity: 0.9;
+}
+
+.member-card__top,
+.member-card__bottom {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* texto con brillo plateado */
+.member-card__name,
+.member-card__number {
+  background: linear-gradient(180deg, #ffffff 0%, #e2ded7 45%, #a49d93 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 .member-card__name {
-  margin-top: 18px;
   font-family: var(--font-title);
   font-size: 24px;
   line-height: 1.2;
 }
 
+.member-card__row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
 .member-card__number {
-  font-size: 13px;
-  letter-spacing: 0.2em;
-  color: rgba(255, 255, 255, 0.7);
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
   font-variant-numeric: tabular-nums;
 }
 
-.member-card__btn {
-  margin-top: 18px;
+.member-card__since {
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+  white-space: nowrap;
 }
 
 /* Ventajas: lista de descuentos */

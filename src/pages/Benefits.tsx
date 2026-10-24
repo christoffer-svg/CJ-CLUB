@@ -5,8 +5,15 @@ import QrCode from '../components/QrCode'
 import Sheet from '../components/Sheet'
 import { logDealUse, useActiveDeals, useDoc } from '../lib/data'
 import type { Client } from '../lib/types'
+import type { Timestamp } from 'firebase/firestore'
 
 type Shown = { name: string; code: string }
+
+/** "04/26", como en una tarjeta */
+function memberSince(ts: Timestamp) {
+  const d = ts.toDate()
+  return `${String(d.getMonth() + 1).padStart(2, '0')}/${String(d.getFullYear()).slice(2)}`
+}
 
 export default function Benefits() {
   const { profile } = useAuth()
@@ -20,13 +27,28 @@ export default function Benefits() {
     <>
       <Header eyebrow="Ventajas" title="Sus ventajas" subtitle="Enseñe su tarjeta o el código en el establecimiento" />
       <main className="page">
-        <section className="member-card" aria-label="Tarjeta de socio">
-          <img className="member-card__logo" src="/logo.png" alt="" />
-          <span className="eyebrow">Miembro CJ Club</span>
-          <span className="member-card__name">{c?.familyName ?? ' '}</span>
-          <span className="member-card__number">{c?.memberNumber ?? ' '}</span>
+        <section className="member" aria-label="Tarjeta de socio">
+          <div className="member-card">
+            <svg className="member-card__guilloche" viewBox="0 0 320 200" preserveAspectRatio="none" aria-hidden="true">
+              {Array.from({ length: 14 }, (_, i) => (
+                <ellipse key={i} cx="300" cy="215" rx={60 + i * 16} ry={40 + i * 11} />
+              ))}
+            </svg>
+            <span className="member-card__sheen" aria-hidden="true" />
+            <img className="member-card__logo" src="/logo.png" alt="" />
+            <div className="member-card__top">
+              <span className="eyebrow">Miembro CJ Club</span>
+            </div>
+            <div className="member-card__bottom">
+              <span className="member-card__name">{c?.familyName ?? '\u00a0'}</span>
+              <div className="member-card__row">
+                <span className="member-card__number">{c?.memberNumber ?? '\u00a0'}</span>
+                {c?.clientSince && <span className="member-card__since">Socio desde {memberSince(c.clientSince)}</span>}
+              </div>
+            </div>
+          </div>
           <button
-            className="btn member-card__btn"
+            className="btn"
             disabled={!c}
             onClick={() => c && setShown({ name: c.familyName, code: c.memberNumber })}
           >
