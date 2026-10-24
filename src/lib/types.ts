@@ -1,7 +1,8 @@
 import type { Timestamp } from 'firebase/firestore'
 
 export type Role = 'admin' | 'client'
-export type Language = 'es' | 'en'
+export type { Language } from '../i18n/translations'
+import type { Language } from '../i18n/translations'
 
 /** users/{uid} */
 export type UserProfile = {

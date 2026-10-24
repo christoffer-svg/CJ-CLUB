@@ -1,25 +1,12 @@
 import Header from '../components/Header'
+import { useI18n } from '../i18n'
 import { useAssignedPartners, useDoc, useGeneralContacts } from '../lib/data'
 import { telLink } from '../lib/format'
 import type { Client, ContactType, GeneralContact } from '../lib/types'
 import { useViewer } from '../lib/viewer'
 
-const contactLabels: [ContactType, string][] = [
-  ['lawyer', 'Su abogado'],
-  ['gestoria', 'Su gestoría'],
-  ['pool', 'Su piscina'],
-  ['maintenance', 'Su mantenimiento'],
-  ['garden', 'Su jardinero'],
-  ['communityAdmin', 'Su administrador de fincas'],
-]
-const contactTypes = contactLabels.map(([t]) => t)
-const labelFor = Object.fromEntries(contactLabels) as Record<ContactType, string>
-
-const groups: [GeneralContact['group'], string][] = [
-  ['urgencias', 'Urgencias'],
-  ['salud', 'Salud'],
-  ['transporte', 'Transporte'],
-]
+const contactTypes: ContactType[] = ['lawyer', 'gestoria', 'pool', 'maintenance', 'garden', 'communityAdmin']
+const groups: GeneralContact['group'][] = ['urgencias', 'salud', 'transporte']
 
 type RowProps = {
   label?: string
@@ -30,6 +17,7 @@ type RowProps = {
 }
 
 function ContactRow({ label, name, description, phone, emergency }: RowProps) {
+  const { t } = useI18n()
   return (
     <div className="contact">
       <div className="contact__body">
@@ -38,7 +26,7 @@ function ContactRow({ label, name, description, phone, emergency }: RowProps) {
         {description && <span className="card__text">{description}</span>}
       </div>
       <a className={emergency ? 'call-btn call-btn--emergency' : 'call-btn'} href={telLink(phone)}>
-        {emergency ? `Llamar ${phone}` : 'Llamar'}
+        {emergency ? t('guide.callNumber', { phone }) : t('guide.call')}
       </a>
     </div>
   )
@@ -46,38 +34,45 @@ function ContactRow({ label, name, description, phone, emergency }: RowProps) {
 
 export default function Guide() {
   const { clientId } = useViewer()
+  const { t, pick } = useI18n()
   const client = useDoc<Client>(clientId ? `clients/${clientId}` : null)
   const partners = useAssignedPartners(client.data, contactTypes)
   const general = useGeneralContacts()
 
   return (
     <>
-      <Header eyebrow="Guía" title="Contactos de confianza" subtitle="Profesionales que conocemos y recomendamos." />
+      <Header eyebrow={t('guide.eyebrow')} title={t('guide.title')} subtitle={t('guide.subtitle')} />
       <main className="page">
         {partners.data.length > 0 && (
           <section className="personal">
-            <span className="eyebrow personal__title">Sus contactos personales</span>
+            <span className="eyebrow personal__title">{t('guide.personal')}</span>
             {partners.data.map((p) => (
-              <ContactRow key={p.type} label={labelFor[p.type]} name={p.name} description={p.description_es} phone={p.phone} />
+              <ContactRow
+                key={p.type}
+                label={t(`guide.type.${p.type}`)}
+                name={p.name}
+                description={pick(p, 'description')}
+                phone={p.phone}
+              />
             ))}
           </section>
         )}
 
         {general.data.length > 0 && (
           <section className="section">
-            <span className="eyebrow">Contactos generales</span>
-            {groups.map(([key, title]) => {
+            <span className="eyebrow">{t('guide.general')}</span>
+            {groups.map((key) => {
               const items = general.data.filter((g) => g.group === key)
               if (items.length === 0) return null
               return (
                 <div key={key} className="contact-group">
-                  <h2 className="section__title">{title}</h2>
+                  <h2 className="section__title">{t(`guide.group.${key}`)}</h2>
                   <div className="card contact-list">
                     {items.map((g) => (
                       <ContactRow
                         key={g.id}
-                        name={g.name_es}
-                        description={g.description_es}
+                        name={pick(g, 'name')}
+                        description={pick(g, 'description')}
                         phone={g.phone}
                         emergency={g.isEmergency}
                       />

@@ -2,6 +2,8 @@ import { useCallback, useState } from 'react'
 import Header from '../components/Header'
 import QrCode from '../components/QrCode'
 import Sheet from '../components/Sheet'
+import { useI18n } from '../i18n'
+import { familyName } from '../lib/format'
 import { logDealUse, useActiveDeals, useDoc } from '../lib/data'
 import type { Client } from '../lib/types'
 import { useViewer } from '../lib/viewer'
@@ -17,6 +19,9 @@ function memberSince(ts: Timestamp) {
 
 export default function Benefits() {
   const { clientId, preview } = useViewer()
+  const { t, pick, lang } = useI18n()
+  // "Gratis" se guarda en español; el resto de etiquetas (20%, 2x1...) no se traducen
+  const label = (l: string) => (l.trim().toLowerCase() === 'gratis' ? t('benefits.free') : l)
   const client = useDoc<Client>(clientId ? `clients/${clientId}` : null)
   const deals = useActiveDeals()
   const [shown, setShown] = useState<Shown | null>(null)
@@ -25,9 +30,9 @@ export default function Benefits() {
 
   return (
     <>
-      <Header eyebrow="Ventajas" title="Sus ventajas" subtitle="Enseñe su tarjeta o el código en el establecimiento" />
+      <Header eyebrow={t('benefits.eyebrow')} title={t('benefits.title')} subtitle={t('benefits.subtitle')} />
       <main className="page">
-        <section className="member" aria-label="Tarjeta de socio">
+        <section className="member" aria-label={t('benefits.card')}>
           <div className="member-card">
             <svg className="member-card__guilloche" viewBox="0 0 320 200" preserveAspectRatio="none" aria-hidden="true">
               {Array.from({ length: 14 }, (_, i) => (
@@ -37,34 +42,34 @@ export default function Benefits() {
             <span className="member-card__sheen" aria-hidden="true" />
             <img className="member-card__logo" src="/logo.png" alt="" />
             <div className="member-card__top">
-              <span className="eyebrow">Miembro CJ Club</span>
+              <span className="eyebrow">{t('benefits.member')}</span>
             </div>
             <div className="member-card__bottom">
-              <span className="member-card__name">{c?.familyName ?? '\u00a0'}</span>
+              <span className="member-card__name">{c ? familyName(c.familyName, lang) : '\u00a0'}</span>
               <div className="member-card__row">
                 <span className="member-card__number">{c?.memberNumber ?? '\u00a0'}</span>
-                {c?.clientSince && <span className="member-card__since">Socio desde {memberSince(c.clientSince)}</span>}
+                {c?.clientSince && <span className="member-card__since">{t('benefits.memberSince', { date: memberSince(c.clientSince) })}</span>}
               </div>
             </div>
           </div>
           <button
             className="btn"
             disabled={!c}
-            onClick={() => c && setShown({ name: c.familyName, code: c.memberNumber })}
+            onClick={() => c && setShown({ name: familyName(c.familyName, lang), code: c.memberNumber })}
           >
-            Mostrar tarjeta
+            {t('benefits.showCard')}
           </button>
         </section>
 
         <section className="section">
-          <span className="eyebrow">Descuentos</span>
+          <span className="eyebrow">{t('benefits.deals')}</span>
           <div className="card deal-list">
             {deals.data.map((d) => (
               <div key={d.id} className="deal">
-                <span className="deal__value">{d.discountLabel}</span>
+                <span className="deal__value">{label(d.discountLabel)}</span>
                 <div className="deal__body">
                   <span className="card__title">{d.title}</span>
-                  <span className="card__text">{d.conditions_es}</span>
+                  <span className="card__text">{pick(d, 'conditions')}</span>
                 </div>
                 <button
                   className="use-btn"
@@ -74,20 +79,20 @@ export default function Benefits() {
                     if (clientId && !preview) logDealUse(d.id, clientId).catch(() => {})
                   }}
                 >
-                  Usar
+                  {t('benefits.use')}
                 </button>
               </div>
             ))}
-            {!deals.loading && deals.data.length === 0 && <p className="card__text">Pronto habrá nuevas ventajas.</p>}
+            {!deals.loading && deals.data.length === 0 && <p className="card__text">{t('benefits.empty')}</p>}
           </div>
         </section>
       </main>
 
       {shown && (
-        <Sheet title={shown.name} onClose={close}>
+        <Sheet title={shown.name} closeLabel={t('benefits.close')} onClose={close}>
           <h2 className="sheet__title">{shown.name}</h2>
-          <p className="sheet__text">Enséñelo al pagar. El descuento se aplica directamente.</p>
-          <QrCode value={shown.code} />
+          <p className="sheet__text">{t('benefits.sheetText')}</p>
+          <QrCode value={shown.code} label={t('benefits.qr', { code: shown.code })} />
           <span className="sheet__code">{shown.code}</span>
         </Sheet>
       )}

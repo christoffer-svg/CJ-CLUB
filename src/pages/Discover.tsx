@@ -1,29 +1,24 @@
 import { useSearchParams } from 'react-router-dom'
 import Header from '../components/Header'
 import { HeartIcon } from '../components/Icons'
+import { useI18n } from '../i18n'
 import { useActivePlaces } from '../lib/data'
 import type { Place } from '../lib/types'
 import { useViewer } from '../lib/viewer'
 
 type Filter = 'all' | Place['category'] | 'saved'
 
-const filters: [Filter, string][] = [
-  ['all', 'Todo'],
-  ['restaurants', 'Restaurantes'],
-  ['golf', 'Golf'],
-  ['beaches', 'Playas'],
-  ['plans', 'Planes'],
-  ['saved', 'Guardados'],
-]
+const filters: Filter[] = ['all', 'restaurants', 'golf', 'beaches', 'plans', 'saved']
 const categoryOrder: Place['category'][] = ['restaurants', 'golf', 'beaches', 'plans']
 
 export default function Discover() {
   // ?categoria=restaurants abre el filtro indicado (p. ej. desde "Dónde comer" en Inicio)
   const [params, setParams] = useSearchParams()
   const param = params.get('categoria') as Filter | null
-  const active: Filter = filters.some(([f]) => f === param) ? param! : 'all'
+  const active: Filter = filters.includes(param as Filter) ? param! : 'all'
 
   const { favorites, toggleFavorite } = useViewer()
+  const { t, pick } = useI18n()
   const places = useActivePlaces()
 
   const shown = places.data
@@ -32,10 +27,10 @@ export default function Discover() {
 
   return (
     <>
-      <Header eyebrow="Descubrir" title="Lo que nos gusta" subtitle="Seleccionado por el equipo CJ" />
+      <Header eyebrow={t('discover.eyebrow')} title={t('discover.title')} subtitle={t('discover.subtitle')} />
       <main className="page">
-        <div className="pills" role="tablist" aria-label="Filtrar lugares">
-          {filters.map(([key, label]) => (
+        <div className="pills" role="tablist" aria-label={t('discover.filters')}>
+          {filters.map((key) => (
             <button
               key={key}
               role="tab"
@@ -43,13 +38,13 @@ export default function Discover() {
               className={active === key ? 'pill pill--active' : 'pill'}
               onClick={() => setParams(key === 'all' ? {} : { categoria: key }, { replace: true })}
             >
-              {label}
+              {t(`discover.filter.${key}`)}
             </button>
           ))}
         </div>
 
         {!places.loading && active === 'saved' && shown.length === 0 && (
-          <p className="empty">Aún no ha guardado nada. Toque el corazón de un sitio para tenerlo aquí.</p>
+          <p className="empty">{t('discover.emptySaved')}</p>
         )}
 
         <div className="place-list">
@@ -62,19 +57,19 @@ export default function Discover() {
                   <button
                     className={saved ? 'heart heart--on' : 'heart'}
                     aria-pressed={saved}
-                    aria-label={saved ? `Quitar ${p.name} de guardados` : `Guardar ${p.name}`}
+                    aria-label={saved ? t('discover.unsave', { name: p.name }) : t('discover.save', { name: p.name })}
                     onClick={() => toggleFavorite(p.id)}
                   >
                     <HeartIcon filled={saved} />
                   </button>
                 </div>
-                {p.meta_es && <p className="card__text">{p.meta_es}</p>}
-                {p.cjNote_es && (
+                {pick(p, 'meta') && <p className="card__text">{pick(p, 'meta')}</p>}
+                {pick(p, 'cjNote') && (
                   <p className="place__note">
-                    <span className="place__note-mark">CJ ·</span> {p.cjNote_es}
+                    <span className="place__note-mark">CJ ·</span> {pick(p, 'cjNote')}
                   </p>
                 )}
-                {p.discountPercent ? <span className="tag">CJ Club · {p.discountPercent}% descuento</span> : null}
+                {p.discountPercent ? <span className="tag">{t('discover.discount', { n: p.discountPercent })}</span> : null}
               </article>
             )
           })}

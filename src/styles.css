@@ -293,6 +293,7 @@ button {
 
 /* Acceso */
 .login {
+  position: relative;
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
@@ -1411,4 +1412,47 @@ button {
 .preview-bar a {
   color: var(--black);
   font-weight: 600;
+}
+
+/* Selector de idioma ES / EN */
+.header__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.lang-pills {
+  flex: none;
+  display: inline-flex;
+  gap: 4px;
+  padding: 3px;
+  border: 1px solid rgba(183, 154, 104, 0.35);
+  border-radius: 16px;
+}
+
+.lang-pill {
+  min-width: 34px;
+  height: 24px;
+  padding: 0 8px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  cursor: pointer;
+}
+
+.lang-pill--active {
+  background: var(--black);
+  border-color: var(--gold);
+  color: var(--white);
+}
+
+.login__lang {
+  position: absolute;
+  top: calc(env(safe-area-inset-top) + 16px);
+  right: 16px;
 }

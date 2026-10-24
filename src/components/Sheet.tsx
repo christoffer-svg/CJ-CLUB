@@ -1,7 +1,17 @@
 import { useEffect, useRef, type ReactNode } from 'react'
 
 /** Hoja que sube desde abajo, con fondo oscurecido. Se cierra con el botón, tocando fuera o con Escape. */
-export default function Sheet({ title, onClose, children }: { title: string; onClose: () => void; children: ReactNode }) {
+export default function Sheet({
+  title,
+  closeLabel,
+  onClose,
+  children,
+}: {
+  title: string
+  closeLabel: string
+  onClose: () => void
+  children: ReactNode
+}) {
   const closeRef = useRef<HTMLButtonElement>(null)
   useEffect(() => {
     closeRef.current?.focus()
@@ -16,7 +26,7 @@ export default function Sheet({ title, onClose, children }: { title: string; onC
         <span className="sheet__handle" aria-hidden="true" />
         {children}
         <button ref={closeRef} className="btn btn--ghost sheet__close" onClick={onClose}>
-          Cerrar
+          {closeLabel}
         </button>
       </div>
     </div>
