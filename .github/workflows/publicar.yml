@@ -1,0 +1,101 @@
+# Publica CJ Club en Firebase.
+# Se ejecuta al llegar un cambio a main, y también con el botón "Run workflow".
+# Siempre: la web (Hosting), las reglas de Firestore y los índices.
+# Las funciones del servidor solo si la variable de repositorio DEPLOY_FUNCTIONS vale true
+# (hace falta el plan de pago Blaze; ver docs/publicacion.md).
+
+name: Publicar CJ Club
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publicar-cj-club
+  cancel-in-progress: false
+
+jobs:
+  publicar:
+    name: Comprobar y publicar
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Descargar el código
+        uses: actions/checkout@v7
+
+      - name: Preparar Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            functions/package-lock.json
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Revisar el código
+        run: npm run lint
+
+      - name: Construir la app
+        run: npm run build
+
+      - name: Instalar y construir las funciones
+        if: vars.DEPLOY_FUNCTIONS == 'true'
+        run: |
+          npm ci --prefix functions
+          npm run build --prefix functions
+
+      - name: Aviso sobre las funciones
+        env:
+          DEPLOY_FUNCTIONS: ${{ vars.DEPLOY_FUNCTIONS }}
+        run: |
+          if [ "$DEPLOY_FUNCTIONS" = "true" ]; then
+            echo "También se publicarán las funciones del servidor."
+          else
+            echo "Las funciones del servidor no se publican en este intento. Sí se publican la web, las reglas y los índices."
+          fi
+
+      - name: Comprobar que la clave de Firebase está guardada
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: |
+          if ! printf '%s' "$FIREBASE_SERVICE_ACCOUNT" | grep -q '"private_key"'; then
+            echo "::error::Falta el secreto FIREBASE_SERVICE_ACCOUNT, o no es el archivo de la clave. Los pasos están en docs/publicacion.md."
+            exit 1
+          fi
+
+      - name: Entrar en Firebase
+        uses: google-github-actions/auth@v3
+        with:
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          project_id: cj-club
+
+      - name: Comprobar que la clave no viaja con la publicación
+        run: |
+          case "${GOOGLE_APPLICATION_CREDENTIALS:-}" in
+            "$GITHUB_WORKSPACE"/dist/*|"$GITHUB_WORKSPACE"/functions/*)
+              echo "::error::La clave de Firebase ha quedado en una carpeta que se publica. No se sube nada."
+              exit 1
+              ;;
+          esac
+          if [ -z "${GOOGLE_APPLICATION_CREDENTIALS:-}" ] || [ ! -f "$GOOGLE_APPLICATION_CREDENTIALS" ]; then
+            echo "::error::Firebase no ha recibido la clave. Revise el secreto FIREBASE_SERVICE_ACCOUNT (docs/publicacion.md)."
+            exit 1
+          fi
+
+      - name: Publicar la web, las reglas y los índices
+        run: npx firebase deploy --project cj-club --only hosting,firestore:rules,firestore:indexes --non-interactive --message "Publicado desde GitHub ${GITHUB_SHA}"
+
+      - name: Publicar las funciones
+        if: vars.DEPLOY_FUNCTIONS == 'true'
+        run: npx firebase deploy --project cj-club --only functions --non-interactive --force
+
+      - name: Listo
+        run: echo "Publicado en https://cj-club.web.app"
