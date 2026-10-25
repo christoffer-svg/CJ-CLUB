@@ -23,7 +23,7 @@ Controleer of elke tekst natuurlijk en correct Nederlands is. Noteer correcties 
 | `login.back` | Volver al inicio de sesión | Back to sign in | Terug naar inloggen | |
 | `login.resetIntro` | Escriba su correo y le enviaremos un enlace para crear una nueva contraseña. | Enter your email and we will send you a link to create a new password. | Vul uw e-mailadres in en wij sturen u een link om een nieuw wachtwoord aan te maken. | |
 | `login.resetSent` | Si el correo está registrado en CJ Club, recibirá un enlace para crear una nueva contraseña. | If this email is registered with CJ Club, you will receive a link to create a new password. | Als dit e-mailadres bij CJ Club bekend is, ontvangt u een link om een nieuw wachtwoord aan te maken. | |
-| `login.note` | Acceso exclusivo para clientes de CJ | Exclusive access for CJ clients | Exclusieve toegang voor klanten van CJ | |
+| `login.note` | Acceso para clientes y negocios de CJ Club | Access for CJ clients and partner businesses | Toegang voor klanten en partnerzaken van CJ | |
 | `login.notInvited` | Esta cuenta no tiene acceso a CJ Club. Contacte con CJ. | This account does not have access to CJ Club. Please contact CJ. | Dit account heeft geen toegang tot CJ Club. Neem contact op met CJ. | |
 | `login.error.credentials` | Correo o contraseña incorrectos. | Incorrect email or password. | Onjuist e-mailadres of wachtwoord. | |
 | `login.error.tooMany` | Demasiados intentos. Espere unos minutos y vuelva a probar. | Too many attempts. Please wait a few minutes and try again. | Te veel pogingen. Wacht een paar minuten en probeer het opnieuw. | |
@@ -112,6 +112,11 @@ Controleer of elke tekst natuurlijk en correct Nederlands is. Noteer correcties 
 | `benefits.qr` | Código QR: {code} | QR code: {code} | QR-code: {code} | |
 | `benefits.close` | Cerrar | Close | Sluiten | |
 | `benefits.free` | Gratis | Free | Gratis | |
+| `benefits.offeredBy` | Descuento ofrecido por {name} | Discount offered by {name} | Korting aangeboden door {name} | |
+| `benefits.conditionsByBusiness` | Condiciones fijadas por el negocio | Conditions set by the business | Voorwaarden vastgesteld door de zaak | |
+| `benefits.validFrom` | Válido desde el {date} | Valid from {date} | Geldig vanaf {date} | |
+| `benefits.validUntil` | Válido hasta el {date} | Valid until {date} | Geldig tot {date} | |
+| `benefits.validRange` | Válido del {from} al {until} | Valid from {from} to {until} | Geldig van {from} tot {until} | |
 | `common.back` | Volver | Back | Terug | |
 | `team.eyebrow` | Su equipo CJ | Your CJ team | Uw CJ-team | |
 | `team.messages` | Mensajes | Messages | Berichten | |

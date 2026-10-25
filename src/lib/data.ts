@@ -1,4 +1,4 @@
-import { addDoc, collection, doc, getCountFromServer, getDoc, getDocs, orderBy, query, serverTimestamp, where } from 'firebase/firestore'
+import { addDoc, collection, doc, getDoc, getDocs, orderBy, query, serverTimestamp, where } from 'firebase/firestore'
 import { useEffect, useState } from 'react'
 import { db } from './firebase'
 import type { Client, ContactType, Deal, GeneralContact, Partner, Place } from './types'
@@ -21,12 +21,28 @@ export function useDoc<T>(path: string | null): Result<T> {
   return state
 }
 
-/** Número de descuentos activos */
+/** "2026-10-25" en el calendario de quien usa la app */
+export function todayKey(now = new Date()) {
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`
+}
+
+/** Visible para los socios: activo, no oculto por CJ y dentro de las fechas */
+export function isDealCurrent(
+  d: Pick<Deal, 'active' | 'hiddenByAdmin' | 'validFrom' | 'validUntil'>,
+  today = todayKey(),
+) {
+  if (!d.active || d.hiddenByAdmin) return false
+  if (d.validFrom && d.validFrom > today) return false
+  if (d.validUntil && d.validUntil < today) return false
+  return true
+}
+
+/** Número de descuentos que los socios ven ahora mismo */
 export function useActiveDealsCount() {
   const [count, setCount] = useState<number | null>(null)
   useEffect(() => {
-    getCountFromServer(query(collection(db, 'deals'), where('active', '==', true)))
-      .then((snap) => setCount(snap.data().count))
+    getDocs(query(collection(db, 'deals'), where('active', '==', true)))
+      .then((snap) => setCount(snap.docs.filter((d) => isDealCurrent(d.data() as Deal)).length))
       .catch(() => setCount(null))
   }, [])
   return count
@@ -92,7 +108,10 @@ export function useActiveDeals() {
       .then((snap) =>
         setState({
           loading: false,
-          data: snap.docs.map((d) => ({ ...(d.data() as Deal), id: d.id })).sort((a, b) => a.order - b.order),
+          data: snap.docs
+            .map((d) => ({ ...(d.data() as Deal), id: d.id }))
+            .filter((d) => isDealCurrent(d))
+            .sort((a, b) => a.order - b.order),
         }),
       )
       .catch(() => setState({ loading: false, data: [] }))

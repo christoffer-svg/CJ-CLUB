@@ -5,11 +5,25 @@ import Sheet from '../components/Sheet'
 import { useI18n } from '../i18n'
 import { familyName } from '../lib/format'
 import { logDealUse, useActiveDeals, useDoc } from '../lib/data'
-import type { Client } from '../lib/types'
+import type { Client, Deal } from '../lib/types'
 import { useViewer } from '../lib/viewer'
+import { shortDate } from '../lib/when'
 import type { Timestamp } from 'firebase/firestore'
 
-type Shown = { name: string; code: string }
+type Shown = { name: string; code: string; businessName?: string }
+
+function dealValidity(
+  d: Pick<Deal, 'validFrom' | 'validUntil'>,
+  t: (key: 'benefits.validFrom' | 'benefits.validUntil' | 'benefits.validRange', params: Record<string, string>) => string,
+  locale: string,
+) {
+  const from = d.validFrom ? shortDate(d.validFrom, locale) : ''
+  const until = d.validUntil ? shortDate(d.validUntil, locale) : ''
+  if (from && until) return t('benefits.validRange', { from, until })
+  if (from) return t('benefits.validFrom', { date: from })
+  if (until) return t('benefits.validUntil', { date: until })
+  return ''
+}
 
 /** "04/26", como en una tarjeta */
 function memberSince(ts: Timestamp) {
@@ -19,7 +33,7 @@ function memberSince(ts: Timestamp) {
 
 export default function Benefits() {
   const { clientId, preview } = useViewer()
-  const { t, pick } = useI18n()
+  const { t, pick, locale } = useI18n()
   // "Gratis" se guarda en español; el resto de etiquetas (20%, 2x1...) no se traducen
   const label = (l: string) => (l.trim().toLowerCase() === 'gratis' ? t('benefits.free') : l)
   const client = useDoc<Client>(clientId ? `clients/${clientId}` : null)
@@ -64,17 +78,28 @@ export default function Benefits() {
         <section className="section">
           <span className="eyebrow">{t('benefits.deals')}</span>
           <div className="card deal-list">
-            {deals.data.map((d) => (
+            {deals.data.map((d) => {
+              const validity = dealValidity(d, t, locale)
+              const businessName = d.source === 'business' ? d.businessName : ''
+              return (
               <div key={d.id} className="deal">
                 <span className="deal__value">{label(d.discountLabel)}</span>
                 <div className="deal__body">
                   <span className="card__title">{d.title}</span>
-                  <span className="card__text">{pick(d, 'conditions')}</span>
+                  {businessName && <span className="deal__by">{t('benefits.offeredBy', { name: businessName })}</span>}
+                  {pick(d, 'description') && <span className="card__text">{pick(d, 'description')}</span>}
+                  {pick(d, 'conditions') && <span className="card__text">{pick(d, 'conditions')}</span>}
+                  {d.source === 'business' && <span className="deal__legal">{t('benefits.conditionsByBusiness')}</span>}
+                  {validity && <span className="deal__when">{validity}</span>}
                 </div>
                 <button
                   className="use-btn"
                   onClick={() => {
-                    setShown({ name: d.title, code: d.code })
+                    setShown({
+                      name: d.title,
+                      code: d.code,
+                      businessName: d.source === 'business' ? d.businessName : undefined,
+                    })
                     // Registro para CJ (no en la vista previa); si falla, el cliente puede usar el descuento igualmente
                     if (clientId && !preview) logDealUse(d.id, clientId).catch(() => {})
                   }}
@@ -82,7 +107,8 @@ export default function Benefits() {
                   {t('benefits.use')}
                 </button>
               </div>
-            ))}
+              )
+            })}
             {!deals.loading && deals.data.length === 0 && <p className="card__text">{t('benefits.empty')}</p>}
           </div>
         </section>
@@ -91,6 +117,8 @@ export default function Benefits() {
       {shown && (
         <Sheet title={shown.name} closeLabel={t('benefits.close')} onClose={close}>
           <h2 className="sheet__title">{shown.name}</h2>
+          {shown.businessName && <p className="sheet__text">{t('benefits.offeredBy', { name: shown.businessName })}</p>}
+          {shown.businessName && <p className="sheet__legal">{t('benefits.conditionsByBusiness')}</p>}
           <p className="sheet__text">{t('benefits.sheetText')}</p>
           <QrCode value={shown.code} label={t('benefits.qr', { code: shown.code })} />
           <span className="sheet__code">{shown.code}</span>

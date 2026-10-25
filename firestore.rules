@@ -34,6 +34,32 @@ service cloud.firestore {
       return isMember() && me().role == 'client' && me().clientId is string;
     }
 
+    // Negocio colaborador invitado por CJ, vinculado a un lugar
+    function isBusiness() {
+      return isMember()
+        && me().role == 'business'
+        && me().placeId is string
+        && me().placeId.size() > 0
+        && me().placeId.size() <= 200;
+    }
+
+    function myPlaceId() {
+      return me().placeId;
+    }
+
+    function placeOf(id) {
+      return get(/databases/$(database)/documents/places/$(id)).data;
+    }
+
+    // Si el rol es negocio, tiene que quedar vinculado a un lugar que existe
+    function businessLinked() {
+      return request.resource.data.role != 'business'
+        || (request.resource.data.placeId is string
+            && request.resource.data.placeId.size() > 0
+            && request.resource.data.placeId.size() <= 200
+            && exists(/databases/$(database)/documents/places/$(request.resource.data.placeId)));
+    }
+
     // Colaborador asignado en el mapa contacts de la ficha del cliente
     function isMyPartner(partnerId) {
       return isClient()
@@ -50,17 +76,25 @@ service cloud.firestore {
       allow read: if (signedIn() && request.auth.uid == uid) || isAdmin();
 
       // Un cliente solo puede cambiar su idioma y sus favoritos
-      allow update: if signedIn() && request.auth.uid == uid && !isAdmin()
+      allow update: if isClient() && request.auth.uid == uid
         && changedKeys().hasOnly(['language', 'favorites'])
         && request.resource.data.language in ['es', 'en', 'nl', 'sv', 'de', 'fr']
         && (!('favorites' in request.resource.data)
             || (request.resource.data.favorites is list && request.resource.data.favorites.size() <= 200));
 
+      // Un negocio solo puede cambiar su idioma
+      allow update: if isBusiness() && request.auth.uid == uid
+        && changedKeys().hasOnly(['language'])
+        && request.resource.data.language in ['es', 'en', 'nl', 'sv', 'de', 'fr'];
+
       // El equipo de CJ gestiona las fichas, pero nadie puede cambiarse su propio rol ni borrarse a sí mismo
       allow update: if isAdmin()
-        && request.resource.data.role in ['admin', 'client']
+        && request.resource.data.role in ['admin', 'client', 'business']
+        && businessLinked()
         && (uid != request.auth.uid || !changedKeys().hasAny(['role']));
-      allow create: if isAdmin() && uid != request.auth.uid && request.resource.data.role in ['admin', 'client'];
+      allow create: if isAdmin() && uid != request.auth.uid
+        && request.resource.data.role in ['admin', 'client', 'business']
+        && businessLinked();
       allow delete: if isAdmin() && uid != request.auth.uid;
     }
 
@@ -78,25 +112,106 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
-    // ---------- Contenido común: lectura con sesión, escritura solo CJ ----------
+    // ---------- Contenido común: los socios lo leen; el negocio no ----------
     match /generalContacts/{id} {
-      allow read: if isMember();
+      allow read: if isAdmin() || isClient();
       allow write: if isAdmin();
     }
 
     match /places/{id} {
-      allow read: if isMember();
+      allow get: if isAdmin() || isClient() || (isBusiness() && id == myPlaceId());
+      allow list: if isAdmin() || isClient();
       allow write: if isAdmin();
     }
 
+    // Texto de un descuento publicado por el negocio. Sin campos de más.
+    function dealTextOk() {
+      return request.resource.data.keys().hasOnly([
+          'title', 'conditions_es', 'conditions_en', 'discountLabel', 'code', 'active', 'order',
+          'placeId', 'businessName', 'description_es', 'description_en', 'validFrom', 'validUntil',
+          'source', 'createdByUid', 'hiddenByAdmin'
+        ])
+        && request.resource.data.title is string
+        && request.resource.data.title.size() > 0
+        && request.resource.data.title.size() <= 120
+        && request.resource.data.discountLabel is string
+        && request.resource.data.discountLabel.size() > 0
+        && request.resource.data.discountLabel.size() <= 40
+        && request.resource.data.code is string
+        && request.resource.data.code.size() > 0
+        && request.resource.data.code.size() <= 40
+        && request.resource.data.conditions_es is string
+        && request.resource.data.conditions_es.size() <= 2000
+        && request.resource.data.conditions_en is string
+        && request.resource.data.conditions_en.size() <= 2000
+        && request.resource.data.description_es is string
+        && request.resource.data.description_es.size() <= 2000
+        && request.resource.data.description_en is string
+        && request.resource.data.description_en.size() <= 2000
+        && request.resource.data.businessName is string
+        && request.resource.data.businessName.size() > 0
+        && request.resource.data.businessName.size() <= 200
+        && request.resource.data.validFrom is string
+        && (request.resource.data.validFrom.size() == 0 || request.resource.data.validFrom.matches('[0-9]{4}-[0-9]{2}-[0-9]{2}'))
+        && request.resource.data.validUntil is string
+        && (request.resource.data.validUntil.size() == 0 || request.resource.data.validUntil.matches('[0-9]{4}-[0-9]{2}-[0-9]{2}'))
+        && (request.resource.data.validFrom.size() == 0
+            || request.resource.data.validUntil.size() == 0
+            || request.resource.data.validFrom <= request.resource.data.validUntil)
+        && request.resource.data.active is bool
+        && request.resource.data.order is number
+        && request.resource.data.order >= 0
+        && request.resource.data.order <= 9999
+        && request.resource.data.placeId == myPlaceId()
+        && request.resource.data.source == 'business'
+        && request.resource.data.createdByUid is string
+        && request.resource.data.createdByUid.size() > 0
+        && request.resource.data.createdByUid.size() <= 128
+        && request.resource.data.hiddenByAdmin is bool;
+    }
+
     match /deals/{id} {
-      allow read: if isMember();
-      allow write: if isAdmin();
+      allow read: if isAdmin() || isClient()
+        || (isBusiness() && resource.data.placeId == myPlaceId());
+
+      // Solo el negocio crea ofertas, a su nombre y con el nombre real del lugar
+      allow create: if isBusiness()
+        && dealTextOk()
+        && request.resource.data.hiddenByAdmin == false
+        && request.resource.data.createdByUid == request.auth.uid
+        && exists(/databases/$(database)/documents/places/$(myPlaceId()))
+        && request.resource.data.businessName == placeOf(myPlaceId()).name;
+
+      // Puede corregir, pausar o cambiar fechas. No quita la ocultación de CJ ni cambia de lugar.
+      allow update: if isBusiness()
+        && resource.data.placeId == myPlaceId()
+        && resource.data.source == 'business'
+        && dealTextOk()
+        && request.resource.data.hiddenByAdmin == resource.data.hiddenByAdmin
+        && request.resource.data.createdByUid == resource.data.createdByUid
+        && (request.resource.data.businessName == resource.data.businessName
+            || (exists(/databases/$(database)/documents/places/$(myPlaceId()))
+                && request.resource.data.businessName == placeOf(myPlaceId()).name));
+
+      // CJ no redacta ofertas nuevas. En las del negocio solo puede ocultarlas.
+      // En las antiguas (sin source business) puede seguir corrigiéndolas.
+      allow update: if isAdmin() && (
+        (resource.data.get('source', 'cj') == 'business'
+          && changedKeys().hasOnly(['hiddenByAdmin'])
+          && request.resource.data.hiddenByAdmin is bool)
+        || (resource.data.get('source', 'cj') != 'business'
+          && request.resource.data.get('source', 'cj') != 'business')
+      );
+
+      allow delete: if isAdmin()
+        || (isBusiness()
+            && resource.data.placeId == myPlaceId()
+            && resource.data.source == 'business');
     }
 
     // Ajustes generales, p. ej. settings/tipOfTheWeek
     match /settings/{id} {
-      allow read: if isMember();
+      allow read: if isAdmin() || isClient();
       allow write: if isAdmin();
     }
 
@@ -125,10 +240,6 @@ service cloud.firestore {
 
     function validText(t, max) {
       return t is string && t.size() > 0 && t.size() <= max;
-    }
-
-    function placeOf(id) {
-      return get(/databases/$(database)/documents/places/$(id)).data;
     }
 
     // Restaurante con botón de reserva configurado por CJ

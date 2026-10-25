@@ -20,6 +20,10 @@ import Partners from './pages/admin/Partners'
 import GeneralContacts from './pages/admin/GeneralContacts'
 import Places from './pages/admin/Places'
 import Deals from './pages/admin/Deals'
+import Businesses from './pages/admin/Businesses'
+import BusinessLayout from './pages/business/BusinessLayout'
+import BusinessDeals from './pages/business/BusinessDeals'
+import BusinessReservations from './pages/business/BusinessReservations'
 import Tip from './pages/admin/Tip'
 import Summary from './pages/admin/Summary'
 import Reservations from './pages/admin/Reservations'
@@ -30,7 +34,7 @@ import AdminRequests from './pages/admin/AdminRequests'
 export default function App() {
   const { pathname } = useLocation()
   // El panel usa más ancho en ordenador; la vista previa del cliente mantiene el ancho de móvil
-  const wide = pathname.startsWith('/admin') && !pathname.includes('/vista')
+  const wide = (pathname.startsWith('/admin') && !pathname.includes('/vista')) || pathname.startsWith('/negocio')
 
   return (
     <div className={wide ? 'app-frame app-frame--wide' : 'app-frame'}>
@@ -76,8 +80,15 @@ export default function App() {
             <Route path="colaboradores" element={<Partners />} />
             <Route path="contactos" element={<GeneralContacts />} />
             <Route path="lugares" element={<Places />} />
+            <Route path="negocios" element={<Businesses />} />
             <Route path="descuentos" element={<Deals />} />
             <Route path="consejo" element={<Tip />} />
+          </Route>
+        </Route>
+        <Route element={<RequireRole role="business" />}>
+          <Route path="negocio" element={<BusinessLayout />}>
+            <Route index element={<BusinessDeals />} />
+            <Route path="reservas" element={<BusinessReservations />} />
           </Route>
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />

@@ -23,7 +23,7 @@ Bitte prüfen Sie, ob jeder Text natürlich und korrekt auf Deutsch ist. Korrekt
 | `login.back` | Volver al inicio de sesión | Back to sign in | Zurück zur Anmeldung | |
 | `login.resetIntro` | Escriba su correo y le enviaremos un enlace para crear una nueva contraseña. | Enter your email and we will send you a link to create a new password. | Geben Sie Ihre E-Mail-Adresse ein. Wir senden Ihnen einen Link, um ein neues Passwort festzulegen. | |
 | `login.resetSent` | Si el correo está registrado en CJ Club, recibirá un enlace para crear una nueva contraseña. | If this email is registered with CJ Club, you will receive a link to create a new password. | Wenn diese E-Mail-Adresse bei CJ Club registriert ist, erhalten Sie einen Link, um ein neues Passwort festzulegen. | |
-| `login.note` | Acceso exclusivo para clientes de CJ | Exclusive access for CJ clients | Exklusiver Zugang für Kunden von CJ | |
+| `login.note` | Acceso para clientes y negocios de CJ Club | Access for CJ clients and partner businesses | Zugang für Kunden und Partnerbetriebe von CJ | |
 | `login.notInvited` | Esta cuenta no tiene acceso a CJ Club. Contacte con CJ. | This account does not have access to CJ Club. Please contact CJ. | Dieses Konto hat keinen Zugang zu CJ Club. Bitte wenden Sie sich an CJ. | |
 | `login.error.credentials` | Correo o contraseña incorrectos. | Incorrect email or password. | E-Mail-Adresse oder Passwort falsch. | |
 | `login.error.tooMany` | Demasiados intentos. Espere unos minutos y vuelva a probar. | Too many attempts. Please wait a few minutes and try again. | Zu viele Versuche. Bitte warten Sie einige Minuten und versuchen Sie es erneut. | |
@@ -112,6 +112,11 @@ Bitte prüfen Sie, ob jeder Text natürlich und korrekt auf Deutsch ist. Korrekt
 | `benefits.qr` | Código QR: {code} | QR code: {code} | QR-Code: {code} | |
 | `benefits.close` | Cerrar | Close | Schließen | |
 | `benefits.free` | Gratis | Free | Gratis | |
+| `benefits.offeredBy` | Descuento ofrecido por {name} | Discount offered by {name} | Rabatt angeboten von {name} | |
+| `benefits.conditionsByBusiness` | Condiciones fijadas por el negocio | Conditions set by the business | Bedingungen festgelegt vom Betrieb | |
+| `benefits.validFrom` | Válido desde el {date} | Valid from {date} | Gültig ab dem {date} | |
+| `benefits.validUntil` | Válido hasta el {date} | Valid until {date} | Gültig bis zum {date} | |
+| `benefits.validRange` | Válido del {from} al {until} | Valid from {from} to {until} | Gültig vom {from} bis zum {until} | |
 | `common.back` | Volver | Back | Zurück | |
 | `team.eyebrow` | Su equipo CJ | Your CJ team | Ihr CJ-Team | |
 | `team.messages` | Mensajes | Messages | Nachrichten | |

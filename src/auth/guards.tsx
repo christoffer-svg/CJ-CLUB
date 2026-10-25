@@ -20,5 +20,7 @@ export function RequireRole({ role }: { role: Role }) {
 }
 
 export function homeFor(role: Role) {
-  return role === 'admin' ? '/admin' : '/'
+  if (role === 'admin') return '/admin'
+  if (role === 'business') return '/negocio'
+  return '/'
 }
