@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { TranslationKey } from '../i18n/translations'
 import { useI18n } from '../i18n'
 import { isGeoPoint } from '../lib/geo'
@@ -7,6 +7,7 @@ import {
   DEFAULT_WEATHER_PLACE,
   conditionKey,
   fetchWeather,
+  lookupPlaceName,
   officialWarningsUrl,
   type NoticeId,
   type Severity,
@@ -14,7 +15,11 @@ import {
   type WeatherReport,
 } from '../lib/weather'
 
-const DEVICE_KEY = 'cjclub.weatherDevice'
+const MODE_KEY = 'cjclub.weatherMode'
+const LEGACY_DEVICE_KEY = 'cjclub.weatherDevice'
+
+type WeatherMode = 'device' | 'fallback'
+type Source = 'pending' | WeatherMode
 
 const noticeText: Record<NoticeId, TranslationKey> = {
   wind: 'weather.notice.wind',
@@ -34,21 +39,56 @@ const severityText: Record<Severity, TranslationKey> = {
 
 type GeoMessage = 'denied' | 'unavailable'
 
-function readPreferDevice() {
+function readMode(): WeatherMode | null {
   try {
-    return localStorage.getItem(DEVICE_KEY) === '1'
+    const mode = localStorage.getItem(MODE_KEY)
+    if (mode === 'device' || mode === 'fallback') return mode
+    if (localStorage.getItem(LEGACY_DEVICE_KEY) === '1') return 'device'
+    return null
   } catch {
-    return false
+    return null
   }
 }
 
-function rememberDevice(on: boolean) {
+function rememberMode(mode: WeatherMode) {
   try {
-    if (on) localStorage.setItem(DEVICE_KEY, '1')
-    else localStorage.removeItem(DEVICE_KEY)
+    localStorage.setItem(MODE_KEY, mode)
+    localStorage.removeItem(LEGACY_DEVICE_KEY)
   } catch {
     // sin almacenamiento local el tiempo se sigue viendo
   }
+}
+
+let inflightFix: Promise<GeoPoint> | null = null
+
+function locateDevice(): Promise<GeoPoint> {
+  if (!navigator.geolocation) return Promise.reject(new Error('geolocation'))
+  if (!inflightFix) {
+    inflightFix = new Promise<GeoPoint>((resolve, reject) => {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+        (err) => reject(err),
+        { enableHighAccuracy: false, timeout: 12000, maximumAge: 10 * 60 * 1000 },
+      )
+    }).finally(() => {
+      inflightFix = null
+    })
+  }
+  return inflightFix
+}
+
+function initialSource(allowDevice: boolean): Source {
+  if (!allowDevice || typeof navigator === 'undefined' || !('geolocation' in navigator)) return 'fallback'
+  return readMode() === 'fallback' ? 'fallback' : 'pending'
+}
+
+function messageFor(err: unknown): GeoMessage {
+  const code = typeof err === 'object' && err !== null && 'code' in err ? Number((err as { code: unknown }).code) : 0
+  const text =
+    typeof err === 'object' && err !== null && 'message' in err && typeof (err as { message: unknown }).message === 'string'
+      ? (err as { message: string }).message.toLowerCase()
+      : ''
+  return code === 1 || text.includes('denied') || text.includes('permission') ? 'denied' : 'unavailable'
 }
 
 function formatTemp(value: number, locale: string) {
@@ -129,65 +169,72 @@ type Props = {
 
 export default function WeatherCard({ ready, propertyName, propertyPoint, allowDevice }: Props) {
   const { t, lang, locale } = useI18n()
+  const [source, setSource] = useState<Source>(() => initialSource(allowDevice))
   const [device, setDevice] = useState<GeoPoint | null>(null)
-  const [locating, setLocating] = useState(false)
+  const [placeName, setPlaceName] = useState<string | null>(null)
   const [geoMessage, setGeoMessage] = useState<GeoMessage | null>(null)
   const [loaded, setLoaded] = useState<{ key: string; data: WeatherReport } | null>(null)
   const [failedKey, setFailedKey] = useState<string | null>(null)
   const [reload, setReload] = useState(0)
 
   const property = propertyPoint && isGeoPoint(propertyPoint) ? propertyPoint : null
-  const point = device ?? property ?? DEFAULT_WEATHER_PLACE
+  const fallbackPoint = property ?? DEFAULT_WEATHER_PLACE
+  const point = source === 'device' && device ? device : fallbackPoint
   const homeLabel = propertyName?.trim() || t('weather.yourHome')
-  const label = device ? t('weather.yourLocation') : property ? homeLabel : DEFAULT_WEATHER_PLACE.name
   const fallbackLabel = property ? homeLabel : DEFAULT_WEATHER_PLACE.name
+  const label = source === 'device' ? placeName || t('weather.yourLocation') : fallbackLabel
   const canLocate = allowDevice && typeof navigator !== 'undefined' && 'geolocation' in navigator
 
-  const askDevice = useCallback(() => {
-    if (!navigator.geolocation) {
-      setGeoMessage('unavailable')
-      return
-    }
-    setLocating(true)
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        setDevice({ lat: pos.coords.latitude, lng: pos.coords.longitude })
+  useEffect(() => {
+    if (source !== 'pending') return
+    let ignore = false
+    locateDevice()
+      .then((fix) => {
+        if (ignore) return
+        setDevice(fix)
+        setPlaceName(null)
         setGeoMessage(null)
-        rememberDevice(true)
-        setLocating(false)
-      },
-      (err) => {
+        setSource('device')
+        rememberMode('device')
+      })
+      .catch((err: unknown) => {
+        if (ignore) return
         setDevice(null)
-        rememberDevice(false)
-        setGeoMessage(err.code === err.PERMISSION_DENIED ? 'denied' : 'unavailable')
-        setLocating(false)
-      },
-      { enableHighAccuracy: false, timeout: 12000, maximumAge: 10 * 60 * 1000 },
-    )
-  }, [])
+        setPlaceName(null)
+        setSource('fallback')
+        rememberMode('fallback')
+        setGeoMessage(messageFor(err))
+      })
+    return () => {
+      ignore = true
+    }
+  }, [source])
 
   useEffect(() => {
-    if (!allowDevice || !readPreferDevice() || !navigator.geolocation || !navigator.permissions?.query) return
-    let cancelled = false
-    navigator.permissions
-      .query({ name: 'geolocation' })
-      .then((result) => {
-        if (!cancelled && result.state === 'granted') askDevice()
+    if (source !== 'device' || !device) return
+    const ctrl = new AbortController()
+    let ignore = false
+    lookupPlaceName(device, lang, ctrl.signal)
+      .then((name) => {
+        if (!ignore && name) setPlaceName(name)
       })
-      .catch(() => {})
+      .catch((err: unknown) => {
+        if (err instanceof Error && err.name === 'AbortError') return
+      })
     return () => {
-      cancelled = true
+      ignore = true
+      ctrl.abort()
     }
-  }, [allowDevice, askDevice])
+  }, [source, device, lang])
 
   const lat = point.lat
   const lng = point.lng
   const pointKey = `${lat.toFixed(3)},${lng.toFixed(3)}`
-  const report = loaded?.key === pointKey ? loaded.data : null
-  const failed = failedKey === pointKey
+  const report = source === 'pending' ? null : loaded?.key === pointKey ? loaded.data : null
+  const failed = source !== 'pending' && failedKey === pointKey
 
   useEffect(() => {
-    if (!ready) return
+    if (!ready || source === 'pending') return
     const ctrl = new AbortController()
     let ignore = false
     fetchWeather({ lat, lng }, ctrl.signal, reload > 0)
@@ -204,12 +251,14 @@ export default function WeatherCard({ ready, propertyName, propertyPoint, allowD
       ignore = true
       ctrl.abort()
     }
-  }, [ready, lat, lng, pointKey, reload])
+  }, [ready, source, lat, lng, pointKey, reload])
 
   function useSavedPlace() {
     setDevice(null)
+    setPlaceName(null)
     setGeoMessage(null)
-    rememberDevice(false)
+    setSource('fallback')
+    rememberMode('fallback')
   }
 
   const notices = report?.notices ?? []
@@ -237,7 +286,7 @@ export default function WeatherCard({ ready, propertyName, propertyPoint, allowD
       <div className="card weather">
         <div className="weather__head">
           <span className="eyebrow">{t('weather.eyebrow')}</span>
-          {ready && <p className="card__title">{label}</p>}
+          {ready && source !== 'pending' && <p className="card__title">{label}</p>}
         </div>
 
         {!ready || (!report && !failed) ? (
@@ -304,12 +353,19 @@ export default function WeatherCard({ ready, propertyName, propertyPoint, allowD
 
         {geoMessage && <p className="weather__hint">{t(geoMessage === 'denied' ? 'weather.geoDenied' : 'weather.geoUnavailable', { place: fallbackLabel })}</p>}
 
-        {canLocate && !device && (
-          <button type="button" className="link-btn weather__action" onClick={askDevice} disabled={locating}>
+        {canLocate && source === 'fallback' && (
+          <button
+            type="button"
+            className="link-btn weather__action"
+            onClick={() => {
+              setGeoMessage(null)
+              setSource('pending')
+            }}
+          >
             {t('weather.useDevice')}
           </button>
         )}
-        {device && (
+        {source === 'device' && (
           <button type="button" className="link-btn weather__action" onClick={useSavedPlace}>
             {t('weather.usePlace', { place: fallbackLabel })}
           </button>
@@ -322,6 +378,11 @@ export default function WeatherCard({ ready, propertyName, propertyPoint, allowD
           <a href="https://open-meteo.com/" target="_blank" rel="noreferrer">
             {t('weather.source')}
           </a>
+          {source === 'device' && placeName && (
+            <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">
+              {t('weather.osm')}
+            </a>
+          )}
         </div>
       </div>
     </section>
