@@ -57,6 +57,10 @@ export type GeneralContact = {
   order: number
 }
 
+/** Cómo abre el cliente la reserva: enlace del restaurante, llamada o WhatsApp */
+export const reservationChannels = ['link', 'phone', 'whatsapp'] as const
+export type ReservationChannel = (typeof reservationChannels)[number]
+
 /** places/{placeId} */
 export type Place = {
   category: 'restaurants' | 'golf' | 'beaches' | 'plans'
@@ -68,6 +72,44 @@ export type Place = {
   discountPercent?: number | null
   active: boolean
   location?: GeoPoint
+  /**
+   * Solo restaurantes. Lo configura CJ en el panel, sin tocar la app.
+   * Vacío o null: el cliente no ve el botón Reservar.
+   */
+  reservationChannel?: ReservationChannel | null
+  /** URL https, o teléfono (con o sin prefijo) */
+  reservationTarget?: string | null
+}
+
+/** reservationClicks/{id}: cada vez que un cliente pulsa Reservar */
+export type ReservationClick = {
+  placeId: string
+  clientId: string
+  /** uid de quien ha pulsado, si había sesión */
+  uid: string
+  channel: ReservationChannel
+  createdAt: Timestamp | null
+}
+
+/** reservationConfirms/{id}: el cliente indica, al volver, que consiguió mesa */
+export type ReservationConfirm = {
+  placeId: string
+  clientId: string
+  uid: string
+  createdAt: Timestamp | null
+}
+
+/**
+ * reservationReports/{placeId}_{aaaa-mm}
+ * Número de reservas que el restaurante ha comunicado a CJ para ese mes.
+ * La app no puede ver las reservas hechas en TheFork, CoverManager u otro sistema.
+ */
+export type ReservationReport = {
+  placeId: string
+  /** "2026-10" */
+  month: string
+  count: number
+  updatedAt: Timestamp | null
 }
 
 /** deals/{dealId} */

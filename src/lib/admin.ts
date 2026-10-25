@@ -101,7 +101,10 @@ export async function createClient(data: NewClient) {
 
 /** Da de baja a un cliente en el servidor (función deleteClient): borra cuenta, ficha y registros */
 export async function deleteClient(clientId: string) {
-  const call = httpsCallable<{ clientId: string }, { accounts: number; dealUses: number }>(functions, 'deleteClient')
+  const call = httpsCallable<
+    { clientId: string },
+    { accounts: number; dealUses: number; requests: number; reservationClicks: number; reservationConfirms: number }
+  >(functions, 'deleteClient')
   return (await call({ clientId })).data
 }
 

@@ -22,6 +22,7 @@ import Places from './pages/admin/Places'
 import Deals from './pages/admin/Deals'
 import Tip from './pages/admin/Tip'
 import Summary from './pages/admin/Summary'
+import Reservations from './pages/admin/Reservations'
 import AdminMessages from './pages/admin/AdminMessages'
 import AdminThread from './pages/admin/AdminThread'
 import AdminRequests from './pages/admin/AdminRequests'
@@ -65,6 +66,7 @@ export default function App() {
           <Route path="admin" element={<AdminLayout />}>
             <Route index element={<AdminHome />} />
             <Route path="resumen" element={<Summary />} />
+            <Route path="reservas" element={<Reservations />} />
             <Route path="mensajes" element={<AdminMessages />} />
             <Route path="mensajes/:clientId" element={<AdminThread />} />
             <Route path="peticiones" element={<AdminRequests />} />

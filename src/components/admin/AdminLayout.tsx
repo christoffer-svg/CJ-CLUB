@@ -7,6 +7,7 @@ import { ToastProvider } from './Toast'
 
 export const adminSections = [
   { to: '/admin/resumen', label: 'Resumen del mes', text: 'Clientes, descuentos usados y lugares guardados' },
+  { to: '/admin/reservas', label: 'Reservas', text: 'Pinchazos y reservas de los restaurantes' },
   { to: '/admin/mensajes', label: 'Mensajes', text: 'Conversaciones con los clientes' },
   { to: '/admin/peticiones', label: 'Peticiones', text: 'Presupuestos, llaves, reparaciones y más' },
   { to: '/admin/clientes', label: 'Clientes', text: 'Fichas, contactos asignados e invitaciones' },

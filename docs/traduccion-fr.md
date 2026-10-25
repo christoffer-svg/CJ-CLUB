@@ -91,6 +91,13 @@ Vérifiez que chaque texte est naturel et correct en français. Notez vos correc
 | `discover.distance` | A {km} km de su casa | {km} km from your home | À {km} km de chez vous | |
 | `discover.home` | Su casa | Your home | Votre maison | |
 | `discover.mapHint` | Toque un punto del mapa para ver el sitio. | Tap a point on the map to see the place. | Touchez un point sur la carte pour voir le lieu. | |
+| `discover.reserve` | Reservar | Book | Réserver | |
+| `discover.reserveAsk` | ¿Ha reservado en {name}? | Have you booked at {name}? | Avez-vous réservé chez {name} ? | |
+| `discover.reserveAskText` | Si ya tiene mesa, indíquenoslo. Así sabemos qué restaurantes le resultan útiles. Es opcional. | If you already have a table, please tell us. It helps us see which restaurants are useful to you. This is optional. | Si vous avez déjà une table, dites-le-nous. Cela nous aide à savoir quels restaurants vous sont utiles. C'est facultatif. | |
+| `discover.reserveYes` | Sí, he reservado | Yes, I have booked | Oui, j'ai réservé | |
+| `discover.reserveNo` | Todavía no | Not yet | Pas encore | |
+| `discover.reserveThanks` | Gracias. Queda anotado. | Thank you. We have noted it. | Merci. C'est noté. | |
+| `discover.reserveWhatsapp` | Buenos días. Quisiera reservar una mesa. Soy cliente de CJ Club. | Good morning. I would like to book a table. I am a CJ Club client. | Bonjour. Je souhaiterais réserver une table. Je suis client de CJ Club. | |
 | `benefits.eyebrow` | Ventajas | Benefits | Avantages | |
 | `benefits.title` | Sus ventajas | Your benefits | Vos avantages | |
 | `benefits.subtitle` | Enseñe su tarjeta o el código en el establecimiento | Show your card or the code at the venue | Présentez votre carte ou le code dans l'établissement | |

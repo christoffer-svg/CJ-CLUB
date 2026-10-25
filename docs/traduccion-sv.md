@@ -91,6 +91,13 @@ Kontrollera att varje text är naturlig och korrekt på svenska. Skriv dina rät
 | `discover.distance` | A {km} km de su casa | {km} km from your home | {km} km från ditt hem | |
 | `discover.home` | Su casa | Your home | Ditt hem | |
 | `discover.mapHint` | Toque un punto del mapa para ver el sitio. | Tap a point on the map to see the place. | Tryck på en punkt på kartan för att se platsen. | |
+| `discover.reserve` | Reservar | Book | Boka | |
+| `discover.reserveAsk` | ¿Ha reservado en {name}? | Have you booked at {name}? | Har du bokat på {name}? | |
+| `discover.reserveAskText` | Si ya tiene mesa, indíquenoslo. Así sabemos qué restaurantes le resultan útiles. Es opcional. | If you already have a table, please tell us. It helps us see which restaurants are useful to you. This is optional. | Om du redan har ett bord, berätta gärna. Då ser vi vilka restauranger som är till hjälp. Det är frivilligt. | |
+| `discover.reserveYes` | Sí, he reservado | Yes, I have booked | Ja, jag har bokat | |
+| `discover.reserveNo` | Todavía no | Not yet | Inte än | |
+| `discover.reserveThanks` | Gracias. Queda anotado. | Thank you. We have noted it. | Tack. Det är noterat. | |
+| `discover.reserveWhatsapp` | Buenos días. Quisiera reservar una mesa. Soy cliente de CJ Club. | Good morning. I would like to book a table. I am a CJ Club client. | God morgon. Jag skulle vilja boka ett bord. Jag är kund hos CJ Club. | |
 | `benefits.eyebrow` | Ventajas | Benefits | Förmåner | |
 | `benefits.title` | Sus ventajas | Your benefits | Dina förmåner | |
 | `benefits.subtitle` | Enseñe su tarjeta o el código en el establecimiento | Show your card or the code at the venue | Visa ditt kort eller koden på plats | |

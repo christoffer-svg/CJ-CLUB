@@ -127,6 +127,23 @@ service cloud.firestore {
       return t is string && t.size() > 0 && t.size() <= max;
     }
 
+    function placeOf(id) {
+      return get(/databases/$(database)/documents/places/$(id)).data;
+    }
+
+    // Restaurante con botón de reserva configurado por CJ
+    function bookableRestaurant(id) {
+      return id is string
+        && id.size() > 0
+        && id.size() <= 200
+        && exists(/databases/$(database)/documents/places/$(id))
+        && placeOf(id).category == 'restaurants'
+        && placeOf(id).reservationChannel in ['link', 'phone', 'whatsapp']
+        && placeOf(id).reservationTarget is string
+        && placeOf(id).reservationTarget.size() > 0
+        && placeOf(id).reservationTarget.size() <= 2000;
+    }
+
     match /conversations/{clientId} {
       allow read: if isAdmin() || isMyClient(clientId);
 
@@ -194,6 +211,54 @@ service cloud.firestore {
         && request.resource.data.status in ['new', 'in_progress', 'done', 'cancelled']
         && request.resource.data.clientId == resource.data.clientId;
       allow delete: if isAdmin();
+    }
+
+    // ---------- reservationClicks / reservationConfirms / reservationReports ----------
+    // Pinchazo en Reservar. El cliente solo crea el suyo, con la hora del servidor.
+    // No puede leer los de nadie (tampoco los suyos). Solo CJ lee. Nadie los borra desde la app.
+    match /reservationClicks/{id} {
+      allow create: if isClient()
+        && request.resource.data.keys().hasOnly(['placeId', 'clientId', 'uid', 'channel', 'createdAt'])
+        && request.resource.data.clientId == me().clientId
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.channel in ['link', 'phone', 'whatsapp']
+        && bookableRestaurant(request.resource.data.placeId)
+        && placeOf(request.resource.data.placeId).reservationChannel == request.resource.data.channel
+        && request.resource.data.createdAt == request.time;
+      allow read: if isAdmin();
+      allow update, delete: if false;
+    }
+
+    // El cliente, al volver, puede decir que consiguió mesa. Mismas reglas: solo crea, solo CJ lee.
+    match /reservationConfirms/{id} {
+      allow create: if isClient()
+        && request.resource.data.keys().hasOnly(['placeId', 'clientId', 'uid', 'createdAt'])
+        && request.resource.data.clientId == me().clientId
+        && request.resource.data.uid == request.auth.uid
+        && bookableRestaurant(request.resource.data.placeId)
+        && request.resource.data.createdAt == request.time;
+      allow read: if isAdmin();
+      allow update, delete: if false;
+    }
+
+    // Número de reservas que el restaurante comunica a CJ, por mes. Solo el equipo lo ve y lo anota.
+    match /reservationReports/{id} {
+      function validReport() {
+        return request.resource.data.keys().hasOnly(['placeId', 'month', 'count', 'updatedAt'])
+          && request.resource.data.placeId is string
+          && request.resource.data.month is string
+          && request.resource.data.month.matches('[0-9]{4}-(0[1-9]|1[0-2])')
+          && id == request.resource.data.placeId + '_' + request.resource.data.month
+          && request.resource.data.count is int
+          && request.resource.data.count >= 0
+          && request.resource.data.count <= 100000
+          && request.resource.data.updatedAt == request.time
+          && exists(/databases/$(database)/documents/places/$(request.resource.data.placeId))
+          && placeOf(request.resource.data.placeId).category == 'restaurants';
+      }
+      allow read: if isAdmin();
+      allow create, update: if isAdmin() && validReport();
+      allow delete: if false;
     }
 
     // ---------- Todo lo demás: denegado ----------

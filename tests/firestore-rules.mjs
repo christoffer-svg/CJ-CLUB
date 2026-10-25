@@ -31,7 +31,7 @@ const J = j.idToken, L = l.idToken, AD = a.idToken, X = x.idToken
 const dealUse = (cid, did) => ({ fields: { clientId: str(cid), dealId: str(did), date: { timestampValue: new Date().toISOString() } } })
 
 // Sin sesión / sin invitación: nada
-for (const p of ['users/' + j.localId, 'clients/jansen', 'partners/lawyer-ruiz', 'generalContacts/emergencias', 'places/golf-pinar', 'deals/deal-golf', 'settings/tipOfTheWeek', 'dealUses']) {
+for (const p of ['users/' + j.localId, 'clients/jansen', 'partners/lawyer-ruiz', 'generalContacts/emergencias', 'places/golf-pinar', 'deals/deal-golf', 'settings/tipOfTheWeek', 'dealUses', 'reservationClicks', 'reservationConfirms', 'reservationReports/rest-la-terraza_2026-10']) {
   ok(await req(null, p), 403, 'anónimo lee ' + p)
   ok(await req(X, p), 403, 'no invitado lee ' + p)
 }
@@ -149,6 +149,48 @@ ok(await patch(J, 'requests/q1', { status: str('done') }), 403, 'cliente marca s
 ok(await serverTime(J, 'requests/q1', { status: str('cancelled') }, ['updatedAt'], true, ['status']), 200, 'cliente cancela su petición nueva')
 ok(await serverTime(J, 'requests/q1', { status: str('new') }, ['updatedAt'], true, ['status']), 403, 'cliente reabre una petición cancelada')
 ok(await patch(AD, 'requests/q1', { status: str('in_progress'), cjNote: str('Mañana') }), 200, 'CJ cambia estado y nota')
+
+// reservas de restaurantes
+await patch('owner', 'places/rest-la-terraza', { reservationChannel: str('link'), reservationTarget: str('https://example.com/reservar') })
+const clickFields = (cid, uid, place, channel) => ({ placeId: str(place), clientId: str(cid), uid: str(uid), channel: str(channel) })
+ok(await serverTime(J, 'reservationClicks/c1', clickFields('jansen', j.localId, 'rest-la-terraza', 'link'), ['createdAt'], false), 200, 'cliente registra un pinchazo en Reservar')
+ok(await serverTime(J, 'reservationClicks/c2', clickFields('lindqvist', j.localId, 'rest-la-terraza', 'link'), ['createdAt'], false), 403, 'cliente registra pinchazo a nombre de otra familia')
+ok(await serverTime(L, 'reservationClicks/c3', clickFields('jansen', l.localId, 'rest-la-terraza', 'link'), ['createdAt'], false), 403, 'Lindqvist registra pinchazo a nombre de Jansen')
+ok(await serverTime(J, 'reservationClicks/c4', clickFields('jansen', l.localId, 'rest-la-terraza', 'link'), ['createdAt'], false), 403, 'cliente firma el pinchazo como otra persona')
+ok(await serverTime(J, 'reservationClicks/c5', clickFields('jansen', j.localId, 'no-existe', 'link'), ['createdAt'], false), 403, 'pinchazo de restaurante inexistente')
+ok(await serverTime(J, 'reservationClicks/c6', clickFields('jansen', j.localId, 'golf-pinar', 'link'), ['createdAt'], false), 403, 'pinchazo en un lugar que no es restaurante')
+ok(await serverTime(J, 'reservationClicks/c7', clickFields('jansen', j.localId, 'rest-casa-olivo', 'whatsapp'), ['createdAt'], false), 403, 'pinchazo en un restaurante sin reserva configurada')
+ok(await serverTime(J, 'reservationClicks/c8', clickFields('jansen', j.localId, 'rest-la-terraza', 'phone'), ['createdAt'], false), 403, 'el canal no coincide con el del restaurante')
+ok(await req(J, 'reservationClicks/c9', 'PATCH', { fields: { ...clickFields('jansen', j.localId, 'rest-la-terraza', 'link'), createdAt: { timestampValue: new Date().toISOString() } } }), 403, 'pinchazo con hora inventada')
+ok(await serverTime(J, 'reservationClicks/c10', { ...clickFields('jansen', j.localId, 'rest-la-terraza', 'link'), extra: str('x') }, ['createdAt'], false), 403, 'pinchazo con campos extra')
+ok(await serverTime(AD, 'reservationClicks/c11', clickFields('jansen', a.localId, 'rest-la-terraza', 'link'), ['createdAt'], false), 403, 'admin registra pinchazos como si fuera cliente')
+ok(await runQuery(J, { from: [{ collectionId: 'reservationClicks' }] }), 403, 'cliente lee pinchazos')
+ok(await req(J, 'reservationClicks/c1'), 403, 'cliente lee un pinchazo')
+ok(await patch(J, 'reservationClicks/c1', { channel: str('phone') }), 403, 'cliente cambia un pinchazo')
+ok(await req(J, 'reservationClicks/c1', 'DELETE'), 403, 'cliente borra un pinchazo')
+ok(await req(AD, 'reservationClicks/c1', 'DELETE'), 403, 'admin no borra pinchazos desde la app')
+ok(await runQuery(AD, { from: [{ collectionId: 'reservationClicks' }] }), 200, 'admin lee pinchazos')
+
+const confirmFields = (cid, uid, place) => ({ placeId: str(place), clientId: str(cid), uid: str(uid) })
+ok(await serverTime(J, 'reservationConfirms/f1', confirmFields('jansen', j.localId, 'rest-la-terraza'), ['createdAt'], false), 200, 'cliente confirma que reservó')
+ok(await serverTime(J, 'reservationConfirms/f2', confirmFields('lindqvist', j.localId, 'rest-la-terraza'), ['createdAt'], false), 403, 'cliente confirma a nombre de otra familia')
+ok(await serverTime(J, 'reservationConfirms/f3', confirmFields('jansen', j.localId, 'golf-pinar'), ['createdAt'], false), 403, 'cliente confirma una reserva en un lugar que no es restaurante')
+ok(await runQuery(J, { from: [{ collectionId: 'reservationConfirms' }] }), 403, 'cliente lee confirmaciones')
+ok(await runQuery(AD, { from: [{ collectionId: 'reservationConfirms' }] }), 200, 'admin lee confirmaciones')
+ok(await req(AD, 'reservationConfirms/f1', 'DELETE'), 403, 'admin no borra confirmaciones desde la app')
+
+const reportFields = (place, month, count) => ({ placeId: str(place), month: str(month), count: { integerValue: String(count) } })
+ok(await req(J, 'reservationReports/rest-la-terraza_2026-10'), 403, 'cliente lee el número anotado')
+ok(await serverTime(J, 'reservationReports/rest-la-terraza_2026-10', reportFields('rest-la-terraza', '2026-10', 3), ['updatedAt'], false), 403, 'cliente anota reservas')
+ok(await serverTime(AD, 'reservationReports/rest-la-terraza_2026-10', reportFields('rest-la-terraza', '2026-10', 4), ['updatedAt'], false), 200, 'admin anota las reservas del mes')
+ok(await serverTime(AD, 'reservationReports/rest-la-terraza_2026-10', reportFields('rest-la-terraza', '2026-10', 5), ['updatedAt'], true, ['placeId', 'month', 'count']), 200, 'admin corrige el número')
+ok(await serverTime(AD, 'reservationReports/otro_2026-10', reportFields('rest-la-terraza', '2026-10', 4), ['updatedAt'], false), 403, 'el id del informe no coincide con el restaurante y el mes')
+ok(await serverTime(AD, 'reservationReports/rest-la-terraza_2026-13', reportFields('rest-la-terraza', '2026-13', 4), ['updatedAt'], false), 403, 'mes no válido')
+ok(await serverTime(AD, 'reservationReports/rest-la-terraza_2026-11', reportFields('rest-la-terraza', '2026-11', -1), ['updatedAt'], false), 403, 'número negativo')
+ok(await serverTime(AD, 'reservationReports/golf-pinar_2026-10', reportFields('golf-pinar', '2026-10', 1), ['updatedAt'], false), 403, 'informe de un lugar que no es restaurante')
+ok(await req(AD, 'reservationReports/rest-la-terraza_2026-10', 'DELETE'), 403, 'admin no borra el informe desde la app')
+ok(await req(AD, 'reservationReports/rest-la-terraza_2026-10'), 200, 'admin lee el informe')
+ok(await runQuery(J, { from: [{ collectionId: 'reservationReports' }] }), 403, 'cliente lista informes')
 
 // colecciones no previstas
 ok(await req(AD, 'secretos/x', 'PATCH', { fields: { a: str('1') } }), 403, 'admin escribe en colección no prevista')
