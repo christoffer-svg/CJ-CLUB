@@ -5,7 +5,8 @@ import { useToast } from '../../components/admin/Toast'
 import LocationPicker from '../../components/admin/LocationPicker'
 import { useEditor } from '../../components/admin/useEditor'
 import { patchDoc, useLiveCollection } from '../../lib/admin'
-import type { GeoPoint, Place } from '../../lib/types'
+import { reservationError } from '../../lib/reservations'
+import type { GeoPoint, Place, ReservationChannel } from '../../lib/types'
 
 const categories: [Place['category'], string][] = [
   ['restaurants', 'Restaurantes'],
@@ -14,7 +15,25 @@ const categories: [Place['category'], string][] = [
   ['plans', 'Planes'],
 ]
 
-type Draft = Omit<Place, 'discountPercent' | 'location'> & { discountPercent: string; location: GeoPoint | null }
+const reservationOptions: ['' | ReservationChannel, string][] = [
+  ['', 'Sin botón de reserva'],
+  ['link', 'Enlace (TheFork, CoverManager, OpenTable, web…)'],
+  ['phone', 'Teléfono'],
+  ['whatsapp', 'WhatsApp'],
+]
+
+const reservationLabel: Record<ReservationChannel, string> = {
+  link: 'enlace',
+  phone: 'teléfono',
+  whatsapp: 'WhatsApp',
+}
+
+type Draft = Omit<Place, 'discountPercent' | 'location' | 'reservationChannel' | 'reservationTarget'> & {
+  discountPercent: string
+  location: GeoPoint | null
+  reservationChannel: '' | ReservationChannel
+  reservationTarget: string
+}
 const empty: Draft = {
   category: 'restaurants',
   name: '',
@@ -25,6 +44,15 @@ const empty: Draft = {
   discountPercent: '',
   active: true,
   location: null,
+  reservationChannel: '',
+  reservationTarget: '',
+}
+
+function reservationHint(channel: Draft['reservationChannel']) {
+  if (channel === 'link') return 'Pegue el enlace de reserva del restaurante. El cliente verá el botón Reservar. Para cambiarlo, basta con guardar otro enlace.'
+  if (channel === 'phone') return 'El botón Reservar llamará a este número. Un móvil de España puede ir sin prefijo.'
+  if (channel === 'whatsapp') return 'El botón Reservar abrirá WhatsApp con un mensaje de CJ Club. Un móvil de España puede ir sin prefijo.'
+  return 'Sin enlace, el restaurante sigue en la app pero no tiene botón de reserva.'
 }
 
 export default function Places() {
@@ -55,7 +83,13 @@ export default function Places() {
                       {p.discountPercent ? <span className="a-badge">{p.discountPercent}%</span> : null}
                     </span>
                     <span className="card__text">
-                      {[p.meta_es, p.location ? null : 'sin ubicación en el mapa'].filter(Boolean).join(' · ')}
+                      {[
+                        p.meta_es,
+                        p.location ? null : 'sin ubicación en el mapa',
+                        p.category === 'restaurants' ? (p.reservationChannel ? `reserva por ${reservationLabel[p.reservationChannel]}` : 'sin botón de reserva') : null,
+                      ]
+                        .filter(Boolean)
+                        .join(' · ')}
                     </span>
                   </div>
                   <Toggle
@@ -74,6 +108,8 @@ export default function Places() {
                         ...p,
                         discountPercent: p.discountPercent ? String(p.discountPercent) : '',
                         location: p.location ?? null,
+                        reservationChannel: p.reservationChannel ?? '',
+                        reservationTarget: p.reservationTarget ?? '',
                       })
                     }
                   >
@@ -92,14 +128,27 @@ export default function Places() {
           title={editor.editing?.id ? 'Editar lugar' : 'Nuevo lugar'}
           onClose={editor.close}
           busy={editor.busy}
-          onSubmit={() =>
-            d.name.trim() &&
-            editor.save(({ discountPercent, ...x }) => {
+          onSubmit={() => {
+            if (!d.name.trim()) return
+            const problem = reservationError(d.category, d.reservationChannel, d.reservationTarget)
+            if (problem) {
+              toast(problem, 'error')
+              return
+            }
+            editor.save(({ discountPercent, reservationChannel, reservationTarget, ...x }) => {
               const pct = Math.round(Number(discountPercent))
-              // sin descuento: se guarda null para borrar uno anterior
-              return { ...x, name: x.name.trim(), discountPercent: pct > 0 && pct <= 100 ? pct : null }
+              const allowed = reservationChannel === 'link' || reservationChannel === 'phone' || reservationChannel === 'whatsapp'
+              const channel = x.category === 'restaurants' && allowed ? reservationChannel : null
+              // sin descuento o sin reserva: se guarda null para borrar uno anterior
+              return {
+                ...x,
+                name: x.name.trim(),
+                discountPercent: pct > 0 && pct <= 100 ? pct : null,
+                reservationChannel: channel,
+                reservationTarget: channel ? reservationTarget.trim() : null,
+              }
             }, `Guardado: ${d.name}`)
-          }
+          }}
         >
           <div className="a-grid-2">
             <Field label="Nombre">
@@ -130,6 +179,37 @@ export default function Places() {
             onEs={(v) => editor.set('cjNote_es', v)}
             onEn={(v) => editor.set('cjNote_en', v)}
           />
+          {d.category === 'restaurants' && (
+            <FieldGroup label="Reserva" hint={reservationHint(d.reservationChannel)}>
+              <Select value={d.reservationChannel} onChange={(e) => editor.set('reservationChannel', e.target.value as Draft['reservationChannel'])}>
+                {reservationOptions.map(([value, label]) => (
+                  <option key={value || 'none'} value={value}>
+                    {label}
+                  </option>
+                ))}
+              </Select>
+              {d.reservationChannel === 'link' && (
+                <Input
+                  type="url"
+                  inputMode="url"
+                  placeholder="https://"
+                  value={d.reservationTarget}
+                  onChange={(e) => editor.set('reservationTarget', e.target.value)}
+                  aria-label="Enlace de reserva"
+                />
+              )}
+              {(d.reservationChannel === 'phone' || d.reservationChannel === 'whatsapp') && (
+                <Input
+                  type="tel"
+                  inputMode="tel"
+                  placeholder={d.reservationChannel === 'whatsapp' ? '34600111222' : '+34 600 111 222'}
+                  value={d.reservationTarget}
+                  onChange={(e) => editor.set('reservationTarget', e.target.value)}
+                  aria-label={d.reservationChannel === 'whatsapp' ? 'WhatsApp de reserva' : 'Teléfono de reserva'}
+                />
+              )}
+            </FieldGroup>
+          )}
           <Field label="Descuento CJ Club (%)" hint="Déjelo vacío si no tiene descuento.">
             <Input
               type="number"

@@ -91,6 +91,13 @@ Controleer of elke tekst natuurlijk en correct Nederlands is. Noteer correcties 
 | `discover.distance` | A {km} km de su casa | {km} km from your home | {km} km van uw huis | |
 | `discover.home` | Su casa | Your home | Uw huis | |
 | `discover.mapHint` | Toque un punto del mapa para ver el sitio. | Tap a point on the map to see the place. | Tik op een punt op de kaart om de plek te zien. | |
+| `discover.reserve` | Reservar | Book | Reserveren | |
+| `discover.reserveAsk` | ¿Ha reservado en {name}? | Have you booked at {name}? | Heeft u gereserveerd bij {name}? | |
+| `discover.reserveAskText` | Si ya tiene mesa, indíquenoslo. Así sabemos qué restaurantes le resultan útiles. Es opcional. | If you already have a table, please tell us. It helps us see which restaurants are useful to you. This is optional. | Als u al een tafel heeft, laat het ons weten. Zo zien we welke restaurants u helpen. Dit is vrijwillig. | |
+| `discover.reserveYes` | Sí, he reservado | Yes, I have booked | Ja, ik heb gereserveerd | |
+| `discover.reserveNo` | Todavía no | Not yet | Nog niet | |
+| `discover.reserveThanks` | Gracias. Queda anotado. | Thank you. We have noted it. | Dank u. Het is genoteerd. | |
+| `discover.reserveWhatsapp` | Buenos días. Quisiera reservar una mesa. Soy cliente de CJ Club. | Good morning. I would like to book a table. I am a CJ Club client. | Goedemorgen. Ik wil graag een tafel reserveren. Ik ben klant van CJ Club. | |
 | `benefits.eyebrow` | Ventajas | Benefits | Voordelen | |
 | `benefits.title` | Sus ventajas | Your benefits | Uw voordelen | |
 | `benefits.subtitle` | Enseñe su tarjeta o el código en el establecimiento | Show your card or the code at the venue | Laat uw kaart of de code zien bij het bedrijf | |

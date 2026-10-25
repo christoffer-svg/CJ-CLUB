@@ -6,6 +6,7 @@ import MapView from '../components/MapView'
 import { useI18n } from '../i18n'
 import { useActivePlaces, useDoc } from '../lib/data'
 import { directionsUrl, distanceKm, formatKm, isGeoPoint } from '../lib/geo'
+import { logReservationClick, markReservePending, reservationHref } from '../lib/reservations'
 import type { Client, GeoPoint, Place } from '../lib/types'
 import { useViewer } from '../lib/viewer'
 
@@ -16,10 +17,11 @@ const filters: Filter[] = ['all', 'restaurants', 'golf', 'beaches', 'plans', 'sa
 const categoryOrder: Place['category'][] = ['restaurants', 'golf', 'beaches', 'plans']
 
 function PlaceCard({ p, home }: { p: PlaceItem; home: GeoPoint | null }) {
-  const { favorites, toggleFavorite } = useViewer()
+  const { favorites, toggleFavorite, clientId, preview } = useViewer()
   const { t, pick, locale } = useI18n()
   const saved = favorites.includes(p.id)
   const location = isGeoPoint(p.location) ? p.location : null
+  const reserveHref = reservationHref(p, t('discover.reserveWhatsapp'))
   return (
     <article className="card place">
       <div className="place__head">
@@ -47,6 +49,21 @@ function PlaceCard({ p, home }: { p: PlaceItem; home: GeoPoint | null }) {
             {t('discover.directions')}
           </a>
         </div>
+      )}
+      {reserveHref && (
+        <a
+          className="btn place__reserve"
+          href={reserveHref}
+          {...(p.reservationChannel === 'phone' ? {} : { target: '_blank', rel: 'noopener noreferrer' })}
+          onClick={() => {
+            // En la vista previa se abre el enlace, pero no se cuenta el pinchazo
+            if (preview || !clientId || !p.reservationChannel) return
+            logReservationClick(p.id, clientId, p.reservationChannel).catch(() => {})
+            markReservePending(p.id, p.name)
+          }}
+        >
+          {t('discover.reserve')}
+        </a>
       )}
     </article>
   )

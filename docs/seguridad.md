@@ -14,17 +14,20 @@ Todo está denegado salvo lo que se permite expresamente.
 | `partners/{id}` | Lee, de uno en uno, solo los asignados en su mapa `contacts`. No puede listar. | Lee, lista y escribe. |
 | `generalContacts`, `places`, `deals`, `settings` | Lee (con sesión e invitación). No escribe. | Lee y escribe. |
 | `dealUses/{id}` | Solo crea registros con su `clientId`, de un descuento existente y con la hora del servidor. No lee. | Lee y borra. |
+| `reservationClicks/{id}` | Solo crea su pinchazo en Reservar (`clientId` y `uid` propios, canal igual al del restaurante, hora del servidor). No lee, no cambia y no borra. | Lee. No borra desde la app. |
+| `reservationConfirms/{id}` | Solo crea su confirmación de «he reservado», de un restaurante con reserva configurada. No lee. | Lee. No borra desde la app. |
+| `reservationReports/{id}` | No lee ni escribe. | Lee y anota el número del mes (`{restaurante}_{aaaa-mm}`). No borra desde la app. |
 | `conversations/{clientId}` y `messages` | Lee y escribe solo en la suya, firmando como `client` con su uid y la hora del servidor; no puede editar ni borrar mensajes, ni cambiar el nombre de la familia ni la marca de leído de CJ. | Lee todas y responde como `cj`. Puede borrar. |
 | `requests/{id}` | Crea peticiones a su nombre (estado `new`, tipo válido, hora del servidor) y lee las suyas. Solo puede cancelarlas mientras son nuevas. No escribe la nota de CJ. | Lee todas, cambia estado y nota, borra. |
 | Cualquier otra | Denegado. | Denegado. |
 
 "Con sesión" significa además estar invitado: tener ficha en `users/`. Una cuenta creada por libre no lee nada.
 
-Pruebas: `tests/firestore-rules.mjs` (129 comprobaciones; ver instrucciones en el archivo). Ejecutar antes de cada cambio de reglas.
+Pruebas: `tests/firestore-rules.mjs` (169 comprobaciones; ver instrucciones en el archivo). Ejecutar antes de cada cambio de reglas.
 
 ### Funciones de servidor (`functions/`)
 - `createClient` (Madrid, `europe-southwest1`): comprueba que quien llama es `admin`, valida los datos, crea la cuenta con contraseña aleatoria, la ficha y el perfil; si algo falla, no deja cuentas sueltas. Límite de 5 instancias.
-- `deleteClient`: baja de un cliente (derecho de supresión). Solo `admin`; borra sus cuentas de acceso, perfiles, ficha, conversación con mensajes, peticiones y registros de uso. Se niega si hay una cuenta del equipo vinculada.
+- `deleteClient`: baja de un cliente (derecho de supresión). Solo `admin`; borra sus cuentas de acceso, perfiles, ficha, conversación con mensajes, peticiones, registros de uso y sus pinchazos y confirmaciones de reserva. Se niega si hay una cuenta del equipo vinculada. No es una función nueva: es la misma baja de siempre.
 - El alta y la baja de clientes no se pueden hacer desde el navegador: no hay registro público en la app.
 
 ### Código que descarga el navegador

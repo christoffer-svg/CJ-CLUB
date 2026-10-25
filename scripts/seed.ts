@@ -231,6 +231,8 @@ const places = {
     discountPercent: 10,
     active: true,
     location: { lat: 38.7953, lng: 0.1802 },
+    reservationChannel: 'link',
+    reservationTarget: 'https://example.com/reservar/la-terraza',
   },
   'rest-casa-olivo': {
     category: 'restaurants',
