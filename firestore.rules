@@ -112,6 +112,15 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
+    // ---------- partnerCategories/{id} ----------
+    // Servicios de los colaboradores (abogado, piscina, y los que CJ añada).
+    // Los clientes los leen para ver el nombre. El negocio no los necesita.
+    // Solo el equipo de CJ los cambia. Borrar uno que está en uso lo impide el panel.
+    match /partnerCategories/{id} {
+      allow read: if isAdmin() || isClient();
+      allow write: if isAdmin();
+    }
+
     // ---------- Contenido común: los socios lo leen; el negocio no ----------
     match /generalContacts/{id} {
       allow read: if isAdmin() || isClient();

@@ -562,6 +562,17 @@ button {
   gap: 3px;
 }
 
+/* Un solo servicio: la etiqueta sigue siendo la de siempre. Varios: se parten en líneas. */
+.contact__services {
+  display: contents;
+}
+
+.contact__services--many {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 12px;
+}
+
 .call-btn {
   flex: none;
   display: inline-flex;
@@ -1246,6 +1257,56 @@ button {
 .a-field__hint {
   font-size: 12px;
   color: var(--text-2);
+}
+
+.a-checks {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.a-check {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: var(--text);
+}
+
+.a-check input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--espresso);
+}
+
+.a-glyph {
+  flex: none;
+  display: flex;
+  color: var(--gold-dark);
+}
+
+.a-icon-pick {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.a-icon-pick__btn {
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  background: var(--white);
+  color: var(--espresso);
+  cursor: pointer;
+}
+
+.a-icon-pick__btn[aria-checked='true'] {
+  border-color: var(--gold);
+  color: var(--gold-dark);
 }
 
 .a-input {

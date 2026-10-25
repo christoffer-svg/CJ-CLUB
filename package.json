@@ -14,7 +14,8 @@
     "deploy:rules": "tsx scripts/deploy-rules.ts",
     "build:emulator": "tsc -b && vite build --mode emulator",
     "dev:emulator": "vite --mode emulator",
-    "test:rules": "node tests/firestore-rules.mjs"
+    "test:rules": "node tests/firestore-rules.mjs",
+    "test:unit": "tsx tests/services.test.ts"
   },
   "dependencies": {
     "firebase": "^13.1.0",

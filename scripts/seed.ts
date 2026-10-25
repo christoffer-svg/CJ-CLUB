@@ -15,6 +15,7 @@ import { initializeApp } from 'firebase-admin/app'
 import { getAuth } from 'firebase-admin/auth'
 import { getFirestore, Timestamp } from 'firebase-admin/firestore'
 import { randomBytes } from 'node:crypto'
+import { builtinCategoryList } from '../src/lib/services'
 import { adminCredential } from './credentials'
 
 const args = Object.fromEntries(
@@ -340,7 +341,15 @@ async function main() {
     if (only && !only.includes(col)) return
     Object.entries(data).forEach(([id, d]) => batch.set(db.collection(col).doc(id), d))
   }
-  put('partners', partners)
+  put(
+    'partners',
+    Object.fromEntries(Object.entries(partners).map(([id, partner]) => [id, { ...partner, categories: [partner.category] }])),
+  )
+  // Los seis servicios de siempre. Añadir otro se hace en el panel, sin tocar este archivo.
+  put(
+    'partnerCategories',
+    Object.fromEntries(builtinCategoryList.map(({ id, ...data }) => [id, data])),
+  )
   put('clients', clients)
   put('generalContacts', generalContacts)
   put('places', places)

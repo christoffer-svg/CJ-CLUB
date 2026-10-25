@@ -11,7 +11,7 @@ export function useEditor<T extends object>(collectionName: string, empty: T) {
   return {
     editing,
     busy,
-    openNew: () => setEditing({ id: null, draft: { ...empty } }),
+    openNew: (partial?: Partial<T>) => setEditing({ id: null, draft: { ...empty, ...partial } }),
     openEdit: (id: string, item: T) => setEditing({ id, draft: { ...empty, ...item } }),
     close: () => setEditing(null),
     set: <K extends keyof T>(key: K, value: T[K]) =>

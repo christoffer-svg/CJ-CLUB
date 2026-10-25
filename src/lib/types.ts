@@ -22,7 +22,12 @@ export type UserProfile = {
   favorites?: string[]
 }
 
-export type ContactType = 'lawyer' | 'gestoria' | 'pool' | 'maintenance' | 'garden' | 'communityAdmin'
+/**
+ * Id de un servicio de colaborador.
+ * Los seis de siempre (lawyer, gestoria, pool, maintenance, garden, communityAdmin)
+ * siguen valiendo. Los nuevos los crea CJ en el panel y viven en partnerCategories.
+ */
+export type ContactType = string
 
 /** clients/{clientId} */
 export type Client = {
@@ -33,7 +38,8 @@ export type Client = {
   agentName: string
   agentPhone: string
   agentWhatsapp: string
-  contacts: Partial<Record<ContactType, string>>
+  /** Un colaborador por servicio. La clave es el id del servicio. */
+  contacts: Partial<Record<string, string>>
   /** ubicación de la vivienda, para calcular distancias */
   location?: GeoPoint
 }
@@ -41,11 +47,32 @@ export type Client = {
 /** partners/{partnerId} */
 export type Partner = {
   name: string
+  /**
+   * Primer servicio. Las fichas antiguas solo tienen este campo.
+   * Se sigue guardando: si el colaborador tiene varios, es uno de ellos.
+   */
   category: ContactType
+  /** Todos los servicios. Si falta o está vacío, se usa `category`. */
+  categories?: ContactType[]
   phone: string
   description_es: string
   description_en: string
   /** false = desactivado por CJ (no se muestra a los clientes) */
+  active?: boolean
+}
+
+/** partnerCategories/{id}: oficios que puede ofrecer un colaborador. Los crea CJ, sin cambiar la app. */
+export type PartnerCategory = {
+  name_es: string
+  name_en?: string
+  name_nl?: string
+  name_sv?: string
+  name_de?: string
+  name_fr?: string
+  /** Clave de icono de línea. Vacío o desconocido: icono por defecto. */
+  icon?: string
+  order: number
+  /** false = oculto: no se ofrece al elegir, pero no se borra */
   active?: boolean
 }
 

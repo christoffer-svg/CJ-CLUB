@@ -16,7 +16,7 @@ import {
 import { httpsCallable } from 'firebase/functions'
 import { useEffect, useState } from 'react'
 import { auth, db, functions } from './firebase'
-import type { ContactType, Language } from './types'
+import type { Language } from './types'
 
 export type WithId<T> = T & { id: string }
 
@@ -144,16 +144,6 @@ export const languageOptions: [Language, string][] = [
   ['de', 'Alemán'],
   ['fr', 'Francés'],
 ]
-
-export const contactTypeLabels: [ContactType, string][] = [
-  ['lawyer', 'Abogado'],
-  ['gestoria', 'Gestoría'],
-  ['pool', 'Piscina'],
-  ['maintenance', 'Mantenimiento'],
-  ['garden', 'Jardinería'],
-  ['communityAdmin', 'Administrador de fincas'],
-]
-export const contactTypeLabel = Object.fromEntries(contactTypeLabels) as Record<ContactType, string>
 
 /** Fecha de un Timestamp en formato de campo de fecha: "2026-04-17" */
 export function toDateInput(ts: Timestamp | undefined) {
