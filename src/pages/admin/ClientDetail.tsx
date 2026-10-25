@@ -9,7 +9,6 @@ import LocationPicker from '../../components/admin/LocationPicker'
 import { Field, FieldGroup, Input, Select } from '../../components/admin/Fields'
 import { useToast } from '../../components/admin/Toast'
 import {
-  contactTypeLabels,
   deleteClient,
   fromDateInput,
   languageOptions,
@@ -19,7 +18,9 @@ import {
   useLiveCollection,
   useLiveDoc,
 } from '../../lib/admin'
-import type { Client, ContactType, Language, Partner, UserProfile } from '../../lib/types'
+import { usePartnerCategories } from '../../lib/data'
+import { partnerOffers } from '../../lib/services'
+import type { Client, Language, Partner, UserProfile } from '../../lib/types'
 
 export default function ClientDetail() {
   const { id = '' } = useParams()
@@ -32,6 +33,7 @@ export default function ClientDetail() {
   const client = useLiveDoc<Client>(`clients/${id}`)
   const users = useLiveCollection<UserProfile>('users')
   const partners = useLiveCollection<Partner>('partners')
+  const categories = usePartnerCategories()
   const c = client.data
   const user = users.data.find((u) => u.clientId === id)
 
@@ -145,33 +147,33 @@ export default function ClientDetail() {
 
       <section className="card a-form">
         <h2 className="a-section-title">Contactos personales</h2>
-        {contactTypeLabels.map(([type, label]) => {
-          const current = c.contacts?.[type] ?? ''
-          const options = partners.data
-            .filter((p) => p.category === type && (p.active !== false || p.id === current))
-            .sort((a, b) => a.name.localeCompare(b.name))
-          return (
-            <Field key={type} label={label}>
-              <Select
-                value={current}
-                onChange={(e) =>
-                  saveClient({ [`contacts.${type}`]: e.target.value ? e.target.value : deleteField() } as Record<
-                    `contacts.${ContactType}`,
-                    unknown
-                  >)
-                }
-              >
-                <option value="">Sin asignar</option>
-                {options.map((p) => (
-                  <option key={p.id} value={p.id}>
-                    {p.name}
-                    {p.active === false ? ' (desactivado)' : ''}
-                  </option>
-                ))}
-              </Select>
-            </Field>
-          )
-        })}
+        <p className="card__text">
+          Un colaborador con varios servicios aparece en cada uno de ellos. Puede asignarle el mismo a más de un servicio.
+        </p>
+        {categories.data
+          .filter((cat) => cat.active || Boolean(c.contacts?.[cat.id]))
+          .map((cat) => {
+            const current = c.contacts?.[cat.id] ?? ''
+            const options = partners.data
+              .filter((p) => (partnerOffers(p, cat.id) || p.id === current) && (p.active !== false || p.id === current))
+              .sort((a, b) => a.name.localeCompare(b.name, 'es'))
+            return (
+              <Field key={cat.id} label={cat.active ? cat.name_es : `${cat.name_es} (oculto)`}>
+                <Select
+                  value={current}
+                  onChange={(e) => saveClient({ [`contacts.${cat.id}`]: e.target.value ? e.target.value : deleteField() })}
+                >
+                  <option value="">Sin asignar</option>
+                  {options.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.name}
+                      {p.active === false ? ' (desactivado)' : ''}
+                    </option>
+                  ))}
+                </Select>
+              </Field>
+            )
+          })}
       </section>
 
       <section className="card a-form a-danger">

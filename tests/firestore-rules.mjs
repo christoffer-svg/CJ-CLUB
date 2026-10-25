@@ -40,7 +40,7 @@ const J = j.idToken, L = l.idToken, AD = a.idToken, X = x.idToken, B = b.idToken
 const dealUse = (cid, did) => ({ fields: { clientId: str(cid), dealId: str(did), date: { timestampValue: new Date().toISOString() } } })
 
 // Sin sesión / sin invitación: nada
-for (const p of ['users/' + j.localId, 'clients/jansen', 'partners/lawyer-ruiz', 'generalContacts/emergencias', 'places/golf-pinar', 'deals/deal-golf', 'settings/tipOfTheWeek', 'dealUses', 'reservationClicks', 'reservationConfirms', 'reservationReports/rest-la-terraza_2026-10']) {
+for (const p of ['users/' + j.localId, 'clients/jansen', 'partners/lawyer-ruiz', 'partnerCategories/lawyer', 'generalContacts/emergencias', 'places/golf-pinar', 'deals/deal-golf', 'settings/tipOfTheWeek', 'dealUses', 'reservationClicks', 'reservationConfirms', 'reservationReports/rest-la-terraza_2026-10']) {
   ok(await req(null, p), 403, 'anónimo lee ' + p)
   ok(await req(X, p), 403, 'no invitado lee ' + p)
 }
@@ -89,6 +89,19 @@ ok(await runQuery(J, { from: [{ collectionId: 'partners' }] }), 403, 'cliente li
 ok(await runQuery(J, { from: [{ collectionId: 'partners' }], where: { fieldFilter: { field: { fieldPath: 'category' }, op: 'EQUAL', value: str('lawyer') } } }), 403, 'cliente busca colaboradores por categoría')
 ok(await patch(J, 'partners/lawyer-ruiz', { phone: str('1') }), 403, 'cliente modifica colaborador')
 ok(await runQuery(AD, { from: [{ collectionId: 'partners' }] }), 200, 'admin lista colaboradores')
+
+// partnerCategories: servicios de los colaboradores
+const limpieza = { fields: { name_es: str('Limpieza'), name_en: str('Cleaning'), icon: str('default'), order: { integerValue: '8' }, active: { booleanValue: true } } }
+ok(await req(J, 'partnerCategories/limpieza', 'PATCH', limpieza), 403, 'cliente crea un servicio')
+ok(await req(X, 'partnerCategories/limpieza'), 403, 'no invitado lee un servicio')
+ok(await req(AD, 'partnerCategories/limpieza', 'PATCH', limpieza), 200, 'admin crea un servicio')
+ok(await req(J, 'partnerCategories/limpieza'), 200, 'cliente lee un servicio')
+ok(await runQuery(J, { from: [{ collectionId: 'partnerCategories' }] }), 200, 'cliente lista servicios')
+ok(await runQuery(X, { from: [{ collectionId: 'partnerCategories' }] }), 403, 'no invitado lista servicios')
+ok(await patch(J, 'partnerCategories/limpieza', { name_es: str('Otro') }), 403, 'cliente modifica un servicio')
+ok(await req(J, 'partnerCategories/limpieza', 'DELETE'), 403, 'cliente borra un servicio')
+ok(await patch(AD, 'partnerCategories/limpieza', { name_es: str('Limpieza del hogar') }), 200, 'admin renombra un servicio')
+ok(await req(AD, 'partnerCategories/limpieza', 'DELETE'), 200, 'admin borra un servicio')
 
 // contenido común
 for (const [col, id] of [['generalContacts', 'emergencias'], ['places', 'golf-pinar'], ['deals', 'deal-golf'], ['settings', 'tipOfTheWeek']]) {
@@ -225,6 +238,9 @@ ok(await runQuery(B, { from: [{ collectionId: 'reservationClicks' }], where: { f
 ok(await runQuery(B, { from: [{ collectionId: 'reservationConfirms' }] }), 403, 'negocio lee confirmaciones de reserva')
 ok(await req(B, 'reservationReports/rest-la-terraza_2026-10'), 403, 'negocio lee el número anotado por CJ')
 ok(await req(B, 'partners/lawyer-ruiz'), 403, 'negocio lee colaboradores')
+ok(await req(B, 'partnerCategories/lawyer'), 403, 'negocio lee servicios de colaboradores')
+ok(await runQuery(B, { from: [{ collectionId: 'partnerCategories' }] }), 403, 'negocio lista servicios de colaboradores')
+ok(await req(B, 'partnerCategories/limpieza', 'PATCH', { fields: { name_es: str('X') } }), 403, 'negocio crea un servicio')
 ok(await req(B, 'generalContacts/emergencias'), 403, 'negocio lee contactos generales')
 ok(await req(B, 'settings/tipOfTheWeek'), 403, 'negocio lee ajustes')
 ok(await req(B, 'places/rest-la-terraza'), 200, 'negocio lee su lugar')

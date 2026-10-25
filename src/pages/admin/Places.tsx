@@ -64,7 +64,7 @@ export default function Places() {
   return (
     <>
       <PageTitle eyebrow="Panel" title="Lugares">
-        <button className="btn a-btn" onClick={editor.openNew}>
+        <button className="btn a-btn" onClick={() => editor.openNew()}>
           Añadir lugar
         </button>
       </PageTitle>

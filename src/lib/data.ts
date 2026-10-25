@@ -1,7 +1,8 @@
-import { addDoc, collection, doc, getDoc, getDocs, orderBy, query, serverTimestamp, where } from 'firebase/firestore'
+import { addDoc, collection, doc, getDoc, getDocs, onSnapshot, orderBy, query, serverTimestamp, where } from 'firebase/firestore'
 import { useEffect, useState } from 'react'
 import { db } from './firebase'
-import type { Client, ContactType, Deal, GeneralContact, Partner, Place } from './types'
+import { mergeCategories, PARTNER_CATEGORIES, type MergedCategory } from './services'
+import type { Client, Deal, GeneralContact, Partner, PartnerCategory, Place } from './types'
 
 type Result<T> = { loading: boolean; data: T | null; error: boolean }
 
@@ -48,22 +49,30 @@ export function useActiveDealsCount() {
   return count
 }
 
-export type AssignedPartner = Partner & { id: string; type: ContactType }
+export type AssignedPartner = Partner & { id: string; types: string[] }
 
-/** Colaboradores asignados al cliente, en el orden de los tipos indicado */
-export function useAssignedPartners(client: Client | null, types: ContactType[]) {
+/**
+ * Colaboradores asignados al cliente, uno por persona.
+ * Si el mismo colaborador está en varios servicios, sale una sola vez, con todos ellos.
+ */
+export function useAssignedPartners(client: Client | null) {
   const [state, setState] = useState<{ loading: boolean; data: AssignedPartner[] }>({ loading: true, data: [] })
   useEffect(() => {
     if (!client) return
     let cancelled = false
-    const wanted = types.filter((t) => client.contacts?.[t])
+    const byId = new Map<string, string[]>()
+    for (const [type, id] of Object.entries(client.contacts ?? {})) {
+      if (typeof id !== 'string' || !id) continue
+      const types = byId.get(id)
+      if (types) types.push(type)
+      else byId.set(id, [type])
+    }
     Promise.all(
-      wanted.map(async (type) => {
-        const id = client.contacts[type]!
+      [...byId].map(async ([id, types]) => {
         try {
           const snap = await getDoc(doc(db, 'partners', id))
           // Los colaboradores desactivados por CJ no se muestran
-          return snap.exists() && snap.get('active') !== false ? { ...(snap.data() as Partner), id, type } : null
+          return snap.exists() && snap.get('active') !== false ? { ...(snap.data() as Partner), id, types } : null
         } catch {
           return null
         }
@@ -72,10 +81,23 @@ export function useAssignedPartners(client: Client | null, types: ContactType[])
     return () => {
       cancelled = true
     }
-    // types es una constante del módulo que lo llama
-    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [client])
   return state
+}
+
+/** Servicios de colaboradores: los de Firestore y, si faltan, los seis de siempre. */
+export function usePartnerCategories(): { loading: boolean; data: MergedCategory[] } {
+  const [stored, setStored] = useState<(PartnerCategory & { id: string })[] | null>(null)
+  useEffect(
+    () =>
+      onSnapshot(
+        collection(db, PARTNER_CATEGORIES),
+        (snap) => setStored(snap.docs.map((d) => ({ ...(d.data() as PartnerCategory), id: d.id }))),
+        () => setStored([]),
+      ),
+    [],
+  )
+  return { loading: stored === null, data: mergeCategories(stored ?? []) }
 }
 
 /** Contactos generales ordenados por "order" */
