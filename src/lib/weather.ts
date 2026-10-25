@@ -15,11 +15,11 @@ import type { GeoPoint } from './types'
  * la página oficial de AEMET para comprobarlo.
  */
 
-/** Jávea: ahí se concentran las viviendas y los lugares de ejemplo del club. */
+/** Orihuela Costa (Alicante): centro de la costa, entre La Zenia y Cabo Roig. */
 export const DEFAULT_WEATHER_PLACE: GeoPoint & { name: string } = {
-  name: 'Jávea',
-  lat: 38.78333,
-  lng: 0.16667,
+  name: 'Orihuela Costa',
+  lat: 37.925,
+  lng: -0.73,
 }
 
 const FORECAST_URL = 'https://api.open-meteo.com/v1/forecast'
@@ -89,6 +89,38 @@ export function conditionKey(code: number): TranslationKey {
 export function officialWarningsUrl(lang: string) {
   const prefix = lang === 'es' || lang === 'fr' ? lang : 'en'
   return `https://www.aemet.es/${prefix}/eltiempo/prediccion/avisos`
+}
+
+const PLACE_URL = 'https://nominatim.openstreetmap.org/reverse'
+const placeNames = new Map<string, string>()
+
+/** Nombre corto de un sitio a partir de la dirección de OpenStreetMap. */
+export function placeLabel(address: Record<string, unknown> | null | undefined): string | null {
+  if (!address) return null
+  const text = (key: string) => (typeof address[key] === 'string' ? address[key].trim() : '')
+  const suburb = text('suburb') || text('neighbourhood') || text('quarter') || text('hamlet')
+  const city = text('city') || text('town') || text('village') || text('municipality')
+  const local = suburb.replace(/^urbanizaci[oó]n\s+/i, '').replace(/\s+(?:ii|iii|iv)$/i, '').trim()
+  return local || city || null
+}
+
+/** Pueblo o barrio de unas coordenadas. Vacío si el servicio no responde. */
+export async function lookupPlaceName(point: GeoPoint, lang: string, signal?: AbortSignal): Promise<string | null> {
+  const key = `${lang}:${point.lat.toFixed(2)},${point.lng.toFixed(2)}`
+  const saved = placeNames.get(key)
+  if (saved) return saved
+  const url = new URL(PLACE_URL)
+  url.searchParams.set('lat', String(point.lat))
+  url.searchParams.set('lon', String(point.lng))
+  url.searchParams.set('format', 'jsonv2')
+  url.searchParams.set('zoom', '13')
+  url.searchParams.set('accept-language', lang)
+  const res = await fetch(url, { signal, headers: { 'Accept-Language': lang } })
+  if (!res.ok) return null
+  const json = (await res.json()) as { address?: Record<string, unknown> }
+  const name = placeLabel(json.address)
+  if (name) placeNames.set(key, name)
+  return name
 }
 
 function num(value: unknown): number | null {
