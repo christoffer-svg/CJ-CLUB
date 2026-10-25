@@ -1804,3 +1804,366 @@ button {
   letter-spacing: 0.02em;
   text-transform: none;
 }
+
+/* Página secundaria: enlace "Volver" */
+.header__back {
+  display: inline-block;
+  margin-top: 18px;
+  color: var(--gold);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+}
+
+/* Aviso de mensaje nuevo */
+.dot {
+  flex: none;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 0 0 2px var(--card);
+}
+
+.round-btn--badge {
+  position: relative;
+}
+
+.round-btn--badge .dot {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+}
+
+/* Inicio: su equipo CJ */
+.team {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.team__row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 0;
+  text-decoration: none;
+  color: inherit;
+}
+
+.team__row + .team__row {
+  border-top: 1px solid var(--card-border);
+}
+
+.team__new {
+  color: var(--gold-dark);
+  font-weight: 600;
+}
+
+/* Chat */
+.chat {
+  gap: 14px;
+}
+
+.chat__note {
+  font-size: 12px;
+  color: var(--text-2);
+  text-align: center;
+}
+
+.chat__note--ok {
+  padding: 10px 12px;
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  background: var(--card);
+  color: var(--text);
+}
+
+.chat__list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 120px;
+}
+
+.bubble {
+  align-self: flex-start;
+  max-width: 82%;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 14px;
+  border: 1px solid var(--card-border);
+  border-radius: 14px 14px 14px 4px;
+  background: var(--card);
+}
+
+.bubble--mine {
+  align-self: flex-end;
+  border-color: var(--espresso);
+  border-radius: 14px 14px 4px 14px;
+  background: var(--espresso);
+  color: var(--white);
+}
+
+.bubble__author {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold-dark);
+}
+
+.bubble--mine .bubble__author {
+  color: var(--gold);
+}
+
+.bubble__text {
+  font-size: 15px;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.bubble__time {
+  align-self: flex-end;
+  font-size: 10px;
+  color: var(--text-2);
+}
+
+.bubble--mine .bubble__time {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.composer {
+  position: sticky;
+  bottom: calc(var(--nav-height) + env(safe-area-inset-bottom) + 8px);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  background: var(--card);
+}
+
+.composer__input {
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  background: var(--white);
+  color: var(--text);
+  font: inherit;
+  font-size: 15px;
+  resize: vertical;
+  outline: none;
+}
+
+.composer__input:focus {
+  border-color: var(--gold);
+}
+
+.composer .composer__input {
+  width: auto;
+  max-height: 160px;
+}
+
+.btn.composer__send {
+  width: auto;
+  height: 44px;
+  padding: 0 18px;
+}
+
+.composer__error {
+  flex-basis: 100%;
+  font-size: 12px;
+  color: var(--emergency);
+}
+
+/* Peticiones */
+.pills--wrap {
+  flex-wrap: wrap;
+  overflow: visible;
+  margin: 0;
+  padding: 0;
+}
+
+.request-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.request-form__types {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.request-form__field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.request-form__actions {
+  display: flex;
+  gap: 8px;
+}
+
+.request {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.request__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.request__text {
+  font-size: 15px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.request__cancel {
+  align-self: flex-start;
+  padding-left: 0;
+  font-size: 12px;
+}
+
+.status {
+  flex: none;
+  padding: 3px 10px;
+  border-radius: 12px;
+  border: 1px solid var(--card-border);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-2);
+}
+
+.status--new {
+  border-color: var(--gold);
+  color: var(--gold-dark);
+}
+
+.status--in_progress {
+  background: var(--espresso);
+  border-color: var(--espresso);
+  color: var(--white);
+}
+
+.status--done {
+  background: var(--black);
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.status--cancelled {
+  text-decoration: line-through;
+}
+
+/* Panel: mensajes y peticiones */
+.a-badge-count {
+  display: inline-grid;
+  place-items: center;
+  min-width: 18px;
+  height: 18px;
+  margin-left: 8px;
+  padding: 0 5px;
+  border-radius: 9px;
+  background: var(--gold);
+  color: var(--black);
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0;
+  vertical-align: middle;
+}
+
+.a-row__spacer {
+  flex: none;
+  width: 9px;
+}
+
+.a-row--unread .card__title {
+  font-weight: 600;
+}
+
+.a-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.a-thread {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.a-thread .chat__list {
+  max-height: 60vh;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.a-composer {
+  position: static;
+}
+
+.a-requests {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.a-request {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.a-request--new {
+  border-left: 2px solid var(--gold);
+}
+
+.a-request__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.a-request__head .a-input {
+  width: auto;
+  min-width: 150px;
+}
+
+.a-request__family {
+  text-decoration: none;
+}
+
+.a-request__chat {
+  align-self: flex-start;
+  padding-left: 0;
+  text-decoration: none;
+}
+
+/* al bajar al último mensaje, que quede por encima del cuadro de escribir y del menú */
+.chat__end {
+  scroll-margin-bottom: calc(var(--nav-height) + env(safe-area-inset-bottom) + 140px);
+}

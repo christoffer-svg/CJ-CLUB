@@ -104,7 +104,8 @@ export const createClient = onCall(async (request) => {
 
 /**
  * Baja de un cliente (derecho de supresión): borra sus cuentas de acceso, sus perfiles,
- * su ficha y sus registros de uso de descuentos. No se puede deshacer.
+ * su ficha, su conversación con CJ, sus peticiones y sus registros de uso de descuentos.
+ * No se puede deshacer.
  */
 export const deleteClient = onCall(async (request) => {
   await requireAdmin(request.auth?.uid)
@@ -128,12 +129,15 @@ export const deleteClient = onCall(async (request) => {
 
   // Borrado en lotes (máx. 500 operaciones por lote)
   const uses = await db.collection('dealUses').where('clientId', '==', clientId).get()
-  const refs = [...users.docs.map((d) => d.ref), ...uses.docs.map((d) => d.ref), clientRef]
+  const requests = await db.collection('requests').where('clientId', '==', clientId).get()
+  // La conversación y todos sus mensajes
+  await db.recursiveDelete(db.doc(`conversations/${clientId}`))
+  const refs = [...users.docs.map((d) => d.ref), ...uses.docs.map((d) => d.ref), ...requests.docs.map((d) => d.ref), clientRef]
   for (let i = 0; i < refs.length; i += 450) {
     const batch = db.batch()
     refs.slice(i, i + 450).forEach((r) => batch.delete(r))
     await batch.commit()
   }
 
-  return { accounts: users.size, dealUses: uses.size }
+  return { accounts: users.size, dealUses: uses.size, requests: requests.size }
 })

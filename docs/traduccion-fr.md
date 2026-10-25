@@ -105,3 +105,48 @@ Vérifiez que chaque texte est naturel et correct en français. Notez vos correc
 | `benefits.qr` | Código QR: {code} | QR code: {code} | QR code : {code} | |
 | `benefits.close` | Cerrar | Close | Fermer | |
 | `benefits.free` | Gratis | Free | Gratuit | |
+| `common.back` | Volver | Back | Retour | |
+| `team.eyebrow` | Su equipo CJ | Your CJ team | Votre équipe CJ | |
+| `team.messages` | Mensajes | Messages | Messages | |
+| `team.messagesText` | Escriba a su equipo de CJ | Write to your CJ team | Écrivez à votre équipe CJ | |
+| `team.unread` | Mensaje nuevo | New message | Nouveau message | |
+| `team.requests` | Peticiones | Requests | Demandes | |
+| `team.requestsText` | Presupuestos, llaves, reparaciones… | Quotes, keys, repairs… | Devis, clés, réparations… | |
+| `team.openRequests.one` | {n} petición abierta | {n} open request | {n} demande en cours | |
+| `team.openRequests.other` | {n} peticiones abiertas | {n} open requests | {n} demandes en cours | |
+| `home.chat` | Escribir a CJ | Message CJ | Écrire à CJ | |
+| `chat.eyebrow` | Mensajes | Messages | Messages | |
+| `chat.title` | Hable con CJ | Talk to CJ | Parlez avec CJ | |
+| `chat.subtitle` | Le respondemos lo antes posible, en horario de oficina. | We reply as soon as possible during office hours. | Nous répondons dès que possible pendant les heures de bureau. | |
+| `chat.empty` | Escríbanos lo que necesite. | Write to us about anything you need. | Écrivez-nous ce dont vous avez besoin. | |
+| `chat.emergency` | Para una urgencia, llame al 112. | In an emergency, call 112. | En cas d'urgence, appelez le 112. | |
+| `chat.placeholder` | Escriba un mensaje | Write a message | Écrire un message | |
+| `chat.send` | Enviar | Send | Envoyer | |
+| `chat.sending` | Enviando… | Sending… | Envoi… | |
+| `chat.error` | No se pudo enviar. Compruebe su conexión e inténtelo de nuevo. | Couldn't send. Check your connection and try again. | L'envoi a échoué. Vérifiez votre connexion et réessayez. | |
+| `chat.you` | Usted | You | Vous | |
+| `requests.eyebrow` | Peticiones | Requests | Demandes | |
+| `requests.title` | Pida algo a CJ | Ask CJ for something | Demandez quelque chose à CJ | |
+| `requests.subtitle` | Aquí verá cómo avanza cada petición. | Here you can follow each request. | Suivez ici l'avancement de chaque demande. | |
+| `requests.new` | Nueva petición | New request | Nouvelle demande | |
+| `requests.type` | Tipo de petición | Type of request | Type de demande | |
+| `requests.type.repair` | Reparación | Repair | Réparation | |
+| `requests.type.budget` | Presupuesto | Quote | Devis | |
+| `requests.type.keys` | Llaves | Keys | Clés | |
+| `requests.type.cleaning` | Limpieza | Cleaning | Ménage | |
+| `requests.type.other` | Otro | Other | Autre | |
+| `requests.description` | Cuéntenos qué necesita | Tell us what you need | Dites-nous ce dont vous avez besoin | |
+| `requests.date` | Fecha preferida (opcional) | Preferred date (optional) | Date souhaitée (facultatif) | |
+| `requests.submit` | Enviar petición | Send request | Envoyer la demande | |
+| `requests.cancelForm` | Cancelar | Cancel | Annuler | |
+| `requests.sent` | Petición enviada. Su equipo de CJ la revisará pronto. | Request sent. Your CJ team will review it soon. | Demande envoyée. Votre équipe CJ l'examinera bientôt. | |
+| `requests.empty` | Aún no ha hecho ninguna petición. | You haven't made any requests yet. | Vous n'avez encore fait aucune demande. | |
+| `requests.status.new` | Recibida | Received | Reçue | |
+| `requests.status.in_progress` | En curso | In progress | En cours | |
+| `requests.status.done` | Hecha | Done | Terminée | |
+| `requests.status.cancelled` | Cancelada | Cancelled | Annulée | |
+| `requests.cancel` | Cancelar petición | Cancel request | Annuler la demande | |
+| `requests.preferred` | Fecha preferida: {date} | Preferred date: {date} | Date souhaitée : {date} | |
+| `requests.cjNote` | Nota de CJ | Note from CJ | Note de CJ | |
+| `requests.error` | No se pudo enviar. Inténtelo de nuevo. | Couldn't send. Please try again. | L'envoi a échoué. Veuillez réessayer. | |
+| `preview.readOnly` | Vista previa: solo lectura. | Preview: read only. | Aperçu : lecture seule. | |

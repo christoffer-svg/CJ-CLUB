@@ -105,3 +105,48 @@ Controleer of elke tekst natuurlijk en correct Nederlands is. Noteer correcties 
 | `benefits.qr` | Código QR: {code} | QR code: {code} | QR-code: {code} | |
 | `benefits.close` | Cerrar | Close | Sluiten | |
 | `benefits.free` | Gratis | Free | Gratis | |
+| `common.back` | Volver | Back | Terug | |
+| `team.eyebrow` | Su equipo CJ | Your CJ team | Uw CJ-team | |
+| `team.messages` | Mensajes | Messages | Berichten | |
+| `team.messagesText` | Escriba a su equipo de CJ | Write to your CJ team | Schrijf uw CJ-team | |
+| `team.unread` | Mensaje nuevo | New message | Nieuw bericht | |
+| `team.requests` | Peticiones | Requests | Verzoeken | |
+| `team.requestsText` | Presupuestos, llaves, reparaciones… | Quotes, keys, repairs… | Offertes, sleutels, reparaties… | |
+| `team.openRequests.one` | {n} petición abierta | {n} open request | {n} open verzoek | |
+| `team.openRequests.other` | {n} peticiones abiertas | {n} open requests | {n} open verzoeken | |
+| `home.chat` | Escribir a CJ | Message CJ | CJ een bericht sturen | |
+| `chat.eyebrow` | Mensajes | Messages | Berichten | |
+| `chat.title` | Hable con CJ | Talk to CJ | Praat met CJ | |
+| `chat.subtitle` | Le respondemos lo antes posible, en horario de oficina. | We reply as soon as possible during office hours. | We antwoorden zo snel mogelijk tijdens kantooruren. | |
+| `chat.empty` | Escríbanos lo que necesite. | Write to us about anything you need. | Schrijf ons waarmee we u kunnen helpen. | |
+| `chat.emergency` | Para una urgencia, llame al 112. | In an emergency, call 112. | Bel bij een noodgeval 112. | |
+| `chat.placeholder` | Escriba un mensaje | Write a message | Schrijf een bericht | |
+| `chat.send` | Enviar | Send | Versturen | |
+| `chat.sending` | Enviando… | Sending… | Versturen… | |
+| `chat.error` | No se pudo enviar. Compruebe su conexión e inténtelo de nuevo. | Couldn't send. Check your connection and try again. | Versturen is niet gelukt. Controleer uw verbinding en probeer het opnieuw. | |
+| `chat.you` | Usted | You | U | |
+| `requests.eyebrow` | Peticiones | Requests | Verzoeken | |
+| `requests.title` | Pida algo a CJ | Ask CJ for something | Vraag CJ iets | |
+| `requests.subtitle` | Aquí verá cómo avanza cada petición. | Here you can follow each request. | Hier ziet u hoe elk verzoek verloopt. | |
+| `requests.new` | Nueva petición | New request | Nieuw verzoek | |
+| `requests.type` | Tipo de petición | Type of request | Soort verzoek | |
+| `requests.type.repair` | Reparación | Repair | Reparatie | |
+| `requests.type.budget` | Presupuesto | Quote | Offerte | |
+| `requests.type.keys` | Llaves | Keys | Sleutels | |
+| `requests.type.cleaning` | Limpieza | Cleaning | Schoonmaak | |
+| `requests.type.other` | Otro | Other | Overig | |
+| `requests.description` | Cuéntenos qué necesita | Tell us what you need | Vertel ons wat u nodig heeft | |
+| `requests.date` | Fecha preferida (opcional) | Preferred date (optional) | Gewenste datum (optioneel) | |
+| `requests.submit` | Enviar petición | Send request | Verzoek versturen | |
+| `requests.cancelForm` | Cancelar | Cancel | Annuleren | |
+| `requests.sent` | Petición enviada. Su equipo de CJ la revisará pronto. | Request sent. Your CJ team will review it soon. | Verzoek verstuurd. Uw CJ-team bekijkt het snel. | |
+| `requests.empty` | Aún no ha hecho ninguna petición. | You haven't made any requests yet. | U heeft nog geen verzoeken gedaan. | |
+| `requests.status.new` | Recibida | Received | Ontvangen | |
+| `requests.status.in_progress` | En curso | In progress | In behandeling | |
+| `requests.status.done` | Hecha | Done | Afgerond | |
+| `requests.status.cancelled` | Cancelada | Cancelled | Geannuleerd | |
+| `requests.cancel` | Cancelar petición | Cancel request | Verzoek annuleren | |
+| `requests.preferred` | Fecha preferida: {date} | Preferred date: {date} | Gewenste datum: {date} | |
+| `requests.cjNote` | Nota de CJ | Note from CJ | Notitie van CJ | |
+| `requests.error` | No se pudo enviar. Inténtelo de nuevo. | Couldn't send. Please try again. | Versturen is niet gelukt. Probeer het opnieuw. | |
+| `preview.readOnly` | Vista previa: solo lectura. | Preview: read only. | Voorbeeld: alleen lezen. | |

@@ -67,6 +67,9 @@ export default function ClientDetail() {
   return (
     <>
       <PageTitle eyebrow={`Cliente · ${c.memberNumber}`} title={c.familyName}>
+        <Link to={`/admin/mensajes/${id}`} className="btn btn--ghost a-btn">
+          Mensajes
+        </Link>
         <Link to={`/admin/clientes/${id}/vista`} className="btn btn--ghost a-btn">
           Ver como cliente
         </Link>

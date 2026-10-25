@@ -9,6 +9,8 @@ import Home from './pages/Home'
 import Guide from './pages/Guide'
 import Discover from './pages/Discover'
 import Benefits from './pages/Benefits'
+import Messages from './pages/Messages'
+import Requests from './pages/Requests'
 import AdminHome from './pages/admin/AdminHome'
 import Clients from './pages/admin/Clients'
 import ClientNew from './pages/admin/ClientNew'
@@ -20,6 +22,9 @@ import Places from './pages/admin/Places'
 import Deals from './pages/admin/Deals'
 import Tip from './pages/admin/Tip'
 import Summary from './pages/admin/Summary'
+import AdminMessages from './pages/admin/AdminMessages'
+import AdminThread from './pages/admin/AdminThread'
+import AdminRequests from './pages/admin/AdminRequests'
 
 export default function App() {
   const { pathname } = useLocation()
@@ -44,6 +49,8 @@ export default function App() {
             <Route path="guia" element={<Guide />} />
             <Route path="descubrir" element={<Discover />} />
             <Route path="ventajas" element={<Benefits />} />
+            <Route path="mensajes" element={<Messages />} />
+            <Route path="peticiones" element={<Requests />} />
           </Route>
         </Route>
         <Route element={<RequireRole role="admin" />}>
@@ -52,10 +59,15 @@ export default function App() {
             <Route path="guia" element={<Guide />} />
             <Route path="descubrir" element={<Discover />} />
             <Route path="ventajas" element={<Benefits />} />
+            <Route path="mensajes" element={<Messages />} />
+            <Route path="peticiones" element={<Requests />} />
           </Route>
           <Route path="admin" element={<AdminLayout />}>
             <Route index element={<AdminHome />} />
             <Route path="resumen" element={<Summary />} />
+            <Route path="mensajes" element={<AdminMessages />} />
+            <Route path="mensajes/:clientId" element={<AdminThread />} />
+            <Route path="peticiones" element={<AdminRequests />} />
             <Route path="clientes" element={<Clients />} />
             <Route path="clientes/nuevo" element={<ClientNew />} />
             <Route path="clientes/:id" element={<ClientDetail />} />

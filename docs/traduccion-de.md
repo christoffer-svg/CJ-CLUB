@@ -105,3 +105,48 @@ Bitte prüfen Sie, ob jeder Text natürlich und korrekt auf Deutsch ist. Korrekt
 | `benefits.qr` | Código QR: {code} | QR code: {code} | QR-Code: {code} | |
 | `benefits.close` | Cerrar | Close | Schließen | |
 | `benefits.free` | Gratis | Free | Gratis | |
+| `common.back` | Volver | Back | Zurück | |
+| `team.eyebrow` | Su equipo CJ | Your CJ team | Ihr CJ-Team | |
+| `team.messages` | Mensajes | Messages | Nachrichten | |
+| `team.messagesText` | Escriba a su equipo de CJ | Write to your CJ team | Schreiben Sie Ihrem CJ-Team | |
+| `team.unread` | Mensaje nuevo | New message | Neue Nachricht | |
+| `team.requests` | Peticiones | Requests | Anfragen | |
+| `team.requestsText` | Presupuestos, llaves, reparaciones… | Quotes, keys, repairs… | Angebote, Schlüssel, Reparaturen… | |
+| `team.openRequests.one` | {n} petición abierta | {n} open request | {n} offene Anfrage | |
+| `team.openRequests.other` | {n} peticiones abiertas | {n} open requests | {n} offene Anfragen | |
+| `home.chat` | Escribir a CJ | Message CJ | CJ schreiben | |
+| `chat.eyebrow` | Mensajes | Messages | Nachrichten | |
+| `chat.title` | Hable con CJ | Talk to CJ | Sprechen Sie mit CJ | |
+| `chat.subtitle` | Le respondemos lo antes posible, en horario de oficina. | We reply as soon as possible during office hours. | Wir antworten so schnell wie möglich während der Bürozeiten. | |
+| `chat.empty` | Escríbanos lo que necesite. | Write to us about anything you need. | Schreiben Sie uns, was Sie brauchen. | |
+| `chat.emergency` | Para una urgencia, llame al 112. | In an emergency, call 112. | Im Notfall rufen Sie 112 an. | |
+| `chat.placeholder` | Escriba un mensaje | Write a message | Nachricht schreiben | |
+| `chat.send` | Enviar | Send | Senden | |
+| `chat.sending` | Enviando… | Sending… | Wird gesendet… | |
+| `chat.error` | No se pudo enviar. Compruebe su conexión e inténtelo de nuevo. | Couldn't send. Check your connection and try again. | Senden fehlgeschlagen. Bitte prüfen Sie Ihre Verbindung und versuchen Sie es erneut. | |
+| `chat.you` | Usted | You | Sie | |
+| `requests.eyebrow` | Peticiones | Requests | Anfragen | |
+| `requests.title` | Pida algo a CJ | Ask CJ for something | Bitten Sie CJ um etwas | |
+| `requests.subtitle` | Aquí verá cómo avanza cada petición. | Here you can follow each request. | Hier sehen Sie, wie es mit jeder Anfrage weitergeht. | |
+| `requests.new` | Nueva petición | New request | Neue Anfrage | |
+| `requests.type` | Tipo de petición | Type of request | Art der Anfrage | |
+| `requests.type.repair` | Reparación | Repair | Reparatur | |
+| `requests.type.budget` | Presupuesto | Quote | Kostenvoranschlag | |
+| `requests.type.keys` | Llaves | Keys | Schlüssel | |
+| `requests.type.cleaning` | Limpieza | Cleaning | Reinigung | |
+| `requests.type.other` | Otro | Other | Sonstiges | |
+| `requests.description` | Cuéntenos qué necesita | Tell us what you need | Beschreiben Sie, was Sie brauchen | |
+| `requests.date` | Fecha preferida (opcional) | Preferred date (optional) | Wunschtermin (optional) | |
+| `requests.submit` | Enviar petición | Send request | Anfrage senden | |
+| `requests.cancelForm` | Cancelar | Cancel | Abbrechen | |
+| `requests.sent` | Petición enviada. Su equipo de CJ la revisará pronto. | Request sent. Your CJ team will review it soon. | Anfrage gesendet. Ihr CJ-Team kümmert sich bald darum. | |
+| `requests.empty` | Aún no ha hecho ninguna petición. | You haven't made any requests yet. | Sie haben noch keine Anfragen gestellt. | |
+| `requests.status.new` | Recibida | Received | Eingegangen | |
+| `requests.status.in_progress` | En curso | In progress | In Bearbeitung | |
+| `requests.status.done` | Hecha | Done | Erledigt | |
+| `requests.status.cancelled` | Cancelada | Cancelled | Storniert | |
+| `requests.cancel` | Cancelar petición | Cancel request | Anfrage stornieren | |
+| `requests.preferred` | Fecha preferida: {date} | Preferred date: {date} | Wunschtermin: {date} | |
+| `requests.cjNote` | Nota de CJ | Note from CJ | Hinweis von CJ | |
+| `requests.error` | No se pudo enviar. Inténtelo de nuevo. | Couldn't send. Please try again. | Senden fehlgeschlagen. Bitte versuchen Sie es erneut. | |
+| `preview.readOnly` | Vista previa: solo lectura. | Preview: read only. | Vorschau: nur Lesen. | |

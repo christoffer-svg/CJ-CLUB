@@ -114,6 +114,13 @@ export const ChevronIcon = (p: IconProps) => (
   </Svg>
 )
 
+export const WhatsAppIcon = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M4.5 19.5 5.6 16A7.5 7.5 0 1 1 8.4 18.6z" />
+    <path d="M9.3 9.2c.2 2.5 2.6 5 5.4 5.5l1-1.3-1.7-.9-.8.7a4 4 0 0 1-2.1-2.1l.7-.8-.9-1.7z" />
+  </Svg>
+)
+
 export const ChatIcon = (p: IconProps) => (
   <Svg {...p}>
     <path d="M4.5 19.5 5.6 16A7.5 7.5 0 1 1 8.4 18.6z" />

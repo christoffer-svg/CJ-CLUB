@@ -93,3 +93,46 @@ export type DealUse = {
   clientId: string
   date: Timestamp
 }
+
+/** conversations/{clientId}: una conversación por cliente con el equipo de CJ (resumen para las listas) */
+export type Conversation = {
+  clientId: string
+  familyName: string
+  lastMessageAt: Timestamp
+  lastMessageText: string
+  lastSender: 'client' | 'cj'
+  /** última vez que cada parte abrió la conversación */
+  clientReadAt?: Timestamp
+  cjReadAt?: Timestamp
+}
+
+/** conversations/{clientId}/messages/{id} */
+export type Message = {
+  text: string
+  sender: 'client' | 'cj'
+  authorUid: string
+  authorName: string
+  /** null mientras se envía (hora del servidor) */
+  createdAt: Timestamp | null
+}
+
+export const requestTypes = ['repair', 'budget', 'keys', 'cleaning', 'other'] as const
+export type RequestType = (typeof requestTypes)[number]
+export const requestStatuses = ['new', 'in_progress', 'done', 'cancelled'] as const
+export type RequestStatus = (typeof requestStatuses)[number]
+
+/** requests/{id}: peticiones de los clientes a CJ */
+export type ClientRequest = {
+  clientId: string
+  familyName: string
+  type: RequestType
+  description: string
+  /** fecha preferida "2026-11-03", opcional */
+  preferredDate?: string
+  status: RequestStatus
+  /** comentario de CJ que ve el cliente */
+  cjNote?: string
+  createdByUid: string
+  createdAt: Timestamp | null
+  updatedAt: Timestamp | null
+}

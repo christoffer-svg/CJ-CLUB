@@ -345,6 +345,48 @@ async function main() {
   put('deals', deals)
   put('settings', { tipOfTheWeek })
 
+  // Conversación y petición de ejemplo de la Familia Jansen
+  if (!only || only.includes('conversations')) {
+    const minutes = (n: number) => Timestamp.fromMillis(Date.now() - n * 60_000)
+    batch.set(db.doc('conversations/jansen'), {
+      clientId: 'jansen',
+      familyName: 'Familia Jansen',
+      lastMessageAt: minutes(30),
+      lastMessageText: 'Buenos días. Le confirmo que el técnico de la piscina pasará el martes.',
+      lastSender: 'cj',
+      clientReadAt: minutes(90),
+      cjReadAt: minutes(30),
+    })
+    batch.set(db.doc('conversations/jansen/messages/m1'), {
+      text: 'Hola, la depuradora de la piscina hace un ruido extraño desde ayer. ¿Pueden mandar a alguien?',
+      sender: 'client',
+      authorUid: 'seed',
+      authorName: 'Familia Jansen',
+      createdAt: minutes(90),
+    })
+    batch.set(db.doc('conversations/jansen/messages/m2'), {
+      text: 'Buenos días. Le confirmo que el técnico de la piscina pasará el martes.',
+      sender: 'cj',
+      authorUid: 'seed',
+      authorName: 'Equipo CJ',
+      createdAt: minutes(30),
+    })
+  }
+  if (!only || only.includes('requests')) {
+    batch.set(db.doc('requests/r-jansen-pintura'), {
+      clientId: 'jansen',
+      familyName: 'Familia Jansen',
+      type: 'budget',
+      description: 'Presupuesto para pintar la fachada y la valla del jardín.',
+      preferredDate: '2026-11-15',
+      status: 'in_progress',
+      cjNote: 'Estamos pidiendo dos presupuestos. Se los enviamos esta semana.',
+      createdByUid: 'seed',
+      createdAt: Timestamp.fromDate(new Date('2026-10-20T10:00:00')),
+      updatedAt: Timestamp.fromDate(new Date('2026-10-21T09:00:00')),
+    })
+  }
+
   if (only) {
     await batch.commit()
     console.log(`Guardado: ${only.join(', ')}`)

@@ -1,9 +1,14 @@
 import { NavLink, Outlet } from 'react-router-dom'
 import { useAuth } from '../../auth/AuthProvider'
+import { useLiveCollection } from '../../lib/admin'
+import { isUnread } from '../../lib/messaging'
+import type { ClientRequest, Conversation } from '../../lib/types'
 import { ToastProvider } from './Toast'
 
 export const adminSections = [
   { to: '/admin/resumen', label: 'Resumen del mes', text: 'Clientes, descuentos usados y lugares guardados' },
+  { to: '/admin/mensajes', label: 'Mensajes', text: 'Conversaciones con los clientes' },
+  { to: '/admin/peticiones', label: 'Peticiones', text: 'Presupuestos, llaves, reparaciones y más' },
   { to: '/admin/clientes', label: 'Clientes', text: 'Fichas, contactos asignados e invitaciones' },
   { to: '/admin/colaboradores', label: 'Colaboradores', text: 'Abogados, gestorías, piscinas y más' },
   { to: '/admin/contactos', label: 'Contactos generales', text: 'Urgencias, salud y transporte' },
@@ -14,6 +19,7 @@ export const adminSections = [
 
 export default function AdminLayout() {
   const { profile, logout } = useAuth()
+  const badges = useBadges()
   return (
     <ToastProvider>
       <header className="header a-header">
@@ -34,6 +40,7 @@ export default function AdminLayout() {
           {adminSections.map((s) => (
             <NavLink key={s.to} to={s.to} className="pill a-menu__item">
               {s.label}
+              {badges[s.to] ? <span className="a-badge-count">{badges[s.to]}</span> : null}
             </NavLink>
           ))}
         </nav>
@@ -43,6 +50,17 @@ export default function AdminLayout() {
       </main>
     </ToastProvider>
   )
+}
+
+/** Avisos del menú: conversaciones sin leer y peticiones nuevas */
+// oxlint-disable-next-line react/only-export-components
+export function useBadges(): Record<string, number> {
+  const convs = useLiveCollection<Conversation>('conversations')
+  const requests = useLiveCollection<ClientRequest>('requests')
+  return {
+    '/admin/mensajes': convs.data.filter((c) => isUnread(c, 'cj')).length,
+    '/admin/peticiones': requests.data.filter((r) => r.status === 'new').length,
+  }
 }
 
 export function PageTitle({ title, eyebrow, children }: { title: string; eyebrow?: string; children?: React.ReactNode }) {

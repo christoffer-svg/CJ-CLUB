@@ -105,3 +105,48 @@ Kontrollera att varje text är naturlig och korrekt på svenska. Skriv dina rät
 | `benefits.qr` | Código QR: {code} | QR code: {code} | QR-kod: {code} | |
 | `benefits.close` | Cerrar | Close | Stäng | |
 | `benefits.free` | Gratis | Free | Gratis | |
+| `common.back` | Volver | Back | Tillbaka | |
+| `team.eyebrow` | Su equipo CJ | Your CJ team | Ditt CJ-team | |
+| `team.messages` | Mensajes | Messages | Meddelanden | |
+| `team.messagesText` | Escriba a su equipo de CJ | Write to your CJ team | Skriv till ditt CJ-team | |
+| `team.unread` | Mensaje nuevo | New message | Nytt meddelande | |
+| `team.requests` | Peticiones | Requests | Förfrågningar | |
+| `team.requestsText` | Presupuestos, llaves, reparaciones… | Quotes, keys, repairs… | Offerter, nycklar, reparationer… | |
+| `team.openRequests.one` | {n} petición abierta | {n} open request | {n} öppen förfrågan | |
+| `team.openRequests.other` | {n} peticiones abiertas | {n} open requests | {n} öppna förfrågningar | |
+| `home.chat` | Escribir a CJ | Message CJ | Skriv till CJ | |
+| `chat.eyebrow` | Mensajes | Messages | Meddelanden | |
+| `chat.title` | Hable con CJ | Talk to CJ | Prata med CJ | |
+| `chat.subtitle` | Le respondemos lo antes posible, en horario de oficina. | We reply as soon as possible during office hours. | Vi svarar så snart vi kan under kontorstid. | |
+| `chat.empty` | Escríbanos lo que necesite. | Write to us about anything you need. | Skriv till oss om vad du behöver. | |
+| `chat.emergency` | Para una urgencia, llame al 112. | In an emergency, call 112. | Vid nödläge, ring 112. | |
+| `chat.placeholder` | Escriba un mensaje | Write a message | Skriv ett meddelande | |
+| `chat.send` | Enviar | Send | Skicka | |
+| `chat.sending` | Enviando… | Sending… | Skickar… | |
+| `chat.error` | No se pudo enviar. Compruebe su conexión e inténtelo de nuevo. | Couldn't send. Check your connection and try again. | Det gick inte att skicka. Kontrollera anslutningen och försök igen. | |
+| `chat.you` | Usted | You | Du | |
+| `requests.eyebrow` | Peticiones | Requests | Förfrågningar | |
+| `requests.title` | Pida algo a CJ | Ask CJ for something | Be CJ om något | |
+| `requests.subtitle` | Aquí verá cómo avanza cada petición. | Here you can follow each request. | Här ser du hur varje förfrågan går. | |
+| `requests.new` | Nueva petición | New request | Ny förfrågan | |
+| `requests.type` | Tipo de petición | Type of request | Typ av förfrågan | |
+| `requests.type.repair` | Reparación | Repair | Reparation | |
+| `requests.type.budget` | Presupuesto | Quote | Offert | |
+| `requests.type.keys` | Llaves | Keys | Nycklar | |
+| `requests.type.cleaning` | Limpieza | Cleaning | Städning | |
+| `requests.type.other` | Otro | Other | Annat | |
+| `requests.description` | Cuéntenos qué necesita | Tell us what you need | Berätta vad du behöver | |
+| `requests.date` | Fecha preferida (opcional) | Preferred date (optional) | Önskat datum (valfritt) | |
+| `requests.submit` | Enviar petición | Send request | Skicka förfrågan | |
+| `requests.cancelForm` | Cancelar | Cancel | Avbryt | |
+| `requests.sent` | Petición enviada. Su equipo de CJ la revisará pronto. | Request sent. Your CJ team will review it soon. | Förfrågan skickad. Ditt CJ-team tittar på den snart. | |
+| `requests.empty` | Aún no ha hecho ninguna petición. | You haven't made any requests yet. | Du har inte gjort några förfrågningar än. | |
+| `requests.status.new` | Recibida | Received | Mottagen | |
+| `requests.status.in_progress` | En curso | In progress | Pågår | |
+| `requests.status.done` | Hecha | Done | Klar | |
+| `requests.status.cancelled` | Cancelada | Cancelled | Avbruten | |
+| `requests.cancel` | Cancelar petición | Cancel request | Avbryt förfrågan | |
+| `requests.preferred` | Fecha preferida: {date} | Preferred date: {date} | Önskat datum: {date} | |
+| `requests.cjNote` | Nota de CJ | Note from CJ | Kommentar från CJ | |
+| `requests.error` | No se pudo enviar. Inténtelo de nuevo. | Couldn't send. Please try again. | Det gick inte att skicka. Försök igen. | |
+| `preview.readOnly` | Vista previa: solo lectura. | Preview: read only. | Förhandsvisning: endast läsning. | |
