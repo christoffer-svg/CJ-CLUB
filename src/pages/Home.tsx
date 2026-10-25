@@ -2,11 +2,13 @@ import { Link } from 'react-router-dom'
 import { useAuth } from '../auth/AuthProvider'
 import { useViewer } from '../lib/viewer'
 import Header from '../components/Header'
+import WeatherCard from '../components/WeatherCard'
 import { AlertIcon, ChatIcon, ChevronIcon, CrossIcon, DishIcon, KeyIcon, PhoneIcon, StarIcon, WhatsAppIcon } from '../components/Icons'
 import { useActiveDealsCount, useDoc } from '../lib/data'
 import { isUnread, useClientRequests, useConversation } from '../lib/messaging'
 import { useI18n } from '../i18n'
 import { familyName, monthYear, telLink, whatsappLink } from '../lib/format'
+import { isGeoPoint } from '../lib/geo'
 import type { Client, TipOfTheWeek } from '../lib/types'
 
 export default function Home() {
@@ -53,6 +55,13 @@ export default function Home() {
             </a>
           )}
         </section>
+
+        <WeatherCard
+          ready={!client.loading}
+          propertyName={c?.property}
+          propertyPoint={isGeoPoint(c?.location) ? c.location : null}
+          allowDevice={!preview}
+        />
 
         <section className="section">
           <h2 className="section__title">{t('home.whatDoYouNeed')}</h2>

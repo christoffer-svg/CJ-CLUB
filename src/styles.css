@@ -2173,6 +2173,203 @@ button {
   scroll-margin-bottom: calc(var(--nav-height) + env(safe-area-inset-bottom) + 140px);
 }
 
+/* Tiempo en inicio */
+.weather-block {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.weather {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-height: 148px;
+}
+
+.weather__head {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.weather__now {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.weather__temp {
+  font-family: var(--font-title);
+  font-size: 44px;
+  line-height: 1;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.weather__cond {
+  margin-top: 6px;
+  font-size: 14px;
+  color: var(--text-2);
+}
+
+.weather__icon {
+  flex: none;
+  color: var(--gold-dark);
+}
+
+.weather__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  font-size: 12px;
+  color: var(--text-2);
+}
+
+.weather__days {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+  border-top: 1px solid var(--card-border);
+  padding-top: 12px;
+}
+
+.weather__day {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  min-width: 0;
+  text-align: center;
+}
+
+.weather__day-name {
+  max-width: 100%;
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gold);
+  line-height: 1.2;
+}
+
+.weather__day-max {
+  font-family: var(--font-title);
+  font-size: 16px;
+  color: var(--text);
+}
+
+.weather__day-min {
+  font-size: 12px;
+  color: var(--text-2);
+}
+
+.weather__hint {
+  font-size: 13px;
+  color: var(--text-2);
+}
+
+.weather__error {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.weather__action {
+  align-self: flex-start;
+  padding: 0;
+  font-size: 12px;
+  color: var(--text-2);
+}
+
+.weather__action:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.weather__footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px 16px;
+}
+
+.weather__footer a {
+  color: var(--stone);
+  font-size: 11px;
+  text-decoration: none;
+}
+
+.weather__footer a:hover,
+.weather__footer a:focus-visible {
+  color: var(--gold-dark);
+  text-decoration: underline;
+}
+
+.weather-notices ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.weather-disclaimer {
+  font-size: 12px;
+  color: var(--text-2);
+}
+
+.weather-notice {
+  border: 1px solid var(--card-border);
+  border-left-width: 4px;
+  border-radius: var(--radius);
+  background: var(--card);
+  padding: 12px 14px;
+}
+
+.weather-notice--moderate {
+  border-left-color: #a6853f;
+  background: #f8f3e6;
+}
+
+.weather-notice--severe {
+  border-left-color: #a35b28;
+  background: #f8eee4;
+}
+
+.weather-notice--extreme {
+  border-left-color: var(--emergency);
+  background: #f8ecea;
+}
+
+.weather-notice__level {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.weather-notice--moderate .weather-notice__level {
+  color: #8a6a2f;
+}
+
+.weather-notice--severe .weather-notice__level {
+  color: #8a4a1c;
+}
+
+.weather-notice--extreme .weather-notice__level {
+  color: var(--emergency);
+}
+
+.weather-notice__text {
+  margin-top: 3px;
+  font-size: 14px;
+  color: var(--text);
+}
+
 /* Reservas de restaurantes */
 .a-reserve {
   display: flex;
