@@ -14,7 +14,8 @@ export const adminSections = [
   { to: '/admin/colaboradores', label: 'Colaboradores', text: 'Abogados, gestorías, piscinas y más' },
   { to: '/admin/contactos', label: 'Contactos generales', text: 'Urgencias, salud y transporte' },
   { to: '/admin/lugares', label: 'Lugares', text: 'Restaurantes, golf, playas y planes' },
-  { to: '/admin/descuentos', label: 'Descuentos', text: 'Ventajas y usos de este mes' },
+  { to: '/admin/negocios', label: 'Negocios', text: 'Acceso para que cada negocio publique sus descuentos' },
+  { to: '/admin/descuentos', label: 'Descuentos', text: 'Ocultar o retirar ofertas. Las publica el negocio' },
   { to: '/admin/consejo', label: 'Consejo de la semana', text: 'Texto en español e inglés' },
 ]
 

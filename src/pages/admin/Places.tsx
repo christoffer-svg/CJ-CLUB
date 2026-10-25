@@ -210,7 +210,10 @@ export default function Places() {
               )}
             </FieldGroup>
           )}
-          <Field label="Descuento CJ Club (%)" hint="Déjelo vacío si no tiene descuento.">
+          <Field
+            label="Descuento CJ Club (%)"
+            hint="Porcentaje que sale en la ficha del lugar. Las ofertas con código las publica el negocio, no CJ. Déjelo vacío si no quiere mostrar un porcentaje."
+          >
             <Input
               type="number"
               min={1}

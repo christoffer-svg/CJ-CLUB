@@ -9,10 +9,12 @@ Todo está denegado salvo lo que se permite expresamente.
 
 | Colección | Cliente (`client`) | Equipo CJ (`admin`) |
 |---|---|---|
-| `users/{uid}` | Lee solo su ficha. Solo puede cambiar `language` (es/en) y `favorites` (lista, máx. 200). | Lee y gestiona todas. No puede cambiarse su propio rol ni borrarse a sí mismo. Rol limitado a `admin` / `client`. |
+| `users/{uid}` | Lee solo su ficha. Solo puede cambiar `language` y `favorites` (lista, máx. 200). | Lee y gestiona todas. No puede cambiarse su propio rol ni borrarse a sí mismo. Rol limitado a `admin` / `client` / `business`. Un negocio tiene que quedar vinculado a un lugar que existe. |
 | `clients/{id}` | Lee solo la suya (`clientId` de su ficha). No escribe. | Lee y escribe. |
 | `partners/{id}` | Lee, de uno en uno, solo los asignados en su mapa `contacts`. No puede listar. | Lee, lista y escribe. |
-| `generalContacts`, `places`, `deals`, `settings` | Lee (con sesión e invitación). No escribe. | Lee y escribe. |
+| `generalContacts`, `settings` | Lee (con sesión e invitación). No escribe. | Lee y escribe. El negocio no los lee. |
+| `places` | Lee. No escribe. El negocio solo lee el suyo, de uno en uno, y no lo modifica. | Lee y escribe. |
+| `deals` | Lee. No escribe. La app solo muestra los activos, no ocultos y en fecha. | No crea ofertas. En las del negocio solo puede cambiar `hiddenByAdmin` o borrarlas. En las antiguas (sin `source: business`) puede seguir corrigiéndolas. |
 | `dealUses/{id}` | Solo crea registros con su `clientId`, de un descuento existente y con la hora del servidor. No lee. | Lee y borra. |
 | `reservationClicks/{id}` | Solo crea su pinchazo en Reservar (`clientId` y `uid` propios, canal igual al del restaurante, hora del servidor). No lee, no cambia y no borra. | Lee. No borra desde la app. |
 | `reservationConfirms/{id}` | Solo crea su confirmación de «he reservado», de un restaurante con reserva configurada. No lee. | Lee. No borra desde la app. |
@@ -21,14 +23,27 @@ Todo está denegado salvo lo que se permite expresamente.
 | `requests/{id}` | Crea peticiones a su nombre (estado `new`, tipo válido, hora del servidor) y lee las suyas. Solo puede cancelarlas mientras son nuevas. No escribe la nota de CJ. | Lee todas, cambia estado y nota, borra. |
 | Cualquier otra | Denegado. | Denegado. |
 
+### Negocio colaborador (`business`)
+Cuenta invitada por CJ y vinculada a un lugar (`users.placeId`). No es un socio.
+
+| Qué | Permiso |
+|---|---|
+| Sus descuentos (`deals` con su `placeId` y `source == business`) | Crear, leer, corregir, pausar y borrar. El nombre tiene que ser el del lugar. No puede quitar `hiddenByAdmin`, cambiar de lugar ni ver los de otros o los antiguos de CJ. |
+| Su lugar | Solo leerlo. |
+| Reservas | No lee pinchazos, confirmaciones ni el número que anota CJ (llevan datos de clientes). Una función de servidor le devuelve solo el recuento de pulsaciones de su lugar. |
+| `users` | Lee la suya. Solo cambia `language`. |
+| Clientes, colaboradores, conversaciones, peticiones, usos, contactos y ajustes | Nada. |
+
 "Con sesión" significa además estar invitado: tener ficha en `users/`. Una cuenta creada por libre no lee nada.
 
-Pruebas: `tests/firestore-rules.mjs` (169 comprobaciones; ver instrucciones en el archivo). Ejecutar antes de cada cambio de reglas.
+Pruebas: `tests/firestore-rules.mjs` (238 comprobaciones; ver instrucciones en el archivo). Ejecutar antes de cada cambio de reglas.
 
 ### Funciones de servidor (`functions/`)
 - `createClient` (Madrid, `europe-southwest1`): comprueba que quien llama es `admin`, valida los datos, crea la cuenta con contraseña aleatoria, la ficha y el perfil; si algo falla, no deja cuentas sueltas. Límite de 5 instancias.
+- `createBusiness`: igual, para el acceso de un negocio vinculado a un lugar que ya existe. Si falla al guardar la ficha, no deja la cuenta suelta.
+- `businessReservationSummary`: solo el propio negocio. Cuenta las pulsaciones en Reservar de su lugar y devuelve el número, sin nombres de clientes.
 - `deleteClient`: baja de un cliente (derecho de supresión). Solo `admin`; borra sus cuentas de acceso, perfiles, ficha, conversación con mensajes, peticiones, registros de uso y sus pinchazos y confirmaciones de reserva. Se niega si hay una cuenta del equipo vinculada. No es una función nueva: es la misma baja de siempre.
-- El alta y la baja de clientes no se pueden hacer desde el navegador: no hay registro público en la app.
+- El alta de clientes y de negocios no se puede hacer desde el navegador sin ser del equipo de CJ: no hay registro público en la app.
 
 ### Código que descarga el navegador
 - Revisado `dist/` tras `npm run build`: sin claves privadas, cuentas de servicio ni tokens.

@@ -23,7 +23,7 @@ Kontrollera att varje text är naturlig och korrekt på svenska. Skriv dina rät
 | `login.back` | Volver al inicio de sesión | Back to sign in | Tillbaka till inloggningen | |
 | `login.resetIntro` | Escriba su correo y le enviaremos un enlace para crear una nueva contraseña. | Enter your email and we will send you a link to create a new password. | Skriv din e-postadress så skickar vi en länk där du kan skapa ett nytt lösenord. | |
 | `login.resetSent` | Si el correo está registrado en CJ Club, recibirá un enlace para crear una nueva contraseña. | If this email is registered with CJ Club, you will receive a link to create a new password. | Om e-postadressen finns registrerad hos CJ Club får du en länk för att skapa ett nytt lösenord. | |
-| `login.note` | Acceso exclusivo para clientes de CJ | Exclusive access for CJ clients | Exklusiv tillgång för CJ:s kunder | |
+| `login.note` | Acceso para clientes y negocios de CJ Club | Access for CJ clients and partner businesses | Tillgång för CJ:s kunder och partnerföretag | |
 | `login.notInvited` | Esta cuenta no tiene acceso a CJ Club. Contacte con CJ. | This account does not have access to CJ Club. Please contact CJ. | Det här kontot har inte tillgång till CJ Club. Kontakta CJ. | |
 | `login.error.credentials` | Correo o contraseña incorrectos. | Incorrect email or password. | Fel e-postadress eller lösenord. | |
 | `login.error.tooMany` | Demasiados intentos. Espere unos minutos y vuelva a probar. | Too many attempts. Please wait a few minutes and try again. | För många försök. Vänta några minuter och försök igen. | |
@@ -112,6 +112,11 @@ Kontrollera att varje text är naturlig och korrekt på svenska. Skriv dina rät
 | `benefits.qr` | Código QR: {code} | QR code: {code} | QR-kod: {code} | |
 | `benefits.close` | Cerrar | Close | Stäng | |
 | `benefits.free` | Gratis | Free | Gratis | |
+| `benefits.offeredBy` | Descuento ofrecido por {name} | Discount offered by {name} | Rabatt som erbjuds av {name} | |
+| `benefits.conditionsByBusiness` | Condiciones fijadas por el negocio | Conditions set by the business | Villkor som fastställts av företaget | |
+| `benefits.validFrom` | Válido desde el {date} | Valid from {date} | Gäller från {date} | |
+| `benefits.validUntil` | Válido hasta el {date} | Valid until {date} | Gäller till {date} | |
+| `benefits.validRange` | Válido del {from} al {until} | Valid from {from} to {until} | Gäller från {from} till {until} | |
 | `common.back` | Volver | Back | Tillbaka | |
 | `team.eyebrow` | Su equipo CJ | Your CJ team | Ditt CJ-team | |
 | `team.messages` | Mensajes | Messages | Meddelanden | |

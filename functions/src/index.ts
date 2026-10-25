@@ -1,7 +1,7 @@
 /**
  * Funciones de servidor de CJ Club.
  * Se ejecutan con permisos de administrador de Firebase, por eso comprueban siempre
- * que quien las llama es del equipo de CJ (rol "admin").
+ * quién llama y qué puede hacer.
  */
 import { initializeApp } from 'firebase-admin/app'
 import { getAuth } from 'firebase-admin/auth'
@@ -100,6 +100,97 @@ export const createClient = onCall(async (request) => {
   }
 
   return { clientId: clientRef.id, uid: user.uid, memberNumber }
+})
+
+/** "2026-10" en el calendario de España */
+function monthKeyMadrid(date: Date) {
+  return new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Europe/Madrid',
+    year: 'numeric',
+    month: '2-digit',
+  }).format(date)
+}
+
+/**
+ * Crea el acceso de un negocio vinculado a un lugar: cuenta (rol "business") y ficha en users/.
+ * La invitación para elegir contraseña la envía después la app, igual que con los clientes.
+ */
+export const createBusiness = onCall(async (request) => {
+  await requireAdmin(request.auth?.uid)
+  const data = (request.data ?? {}) as Record<string, unknown>
+
+  const placeId = text(data.placeId, 'lugar')
+  if (placeId.includes('/')) throw new HttpsError('invalid-argument', 'El lugar no es válido.')
+  const contactName = text(data.contactName, 'nombre de la persona')
+  const email = text(data.email, 'correo').toLowerCase()
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new HttpsError('invalid-argument', 'El correo no es válido.')
+  const languages = ['es', 'en', 'nl', 'sv', 'de', 'fr']
+  const language = typeof data.language === 'string' && languages.includes(data.language) ? data.language : 'es'
+
+  const place = await db.doc(`places/${placeId}`).get()
+  if (!place.exists) throw new HttpsError('not-found', 'Ese lugar no existe. Créelo antes en Lugares.')
+  const businessName = typeof place.get('name') === 'string' ? place.get('name').trim() : ''
+  if (!businessName) throw new HttpsError('failed-precondition', 'Ese lugar no tiene nombre.')
+  if (businessName.length > 200) throw new HttpsError('invalid-argument', 'El nombre del lugar es demasiado largo.')
+
+  const auth = getAuth()
+  const existing = await auth.getUserByEmail(email).catch(() => null)
+  if (existing) throw new HttpsError('already-exists', 'Ya existe una cuenta con ese correo.')
+
+  const user = await auth.createUser({
+    email,
+    displayName: contactName,
+    password: randomBytes(24).toString('base64url'),
+  })
+
+  try {
+    await db.doc(`users/${user.uid}`).set({
+      role: 'business',
+      name: contactName,
+      email,
+      language,
+      placeId,
+      businessName,
+    })
+  } catch (e) {
+    await auth.deleteUser(user.uid).catch(() => {})
+    throw e
+  }
+
+  return { uid: user.uid, placeId, businessName }
+})
+
+/**
+ * Resumen de reservas del propio negocio: solo el número de veces que han pulsado Reservar.
+ * No devuelve nombres ni fichas de clientes. El negocio no puede leer esos registros.
+ */
+export const businessReservationSummary = onCall(async (request) => {
+  const uid = request.auth?.uid
+  if (!uid) throw new HttpsError('unauthenticated', 'Inicie sesión de nuevo.')
+  const me = await db.doc(`users/${uid}`).get()
+  if (me.get('role') !== 'business') throw new HttpsError('permission-denied', 'Solo el negocio puede ver este resumen.')
+  const placeId = me.get('placeId')
+  if (typeof placeId !== 'string' || !placeId) {
+    throw new HttpsError('failed-precondition', 'Su cuenta no está vinculada a un negocio.')
+  }
+
+  const place = await db.doc(`places/${placeId}`).get()
+  if (!place.exists) throw new HttpsError('not-found', 'No encontramos la ficha de su negocio.')
+  const businessName = typeof place.get('name') === 'string' ? place.get('name') : ''
+  const restaurant = place.get('category') === 'restaurants'
+
+  const raw = (request.data as { month?: unknown } | undefined)?.month
+  const month = typeof raw === 'string' && /^[0-9]{4}-(0[1-9]|1[0-2])$/.test(raw) ? raw : monthKeyMadrid(new Date())
+  if (!restaurant) return { restaurant: false, businessName, month, clicks: 0 }
+
+  const snap = await db.collection('reservationClicks').where('placeId', '==', placeId).get()
+  let clicks = 0
+  snap.forEach((doc) => {
+    const created = doc.get('createdAt')
+    if (!created || typeof created.toDate !== 'function') return
+    if (monthKeyMadrid(created.toDate()) === month) clicks += 1
+  })
+  return { restaurant: true, businessName, month, clicks }
 })
 
 /**

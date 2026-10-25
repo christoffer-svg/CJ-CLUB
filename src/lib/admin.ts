@@ -99,6 +99,19 @@ export async function createClient(data: NewClient) {
   return res.data
 }
 
+export type NewBusiness = {
+  placeId: string
+  contactName: string
+  email: string
+  language: Language
+}
+
+/** Crea la cuenta del negocio en el servidor (función createBusiness). El correo de invitación lo envía la pantalla. */
+export async function createBusinessAccount(data: NewBusiness) {
+  const call = httpsCallable<NewBusiness, { uid: string; placeId: string; businessName: string }>(functions, 'createBusiness')
+  return (await call(data)).data
+}
+
 /** Da de baja a un cliente en el servidor (función deleteClient): borra cuenta, ficha y registros */
 export async function deleteClient(clientId: string) {
   const call = httpsCallable<

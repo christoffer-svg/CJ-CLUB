@@ -846,6 +846,20 @@ button {
   gap: 3px;
 }
 
+.deal__by,
+.deal__when {
+  font-size: 13px;
+  color: var(--text-2);
+}
+
+.deal__legal {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
 .use-btn {
   flex: none;
   height: 36px;
@@ -905,6 +919,15 @@ button {
   font-size: 13px;
   color: var(--text-2);
   max-width: 280px;
+}
+
+.sheet__legal {
+  margin: 0;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold);
 }
 
 .qr {
@@ -1173,6 +1196,14 @@ button {
   padding: 18px 0;
   font-size: 13px;
   color: var(--text-2);
+}
+
+.a-lead {
+  margin: 0 0 16px;
+  max-width: 68ch;
+  color: var(--text-2);
+  font-size: 14px;
+  line-height: 1.55;
 }
 
 .a-menu-grid {

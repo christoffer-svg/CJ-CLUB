@@ -1,6 +1,6 @@
 import type { Timestamp } from 'firebase/firestore'
 
-export type Role = 'admin' | 'client'
+export type Role = 'admin' | 'client' | 'business'
 
 /** Coordenadas de un punto en el mapa */
 export type GeoPoint = { lat: number; lng: number }
@@ -14,6 +14,10 @@ export type UserProfile = {
   email: string
   language: Language
   clientId?: string
+  /** lugar vinculado; solo el rol "business" */
+  placeId?: string
+  /** nombre del lugar en el momento del alta */
+  businessName?: string
   /** ids de places guardados como favoritos */
   favorites?: string[]
 }
@@ -112,7 +116,11 @@ export type ReservationReport = {
   updatedAt: Timestamp | null
 }
 
-/** deals/{dealId} */
+/**
+ * deals/{dealId}
+ * Los descuentos antiguos los creó CJ y no tienen placeId ni source.
+ * Los nuevos los publica el negocio vinculado al lugar.
+ */
 export type Deal = {
   title: string
   conditions_es: string
@@ -121,6 +129,19 @@ export type Deal = {
   code: string
   active: boolean
   order: number
+  placeId?: string
+  /** nombre del negocio, copiado de la ficha del lugar */
+  businessName?: string
+  description_es?: string
+  description_en?: string
+  /** "YYYY-MM-DD", o vacío si no hay límite */
+  validFrom?: string
+  validUntil?: string
+  /** "business" si lo publicó el negocio. Ausente en los descuentos antiguos de CJ. */
+  source?: 'business'
+  createdByUid?: string
+  /** CJ lo ha ocultado. El negocio no puede quitar esta marca. */
+  hiddenByAdmin?: boolean
 }
 
 /** settings/tipOfTheWeek */

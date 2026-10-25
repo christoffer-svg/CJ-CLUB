@@ -23,7 +23,7 @@ Vérifiez que chaque texte est naturel et correct en français. Notez vos correc
 | `login.back` | Volver al inicio de sesión | Back to sign in | Retour à la connexion | |
 | `login.resetIntro` | Escriba su correo y le enviaremos un enlace para crear una nueva contraseña. | Enter your email and we will send you a link to create a new password. | Indiquez votre e-mail et nous vous enverrons un lien pour créer un nouveau mot de passe. | |
 | `login.resetSent` | Si el correo está registrado en CJ Club, recibirá un enlace para crear una nueva contraseña. | If this email is registered with CJ Club, you will receive a link to create a new password. | Si cet e-mail est enregistré chez CJ Club, vous recevrez un lien pour créer un nouveau mot de passe. | |
-| `login.note` | Acceso exclusivo para clientes de CJ | Exclusive access for CJ clients | Accès exclusif pour les clients de CJ | |
+| `login.note` | Acceso para clientes y negocios de CJ Club | Access for CJ clients and partner businesses | Accès pour les clients et les commerces partenaires de CJ | |
 | `login.notInvited` | Esta cuenta no tiene acceso a CJ Club. Contacte con CJ. | This account does not have access to CJ Club. Please contact CJ. | Ce compte n'a pas accès à CJ Club. Veuillez contacter CJ. | |
 | `login.error.credentials` | Correo o contraseña incorrectos. | Incorrect email or password. | E-mail ou mot de passe incorrect. | |
 | `login.error.tooMany` | Demasiados intentos. Espere unos minutos y vuelva a probar. | Too many attempts. Please wait a few minutes and try again. | Trop de tentatives. Patientez quelques minutes puis réessayez. | |
@@ -112,6 +112,11 @@ Vérifiez que chaque texte est naturel et correct en français. Notez vos correc
 | `benefits.qr` | Código QR: {code} | QR code: {code} | QR code : {code} | |
 | `benefits.close` | Cerrar | Close | Fermer | |
 | `benefits.free` | Gratis | Free | Gratuit | |
+| `benefits.offeredBy` | Descuento ofrecido por {name} | Discount offered by {name} | Réduction offerte par {name} | |
+| `benefits.conditionsByBusiness` | Condiciones fijadas por el negocio | Conditions set by the business | Conditions fixées par le commerce | |
+| `benefits.validFrom` | Válido desde el {date} | Valid from {date} | Valable à partir du {date} | |
+| `benefits.validUntil` | Válido hasta el {date} | Valid until {date} | Valable jusqu'au {date} | |
+| `benefits.validRange` | Válido del {from} al {until} | Valid from {from} to {until} | Valable du {from} au {until} | |
 | `common.back` | Volver | Back | Retour | |
 | `team.eyebrow` | Su equipo CJ | Your CJ team | Votre équipe CJ | |
 | `team.messages` | Mensajes | Messages | Messages | |

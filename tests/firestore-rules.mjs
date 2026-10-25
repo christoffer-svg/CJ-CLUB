@@ -7,7 +7,8 @@
  *        --client-email=jansen@prueba.test --client-password=Prueba1234
  *   3. npm run test:rules
  *
- * Personas: Jansen y Lindqvist (clientes), el admin y una cuenta no invitada.
+ * Personas: Jansen y Lindqvist (clientes), el admin, una cuenta no invitada
+ * y dos negocios (La Terraza del Puerto y el golf).
  */
 const A = 'http://127.0.0.1:9099/identitytoolkit.googleapis.com/v1', F = 'http://127.0.0.1:8080/v1/projects/cj-club/databases/(default)/documents'
 const H = { 'content-type': 'application/json' }
@@ -18,6 +19,8 @@ const signIn = (email, password) => fetch(`${A}/accounts:signInWithPassword?key=
 const req = (t, path, method = 'GET', body) => fetch(`${F}/${path}`, { method, headers: { ...H, ...(t ? { authorization: 'Bearer ' + t } : {}) }, body: body && JSON.stringify(body) }).then(r => r.status)
 const ownerPatch = (path, fields) => fetch(`${F}/${path}`, { method: 'PATCH', headers: { ...H, authorization: 'Bearer owner' }, body: JSON.stringify({ fields }) })
 const str = (s) => ({ stringValue: s })
+const bool = (b) => ({ booleanValue: b })
+const num = (n) => ({ integerValue: String(n) })
 const patch = (t, path, fields) => req(t, `${path}?${Object.keys(fields).map(k => 'updateMask.fieldPaths=' + k).join('&')}`, 'PATCH', { fields })
 const runQuery = (t, structuredQuery) => fetch(`${F}:runQuery`, { method: 'POST', headers: { ...H, authorization: 'Bearer ' + t }, body: JSON.stringify({ structuredQuery }) }).then(r => r.status)
 
@@ -26,8 +29,14 @@ await signUp('intruso@prueba.test', 'Intruso1234')
 let l = await signUp('lindqvist@prueba.test', 'Prueba1234')
 if (!l.localId) l = await signIn('lindqvist@prueba.test', 'Prueba1234')
 await ownerPatch(`users/${l.localId}`, { role: str('client'), name: str('Familia Lindqvist'), email: str('lindqvist@prueba.test'), language: str('en'), clientId: str('lindqvist') })
+let b = await signUp('terraza@prueba.test', 'Negocio1234')
+if (!b.localId) b = await signIn('terraza@prueba.test', 'Negocio1234')
+await ownerPatch(`users/${b.localId}`, { role: str('business'), name: str('Ana Torres'), email: str('terraza@prueba.test'), language: str('es'), placeId: str('rest-la-terraza') })
+let g = await signUp('golf@prueba.test', 'Negocio1234')
+if (!g.localId) g = await signIn('golf@prueba.test', 'Negocio1234')
+await ownerPatch(`users/${g.localId}`, { role: str('business'), name: str('Golf'), email: str('golf@prueba.test'), language: str('es'), placeId: str('golf-pinar') })
 const j = await signIn('jansen@prueba.test', 'Prueba1234'), a = await signIn('admin@prueba.test', 'Admin1234'), x = await signIn('intruso@prueba.test', 'Intruso1234')
-const J = j.idToken, L = l.idToken, AD = a.idToken, X = x.idToken
+const J = j.idToken, L = l.idToken, AD = a.idToken, X = x.idToken, B = b.idToken, G = g.idToken
 const dealUse = (cid, did) => ({ fields: { clientId: str(cid), dealId: str(did), date: { timestampValue: new Date().toISOString() } } })
 
 // Sin sesión / sin invitación: nada
@@ -192,7 +201,106 @@ ok(await req(AD, 'reservationReports/rest-la-terraza_2026-10', 'DELETE'), 403, '
 ok(await req(AD, 'reservationReports/rest-la-terraza_2026-10'), 200, 'admin lee el informe')
 ok(await runQuery(J, { from: [{ collectionId: 'reservationReports' }] }), 403, 'cliente lista informes')
 
+// negocios: solo sus descuentos y su ficha; nunca datos de clientes ni de otros negocios
+ok(await req(B, 'users/' + b.localId), 200, 'negocio lee su ficha')
+ok(await req(B, 'users/' + j.localId), 403, 'negocio lee la ficha de un cliente')
+ok(await runQuery(B, { from: [{ collectionId: 'users' }] }), 403, 'negocio lista usuarios')
+ok(await patch(B, 'users/' + b.localId, { language: str('en') }), 200, 'negocio cambia idioma')
+ok(await patch(B, 'users/' + b.localId, { language: str('xx') }), 403, 'negocio pone un idioma no válido')
+ok(await patch(B, 'users/' + b.localId, { role: str('admin') }), 403, 'negocio se hace admin')
+ok(await patch(B, 'users/' + b.localId, { placeId: str('golf-pinar') }), 403, 'negocio cambia de lugar')
+ok(await patch(B, 'users/' + b.localId, { name: str('Otro') }), 403, 'negocio cambia su nombre')
+ok(await patch(B, 'users/' + b.localId, { favorites: { arrayValue: { values: [str('x')] } } }), 403, 'negocio cambia favoritos')
+ok(await patch(AD, 'users/' + l.localId, { role: str('business') }), 403, 'admin convierte un cliente en negocio sin lugar')
+ok(await req(AD, 'users/negocio-nuevo', 'PATCH', { fields: { role: str('business'), name: str('Ana'), email: str('ana@negocio.test'), language: str('es'), placeId: str('rest-la-terraza') } }), 200, 'admin crea ficha de negocio')
+ok(await req(AD, 'users/negocio-malo', 'PATCH', { fields: { role: str('business'), name: str('Ana'), email: str('ana@negocio.test'), language: str('es') } }), 403, 'admin crea negocio sin lugar')
+ok(await req(AD, 'users/negocio-falso', 'PATCH', { fields: { role: str('business'), name: str('Ana'), email: str('ana@negocio.test'), language: str('es'), placeId: str('no-existe') } }), 403, 'admin vincula un negocio a un lugar que no existe')
+ok(await patch(AD, 'users/' + b.localId, { placeId: str('no-existe') }), 403, 'admin cambia el negocio a un lugar que no existe')
+ok(await req(B, 'clients/jansen'), 403, 'negocio lee fichas de clientes')
+ok(await req(B, 'conversations/jansen'), 403, 'negocio lee conversaciones')
+ok(await req(B, 'requests/q1'), 403, 'negocio lee peticiones')
+ok(await runQuery(B, { from: [{ collectionId: 'dealUses' }] }), 403, 'negocio lee usos de descuentos')
+ok(await req(B, 'reservationClicks/c1'), 403, 'negocio lee pinchazos de clientes')
+ok(await runQuery(B, { from: [{ collectionId: 'reservationClicks' }], where: { fieldFilter: { field: { fieldPath: 'placeId' }, op: 'EQUAL', value: str('rest-la-terraza') } } }), 403, 'negocio lista los pinchazos de su restaurante')
+ok(await runQuery(B, { from: [{ collectionId: 'reservationConfirms' }] }), 403, 'negocio lee confirmaciones de reserva')
+ok(await req(B, 'reservationReports/rest-la-terraza_2026-10'), 403, 'negocio lee el número anotado por CJ')
+ok(await req(B, 'partners/lawyer-ruiz'), 403, 'negocio lee colaboradores')
+ok(await req(B, 'generalContacts/emergencias'), 403, 'negocio lee contactos generales')
+ok(await req(B, 'settings/tipOfTheWeek'), 403, 'negocio lee ajustes')
+ok(await req(B, 'places/rest-la-terraza'), 200, 'negocio lee su lugar')
+ok(await req(B, 'places/golf-pinar'), 403, 'negocio lee otro lugar')
+ok(await runQuery(B, { from: [{ collectionId: 'places' }] }), 403, 'negocio lista lugares')
+ok(await patch(B, 'places/rest-la-terraza', { name: str('Otro') }), 403, 'negocio modifica su lugar')
+
+const wipe = (path) => fetch(`${F}/${path}`, { method: 'DELETE', headers: { ...H, authorization: 'Bearer owner' } })
+const dealFields = (over = {}) => ({
+  title: str('10% entre semana'),
+  conditions_es: str('De lunes a jueves'),
+  conditions_en: str('Monday to Thursday'),
+  discountLabel: str('10%'),
+  code: str('CJ10'),
+  active: bool(true),
+  order: num(1),
+  placeId: str('rest-la-terraza'),
+  businessName: str('La Terraza del Puerto'),
+  description_es: str('En la cuenta'),
+  description_en: str('On the bill'),
+  validFrom: str(''),
+  validUntil: str(''),
+  source: str('business'),
+  createdByUid: str(b.localId),
+  hiddenByAdmin: bool(false),
+  ...over,
+})
+await wipe('deals/oferta-terraza')
+await wipe('deals/oferta-golf')
+await wipe('deals/oferta-borrar')
+await wipe('deals/oferta-admin')
+ok(await req(B, 'deals/oferta-terraza', 'PATCH', { fields: dealFields() }), 200, 'negocio crea su descuento')
+ok(await req(B, 'deals/oferta-ajena', 'PATCH', { fields: dealFields({ placeId: str('golf-pinar'), businessName: str('Club de Golf El Pinar') }) }), 403, 'negocio crea un descuento de otro lugar')
+ok(await req(B, 'deals/nombre-falso', 'PATCH', { fields: dealFields({ businessName: str('Otro nombre') }) }), 403, 'negocio firma el descuento con otro nombre')
+ok(await req(B, 'deals/extra', 'PATCH', { fields: { ...dealFields(), note: str('x') } }), 403, 'negocio añade campos de más')
+ok(await req(B, 'deals/como-cj', 'PATCH', { fields: dealFields({ source: str('cj') }) }), 403, 'negocio crea un descuento como si fuera de CJ')
+ok(await req(B, 'deals/ya-oculto', 'PATCH', { fields: dealFields({ hiddenByAdmin: bool(true) }) }), 403, 'negocio crea un descuento ya oculto')
+ok(await req(B, 'deals/firma', 'PATCH', { fields: dealFields({ createdByUid: str(a.localId) }) }), 403, 'negocio firma el descuento como otra persona')
+ok(await req(B, 'deals/vacio', 'PATCH', { fields: dealFields({ title: str('') }) }), 403, 'descuento sin título')
+ok(await req(B, 'deals/fecha-mala', 'PATCH', { fields: dealFields({ validFrom: str('mañana') }) }), 403, 'fecha de descuento no válida')
+ok(await req(B, 'deals/fecha-orden', 'PATCH', { fields: dealFields({ validFrom: str('2026-12-01'), validUntil: str('2026-11-01') }) }), 403, 'la fecha de fin es anterior')
+ok(await req(AD, 'deals/creado-por-cj', 'PATCH', { fields: { title: str('X'), active: bool(true) } }), 403, 'admin crea un descuento')
+ok(await req(B, 'deals/oferta-terraza'), 200, 'negocio lee su descuento')
+ok(await req(B, 'deals/deal-golf'), 403, 'negocio lee un descuento antiguo de CJ')
+ok(await req(J, 'deals/oferta-terraza'), 200, 'cliente lee el descuento del negocio')
+ok(await runQuery(B, { from: [{ collectionId: 'deals' }], where: { fieldFilter: { field: { fieldPath: 'placeId' }, op: 'EQUAL', value: str('rest-la-terraza') } } }), 200, 'negocio lista sus descuentos')
+ok(await runQuery(B, { from: [{ collectionId: 'deals' }] }), 403, 'negocio lista todos los descuentos')
+ok(await runQuery(B, { from: [{ collectionId: 'deals' }], where: { fieldFilter: { field: { fieldPath: 'active' }, op: 'EQUAL', value: bool(true) } } }), 403, 'negocio busca descuentos por activo')
+ok(await patch(B, 'deals/oferta-terraza', { title: str('20% entre semana') }), 200, 'negocio edita su descuento')
+ok(await patch(B, 'deals/oferta-terraza', { validFrom: str('2026-11-01'), validUntil: str('2026-12-01') }), 200, 'negocio pone la vigencia')
+ok(await patch(B, 'deals/oferta-terraza', { placeId: str('golf-pinar') }), 403, 'negocio mueve el descuento a otro lugar')
+ok(await patch(B, 'deals/oferta-terraza', { source: str('cj') }), 403, 'negocio cambia el origen')
+ok(await patch(B, 'deals/oferta-terraza', { createdByUid: str(a.localId) }), 403, 'negocio cambia el autor')
+ok(await patch(B, 'deals/oferta-terraza', { hiddenByAdmin: bool(true) }), 403, 'negocio oculta su descuento como si fuera CJ')
+ok(await patch(AD, 'deals/oferta-terraza', { title: str('Otro') }), 403, 'admin reescribe un descuento del negocio')
+ok(await patch(AD, 'deals/oferta-terraza', { active: bool(false) }), 403, 'admin pausa un descuento del negocio')
+ok(await patch(AD, 'deals/oferta-terraza', { hiddenByAdmin: bool(true) }), 200, 'admin oculta un descuento del negocio')
+ok(await patch(B, 'deals/oferta-terraza', { hiddenByAdmin: bool(false) }), 403, 'negocio vuelve a mostrar un descuento oculto por CJ')
+ok(await patch(B, 'deals/oferta-terraza', { active: bool(false) }), 200, 'negocio pausa su descuento')
+await wipe('deals/oferta-golf')
+ok(await req(G, 'deals/oferta-golf', 'PATCH', { fields: dealFields({ placeId: str('golf-pinar'), businessName: str('Club de Golf El Pinar'), createdByUid: str(g.localId), title: str('Green fee') }) }), 200, 'el golf crea su descuento')
+ok(await req(B, 'deals/oferta-golf'), 403, 'un negocio lee el descuento de otro')
+ok(await req(G, 'deals/oferta-terraza'), 403, 'el golf lee el descuento de la terraza')
+ok(await runQuery(B, { from: [{ collectionId: 'deals' }], where: { fieldFilter: { field: { fieldPath: 'placeId' }, op: 'EQUAL', value: str('golf-pinar') } } }), 403, 'negocio lista descuentos de otro')
+await wipe('deals/oferta-borrar')
+ok(await req(B, 'deals/oferta-borrar', 'PATCH', { fields: dealFields() }), 200, 'negocio crea otro descuento')
+ok(await req(G, 'deals/oferta-borrar', 'DELETE'), 403, 'otro negocio borra el descuento')
+ok(await req(J, 'deals/oferta-borrar', 'DELETE'), 403, 'cliente borra un descuento del negocio')
+ok(await req(B, 'deals/deal-golf', 'DELETE'), 403, 'negocio borra un descuento de CJ')
+ok(await req(B, 'deals/oferta-borrar', 'DELETE'), 200, 'negocio retira su descuento')
+await wipe('deals/oferta-admin')
+ok(await req(B, 'deals/oferta-admin', 'PATCH', { fields: dealFields() }), 200, 'negocio crea un descuento que CJ retirará')
+ok(await req(AD, 'deals/oferta-admin', 'DELETE'), 200, 'admin retira un descuento del negocio')
+
 // colecciones no previstas
+ok(await req(B, 'secretos/x'), 403, 'negocio lee colección no prevista')
 ok(await req(AD, 'secretos/x', 'PATCH', { fields: { a: str('1') } }), 403, 'admin escribe en colección no prevista')
 ok(await req(J, 'secretos/x'), 403, 'cliente lee colección no prevista')
 
