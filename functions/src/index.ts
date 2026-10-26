@@ -195,8 +195,9 @@ export const businessReservationSummary = onCall(async (request) => {
 
 /**
  * Baja de un cliente (derecho de supresión): borra sus cuentas de acceso, sus perfiles,
- * su ficha, su conversación con CJ, sus peticiones, sus registros de uso de descuentos
- * y sus pinchazos y confirmaciones de reserva.
+ * su ficha, su conversación con CJ, sus peticiones, sus registros de uso de descuentos,
+ * sus pinchazos y confirmaciones de reserva, sus contactos propios y las notas de su casa
+ * (también los que había compartido con CJ).
  * No se puede deshacer.
  */
 export const deleteClient = onCall(async (request) => {
@@ -224,6 +225,13 @@ export const deleteClient = onCall(async (request) => {
   const requests = await db.collection('requests').where('clientId', '==', clientId).get()
   const reservationClicks = await db.collection('reservationClicks').where('clientId', '==', clientId).get()
   const reservationConfirms = await db.collection('reservationConfirms').where('clientId', '==', clientId).get()
+  // Contactos propios y notas de la casa: privados y compartidos con CJ
+  const [ownContacts, sharedContacts, houseNotes, sharedHouseNotes] = await Promise.all([
+    db.collection(`clients/${clientId}/ownContacts`).get(),
+    db.collection(`clients/${clientId}/sharedContacts`).get(),
+    db.collection(`clients/${clientId}/houseNotes`).get(),
+    db.collection(`clients/${clientId}/sharedHouseNotes`).get(),
+  ])
   // La conversación y todos sus mensajes
   await db.recursiveDelete(db.doc(`conversations/${clientId}`))
   const refs = [
@@ -232,6 +240,10 @@ export const deleteClient = onCall(async (request) => {
     ...requests.docs.map((d) => d.ref),
     ...reservationClicks.docs.map((d) => d.ref),
     ...reservationConfirms.docs.map((d) => d.ref),
+    ...ownContacts.docs.map((d) => d.ref),
+    ...sharedContacts.docs.map((d) => d.ref),
+    ...houseNotes.docs.map((d) => d.ref),
+    ...sharedHouseNotes.docs.map((d) => d.ref),
     clientRef,
   ]
   for (let i = 0; i < refs.length; i += 450) {
@@ -246,5 +258,7 @@ export const deleteClient = onCall(async (request) => {
     requests: requests.size,
     reservationClicks: reservationClicks.size,
     reservationConfirms: reservationConfirms.size,
+    ownContacts: ownContacts.size + sharedContacts.size,
+    houseNotes: houseNotes.size + sharedHouseNotes.size,
   }
 })

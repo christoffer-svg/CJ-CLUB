@@ -3,7 +3,7 @@ import { useAuth } from '../auth/AuthProvider'
 import { useViewer } from '../lib/viewer'
 import Header from '../components/Header'
 import WeatherCard from '../components/WeatherCard'
-import { AlertIcon, ChatIcon, ChevronIcon, CrossIcon, DishIcon, KeyIcon, PhoneIcon, StarIcon, WhatsAppIcon } from '../components/Icons'
+import { AlertIcon, ChatIcon, ChevronIcon, CrossIcon, DishIcon, KeyIcon, NoteIcon, PhoneIcon, StarIcon, WhatsAppIcon } from '../components/Icons'
 import { useActiveDealsCount, useDoc } from '../lib/data'
 import { isUnread, useClientRequests, useConversation } from '../lib/messaging'
 import { useI18n } from '../i18n'
@@ -91,6 +91,23 @@ export default function Home() {
               </span>
             </Link>
           </div>
+        </section>
+
+        <section className="section">
+          <Link to={`${base}/casa`} className="card team">
+            <span className="team__row">
+              <span className="card__icon">
+                <NoteIcon />
+              </span>
+              <span className="card__body">
+                <span className="card__title">{t('house.homeTitle')}</span>
+                <span className="card__text">{t('house.homeText')}</span>
+              </span>
+              <span className="card__chevron">
+                <ChevronIcon />
+              </span>
+            </span>
+          </Link>
         </section>
 
         <section className="section">

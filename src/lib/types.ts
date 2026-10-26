@@ -226,3 +226,43 @@ export type ClientRequest = {
   createdAt: Timestamp | null
   updatedAt: Timestamp | null
 }
+
+/** Id reservado: el cliente escribe el servicio a mano (no es una categoría de CJ). */
+export const ownServiceOther = 'other'
+
+/**
+ * clients/{clientId}/ownContacts/{id} si es privado.
+ * clients/{clientId}/sharedContacts/{id} si el cliente lo comparte con CJ.
+ * El equipo de CJ no puede leer la colección privada. Los negocios tampoco.
+ * `service` es el id de una categoría de colaboradores, o "other".
+ */
+export type OwnContact = {
+  name: string
+  service: string
+  /** Solo si service es "other", p. ej. "Placas solares" */
+  serviceOther: string
+  phone: string
+  email: string
+  notes: string
+  shareWithCj: boolean
+  createdAt: Timestamp | null
+  updatedAt: Timestamp | null
+}
+
+export const houseSections = ['wifi', 'alarm', 'meters', 'keys', 'rubbish', 'other'] as const
+export type HouseSection = (typeof houseSections)[number]
+
+/**
+ * clients/{clientId}/houseNotes/{id} si es privada.
+ * clients/{clientId}/sharedHouseNotes/{id} si el cliente la comparte con CJ.
+ */
+export type HouseNote = {
+  section: HouseSection
+  title: string
+  body: string
+  /** Contraseña o código. Vacío si la nota no tiene. */
+  secret: string
+  shareWithCj: boolean
+  createdAt: Timestamp | null
+  updatedAt: Timestamp | null
+}

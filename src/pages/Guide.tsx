@@ -1,4 +1,5 @@
 import Header from '../components/Header'
+import OwnContacts from '../components/OwnContacts'
 import { useI18n } from '../i18n'
 import { useAssignedPartners, useDoc, useGeneralContacts, usePartnerCategories } from '../lib/data'
 import { telLink } from '../lib/format'
@@ -78,6 +79,8 @@ export default function Guide() {
             })}
           </section>
         )}
+
+        <OwnContacts />
 
         {general.data.length > 0 && (
           <section className="section">

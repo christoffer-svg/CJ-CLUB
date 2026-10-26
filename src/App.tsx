@@ -11,6 +11,7 @@ import Discover from './pages/Discover'
 import Benefits from './pages/Benefits'
 import Messages from './pages/Messages'
 import Requests from './pages/Requests'
+import House from './pages/House'
 import AdminHome from './pages/admin/AdminHome'
 import Clients from './pages/admin/Clients'
 import ClientNew from './pages/admin/ClientNew'
@@ -56,6 +57,7 @@ export default function App() {
             <Route path="ventajas" element={<Benefits />} />
             <Route path="mensajes" element={<Messages />} />
             <Route path="peticiones" element={<Requests />} />
+            <Route path="casa" element={<House />} />
           </Route>
         </Route>
         <Route element={<RequireRole role="admin" />}>
@@ -66,6 +68,7 @@ export default function App() {
             <Route path="ventajas" element={<Benefits />} />
             <Route path="mensajes" element={<Messages />} />
             <Route path="peticiones" element={<Requests />} />
+            <Route path="casa" element={<House />} />
           </Route>
           <Route path="admin" element={<AdminLayout />}>
             <Route index element={<AdminHome />} />

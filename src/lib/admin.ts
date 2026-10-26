@@ -116,7 +116,15 @@ export async function createBusinessAccount(data: NewBusiness) {
 export async function deleteClient(clientId: string) {
   const call = httpsCallable<
     { clientId: string },
-    { accounts: number; dealUses: number; requests: number; reservationClicks: number; reservationConfirms: number }
+    {
+      accounts: number
+      dealUses: number
+      requests: number
+      reservationClicks: number
+      reservationConfirms: number
+      ownContacts: number
+      houseNotes: number
+    }
   >(functions, 'deleteClient')
   return (await call({ clientId })).data
 }

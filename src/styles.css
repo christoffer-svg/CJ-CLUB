@@ -2634,3 +2634,133 @@ button {
     border: 1px solid #d3c4aa;
   }
 }
+
+/* Contactos propios y notas de la casa */
+.own-block {
+  gap: 14px;
+}
+
+.own-contact {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px 0;
+}
+
+.own-contact + .own-contact {
+  border-top: 1px solid var(--card-border);
+}
+
+.own-contact__name,
+.house-note__body,
+.own-contact__notes {
+  overflow-wrap: anywhere;
+}
+
+.own-contact__notes,
+.house-note__body {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  color: var(--text);
+}
+
+.own-actions,
+.own-manage,
+.secret {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.own-actions .call-btn {
+  min-width: 0;
+  height: 34px;
+  padding: 0 12px;
+  font-size: 10px;
+}
+
+.own-manage .link-btn,
+.secret__btn {
+  padding: 4px 2px;
+}
+
+.share-field {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 12px;
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  background: var(--sand);
+}
+
+.share-field input {
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  accent-color: var(--espresso);
+  flex: none;
+}
+
+.share-field__label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.share-field__hint {
+  display: block;
+  margin-top: 4px;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--text-2);
+}
+
+.secret__value {
+  font-size: 15px;
+  letter-spacing: 0.04em;
+  color: var(--text);
+}
+
+.secret__value--mask {
+  letter-spacing: 0.18em;
+  color: var(--text-2);
+}
+
+.status--shared {
+  align-self: flex-start;
+  margin-top: 4px;
+  border-color: var(--gold);
+  color: var(--gold-dark);
+}
+
+.house-note {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.shared-block {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.shared-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.shared-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-top: 8px;
+  border-top: 1px solid var(--card-border);
+}

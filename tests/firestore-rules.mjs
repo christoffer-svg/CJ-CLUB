@@ -7,8 +7,8 @@
  *        --client-email=jansen@prueba.test --client-password=Prueba1234
  *   3. npm run test:rules
  *
- * Personas: Jansen y Lindqvist (clientes), el admin, una cuenta no invitada
- * y dos negocios (La Terraza del Puerto y el golf).
+ * Personas: Jansen y Lindqvist (clientes), el admin, una cuenta no invitada,
+ * dos negocios (La Terraza del Puerto y el golf) y la pareja de Jansen (misma cuenta familiar).
  */
 const A = 'http://127.0.0.1:9099/identitytoolkit.googleapis.com/v1', F = 'http://127.0.0.1:8080/v1/projects/cj-club/databases/(default)/documents'
 const H = { 'content-type': 'application/json' }
@@ -23,6 +23,7 @@ const bool = (b) => ({ booleanValue: b })
 const num = (n) => ({ integerValue: String(n) })
 const patch = (t, path, fields) => req(t, `${path}?${Object.keys(fields).map(k => 'updateMask.fieldPaths=' + k).join('&')}`, 'PATCH', { fields })
 const runQuery = (t, structuredQuery) => fetch(`${F}:runQuery`, { method: 'POST', headers: { ...H, authorization: 'Bearer ' + t }, body: JSON.stringify({ structuredQuery }) }).then(r => r.status)
+const runQueryAt = (t, parent, structuredQuery) => fetch(`${F}/${parent}:runQuery`, { method: 'POST', headers: { ...H, authorization: 'Bearer ' + t }, body: JSON.stringify({ structuredQuery }) }).then(r => r.status)
 
 // Cuenta no invitada (se registra sin ficha en users) y Lindqvist, segunda familia con acceso
 await signUp('intruso@prueba.test', 'Intruso1234')
@@ -36,7 +37,10 @@ let g = await signUp('golf@prueba.test', 'Negocio1234')
 if (!g.localId) g = await signIn('golf@prueba.test', 'Negocio1234')
 await ownerPatch(`users/${g.localId}`, { role: str('business'), name: str('Golf'), email: str('golf@prueba.test'), language: str('es'), placeId: str('golf-pinar') })
 const j = await signIn('jansen@prueba.test', 'Prueba1234'), a = await signIn('admin@prueba.test', 'Admin1234'), x = await signIn('intruso@prueba.test', 'Intruso1234')
-const J = j.idToken, L = l.idToken, AD = a.idToken, X = x.idToken, B = b.idToken, G = g.idToken
+let pareja = await signUp('pareja@prueba.test', 'Prueba1234')
+if (!pareja.localId) pareja = await signIn('pareja@prueba.test', 'Prueba1234')
+await ownerPatch(`users/${pareja.localId}`, { role: str('client'), name: str('Pareja Jansen'), email: str('pareja@prueba.test'), language: str('es'), clientId: str('jansen') })
+const J = j.idToken, L = l.idToken, AD = a.idToken, X = x.idToken, B = b.idToken, G = g.idToken, P = pareja.idToken
 const dealUse = (cid, did) => ({ fields: { clientId: str(cid), dealId: str(did), date: { timestampValue: new Date().toISOString() } } })
 
 // Sin sesión / sin invitación: nada
@@ -314,6 +318,137 @@ ok(await req(B, 'deals/oferta-borrar', 'DELETE'), 200, 'negocio retira su descue
 await wipe('deals/oferta-admin')
 ok(await req(B, 'deals/oferta-admin', 'PATCH', { fields: dealFields() }), 200, 'negocio crea un descuento que CJ retirará')
 ok(await req(AD, 'deals/oferta-admin', 'DELETE'), 200, 'admin retira un descuento del negocio')
+// contactos propios y notas de la casa (privados; CJ solo ve la copia compartida)
+const contact = (extra = {}) => ({
+  name: str('Juan el jardinero'),
+  service: str('garden'),
+  serviceOther: str(''),
+  phone: str('+34 600 111 222'),
+  email: str('juan@jardin.test'),
+  notes: str('Viene los martes'),
+  shareWithCj: bool(false),
+  ...extra,
+})
+const contactMask = ['name', 'service', 'serviceOther', 'phone', 'email', 'notes', 'shareWithCj']
+ok(await serverTime(J, 'clients/jansen/ownContacts/c1', contact(), ['createdAt', 'updatedAt'], false), 200, 'cliente crea un contacto privado')
+ok(await serverTime(J, 'clients/lindqvist/ownContacts/c2', contact(), ['createdAt', 'updatedAt'], false), 403, 'cliente crea un contacto en otra familia')
+ok(await serverTime(J, 'clients/jansen/ownContacts/c3', contact({ name: str('') }), ['createdAt', 'updatedAt'], false), 403, 'contacto sin nombre')
+ok(await serverTime(J, 'clients/jansen/ownContacts/c4', contact({ service: str('limusina') }), ['createdAt', 'updatedAt'], false), 403, 'servicio de contacto no válido')
+const placas = { fields: { name_es: str('Placas solares'), name_en: str('Solar panels'), icon: str('sun'), order: num(9), active: bool(true) } }
+ok(await req(AD, 'partnerCategories/placas-solares', 'PATCH', placas), 200, 'CJ crea el servicio Placas solares')
+ok(await serverTime(J, 'clients/jansen/ownContacts/c12', contact({ service: str('placas-solares') }), ['createdAt', 'updatedAt'], false), 200, 'contacto con un servicio creado por CJ')
+ok(await serverTime(J, 'clients/jansen/ownContacts/c13', contact({ service: str('placas-solares'), serviceOther: str('extra') }), ['createdAt', 'updatedAt'], false), 403, 'un servicio de la lista no lleva texto libre')
+ok(await patch(AD, 'partnerCategories/placas-solares', { active: bool(false) }), 200, 'CJ oculta el servicio')
+ok(await serverTime(J, 'clients/jansen/ownContacts/c15', contact({ service: str('placas-solares') }), ['createdAt', 'updatedAt'], false), 200, 'un servicio oculto sigue valiendo mientras exista')
+await wipe('partnerCategories/placas-solares')
+ok(await serverTime(J, 'clients/jansen/ownContacts/c12', { phone: str('+34 611 000 000') }, ['updatedAt'], true, ['phone']), 200, 'se puede corregir el contacto aunque CJ haya quitado ese servicio')
+ok(await serverTime(J, 'clients/jansen/ownContacts/c14', contact({ service: str('placas-solares') }), ['createdAt', 'updatedAt'], false), 403, 'un servicio que ya no existe no vale para un contacto nuevo')
+ok(await serverTime(J, 'clients/jansen/ownContacts/c5', contact({ service: str('other'), serviceOther: str('') }), ['createdAt', 'updatedAt'], false), 403, 'Otro sin texto libre')
+ok(await serverTime(J, 'clients/jansen/ownContacts/c6', contact({ service: str('other'), serviceOther: str('Placas solares') }), ['createdAt', 'updatedAt'], false), 200, 'contacto Otro con texto libre')
+ok(await serverTime(J, 'clients/jansen/ownContacts/c7', contact({ email: str('no-es-correo') }), ['createdAt', 'updatedAt'], false), 403, 'correo de contacto no válido')
+ok(await serverTime(J, 'clients/jansen/ownContacts/c8', contact({ shareWithCj: bool(true) }), ['createdAt', 'updatedAt'], false), 403, 'un contacto privado no puede nacer ya compartido')
+ok(await serverTime(J, 'clients/jansen/ownContacts/c9', { ...contact(), extra: str('x') }, ['createdAt', 'updatedAt'], false), 403, 'contacto con campos de más')
+ok(await serverTime(AD, 'clients/jansen/ownContacts/c10', contact(), ['createdAt', 'updatedAt'], false), 403, 'CJ no crea contactos del cliente')
+ok(await serverTime(B, 'clients/jansen/ownContacts/c11', contact(), ['createdAt', 'updatedAt'], false), 403, 'un negocio no crea contactos del cliente')
+ok(await req(J, 'clients/jansen/ownContacts/c1'), 200, 'cliente lee su contacto')
+ok(await req(P, 'clients/jansen/ownContacts/c1'), 200, 'otra persona de la misma cuenta lee el contacto')
+ok(await req(L, 'clients/jansen/ownContacts/c1'), 403, 'otra familia lee el contacto')
+ok(await req(AD, 'clients/jansen/ownContacts/c1'), 403, 'CJ no lee un contacto privado')
+ok(await req(B, 'clients/jansen/ownContacts/c1'), 403, 'un negocio no lee un contacto privado')
+ok(await req(X, 'clients/jansen/ownContacts/c1'), 403, 'una cuenta sin invitación no lee contactos')
+ok(await req(null, 'clients/jansen/ownContacts/c1'), 403, 'anónimo no lee contactos')
+ok(await runQueryAt(J, 'clients/jansen', { from: [{ collectionId: 'ownContacts' }] }), 200, 'cliente lista sus contactos privados')
+ok(await runQueryAt(AD, 'clients/jansen', { from: [{ collectionId: 'ownContacts' }] }), 403, 'CJ no lista contactos privados')
+ok(await runQueryAt(B, 'clients/jansen', { from: [{ collectionId: 'ownContacts' }] }), 403, 'un negocio no lista contactos privados')
+ok(await runQuery(J, { from: [{ collectionId: 'ownContacts', allDescendants: true }] }), 403, 'cliente no lista contactos privados de todas las familias')
+ok(await runQuery(AD, { from: [{ collectionId: 'ownContacts', allDescendants: true }] }), 403, 'CJ no lista contactos privados de todas las familias')
+ok(await serverTime(J, 'clients/jansen/ownContacts/c1', { phone: str('+34 600 000 000') }, ['updatedAt'], true, ['phone']), 200, 'cliente edita su contacto')
+ok(await serverTime(J, 'clients/jansen/ownContacts/c1', { shareWithCj: bool(true) }, ['updatedAt'], true, ['shareWithCj']), 403, 'no se comparte sin moverlo a la colección compartida')
+ok(await serverTime(J, 'clients/jansen/ownContacts/c1', { createdAt: { timestampValue: '2020-01-01T00:00:00Z' } }, ['updatedAt'], true, ['createdAt']), 403, 'cliente cambia la fecha de alta del contacto')
+ok(await serverTime(L, 'clients/jansen/ownContacts/c1', { phone: str('1') }, ['updatedAt'], true, ['phone']), 403, 'otra familia edita el contacto')
+ok(await serverTime(AD, 'clients/jansen/ownContacts/c1', { phone: str('1') }, ['updatedAt'], true, ['phone']), 403, 'CJ edita un contacto privado')
+ok(await req(AD, 'clients/jansen/ownContacts/c1', 'DELETE'), 403, 'CJ borra un contacto privado')
+ok(await req(L, 'clients/jansen/ownContacts/c1', 'DELETE'), 403, 'otra familia borra el contacto')
+// Aunque alguien escribiera shareWithCj dentro de la colección privada, CJ sigue sin poder leerla
+await ownerPatch('clients/jansen/ownContacts/plantado', { ...contact(), shareWithCj: bool(true), createdAt: { timestampValue: new Date().toISOString() }, updatedAt: { timestampValue: new Date().toISOString() } })
+ok(await req(AD, 'clients/jansen/ownContacts/plantado'), 403, 'CJ no lee un contacto privado aunque lleve la marca de compartido')
+
+ok(await serverTime(J, 'clients/jansen/sharedContacts/s1', contact({ shareWithCj: bool(true) }), ['createdAt', 'updatedAt'], false), 200, 'cliente comparte un contacto con CJ')
+ok(await serverTime(J, 'clients/jansen/sharedContacts/s2', contact(), ['createdAt', 'updatedAt'], false), 403, 'la colección compartida no admite un contacto privado')
+ok(await req(AD, 'clients/jansen/sharedContacts/s1'), 200, 'CJ lee el contacto compartido')
+ok(await req(P, 'clients/jansen/sharedContacts/s1'), 200, 'la misma cuenta lee el contacto compartido')
+ok(await req(L, 'clients/jansen/sharedContacts/s1'), 403, 'otra familia lee el contacto compartido')
+ok(await req(B, 'clients/jansen/sharedContacts/s1'), 403, 'un negocio no lee el contacto compartido')
+ok(await runQueryAt(AD, 'clients/jansen', { from: [{ collectionId: 'sharedContacts' }] }), 200, 'CJ lista los contactos compartidos')
+ok(await runQueryAt(J, 'clients/jansen', { from: [{ collectionId: 'sharedContacts' }] }), 200, 'cliente lista sus contactos compartidos')
+ok(await runQueryAt(B, 'clients/jansen', { from: [{ collectionId: 'sharedContacts' }] }), 403, 'un negocio no lista contactos compartidos')
+ok(await runQuery(L, { from: [{ collectionId: 'sharedContacts', allDescendants: true }] }), 403, 'otra familia no lista todos los contactos compartidos')
+ok(await runQuery(AD, { from: [{ collectionId: 'sharedContacts', allDescendants: true }] }), 403, 'CJ no lista de una vez los contactos compartidos de todas las familias')
+ok(await serverTime(AD, 'clients/jansen/sharedContacts/s1', { phone: str('1') }, ['updatedAt'], true, ['phone']), 403, 'CJ no edita un contacto compartido')
+ok(await req(AD, 'clients/jansen/sharedContacts/s1', 'DELETE'), 403, 'CJ no borra un contacto compartido desde la app')
+ok(await serverTime(J, 'clients/jansen/sharedContacts/s1', contact({ name: str('Juan actualizado'), shareWithCj: bool(true) }), ['updatedAt'], true, contactMask), 200, 'cliente edita el contacto compartido')
+ok(await req(J, 'clients/jansen/ownContacts/c1', 'DELETE'), 200, 'cliente borra su contacto privado')
+ok(await req(P, 'clients/jansen/sharedContacts/s1', 'DELETE'), 200, 'la misma cuenta borra el contacto compartido')
+ok(await req(B, 'clients/jansen/ownContacts/c6', 'DELETE'), 403, 'un negocio no borra contactos')
+
+const note = (extra = {}) => ({
+  section: str('wifi'),
+  title: str('Wifi de casa'),
+  body: str('Red: CasaJansen'),
+  secret: str('clave-secreta'),
+  shareWithCj: bool(false),
+  ...extra,
+})
+const noteMask = ['section', 'title', 'body', 'secret', 'shareWithCj']
+ok(await serverTime(J, 'clients/jansen/houseNotes/n1', note(), ['createdAt', 'updatedAt'], false), 200, 'cliente crea una nota privada de la casa')
+ok(await serverTime(J, 'clients/lindqvist/houseNotes/n2', note(), ['createdAt', 'updatedAt'], false), 403, 'cliente crea una nota en otra familia')
+ok(await serverTime(J, 'clients/jansen/houseNotes/n3', note({ title: str('') }), ['createdAt', 'updatedAt'], false), 403, 'nota sin título')
+ok(await serverTime(J, 'clients/jansen/houseNotes/n4', note({ section: str('piscina') }), ['createdAt', 'updatedAt'], false), 403, 'apartado de nota no válido')
+ok(await serverTime(J, 'clients/jansen/houseNotes/n5', note({ body: str(''), secret: str('') }), ['createdAt', 'updatedAt'], false), 403, 'nota vacía')
+ok(await serverTime(J, 'clients/jansen/houseNotes/n6', note({ body: str(''), secret: str('solo-clave') }), ['createdAt', 'updatedAt'], false), 200, 'nota que solo guarda una contraseña')
+ok(await serverTime(J, 'clients/jansen/houseNotes/n7', note({ shareWithCj: bool(true) }), ['createdAt', 'updatedAt'], false), 403, 'una nota privada no puede nacer ya compartida')
+ok(await serverTime(B, 'clients/jansen/houseNotes/n8', note(), ['createdAt', 'updatedAt'], false), 403, 'un negocio no crea notas de la casa')
+ok(await req(J, 'clients/jansen/houseNotes/n1'), 200, 'cliente lee su nota')
+ok(await req(P, 'clients/jansen/houseNotes/n1'), 200, 'la misma cuenta lee la nota')
+ok(await req(L, 'clients/jansen/houseNotes/n1'), 403, 'otra familia lee la nota')
+ok(await req(AD, 'clients/jansen/houseNotes/n1'), 403, 'CJ no lee una nota privada')
+ok(await req(B, 'clients/jansen/houseNotes/n1'), 403, 'un negocio no lee una nota privada')
+ok(await req(X, 'clients/jansen/houseNotes/n1'), 403, 'una cuenta sin invitación no lee notas')
+ok(await runQueryAt(J, 'clients/jansen', { from: [{ collectionId: 'houseNotes' }] }), 200, 'cliente lista sus notas privadas')
+ok(await runQueryAt(AD, 'clients/jansen', { from: [{ collectionId: 'houseNotes' }] }), 403, 'CJ no lista notas privadas')
+ok(await runQueryAt(B, 'clients/jansen', { from: [{ collectionId: 'houseNotes' }] }), 403, 'un negocio no lista notas privadas')
+ok(await runQuery(AD, { from: [{ collectionId: 'houseNotes', allDescendants: true }] }), 403, 'CJ no lista notas privadas de todas las familias')
+ok(await runQuery(J, { from: [{ collectionId: 'houseNotes', allDescendants: true }] }), 403, 'cliente no lista notas privadas de todas las familias')
+ok(await serverTime(J, 'clients/jansen/houseNotes/n1', { secret: str('clave-nueva') }, ['updatedAt'], true, ['secret']), 200, 'cliente cambia la contraseña de la nota')
+ok(await serverTime(AD, 'clients/jansen/houseNotes/n1', { secret: str('robada') }, ['updatedAt'], true, ['secret']), 403, 'CJ no cambia una nota privada')
+ok(await req(AD, 'clients/jansen/houseNotes/n1', 'DELETE'), 403, 'CJ no borra una nota privada')
+await ownerPatch('clients/jansen/houseNotes/plantada', { ...note(), shareWithCj: bool(true), createdAt: { timestampValue: new Date().toISOString() }, updatedAt: { timestampValue: new Date().toISOString() } })
+ok(await req(AD, 'clients/jansen/houseNotes/plantada'), 403, 'CJ no lee una nota privada aunque lleve la marca de compartido')
+
+ok(await serverTime(J, 'clients/jansen/sharedHouseNotes/h1', note({ shareWithCj: bool(true), section: str('alarm'), title: str('Alarma') }), ['createdAt', 'updatedAt'], false), 200, 'cliente comparte una nota con CJ')
+ok(await serverTime(J, 'clients/jansen/sharedHouseNotes/h2', note(), ['createdAt', 'updatedAt'], false), 403, 'la colección compartida no admite una nota privada')
+ok(await req(AD, 'clients/jansen/sharedHouseNotes/h1'), 200, 'CJ lee la nota compartida')
+ok(await req(B, 'clients/jansen/sharedHouseNotes/h1'), 403, 'un negocio no lee la nota compartida')
+ok(await req(L, 'clients/jansen/sharedHouseNotes/h1'), 403, 'otra familia lee la nota compartida')
+ok(await runQueryAt(AD, 'clients/jansen', { from: [{ collectionId: 'sharedHouseNotes' }] }), 200, 'CJ lista las notas compartidas')
+ok(await runQueryAt(B, 'clients/jansen', { from: [{ collectionId: 'sharedHouseNotes' }] }), 403, 'un negocio no lista notas compartidas')
+ok(await runQuery(L, { from: [{ collectionId: 'sharedHouseNotes', allDescendants: true }] }), 403, 'otra familia no lista todas las notas compartidas')
+ok(await serverTime(AD, 'clients/jansen/sharedHouseNotes/h1', { secret: str('robada') }, ['updatedAt'], true, ['secret']), 403, 'CJ no edita una nota compartida')
+ok(await req(AD, 'clients/jansen/sharedHouseNotes/h1', 'DELETE'), 403, 'CJ no borra una nota compartida desde la app')
+ok(await serverTime(P, 'clients/jansen/sharedHouseNotes/h1', note({ shareWithCj: bool(true), section: str('alarm'), title: str('Alarma actualizada') }), ['updatedAt'], true, noteMask), 200, 'la misma cuenta edita la nota compartida')
+ok(await req(J, 'clients/jansen/houseNotes/n1', 'DELETE'), 200, 'cliente borra su nota privada')
+ok(await req(J, 'clients/jansen/sharedHouseNotes/h1', 'DELETE'), 200, 'cliente borra la nota compartida')
+ok(await req(B, 'clients/jansen/houseNotes/n6', 'DELETE'), 403, 'un negocio no borra notas')
+for (const path of [
+  'clients/jansen/ownContacts/c6',
+  'clients/jansen/ownContacts/c12',
+  'clients/jansen/ownContacts/c15',
+  'clients/jansen/ownContacts/plantado',
+  'clients/jansen/houseNotes/n6',
+  'clients/jansen/houseNotes/plantada',
+  'partnerCategories/placas-solares',
+]) await wipe(path)
+
 
 // colecciones no previstas
 ok(await req(B, 'secretos/x'), 403, 'negocio lee colección no prevista')

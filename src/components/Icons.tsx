@@ -121,6 +121,14 @@ export const WhatsAppIcon = (p: IconProps) => (
   </Svg>
 )
 
+export const NoteIcon = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M7 3.5h7.5L19 8v12.5H7z" />
+    <path d="M14.5 3.5V8H19" />
+    <path d="M10 12.5h6M10 16h4" />
+  </Svg>
+)
+
 export const ChatIcon = (p: IconProps) => (
   <Svg {...p}>
     <path d="M4.5 19.5 5.6 16A7.5 7.5 0 1 1 8.4 18.6z" />
