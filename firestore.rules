@@ -1,5 +1,6 @@
 rules_version = '2';
 
+
 // Reglas de seguridad de Firestore de CJ Club.
 // Principio: todo está denegado salvo lo que se permite expresamente aquí.
 // Las funciones de servidor (carpeta functions/) usan permisos de administrador y no pasan por estas reglas.
@@ -379,6 +380,122 @@ service cloud.firestore {
       allow read: if isAdmin();
       allow create, update: if isAdmin() && validReport();
       allow delete: if false;
+    }
+
+    // ---------- Contactos y notas de la casa del cliente ----------
+    // Privados por defecto. Viven en una colección que el equipo de CJ no puede leer.
+    // Si el cliente marca "Compartir con CJ", el documento pasa a la colección compartida.
+    // Un negocio colaborador no es admin ni el cliente: no puede leer ninguna de las dos.
+    // Cualquier persona con la misma ficha (clientId) sí: es la misma cuenta familiar.
+
+    function optionalText(t, max) {
+      return t is string && t.size() <= max;
+    }
+
+    function optionalEmail(t) {
+      return t is string && t.size() <= 120 && (t.size() == 0 || (t.size() >= 6 && t.matches('.+@.+[.].+')));
+    }
+
+    function serviceIdOk(value) {
+      return value is string && value.size() > 0 && value.size() <= 80 && value.matches('[A-Za-z0-9_-]+');
+    }
+
+    // Los seis de siempre valen aunque aún no haya documento. El resto tiene que existir
+    // en partnerCategories (también si CJ lo ha ocultado). "other" es el texto libre.
+    function ownServiceKnown(value) {
+      return serviceIdOk(value) && (
+        value == 'lawyer' || value == 'gestoria' || value == 'pool'
+        || value == 'maintenance' || value == 'garden' || value == 'communityAdmin'
+        || value == 'other'
+        || exists(/databases/$(database)/documents/partnerCategories/$(value))
+      );
+    }
+
+    // Si CJ borra el servicio después, el contacto se puede seguir corrigiendo con el mismo id.
+    function ownServiceAllowed(data, previous) {
+      return ownServiceKnown(data.get('service', ''))
+        || (serviceIdOk(data.get('service', '')) && data.get('service', '') == previous.get('service', ''));
+    }
+
+    // "service" es una palabra reservada de las reglas: se lee el campo con get().
+    function otherLabelOk(kind, label) {
+      return (kind == 'other' && validText(label, 80)) || (kind != 'other' && label is string && label.size() == 0);
+    }
+
+    function houseSectionOk(section) {
+      return section == 'wifi' || section == 'alarm' || section == 'meters'
+        || section == 'keys' || section == 'rubbish' || section == 'other';
+    }
+
+    function ownContactData(data, shared) {
+      return data.keys().hasOnly(['name', 'service', 'serviceOther', 'phone', 'email', 'notes', 'shareWithCj', 'createdAt', 'updatedAt'])
+        && validText(data.name, 120)
+        && serviceIdOk(data.get('service', ''))
+        && otherLabelOk(data.get('service', ''), data.get('serviceOther', ''))
+        && optionalText(data.phone, 40)
+        && optionalEmail(data.email)
+        && optionalText(data.notes, 2000)
+        && data.shareWithCj == shared
+        && data.updatedAt == request.time;
+    }
+
+    function houseNoteData(data, shared) {
+      return data.keys().hasOnly(['section', 'title', 'body', 'secret', 'shareWithCj', 'createdAt', 'updatedAt'])
+        && houseSectionOk(data.section)
+        && validText(data.title, 120)
+        && optionalText(data.body, 4000)
+        && optionalText(data.secret, 200)
+        && (data.body.size() > 0 || data.secret.size() > 0)
+        && data.shareWithCj == shared
+        && data.updatedAt == request.time;
+    }
+
+    match /clients/{clientId}/ownContacts/{id} {
+      allow read: if isMyClient(clientId);
+      allow create: if isMyClient(clientId)
+        && ownContactData(request.resource.data, false)
+        && ownServiceKnown(request.resource.data.get('service', ''))
+        && request.resource.data.createdAt == request.time;
+      allow update: if isMyClient(clientId)
+        && ownContactData(request.resource.data, false)
+        && ownServiceAllowed(request.resource.data, resource.data)
+        && request.resource.data.createdAt == resource.data.createdAt;
+      allow delete: if isMyClient(clientId);
+    }
+
+    match /clients/{clientId}/sharedContacts/{id} {
+      allow read: if isMyClient(clientId) || isAdmin();
+      allow create: if isMyClient(clientId)
+        && ownContactData(request.resource.data, true)
+        && ownServiceKnown(request.resource.data.get('service', ''))
+        && request.resource.data.createdAt == request.time;
+      allow update: if isMyClient(clientId)
+        && ownContactData(request.resource.data, true)
+        && ownServiceAllowed(request.resource.data, resource.data)
+        && request.resource.data.createdAt == resource.data.createdAt;
+      allow delete: if isMyClient(clientId);
+    }
+
+    match /clients/{clientId}/houseNotes/{id} {
+      allow read: if isMyClient(clientId);
+      allow create: if isMyClient(clientId)
+        && houseNoteData(request.resource.data, false)
+        && request.resource.data.createdAt == request.time;
+      allow update: if isMyClient(clientId)
+        && houseNoteData(request.resource.data, false)
+        && request.resource.data.createdAt == resource.data.createdAt;
+      allow delete: if isMyClient(clientId);
+    }
+
+    match /clients/{clientId}/sharedHouseNotes/{id} {
+      allow read: if isMyClient(clientId) || isAdmin();
+      allow create: if isMyClient(clientId)
+        && houseNoteData(request.resource.data, true)
+        && request.resource.data.createdAt == request.time;
+      allow update: if isMyClient(clientId)
+        && houseNoteData(request.resource.data, true)
+        && request.resource.data.createdAt == resource.data.createdAt;
+      allow delete: if isMyClient(clientId);
     }
 
     // ---------- Todo lo demás: denegado ----------

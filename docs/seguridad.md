@@ -21,7 +21,9 @@ Todo está denegado salvo lo que se permite expresamente.
 | `reservationReports/{id}` | No lee ni escribe. | Lee y anota el número del mes (`{restaurante}_{aaaa-mm}`). No borra desde la app. |
 | `conversations/{clientId}` y `messages` | Lee y escribe solo en la suya, firmando como `client` con su uid y la hora del servidor; no puede editar ni borrar mensajes, ni cambiar el nombre de la familia ni la marca de leído de CJ. | Lee todas y responde como `cj`. Puede borrar. |
 | `requests/{id}` | Crea peticiones a su nombre (estado `new`, tipo válido, hora del servidor) y lee las suyas. Solo puede cancelarlas mientras son nuevas. No escribe la nota de CJ. | Lee todas, cambia estado y nota, borra. |
-| Cualquier otra | Denegado. | Denegado. |
+| `clients/{id}/ownContacts` y `houseNotes` | La familia (cualquier acceso con ese `clientId`) crea, lee, edita y borra los suyos. Son privados. El servicio del contacto es uno de los seis de siempre, uno que exista en `partnerCategories`, o «Otro» con texto. Si CJ quita ese servicio después, el contacto se puede seguir corrigiendo. | No lee ni escribe. |
+| `clients/{id}/sharedContacts` y `sharedHouseNotes` | La familia los crea al marcar «Compartir con CJ», y puede editarlos o borrarlos. | Solo lee. No edita ni borra desde la app. |
+| Cualquier otra | Denegado. Un negocio colaborador no es ni cliente ni admin: no lee contactos ni notas. | Denegado. |
 
 ### Negocio colaborador (`business`)
 Cuenta invitada por CJ y vinculada a un lugar (`users.placeId`). No es un socio.
@@ -36,13 +38,13 @@ Cuenta invitada por CJ y vinculada a un lugar (`users.placeId`). No es un socio.
 
 "Con sesión" significa además estar invitado: tener ficha en `users/`. Una cuenta creada por libre no lee nada.
 
-Pruebas: `tests/firestore-rules.mjs` (238 comprobaciones; ver instrucciones en el archivo). Ejecutar antes de cada cambio de reglas.
+Pruebas: `tests/firestore-rules.mjs` (345 comprobaciones; ver instrucciones en el archivo). Ejecutar antes de cada cambio de reglas.
 
 ### Funciones de servidor (`functions/`)
 - `createClient` (Madrid, `europe-southwest1`): comprueba que quien llama es `admin`, valida los datos, crea la cuenta con contraseña aleatoria, la ficha y el perfil; si algo falla, no deja cuentas sueltas. Límite de 5 instancias.
 - `createBusiness`: igual, para el acceso de un negocio vinculado a un lugar que ya existe. Si falla al guardar la ficha, no deja la cuenta suelta.
 - `businessReservationSummary`: solo el propio negocio. Cuenta las pulsaciones en Reservar de su lugar y devuelve el número, sin nombres de clientes.
-- `deleteClient`: baja de un cliente (derecho de supresión). Solo `admin`; borra sus cuentas de acceso, perfiles, ficha, conversación con mensajes, peticiones, registros de uso y sus pinchazos y confirmaciones de reserva. Se niega si hay una cuenta del equipo vinculada. No es una función nueva: es la misma baja de siempre.
+- `deleteClient`: baja de un cliente (derecho de supresión). Solo `admin`; borra sus cuentas de acceso, perfiles, ficha, conversación con mensajes, peticiones, registros de uso, pinchazos y confirmaciones de reserva, contactos propios y notas de la casa (privados y compartidos). Se niega si hay una cuenta del equipo vinculada. No es una función nueva: es la misma baja de siempre.
 - El alta de clientes y de negocios no se puede hacer desde el navegador sin ser del equipo de CJ: no hay registro público en la app.
 
 ### Código que descarga el navegador

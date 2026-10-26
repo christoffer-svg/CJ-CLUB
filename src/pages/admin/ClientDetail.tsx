@@ -3,6 +3,7 @@ import { FirebaseError } from 'firebase/app'
 import { useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { PageTitle } from '../../components/admin/AdminLayout'
+import SharedHousehold from '../../components/admin/SharedHousehold'
 import AutoInput from '../../components/admin/AutoInput'
 import Dialog from '../../components/admin/Dialog'
 import LocationPicker from '../../components/admin/LocationPicker'
@@ -176,11 +177,14 @@ export default function ClientDetail() {
           })}
       </section>
 
+      <SharedHousehold clientId={id} />
+
       <section className="card a-form a-danger">
         <h2 className="a-section-title">Dar de baja</h2>
         <p className="card__text">
-          Borra su acceso a la app, su ficha, sus contactos asignados, sus favoritos y sus registros de uso de descuentos.
-          Úselo cuando el cliente pida que se borren sus datos. No se puede deshacer.
+          Borra su acceso a la app, su ficha, sus contactos asignados, los contactos que haya guardado, las notas de su casa,
+          sus favoritos y sus registros de uso de descuentos. Úselo cuando el cliente pida que se borren sus datos. No se puede
+          deshacer.
         </p>
         <div className="a-actions">
           <button
