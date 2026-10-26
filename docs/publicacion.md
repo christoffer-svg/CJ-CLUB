@@ -2,7 +2,7 @@
 
 Cuando un cambio queda guardado en la versión principal del proyecto, la app se publica sola en internet. No hay que ejecutar ningún comando.
 
-La dirección de la app es [https://cj-club.web.app](https://cj-club.web.app). Hoy esa página dice «Site Not Found» porque todavía no se ha publicado nada. La primera publicación que salga bien sustituye ese aviso por la pantalla de acceso.
+La dirección de la app es [https://cjclub.eu](https://cjclub.eu). La dirección técnica de Firebase, [https://cj-club.web.app](https://cj-club.web.app), sigue funcionando y muestra lo mismo.
 
 ## Qué ocurre solo
 
@@ -11,7 +11,7 @@ Cada vez que se guarda un cambio en la rama `main` (es lo que hace Claude Code a
 1. Revisa el código.
 2. Construye la app.
 3. Si los dos pasos anteriores salen bien, publica tres cosas:
-   - la web, en [https://cj-club.web.app](https://cj-club.web.app);
+   - la web, en [https://cjclub.eu](https://cjclub.eu) (y en cj-club.web.app);
    - las normas de seguridad de la base de datos;
    - los índices de la base de datos.
 
@@ -64,7 +64,7 @@ Haga esto antes de aceptar el cambio que añade esta publicación. Si se acepta 
 3. **Run workflow**.
 4. Deje la rama `main`.
 5. **Run workflow** otra vez, el botón verde.
-6. Espere a que el intento salga en verde. Luego abra [https://cj-club.web.app](https://cj-club.web.app).
+6. Espere a que el intento salga en verde. Luego abra [https://cjclub.eu](https://cjclub.eu).
 
 ## Encender las funciones más adelante
 

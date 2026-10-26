@@ -17,6 +17,7 @@ Mensaje (HTML):
 <p>Para crear o cambiar su contraseña, pulse este enlace:</p>
 <p><a href="%LINK%">Elegir mi contraseña</a></p>
 <p>Por seguridad, el enlace caduca en una hora. Si ha caducado, abra la app y pulse «He olvidado mi contraseña».</p>
+<p>Después, entre en la app desde <a href="https://cjclub.eu">cjclub.eu</a>. En el móvil puede añadirla a la pantalla de inicio para abrirla como una app más.</p>
 <p>Si no esperaba este correo, puede ignorarlo.</p>
 <p>Un cordial saludo,<br>El equipo de CJ Real Estate &amp; Services</p>
 <hr>
@@ -25,6 +26,7 @@ Mensaje (HTML):
 <p>To create or change your password, please click this link:</p>
 <p><a href="%LINK%">Choose my password</a></p>
 <p>For your security, the link expires in one hour. If it has expired, open the app and tap “Forgot my password”.</p>
+<p>Then sign in to the app at <a href="https://cjclub.eu">cjclub.eu</a>. On your phone you can add it to your home screen to open it like any other app.</p>
 <p>If you were not expecting this email, you can safely ignore it.</p>
 <p>Kind regards,<br>The CJ Real Estate &amp; Services team</p>
 ```

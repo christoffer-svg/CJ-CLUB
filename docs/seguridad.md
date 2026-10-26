@@ -65,8 +65,8 @@ Páginas `/privacidad` y `/aviso-legal` (español e inglés), enlazadas desde la
 Antes de publicar:
 1. **Publicar las reglas** (`npm run deploy:rules`) y comprobar en Consola → Firestore → Reglas que coinciden con `firestore.rules`.
 2. **Ejecutar las pruebas de reglas** contra el emulador (`npm run test:rules`) y confirmar 0 fallos.
-3. **Restringir la clave web** en Google Cloud → APIs y servicios → Credenciales: limitarla a los dominios de la app (`cj-club.web.app`, `cj-club.firebaseapp.com` y el dominio propio) y solo a las APIs necesarias (Identity Toolkit, Token Service, Cloud Firestore, Firebase Installations).
-4. **Authentication → Configuración**: desactivar la creación de cuentas por los usuarios ("Enable create (sign-up)"), activar la protección contra enumeración de correos, revisar la política de contraseñas y dejar en "Dominios autorizados" solo los de producción (quitar `localhost` si no se usa).
+3. **Restringir la clave web** en Google Cloud → APIs y servicios → Credenciales: limitarla a los dominios de la app (`cjclub.eu`, `www.cjclub.eu`, `cj-club.web.app` y `cj-club.firebaseapp.com`) y solo a las APIs necesarias (Identity Toolkit, Token Service, Cloud Firestore, Firebase Installations).
+4. **Authentication → Configuración**: desactivar la creación de cuentas por los usuarios ("Enable create (sign-up)"), activar la protección contra enumeración de correos, revisar la política de contraseñas y dejar en "Dominios autorizados" solo los de producción: `cjclub.eu`, `www.cjclub.eu`, `cj-club.web.app` y `cj-club.firebaseapp.com` (quitar `localhost` si no se usa).
 5. **App Check** (reCAPTCHA Enterprise) para Firestore, Auth y Functions, primero en modo de supervisión y luego obligatorio. Reduce el abuso con la clave pública.
 6. **Plan Blaze y funciones**: al activarlo, crear una alerta de presupuesto; desplegar `functions/` y comprobar que `createClient` rechaza a usuarios que no son admin.
 7. **Cuenta de servicio**: una sola clave activa, guardada solo en el entorno; borrar claves antiguas en IAM y rotarla periódicamente.
