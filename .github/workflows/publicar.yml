@@ -3,6 +3,8 @@
 # Siempre: la web (Hosting), las reglas de Firestore y los índices.
 # Las funciones del servidor solo si la variable de repositorio DEPLOY_FUNCTIONS vale true
 # (hace falta el plan de pago Blaze; ver docs/publicacion.md).
+# Después, si se publican, se deja activa la limpieza de sus imágenes antiguas.
+# Si esa limpieza no se puede activar, la publicación sigue (aviso en amarillo).
 
 name: Publicar CJ Club
 
@@ -96,6 +98,25 @@ jobs:
       - name: Publicar las funciones
         if: vars.DEPLOY_FUNCTIONS == 'true'
         run: npx firebase deploy --project cj-club --only functions --non-interactive --force
+
+      # Comando aparte, solo para las imágenes. Su --force confirma esa limpieza;
+      # no borra funciones. Un fallo aquí no para la publicación.
+      - name: Activar la limpieza de imágenes antiguas
+        if: vars.DEPLOY_FUNCTIONS == 'true'
+        run: |
+          echo "Se deja activa la limpieza de las imágenes de las funciones en europe-southwest1. Las de más de un día se borran solas."
+          if salida=$(npx firebase functions:artifacts:setpolicy --project cj-club --location europe-southwest1 --days 1 --non-interactive --force 2>&1); then
+            printf '%s\n' "$salida"
+            echo "La limpieza automática de imágenes está activa."
+          else
+            printf '%s\n' "$salida"
+            echo "::warning::No se ha podido dejar activa la limpieza de las imágenes antiguas de las funciones. La publicación no se ha detenido: la web y las funciones siguen publicadas. Esas imágenes se acumulan y pueden suponer un pequeño coste cada mes."
+            if printf '%s' "$salida" | grep -Eqi 'permission|403|artifactregistry\.admin|Authorization failed|PERMISSION_DENIED|repositories\.update|don'"'"'t have permission'; then
+              echo "::warning::La cuenta firebase-adminsdk-fbsvc@cj-club.iam.gserviceaccount.com necesita el permiso Artifact Registry Administrator (Administrador de Artifact Registry, roles/artifactregistry.admin). Añádalo en https://console.cloud.google.com/iam-admin/iam?project=cj-club (la cuenta, el lápiz) y vuelva a publicar a mano. Los pasos están en docs/publicacion.md."
+            else
+              echo "::warning::Si el mensaje de arriba habla de permisos, el que falta es Artifact Registry Administrator (Administrador de Artifact Registry, roles/artifactregistry.admin), en https://console.cloud.google.com/iam-admin/iam?project=cj-club. Los pasos están en docs/publicacion.md."
+            fi
+          fi
 
       - name: Listo
         run: echo "Publicado en https://cjclub.eu (y en https://cj-club.web.app)"
