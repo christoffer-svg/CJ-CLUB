@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { PageTitle } from '../../components/admin/AdminLayout'
 import { Field, Input, Select } from '../../components/admin/Fields'
 import { useToast } from '../../components/admin/Toast'
-import { createClient, languageOptions, type NewClient } from '../../lib/admin'
+import { createClient, invitationNotice, languageOptions, type NewClient } from '../../lib/admin'
 
 const today = () => new Date().toISOString().slice(0, 10)
 
@@ -31,7 +31,7 @@ export default function ClientNew() {
     setBusy(true)
     try {
       const res = await createClient(form)
-      toast(`${form.familyName} creada. Invitación enviada a ${form.email}`)
+      toast(`${form.familyName} creada. ${invitationNotice(form.email, res.via)}`)
       navigate(`/admin/clientes/${res.clientId}`)
     } catch (err) {
       // Los mensajes de la función de servidor ya vienen en español

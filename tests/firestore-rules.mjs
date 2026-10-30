@@ -450,6 +450,11 @@ for (const path of [
 ]) await wipe(path)
 
 
+// mailLog: registro de correos del servidor
+ok(await runQuery(AD, { from: [{ collectionId: 'mailLog' }] }), 200, 'CJ lee el registro de correos')
+ok(await runQuery(J, { from: [{ collectionId: 'mailLog' }] }), 403, 'cliente lee el registro de correos')
+ok(await req(AD, 'mailLog/x', 'PATCH', { fields: { to: str('a@b.c') } }), 403, 'nadie escribe en el registro de correos desde la app')
+
 // colecciones no previstas
 ok(await req(B, 'secretos/x'), 403, 'negocio lee colección no prevista')
 ok(await req(AD, 'secretos/x', 'PATCH', { fields: { a: str('1') } }), 403, 'admin escribe en colección no prevista')

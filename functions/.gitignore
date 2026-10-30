@@ -1,2 +1,4 @@
 node_modules
 lib
+# Claves para el Firebase de pruebas: nunca al repositorio
+.secret.local

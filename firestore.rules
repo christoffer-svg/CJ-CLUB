@@ -498,6 +498,13 @@ service cloud.firestore {
       allow delete: if isMyClient(clientId);
     }
 
+    // ---------- mailLog/{id} ----------
+    // Registro de correos de invitación enviados por el servidor. Solo CJ lo lee; nadie escribe desde la app.
+    match /mailLog/{id} {
+      allow read: if isAdmin();
+      allow write: if false;
+    }
+
     // ---------- Todo lo demás: denegado ----------
     match /{document=**} {
       allow read, write: if false;

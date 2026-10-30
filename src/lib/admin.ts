@@ -95,8 +95,8 @@ export type NewClient = {
 export async function createClient(data: NewClient) {
   const call = httpsCallable<NewClient, { clientId: string; uid: string; memberNumber: string }>(functions, 'createClient')
   const res = await call(data)
-  await sendInvitation(data.email, data.language)
-  return res.data
+  const via = await sendInvitation(data.email, data.language)
+  return { ...res.data, via }
 }
 
 export type NewBusiness = {
@@ -130,10 +130,20 @@ export async function deleteClient(clientId: string) {
 }
 
 /**
- * Envía al cliente el correo de Firebase para elegir contraseña (sirve de invitación).
- * El texto del correo se personaliza en la consola de Firebase > Authentication > Plantillas.
+ * Invitación para elegir contraseña (clientes, negocios y equipo).
+ * Primero intenta el correo propio de CJ (función sendInvitationEmail, con la marca y en el idioma
+ * de la persona). Si esa función aún no está publicada o configurada, o falla, envía el correo
+ * estándar de Firebase, para que la invitación llegue siempre.
+ * Devuelve qué correo se ha enviado: "cj" o "firebase".
  */
-export async function sendInvitation(email: string, language: Language) {
+export async function sendInvitation(email: string, language: Language): Promise<'cj' | 'firebase'> {
+  try {
+    const call = httpsCallable<{ email: string }, { sent: boolean; reason?: string }>(functions, 'sendInvitationEmail')
+    const res = await call({ email })
+    if (res.data.sent) return 'cj'
+  } catch {
+    // función no publicada o error: se usa el correo de Firebase
+  }
   const previous = auth.languageCode
   auth.languageCode = language
   try {
@@ -141,6 +151,21 @@ export async function sendInvitation(email: string, language: Language) {
   } finally {
     auth.languageCode = previous
   }
+  return 'firebase'
+}
+
+/** Texto del aviso tras enviar una invitación */
+export const invitationNotice = (email: string, via: 'cj' | 'firebase') =>
+  via === 'cj' ? `Invitación de CJ Club enviada a ${email}` : `Invitación enviada a ${email} (correo estándar de Firebase)`
+
+export type MailLogEntry = {
+  kind: 'invitation'
+  to: string
+  uid: string
+  status: 'sent' | 'failed' | 'not_configured'
+  provider?: 'resend' | 'simulated'
+  error?: string
+  createdAt: Timestamp | null
 }
 
 /** Idiomas de la app de clientes, para el selector "Idioma preferido" del panel */

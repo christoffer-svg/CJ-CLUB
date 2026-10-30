@@ -6,9 +6,11 @@
 import { initializeApp } from 'firebase-admin/app'
 import { getAuth } from 'firebase-admin/auth'
 import { FieldValue, getFirestore, Timestamp } from 'firebase-admin/firestore'
+import { defineSecret, defineString } from 'firebase-functions/params'
 import { setGlobalOptions } from 'firebase-functions/v2'
 import { HttpsError, onCall } from 'firebase-functions/v2/https'
 import { randomBytes } from 'node:crypto'
+import { invitationEmail, isMailLanguage, sendWithResend, type MailRole } from './email.js'
 
 initializeApp()
 setGlobalOptions({ region: 'europe-southwest1', maxInstances: 5 })
@@ -260,5 +262,80 @@ export const deleteClient = onCall(async (request) => {
     reservationConfirms: reservationConfirms.size,
     ownContacts: ownContacts.size + sharedContacts.size,
     houseNotes: houseNotes.size + sharedHouseNotes.size,
+  }
+})
+
+// ---------- Correo de invitación propio de CJ ----------
+
+// Clave de Resend: se guarda en Secret Manager de Google Cloud (nunca en el código).
+// Ver docs/correo.md. Remitente y dirección de la app: functions/.env
+const resendApiKey = defineSecret('RESEND_API_KEY')
+const emailFrom = defineString('EMAIL_FROM', { default: 'CJ Club <info@cjclub.eu>' })
+const emailReplyTo = defineString('EMAIL_REPLY_TO', { default: '' })
+const appUrl = defineString('APP_URL', { default: 'https://cjclub.eu' })
+
+/**
+ * Envía a una persona ya dada de alta (cliente, negocio o equipo) el correo de CJ para elegir
+ * su contraseña, en su idioma. Solo para el equipo de CJ.
+ * Devuelve { sent: true } o { sent: false, reason }; en ese caso la app envía el correo
+ * estándar de Firebase para que la invitación llegue igualmente.
+ */
+export const sendInvitationEmail = onCall({ secrets: [resendApiKey] }, async (request) => {
+  await requireAdmin(request.auth?.uid)
+  const email = text((request.data ?? {}).email, 'correo').toLowerCase()
+
+  const user = await getAuth().getUserByEmail(email).catch(() => null)
+  if (!user) throw new HttpsError('not-found', 'No hay ninguna cuenta con ese correo.')
+  const profile = await db.doc(`users/${user.uid}`).get()
+  const role = (['client', 'business', 'admin'].includes(profile.get('role')) ? profile.get('role') : 'client') as MailRole
+  const language = isMailLanguage(profile.get('language')) ? profile.get('language') : 'en'
+  const name = (profile.get('name') as string | undefined) || user.displayName || ''
+
+  const base = appUrl.value().replace(/\/$/, '')
+  const log = db.collection('mailLog').doc()
+  const entry = {
+    kind: 'invitation',
+    to: email,
+    uid: user.uid,
+    role,
+    language,
+    by: request.auth!.uid,
+    createdAt: FieldValue.serverTimestamp(),
+  }
+
+  const key = resendApiKey.value()
+  const simulated = process.env.FUNCTIONS_EMULATOR === 'true' && (!key || key === 'test')
+  if (!key && !simulated) {
+    await log.set({ ...entry, status: 'not_configured' })
+    return { sent: false, reason: 'not_configured' }
+  }
+
+  try {
+    const generated = await getAuth().generatePasswordResetLink(email, { url: `${base}/acceso` })
+    // La página de Firebase donde se elige la contraseña, en el idioma de la persona
+    const url = new URL(generated)
+    url.searchParams.set('lang', language)
+    const link = url.toString()
+    const mail = invitationEmail({ language, role, name, link, appUrl: base })
+    if (simulated) {
+      // Firebase de pruebas: no se envía nada; se guarda el correo para poder revisarlo
+      await log.set({ ...entry, status: 'sent', provider: 'simulated', subject: mail.subject, html: mail.html })
+      return { sent: true }
+    }
+    const id = await sendWithResend({
+      apiKey: key,
+      from: emailFrom.value(),
+      replyTo: emailReplyTo.value() || undefined,
+      to: email,
+      subject: mail.subject,
+      html: mail.html,
+      text: mail.text,
+    })
+    await log.set({ ...entry, status: 'sent', provider: 'resend', providerId: id, subject: mail.subject })
+    return { sent: true }
+  } catch (e) {
+    const reason = e instanceof Error ? e.message.slice(0, 300) : 'error'
+    await log.set({ ...entry, status: 'failed', error: reason })
+    return { sent: false, reason: 'failed' }
   }
 })

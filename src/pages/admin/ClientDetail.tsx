@@ -15,12 +15,15 @@ import {
   languageOptions,
   patchDoc,
   sendInvitation,
+  invitationNotice,
+  type MailLogEntry,
   toDateInput,
   useLiveCollection,
   useLiveDoc,
 } from '../../lib/admin'
 import { usePartnerCategories } from '../../lib/data'
 import { partnerOffers } from '../../lib/services'
+import { messageTime } from '../../lib/when'
 import type { Client, Language, Partner, UserProfile } from '../../lib/types'
 
 export default function ClientDetail() {
@@ -37,6 +40,10 @@ export default function ClientDetail() {
   const categories = usePartnerCategories()
   const c = client.data
   const user = users.data.find((u) => u.clientId === id)
+  const mails = useLiveCollection<MailLogEntry>('mailLog')
+  const lastMail = mails.data
+    .filter((m) => user && m.uid === user.id)
+    .sort((a, b) => (b.createdAt?.toMillis() ?? 0) - (a.createdAt?.toMillis() ?? 0))[0]
 
   async function save(path: string, data: Record<string, unknown>, name = c?.familyName) {
     try {
@@ -135,7 +142,7 @@ export default function ClientDetail() {
                 className="btn btn--ghost a-btn"
                 onClick={() =>
                   sendInvitation(user.email, user.language)
-                    .then(() => toast(`Invitación enviada a ${user.email}`))
+                    .then((via) => toast(invitationNotice(user.email, via)))
                     .catch(() => toast('No se pudo enviar la invitación.', 'error'))
                 }
               >
@@ -143,6 +150,16 @@ export default function ClientDetail() {
               </button>
             )}
           </div>
+          {lastMail && (
+            <span className={lastMail.status === 'failed' ? 'a-error' : 'a-field__hint'}>
+              Último correo de CJ: {messageTime(lastMail.createdAt, 'es-ES')} ·{' '}
+              {lastMail.status === 'sent'
+                ? 'enviado'
+                : lastMail.status === 'failed'
+                  ? `no se pudo enviar (${lastMail.error ?? 'error'}); se envió el correo de Firebase`
+                  : 'el correo de CJ aún no está configurado; se envió el de Firebase'}
+            </span>
+          )}
         </Field>
       </section>
 

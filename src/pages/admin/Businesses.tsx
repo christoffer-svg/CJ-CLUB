@@ -4,7 +4,7 @@ import { PageTitle } from '../../components/admin/AdminLayout'
 import Dialog from '../../components/admin/Dialog'
 import { Field, Input, Select } from '../../components/admin/Fields'
 import { useToast } from '../../components/admin/Toast'
-import { createBusinessAccount, languageOptions, sendInvitation, useLiveCollection } from '../../lib/admin'
+import { createBusinessAccount, invitationNotice, languageOptions, sendInvitation, useLiveCollection } from '../../lib/admin'
 import type { Language, Place, UserProfile } from '../../lib/types'
 
 const languages: [Language, string][] = [['es', 'Español'], ...languageOptions.filter(([code]) => code !== 'es')]
@@ -47,8 +47,8 @@ export default function Businesses() {
     try {
       await createBusinessAccount({ placeId, contactName: contactName.trim(), email: email.trim(), language })
       try {
-        await sendInvitation(email.trim(), language)
-        toast(`Invitación enviada a ${email.trim()}`)
+        const via = await sendInvitation(email.trim(), language)
+        toast(invitationNotice(email.trim(), via))
       } catch {
         toast(`Cuenta creada, pero no se pudo enviar el correo a ${email.trim()}. Use «Reenviar invitación».`, 'error')
       }
@@ -86,7 +86,7 @@ export default function Businesses() {
               className="a-link"
               onClick={() =>
                 sendInvitation(u.email, u.language)
-                  .then(() => toast(`Invitación enviada a ${u.email}`))
+                  .then((via) => toast(invitationNotice(u.email, via)))
                   .catch(() => toast('No se pudo enviar la invitación.', 'error'))
               }
             >
