@@ -270,6 +270,9 @@ export const deleteClient = onCall(async (request) => {
 // Clave de Resend: se guarda en Secret Manager de Google Cloud (nunca en el código).
 // Ver docs/correo.md. Remitente y dirección de la app: functions/.env
 const resendApiKey = defineSecret('RESEND_API_KEY')
+// El correo propio solo se activa con EMAIL_ENABLED=true en functions/.env, después de crear el secreto.
+// Así las funciones se pueden publicar aunque el secreto aún no exista.
+const emailEnabled = process.env.EMAIL_ENABLED === 'true'
 const emailFrom = defineString('EMAIL_FROM', { default: 'CJ Club <info@cjclub.eu>' })
 const emailReplyTo = defineString('EMAIL_REPLY_TO', { default: '' })
 const appUrl = defineString('APP_URL', { default: 'https://cjclub.eu' })
@@ -280,7 +283,7 @@ const appUrl = defineString('APP_URL', { default: 'https://cjclub.eu' })
  * Devuelve { sent: true } o { sent: false, reason }; en ese caso la app envía el correo
  * estándar de Firebase para que la invitación llegue igualmente.
  */
-export const sendInvitationEmail = onCall({ secrets: [resendApiKey] }, async (request) => {
+export const sendInvitationEmail = onCall({ secrets: emailEnabled ? [resendApiKey] : [] }, async (request) => {
   await requireAdmin(request.auth?.uid)
   const email = text((request.data ?? {}).email, 'correo').toLowerCase()
 
@@ -303,9 +306,10 @@ export const sendInvitationEmail = onCall({ secrets: [resendApiKey] }, async (re
     createdAt: FieldValue.serverTimestamp(),
   }
 
-  const key = resendApiKey.value()
-  const simulated = process.env.FUNCTIONS_EMULATOR === 'true' && (!key || key === 'test')
-  if (!key && !simulated) {
+  const key = emailEnabled ? resendApiKey.value() : ''
+  // Firebase de pruebas con el correo activado y la clave "test": no se envía nada, se guarda el correo
+  const simulated = emailEnabled && process.env.FUNCTIONS_EMULATOR === 'true' && (!key || key === 'test')
+  if (!emailEnabled || (!key && !simulated)) {
     await log.set({ ...entry, status: 'not_configured' })
     return { sent: false, reason: 'not_configured' }
   }

@@ -68,7 +68,7 @@ Haga esto antes de aceptar el cambio que añade esta publicación. Si se acepta 
 
 ## Encender las funciones más adelante
 
-Las funciones dan de alta y de baja a los clientes desde el panel, y envían el correo de invitación propio de CJ (ver `docs/correo.md`: antes de encenderlas hay que crear el secreto `RESEND_API_KEY`, o la publicación de funciones falla). Hasta que no estén publicadas, esas dos acciones del panel no pueden completarse en la app real.
+Las funciones dan de alta y de baja a los clientes desde el panel, y envían el correo de invitación propio de CJ (ver `docs/correo.md`; el correo propio se activa aparte con `EMAIL_ENABLED`, después de crear el secreto `RESEND_API_KEY`). Hasta que no estén publicadas, esas dos acciones del panel no pueden completarse en la app real.
 
 Cuestan dinero: el proyecto tiene que estar en el plan **Blaze** (pago por uso) de Firebase. Antes de pasarse, ponga una alerta de gasto en [Uso y facturación](https://console.firebase.google.com/project/cj-club/usage/details).
 

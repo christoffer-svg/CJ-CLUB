@@ -45,8 +45,10 @@ de funcionar. En la ficha de cada cliente se ve si el último correo de CJ sali�
    - `EMAIL_REPLY_TO`: el correo donde quiere recibir las respuestas de los clientes (por ejemplo el de la
      oficina). Si lo deja vacío, las respuestas van al remitente.
 
-8. **Encender las funciones** como explica `docs/publicacion.md` (variable `DEPLOY_FUNCTIONS` = `true`).
-   La siguiente publicación sube también el correo propio.
+8. **Activar el correo propio:** en `functions/.env`, cambie `EMAIL_ENABLED=false` por `EMAIL_ENABLED=true`
+   (o pídaselo a Claude). La siguiente publicación sube la función con acceso a la clave.
+   Hágalo **solo después** del paso 5: si el secreto no existe, la publicación de las funciones falla.
+   Las funciones tienen que estar encendidas (`DEPLOY_FUNCTIONS` = `true`, ver `docs/publicacion.md`).
 
 ## Cómo comprobarlo
 
@@ -57,8 +59,8 @@ de funcionar. En la ficha de cada cliente se ve si el último correo de CJ sali�
 
 ## Si algo falla
 
-- **«el correo de CJ aún no está configurado»**: falta el secreto `RESEND_API_KEY` (paso 5) o las funciones
-  no se han vuelto a publicar después de crearlo.
+- **«el correo de CJ aún no está configurado»**: `EMAIL_ENABLED` no está en `true` (paso 8), falta el secreto
+  `RESEND_API_KEY` (paso 5) o las funciones no se han vuelto a publicar después.
 - **«Resend 403 … domain is not verified»**: el dominio del remitente no está verificado (paso 3) o
   `EMAIL_FROM` usa otro dominio.
 - **«Resend 401»**: la clave no es válida. Cree otra en Resend y añádala como nueva versión del secreto.
@@ -67,6 +69,6 @@ de funcionar. En la ficha de cada cliente se ve si el último correo de CJ sali�
 
 ## Probarlo sin enviar nada (para desarrolladores)
 
-En el Firebase de pruebas no se envían correos: con `functions/.secret.local` conteniendo
-`RESEND_API_KEY=test` (este archivo no se sube a GitHub), cada invitación se guarda en la colección
+En el Firebase de pruebas no se envían correos: con `EMAIL_ENABLED=true` (por ejemplo en `functions/.env.local`)
+y `functions/.secret.local` conteniendo `RESEND_API_KEY=test` (este archivo no se sube a GitHub), cada invitación se guarda en la colección
 `mailLog` con el HTML completo para revisarlo.
