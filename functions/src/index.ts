@@ -6,7 +6,7 @@
 import { initializeApp } from 'firebase-admin/app'
 import { getAuth } from 'firebase-admin/auth'
 import { FieldValue, getFirestore, Timestamp } from 'firebase-admin/firestore'
-import { defineSecret, defineString } from 'firebase-functions/params'
+import { defineSecret } from 'firebase-functions/params'
 import { setGlobalOptions } from 'firebase-functions/v2'
 import { HttpsError, onCall } from 'firebase-functions/v2/https'
 import { randomBytes } from 'node:crypto'
@@ -269,13 +269,15 @@ export const deleteClient = onCall(async (request) => {
 
 // Clave de Resend: se guarda en Secret Manager de Google Cloud (nunca en el código).
 // Ver docs/correo.md. Remitente y dirección de la app: functions/.env
-const resendApiKey = defineSecret('RESEND_API_KEY')
 // El correo propio solo se activa con EMAIL_ENABLED=true en functions/.env, después de crear el secreto.
-// Así las funciones se pueden publicar aunque el secreto aún no exista.
+// Con false el secreto ni siquiera se declara: Firebase comprueba en la publicación que exista todo
+// secreto declarado, y así las funciones se publican aunque aún no esté creado.
 const emailEnabled = process.env.EMAIL_ENABLED === 'true'
-const emailFrom = defineString('EMAIL_FROM', { default: 'CJ Club <info@cjclub.eu>' })
-const emailReplyTo = defineString('EMAIL_REPLY_TO', { default: '' })
-const appUrl = defineString('APP_URL', { default: 'https://cjclub.eu' })
+const resendApiKey = emailEnabled ? defineSecret('RESEND_API_KEY') : null
+// Ajustes no secretos (functions/.env), con valores por defecto
+const emailFrom = () => process.env.EMAIL_FROM || 'CJ Club <info@cjclub.eu>'
+const emailReplyTo = () => process.env.EMAIL_REPLY_TO || ''
+const appUrl = () => process.env.APP_URL || 'https://cjclub.eu'
 
 /**
  * Envía a una persona ya dada de alta (cliente, negocio o equipo) el correo de CJ para elegir
@@ -283,7 +285,7 @@ const appUrl = defineString('APP_URL', { default: 'https://cjclub.eu' })
  * Devuelve { sent: true } o { sent: false, reason }; en ese caso la app envía el correo
  * estándar de Firebase para que la invitación llegue igualmente.
  */
-export const sendInvitationEmail = onCall({ secrets: emailEnabled ? [resendApiKey] : [] }, async (request) => {
+export const sendInvitationEmail = onCall({ secrets: resendApiKey ? [resendApiKey] : [] }, async (request) => {
   await requireAdmin(request.auth?.uid)
   const email = text((request.data ?? {}).email, 'correo').toLowerCase()
 
@@ -294,7 +296,7 @@ export const sendInvitationEmail = onCall({ secrets: emailEnabled ? [resendApiKe
   const language = isMailLanguage(profile.get('language')) ? profile.get('language') : 'en'
   const name = (profile.get('name') as string | undefined) || user.displayName || ''
 
-  const base = appUrl.value().replace(/\/$/, '')
+  const base = appUrl().replace(/\/$/, '')
   const log = db.collection('mailLog').doc()
   const entry = {
     kind: 'invitation',
@@ -306,7 +308,7 @@ export const sendInvitationEmail = onCall({ secrets: emailEnabled ? [resendApiKe
     createdAt: FieldValue.serverTimestamp(),
   }
 
-  const key = emailEnabled ? resendApiKey.value() : ''
+  const key = resendApiKey?.value() ?? ''
   // Firebase de pruebas con el correo activado y la clave "test": no se envía nada, se guarda el correo
   const simulated = emailEnabled && process.env.FUNCTIONS_EMULATOR === 'true' && (!key || key === 'test')
   if (!emailEnabled || (!key && !simulated)) {
@@ -328,8 +330,8 @@ export const sendInvitationEmail = onCall({ secrets: emailEnabled ? [resendApiKe
     }
     const id = await sendWithResend({
       apiKey: key,
-      from: emailFrom.value(),
-      replyTo: emailReplyTo.value() || undefined,
+      from: emailFrom(),
+      replyTo: emailReplyTo() || undefined,
       to: email,
       subject: mail.subject,
       html: mail.html,
