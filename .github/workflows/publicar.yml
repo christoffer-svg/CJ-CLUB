@@ -89,6 +89,9 @@ jobs:
             echo "::error::Firebase no ha recibido la clave. Revise el secreto FIREBASE_SERVICE_ACCOUNT (docs/publicacion.md)."
             exit 1
           fi
+          # El nombre de la cuenta no es secreto: ayuda a saber a quién dar los permisos
+          echo "Cuenta que publica: $(jq -r '.client_email // "desconocida"' "$GOOGLE_APPLICATION_CREDENTIALS")"
+          echo "Identificador de la clave: $(jq -r '.private_key_id // "desconocido" | .[0:8]' "$GOOGLE_APPLICATION_CREDENTIALS")…"
 
       - name: Publicar la web, las reglas y los índices
         run: npx firebase deploy --project cj-club --only hosting,firestore:rules,firestore:indexes --non-interactive --message "Publicado desde GitHub ${GITHUB_SHA}"
