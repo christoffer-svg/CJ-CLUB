@@ -1,4 +1,5 @@
-import { NavLink, Outlet } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import { useAuth } from '../../auth/AuthProvider'
 import RoleSwitcher from '../../components/RoleSwitcher'
 import { useLiveCollection } from '../../lib/admin'
@@ -6,65 +7,114 @@ import { isUnread } from '../../lib/messaging'
 import type { ClientRequest, Conversation } from '../../lib/types'
 import { ToastProvider } from './Toast'
 
-export const adminSections = [
-  { to: '/admin/resumen', label: 'Resumen del mes', text: 'Clientes, descuentos usados y lugares guardados' },
-  { to: '/admin/reservas', label: 'Reservas', text: 'Pinchazos y reservas de los restaurantes' },
-  { to: '/admin/mensajes', label: 'Mensajes', text: 'Conversaciones con los clientes' },
-  { to: '/admin/peticiones', label: 'Peticiones', text: 'Presupuestos, llaves, reparaciones y más' },
-  { to: '/admin/social', label: 'Social', text: 'Planes y recomendaciones de los clientes; avisos' },
-  { to: '/admin/servicios', label: 'Servicios de CJ', text: 'Key holding, reformas, vigilancia… con o sin precio' },
-  { to: '/admin/reformas', label: 'Reformas', text: 'Obras: avances, pagos y extras con el constructor' },
-  { to: '/admin/clientes', label: 'Clientes', text: 'Fichas, contactos asignados e invitaciones' },
-  { to: '/admin/colaboradores', label: 'Colaboradores', text: 'Abogados, gestorías, piscinas y más' },
-  { to: '/admin/contactos', label: 'Contactos generales', text: 'Urgencias, salud y transporte' },
-  { to: '/admin/lugares', label: 'Lugares', text: 'Restaurantes, golf, playas y planes' },
-  { to: '/admin/negocios', label: 'Negocios', text: 'Acceso para que cada negocio publique sus descuentos' },
-  { to: '/admin/pedidos', label: 'Pedidos de comida', text: 'Pedidos para llevar y a domicilio de los restaurantes' },
-  { to: '/admin/eventos', label: 'Eventos', text: 'Catas, música en vivo y reservas de los negocios' },
-  { to: '/admin/descuentos', label: 'Descuentos', text: 'Ocultar o retirar ofertas. Las publica el negocio' },
-  { to: '/admin/consejo', label: 'Consejo de la semana', text: 'Texto en español e inglés' },
+const S = (to: string, label: string, text: string) => ({ to, label, text })
+
+/** Secciones del panel, agrupadas */
+export const adminGroups = [
+  {
+    title: 'Día a día',
+    items: [
+      S('/admin/resumen', 'Resumen del mes', 'Clientes, descuentos usados y lugares guardados'),
+      S('/admin/mensajes', 'Mensajes', 'Conversaciones con los clientes'),
+      S('/admin/peticiones', 'Peticiones', 'Servicios, presupuestos, llaves, reparaciones y más'),
+      S('/admin/reservas', 'Reservas', 'Pinchazos y reservas de los restaurantes'),
+      S('/admin/pedidos', 'Pedidos de comida', 'Pedidos para llevar y a domicilio de los restaurantes'),
+    ],
+  },
+  {
+    title: 'Clientes',
+    items: [
+      S('/admin/clientes', 'Clientes', 'Fichas, contactos asignados e invitaciones'),
+      S('/admin/reformas', 'Reformas', 'Obras: presupuestos, pagos, extras y repasos'),
+      S('/admin/constructores', 'Profesionales', 'Constructores, oficios, arquitectos y diseñadores'),
+      S('/admin/servicios', 'Servicios de CJ', 'Key holding, reformas, vigilancia… con o sin precio'),
+      S('/admin/social', 'Social', 'Planes y recomendaciones de los clientes; avisos'),
+    ],
+  },
+  {
+    title: 'Guía y Descubrir',
+    items: [
+      S('/admin/colaboradores', 'Colaboradores', 'Abogados, gestorías, piscinas y más'),
+      S('/admin/contactos', 'Contactos generales', 'Urgencias, salud y transporte'),
+      S('/admin/lugares', 'Lugares', 'Restaurantes, golf, playas y planes'),
+      S('/admin/negocios', 'Negocios', 'Acceso para que cada negocio publique en la app'),
+      S('/admin/eventos', 'Eventos', 'Catas, música en vivo y reservas de los negocios'),
+      S('/admin/descuentos', 'Descuentos', 'Ocultar o retirar ofertas. Las publica el negocio'),
+      S('/admin/consejo', 'Consejo de la semana', 'Texto en español e inglés'),
+    ],
+  },
 ]
+
+export const adminSections = adminGroups.flatMap((g) => g.items)
 
 export default function AdminLayout() {
   const { profile, logout } = useAuth()
   const badges = useBadges()
-  return (
-    <ToastProvider>
-      <header className="header a-header">
-        <div className="a-header__row">
-          <NavLink to="/admin" end className="header__brand a-header__brand">
-            <img className="header__logo" src="/logo.png" alt="CJ" />
-            <span className="eyebrow header__tagline">
-              Panel CJ Club
-              <br />
-              {profile?.name}
-            </span>
-          </NavLink>
-          <div className="a-header__tools">
-            <button className="link-btn a-header__logout" onClick={logout}>
-              Cerrar sesión
-            </button>
-          </div>
-        </div>
-        <RoleSwitcher variant="header" />
-        <nav className="a-menu" aria-label="Secciones del panel">
-          {adminSections.map((s) => (
-            <NavLink key={s.to} to={s.to} className="pill a-menu__item">
-              {s.label}
+  const { pathname } = useLocation()
+  const [open, setOpen] = useState(false)
+  // Al cambiar de sección, el menú del móvil se cierra
+  useEffect(() => setOpen(false), [pathname])
+  const current = adminSections.find((s) => pathname.startsWith(s.to))
+  const pending = Object.values(badges).reduce((n, b) => n + (b || 0), 0)
+
+  const menu = (
+    <nav className="a-nav" aria-label="Secciones del panel">
+      <NavLink to="/admin" end className="a-nav__item a-nav__home">
+        Inicio del panel
+      </NavLink>
+      {adminGroups.map((g) => (
+        <div key={g.title} className="a-nav__group">
+          <span className="a-nav__title">{g.title}</span>
+          {g.items.map((s) => (
+            <NavLink key={s.to} to={s.to} className="a-nav__item">
+              <span>{s.label}</span>
               {badges[s.to] ? <span className="a-badge-count">{badges[s.to]}</span> : null}
             </NavLink>
           ))}
-        </nav>
-      </header>
-      <main className="a-page">
-        <Outlet />
-      </main>
+        </div>
+      ))}
+    </nav>
+  )
+
+  return (
+    <ToastProvider>
+      <div className="a-shell">
+        <header className="header a-header">
+          <div className="a-header__row">
+            <NavLink to="/admin" end className="header__brand a-header__brand">
+              <img className="header__logo" src="/logo.png" alt="CJ" />
+              <span className="eyebrow header__tagline">
+                Panel CJ Club
+                <br />
+                {profile?.name}
+              </span>
+            </NavLink>
+            <div className="a-header__tools">
+              <button className="link-btn a-header__logout" onClick={logout}>
+                Cerrar sesión
+              </button>
+            </div>
+          </div>
+          <RoleSwitcher variant="header" />
+          {/* Móvil: botón que abre el menú completo */}
+          <button type="button" className="a-menu-toggle" aria-expanded={open} onClick={() => setOpen(!open)}>
+            <span className="a-menu-toggle__icon" aria-hidden="true">
+              {open ? '×' : '☰'}
+            </span>
+            <span>{open ? 'Cerrar menú' : current ? current.label : 'Menú'}</span>
+            {!open && pending > 0 && <span className="a-badge-count">{pending}</span>}
+          </button>
+          {open && <div className="a-nav-drawer">{menu}</div>}
+        </header>
+        <aside className="a-sidebar">{menu}</aside>
+        <main className="a-page">
+          <Outlet />
+        </main>
+      </div>
     </ToastProvider>
   )
 }
 
-/** Avisos del menú: conversaciones sin leer y peticiones nuevas */
-// oxlint-disable-next-line react/only-export-components
 export function useBadges(): Record<string, number> {
   const convs = useLiveCollection<Conversation>('conversations')
   const requests = useLiveCollection<ClientRequest>('requests')
