@@ -16,7 +16,7 @@ import {
 import { httpsCallable } from 'firebase/functions'
 import { useEffect, useState } from 'react'
 import { auth, db, functions } from './firebase'
-import type { Language } from './types'
+import type { Trade, Language } from './types'
 
 export type WithId<T> = T & { id: string }
 
@@ -121,7 +121,7 @@ export async function createBusinessAccount(data: NewBusiness) {
   return (await call(data)).data
 }
 
-export type NewBuilder = { name: string; companyName: string; email: string; language: Language }
+export type NewBuilder = { name: string; companyName: string; trade: Trade; email: string; language: Language }
 
 /** Crea la cuenta de un constructor en el servidor (función createBuilder) y le envía la invitación */
 export async function createBuilderAccount(data: NewBuilder) {

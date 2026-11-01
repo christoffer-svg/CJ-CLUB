@@ -2930,6 +2930,21 @@ button {
   letter-spacing: 0.04em;
 }
 
+.pv-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.pv-group__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  padding: 0 4px;
+}
+
 .plan__list {
   display: flex;
   flex-direction: column;

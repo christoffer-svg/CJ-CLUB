@@ -5,12 +5,13 @@ import Dialog from '../../components/admin/Dialog'
 import { Field, Input, Select } from '../../components/admin/Fields'
 import { useToast } from '../../components/admin/Toast'
 import { createBuilderAccount, invitationNotice, languageOptions, sendInvitation, useLiveCollection, type NewBuilder } from '../../lib/admin'
-import type { Project, UserProfile } from '../../lib/types'
+import { tradeLabel } from '../../lib/trades'
+import { TRADES, type Project, type Trade, type UserProfile } from '../../lib/types'
 import { hasRole } from '../../lib/roles'
 
-const empty: NewBuilder = { name: '', companyName: '', email: '', language: 'es' }
+const empty: NewBuilder = { name: '', companyName: '', trade: 'construction', email: '', language: 'es' }
 
-/** Constructores con acceso a "Mi reforma": solo ven las obras que CJ les asigna */
+/** Profesionales de la obra (constructor, electricista, carpintero…) con acceso a "Mi reforma": solo ven los contratos que CJ les asigna */
 export default function Builders() {
   const users = useLiveCollection<UserProfile>('users')
   const projects = useLiveCollection<Project>('projects')
@@ -18,7 +19,9 @@ export default function Builders() {
   const [form, setForm] = useState<NewBuilder | null>(null)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
-  const builders = users.data.filter((u) => hasRole(u, 'builder')).sort((a, b) => (a.companyName ?? '').localeCompare(b.companyName ?? ''))
+  const builders = users.data
+    .filter((u) => hasRole(u, 'builder'))
+    .sort((a, b) => tradeLabel[a.trade ?? 'construction'].localeCompare(tradeLabel[b.trade ?? 'construction']) || (a.companyName ?? '').localeCompare(b.companyName ?? ''))
   const count = (uid: string) => projects.data.filter((p) => p.builderUid === uid).length
 
   async function create() {
@@ -43,19 +46,19 @@ export default function Builders() {
 
   return (
     <>
-      <PageTitle eyebrow="Mi reforma" title="Constructores">
+      <PageTitle eyebrow="Mi reforma" title="Profesionales">
         <button className="btn a-btn" onClick={() => setForm({ ...empty })}>
-          Añadir constructor
+          Añadir profesional
         </button>
       </PageTitle>
-      <p className="card__text">Cada constructor entra con su propio correo y solo ve las obras en las que lo asigne en «Reformas».</p>
+      <p className="card__text">Constructores y demás oficios (electricista, carpintero…). Cada uno entra con su propio correo y solo ve los contratos en los que lo asigne en «Reformas».</p>
       <div className="card a-list">
         {builders.map((b) => (
           <div key={b.id} className="a-row">
             <div className="a-row__body">
               <span className="card__title">{b.companyName || b.name}</span>
               <span className="card__text">
-                {b.name} · {b.email} · {count(b.id)} {count(b.id) === 1 ? 'obra' : 'obras'}
+                {tradeLabel[b.trade ?? 'construction']} · {b.name} · {b.email} · {count(b.id)} {count(b.id) === 1 ? 'contrato' : 'contratos'}
               </span>
             </div>
             <button
@@ -70,11 +73,20 @@ export default function Builders() {
             </button>
           </div>
         ))}
-        {!users.loading && builders.length === 0 && <p className="a-empty">Aún no hay constructores.</p>}
+        {!users.loading && builders.length === 0 && <p className="a-empty">Aún no hay profesionales.</p>}
       </div>
 
       {form && (
-        <Dialog title="Nuevo constructor" submitLabel={busy ? 'Creando…' : 'Crear e invitar'} busy={busy} onClose={() => setForm(null)} onSubmit={create}>
+        <Dialog title="Nuevo profesional" submitLabel={busy ? 'Creando…' : 'Crear e invitar'} busy={busy} onClose={() => setForm(null)} onSubmit={create}>
+          <Field label="Oficio">
+            <Select value={form.trade} onChange={(e) => setForm({ ...form, trade: e.target.value as Trade })}>
+              {TRADES.map((tr) => (
+                <option key={tr} value={tr}>
+                  {tradeLabel[tr]}
+                </option>
+              ))}
+            </Select>
+          </Field>
           <Field label="Empresa">
             <Input required value={form.companyName} onChange={(e) => setForm({ ...form, companyName: e.target.value })} />
           </Field>

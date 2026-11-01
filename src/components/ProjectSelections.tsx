@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import { AttachmentList, FilePicker } from './Attachments'
 import { useI18n } from '../i18n'
+import { useRoleName } from './projectRoles'
 import { parseAmount } from '../lib/amount'
 import { lineTotal } from '../lib/budget'
 import { formatMoney, proposeProjectExtra, type Author, type WithId } from '../lib/projects'
@@ -35,6 +36,7 @@ export default function ProjectSelections({
   extras: WithId<ProjectExtra>[]
 }) {
   const { t, locale } = useI18n()
+  const roleName = useRoleName()
   const money = (n: number) => formatMoney(n, locale)
   const [form, setForm] = useState<Draft | null>(null)
   const [busy, setBusy] = useState(false)
@@ -236,13 +238,13 @@ export default function ProjectSelections({
             })()}
             {s.note && <p className="request__text">{s.note}</p>}
             <AttachmentList items={s.attachments} />
-            <span className="card__text">{t('sel.addedBy', { name: `${s.authorName} (${t(`project.role.${s.authorRole}`)})`, date: shortDate(s.createdAt, locale) })}</span>
+            <span className="card__text">{t('sel.addedBy', { name: `${s.authorName} (${roleName(s.authorRole)})`, date: shortDate(s.createdAt, locale) })}</span>
             <ul className="sel-oks">
               {(['client', 'builder'] as const).map((r) => {
                 const uid = s[`${r}OkUid`]
                 return (
                   <li key={r}>
-                    <span className="card__title sel-oks__who">{t(`project.role.${r}`)}</span>
+                    <span className="card__title sel-oks__who">{roleName(r)}</span>
                     <span className="card__text">
                       {uid ? t('sel.okOn', { name: s[`${r}OkName`] ?? '', date: shortDate(s[`${r}OkAt`], locale) }) : t('sel.okPending')}
                     </span>

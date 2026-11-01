@@ -293,6 +293,14 @@ Vérifiez que chaque texte est naturel et correct en français. Notez vos correc
 | `project.status.planned` | Prevista | Planned | Prévu | |
 | `project.status.in_progress` | En obras | In progress | En cours | |
 | `project.status.finished` | Terminada | Finished | Terminé | |
+| `trade.construction` | Constructor | Builder | Entrepreneur | |
+| `trade.electrician` | Electricista | Electrician | Électricien | |
+| `trade.plumber` | Fontanero | Plumber | Plombier | |
+| `trade.carpenter` | Carpintero | Carpenter | Menuisier | |
+| `trade.painter` | Pintor | Painter | Peintre | |
+| `trade.glazier` | Cristalero | Glazier | Vitrier | |
+| `trade.other` | Otro oficio | Other trade | Autre corps de métier | |
+| `project.list.contracts` | {n} contratos | {n} contracts | {n} contrats | |
 | `project.tab.summary` | Resumen | Summary | Résumé | |
 | `project.tab.chat` | Conversación | Conversation | Conversation | |
 | `project.tab.updates` | Avances | Progress | Avancement | |

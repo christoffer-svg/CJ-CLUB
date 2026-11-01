@@ -8,6 +8,10 @@ export type { Language } from '../i18n/translations'
 import type { Language } from '../i18n/translations'
 
 /** users/{uid} */
+/** Oficio de un profesional de la obra (constructor, electricista…) */
+export const TRADES = ['construction', 'electrician', 'plumber', 'carpenter', 'painter', 'glazier', 'other'] as const
+export type Trade = (typeof TRADES)[number]
+
 export type UserProfile = {
   /** acceso que está usando ahora */
   role: Role
@@ -20,8 +24,10 @@ export type UserProfile = {
   clientId?: string
   /** todas sus casas; solo las asigna CJ */
   clientIds?: string[]
-  /** constructor: nombre de la empresa */
+  /** constructor u otro oficio: nombre de la empresa */
   companyName?: string
+  /** oficio del profesional (sin él: constructor) */
+  trade?: Trade
   /** lugar vinculado; solo el rol "business" */
   placeId?: string
   /** nombre del lugar en el momento del alta */
@@ -289,8 +295,11 @@ export type Project = {
   familyName: string
   property: string
   title: string
+  /** profesional del contrato (constructor, electricista…); varios contratos de la misma casa y con el mismo título forman una reforma */
   builderUid: string
   builderName: string
+  /** oficio de este contrato (sin él: constructor) */
+  trade?: Trade
   status: 'planned' | 'in_progress' | 'finished'
   /** presupuesto inicial acordado, en euros, sin IVA */
   budget: number

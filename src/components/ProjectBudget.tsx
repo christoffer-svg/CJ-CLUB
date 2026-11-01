@@ -4,6 +4,7 @@ import PaymentPlan from './PaymentPlan'
 import SignaturePad from './SignaturePad'
 import { planReady } from '../lib/plan'
 import { useI18n } from '../i18n'
+import { useRoleName } from './projectRoles'
 import { parseAmount } from '../lib/amount'
 import { budgetHash, deleteBudgetGroup, deleteBudgetLine, lineTotal, linesBase, saveBudgetLine, signBudget, snapshotLines, withdrawSignature } from '../lib/budget'
 import { formatMoney, type Author, type WithId } from '../lib/projects'
@@ -47,6 +48,7 @@ export default function ProjectBudget({
   plan: Milestone[]
 }) {
   const { t, locale } = useI18n()
+  const roleName = useRoleName()
   const money = (n: number) => formatMoney(n, locale)
   const [form, setForm] = useState<Draft | null>(null)
   const [signing, setSigning] = useState<{ name: string; accepted: boolean; image: string | null } | null>(null)
@@ -359,7 +361,7 @@ export default function ProjectBudget({
             const s = sigs[r]
             return (
               <div key={r} className="budget-sig">
-                <span className="card__title">{t(`project.role.${r}`)}</span>
+                <span className="card__title">{roleName(r)}</span>
                 {s ? (
                   <>
                     <img className="budget-sig__img" src={s.image} alt={t('budget.signatureOf', { name: s.name })} />

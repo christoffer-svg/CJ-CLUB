@@ -293,6 +293,14 @@ Kontrollera att varje text är naturlig och korrekt på svenska. Skriv dina rät
 | `project.status.planned` | Prevista | Planned | Planerad | |
 | `project.status.in_progress` | En obras | In progress | Pågår | |
 | `project.status.finished` | Terminada | Finished | Klar | |
+| `trade.construction` | Constructor | Builder | Byggare | |
+| `trade.electrician` | Electricista | Electrician | Elektriker | |
+| `trade.plumber` | Fontanero | Plumber | Rörmokare | |
+| `trade.carpenter` | Carpintero | Carpenter | Snickare | |
+| `trade.painter` | Pintor | Painter | Målare | |
+| `trade.glazier` | Cristalero | Glazier | Glasmästare | |
+| `trade.other` | Otro oficio | Other trade | Annat yrke | |
+| `project.list.contracts` | {n} contratos | {n} contracts | {n} avtal | |
 | `project.tab.summary` | Resumen | Summary | Översikt | |
 | `project.tab.chat` | Conversación | Conversation | Samtal | |
 | `project.tab.updates` | Avances | Progress | Framsteg | |

@@ -3,6 +3,7 @@ import { AttachmentList, FilePicker } from './Attachments'
 import ProjectBudget from './ProjectBudget'
 import ProjectSelections from './ProjectSelections'
 import ProjectSnags from './ProjectSnags'
+import { TradeContext } from './projectRoles'
 import { RETENTION, planRows, planReady, usePlan } from '../lib/plan'
 import { useSnags } from '../lib/snags'
 import { useSelections } from '../lib/selections'
@@ -59,7 +60,7 @@ export default function ProjectView({ projectId, author, readOnly }: { projectId
   const [error, setError] = useState(false)
   const role: ProjectRole = author.role
   const money = (n: number) => formatMoney(n, locale)
-  const roleName = (r: ProjectRole) => t(`project.role.${r}`)
+  const roleName = (r: ProjectRole) => (r === 'builder' ? t(`trade.${project.data?.trade ?? 'construction'}`) : t(`project.role.${r}`))
   const p = project.data
   const totals = projectTotals(p, extras.data, payments.data, lines.data)
   const needsMySignature = (role === 'client' || role === 'builder') && lines.data.length > 0 && !sigs.loading && !sigs[role]
@@ -134,14 +135,15 @@ export default function ProjectView({ projectId, author, readOnly }: { projectId
   const status = (key: TranslationKey, cls: string) => <span className={`status status--${cls}`}>{t(key)}</span>
 
   return (
-    <div className="pv">
+    <TradeContext.Provider value={p.trade}>
+      <div className="pv">
       <section className="card pv-head">
         <div className="pv-head__row">
           <h2 className="pv-head__title">{p.title}</h2>
           {status(`project.status.${p.status}`, p.status === 'finished' ? 'done' : p.status === 'in_progress' ? 'in_progress' : 'new')}
         </div>
         <span className="card__text">
-          {p.property} · {t('project.builder')}: {p.builderName}
+          {p.property} · {t(`trade.${p.trade ?? 'construction'}`)}: {p.builderName}
         </span>
         {(p.startDate || p.endDate) && (
           <span className="card__text">
@@ -573,6 +575,7 @@ export default function ProjectView({ projectId, author, readOnly }: { projectId
           })}
         </>
       )}
-    </div>
+      </div>
+    </TradeContext.Provider>
   )
 }

@@ -239,7 +239,8 @@ export const createBusiness = onCall(async (request) => {
 })
 
 /**
- * Crea el acceso de un constructor para "Mi reforma": cuenta (rol "builder") y ficha en users/.
+ * Crea el acceso de un profesional de la obra para "Mi reforma" (constructor, electricista, carpintero…):
+ * cuenta (rol "builder", con su oficio) y ficha en users/.
  * Solo ve las obras en las que CJ le asigne. La invitación la envía después la app.
  * Si el correo ya tiene cuenta, se le añade el acceso de constructor (entra con su contraseña de siempre).
  */
@@ -248,6 +249,8 @@ export const createBuilder = onCall(async (request) => {
   const data = (request.data ?? {}) as Record<string, unknown>
   const name = text(data.name, 'nombre de la persona')
   const companyName = text(data.companyName, 'empresa')
+  const trades = ['construction', 'electrician', 'plumber', 'carpenter', 'painter', 'glazier', 'other']
+  const trade = typeof data.trade === 'string' && trades.includes(data.trade) ? data.trade : 'construction'
   const email = text(data.email, 'correo').toLowerCase()
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new HttpsError('invalid-argument', 'El correo no es válido.')
   const languages = ['es', 'en', 'nl', 'sv', 'de', 'fr']
@@ -258,13 +261,13 @@ export const createBuilder = onCall(async (request) => {
   if (existing) {
     const profile = await existingProfile(existing.uid)
     if (rolesOf(profile).includes('builder')) throw new HttpsError('already-exists', 'Ese correo ya es el acceso de un constructor.')
-    await profile.ref.update({ roles: [...rolesOf(profile), 'builder'], companyName })
+    await profile.ref.update({ roles: [...rolesOf(profile), 'builder'], companyName, trade })
     return { uid: existing.uid, addedToExisting: true }
   }
 
   const user = await auth.createUser({ email, displayName: name, password: randomBytes(24).toString('base64url') })
   try {
-    await db.doc(`users/${user.uid}`).set({ role: 'builder', roles: ['builder'], name, companyName, email, language })
+    await db.doc(`users/${user.uid}`).set({ role: 'builder', roles: ['builder'], name, companyName, trade, email, language })
   } catch (e) {
     await auth.deleteUser(user.uid).catch(() => {})
     throw e

@@ -293,6 +293,14 @@ Controleer of elke tekst natuurlijk en correct Nederlands is. Noteer correcties 
 | `project.status.planned` | Prevista | Planned | Gepland | |
 | `project.status.in_progress` | En obras | In progress | In uitvoering | |
 | `project.status.finished` | Terminada | Finished | Afgerond | |
+| `trade.construction` | Constructor | Builder | Aannemer | |
+| `trade.electrician` | Electricista | Electrician | Elektricien | |
+| `trade.plumber` | Fontanero | Plumber | Loodgieter | |
+| `trade.carpenter` | Carpintero | Carpenter | Timmerman | |
+| `trade.painter` | Pintor | Painter | Schilder | |
+| `trade.glazier` | Cristalero | Glazier | Glaszetter | |
+| `trade.other` | Otro oficio | Other trade | Ander vak | |
+| `project.list.contracts` | {n} contratos | {n} contracts | {n} contracten | |
 | `project.tab.summary` | Resumen | Summary | Overzicht | |
 | `project.tab.chat` | Conversación | Conversation | Gesprek | |
 | `project.tab.updates` | Avances | Progress | Voortgang | |

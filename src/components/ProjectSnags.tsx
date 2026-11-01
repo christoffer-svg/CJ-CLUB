@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import { AttachmentList, FilePicker } from './Attachments'
 import { useI18n } from '../i18n'
+import { useRoleName } from './projectRoles'
 import { releaseRetention } from '../lib/plan'
 import type { Author, WithId } from '../lib/projects'
 import { acceptSnag, addSnag, markSnagFixed, reopenSnag } from '../lib/snags'
@@ -31,6 +32,7 @@ export default function ProjectSnags({
   retention: string
 }) {
   const { t, locale } = useI18n()
+  const roleName = useRoleName()
   const [form, setForm] = useState<{ title: string; text: string; files: File[] } | null>(null)
   const [fixing, setFixing] = useState<{ id: string; note: string; files: File[] } | null>(null)
   const [reopening, setReopening] = useState<{ id: string; note: string } | null>(null)
@@ -124,7 +126,7 @@ export default function ProjectSnags({
           </div>
           {s.text && <p className="request__text">{s.text}</p>}
           <AttachmentList items={s.attachments} />
-          <span className="card__text">{t('snag.by', { name: `${s.authorName} (${t(`project.role.${s.authorRole}`)})`, date: shortDate(s.createdAt, locale) })}</span>
+          <span className="card__text">{t('snag.by', { name: `${s.authorName} (${roleName(s.authorRole)})`, date: shortDate(s.createdAt, locale) })}</span>
           {s.status === 'open' && s.reopenNote && <p className="composer__error">{t('snag.reopenedNote', { note: s.reopenNote })}</p>}
           {s.fixedByName && (
             <div className="snag-fix">

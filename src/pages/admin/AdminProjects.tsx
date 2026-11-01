@@ -10,13 +10,15 @@ import ProjectView from '../../components/ProjectView'
 import { patchDoc, useLiveCollection } from '../../lib/admin'
 import { db } from '../../lib/firebase'
 import { formatMoney, useProject } from '../../lib/projects'
+import { TRADES, type Trade } from '../../lib/types'
 import type { Client, Project, UserProfile } from '../../lib/types'
 import { hasRole } from '../../lib/roles'
 import { parseAmount } from '../../lib/amount'
+import { tradeLabel } from '../../lib/trades'
 
 const statusLabel: Record<Project['status'], string> = { planned: 'Prevista', in_progress: 'En obras', finished: 'Terminada' }
 
-type Draft = { clientId: string; builderUid: string; title: string; budget: string; vatRate: 10 | 21; status: Project['status']; startDate: string; endDate: string }
+type Draft = { clientId: string; builderUid: string; trade: Trade; title: string; budget: string; vatRate: 10 | 21; status: Project['status']; startDate: string; endDate: string }
 
 /** Formulario de obra (nueva o editar) */
 function ProjectForm({ initial, onClose, onSaved }: { initial: Draft; onClose: () => void; onSaved: (id: string) => void }) {
@@ -27,7 +29,10 @@ function ProjectForm({ initial, onClose, onSaved }: { initial: Draft; onClose: (
   const [d, setD] = useState(initial)
   const [busy, setBusy] = useState(false)
   const builders = users.data.filter((u) => hasRole(u, 'builder'))
-  const budget = parseAmount(d.budget)
+  const allProjects = useLiveCollection<Project>('projects')
+  const reformTitles = [...new Set(allProjects.data.filter((x) => x.clientId === d.clientId).map((x) => x.title))]
+  // Cifra global solo para contratos sin presupuesto detallado (vacío = 0)
+  const budget = d.budget.trim() ? parseAmount(d.budget) : 0
   const valid = d.clientId && d.builderUid && d.title.trim() && Number.isFinite(budget) && budget >= 0
 
   async function save() {
@@ -43,6 +48,7 @@ function ProjectForm({ initial, onClose, onSaved }: { initial: Draft; onClose: (
       title: d.title.trim(),
       builderUid: d.builderUid,
       builderName: builder.companyName || builder.name,
+      trade: d.trade,
       status: d.status,
       budget: Math.round(budget * 100) / 100,
       vatRate: d.vatRate,
@@ -56,7 +62,7 @@ function ProjectForm({ initial, onClose, onSaved }: { initial: Draft; onClose: (
         onSaved(id)
       } else {
         const ref = await addDoc(collection(db, 'projects'), { ...data, createdAt: serverTimestamp() })
-        toast(`Obra creada para ${house.familyName}`)
+        toast(`Contrato creado para ${house.familyName}`)
         onSaved(ref.id)
       }
     } catch {
@@ -66,7 +72,7 @@ function ProjectForm({ initial, onClose, onSaved }: { initial: Draft; onClose: (
   }
 
   return (
-    <Dialog title={id ? 'Editar obra' : 'Nueva obra'} busy={busy || !valid} onClose={onClose} onSubmit={save}>
+    <Dialog title={id ? 'Editar contrato' : 'Nuevo contrato'} busy={busy || !valid} onClose={onClose} onSubmit={save}>
       <Field label="Casa del cliente">
         <Select required value={d.clientId} onChange={(e) => setD({ ...d, clientId: e.target.value })}>
           <option value="">Elija una casa</option>
@@ -79,22 +85,46 @@ function ProjectForm({ initial, onClose, onSaved }: { initial: Draft; onClose: (
             ))}
         </Select>
       </Field>
-      <Field label="Constructor" hint={builders.length ? undefined : 'Primero añada un constructor en «Constructores».'}>
-        <Select required value={d.builderUid} onChange={(e) => setD({ ...d, builderUid: e.target.value })}>
-          <option value="">Elija un constructor</option>
+      <Field label="Reforma" hint="Para añadir otro oficio a una reforma que ya existe, use el mismo nombre: sus contratos se verán juntos.">
+        <Input required list="reform-titles" placeholder="Reforma de la cocina" value={d.title} onChange={(e) => setD({ ...d, title: e.target.value })} />
+        <datalist id="reform-titles">
+          {reformTitles.map((x) => (
+            <option key={x} value={x} />
+          ))}
+        </datalist>
+      </Field>
+      <Field label="Profesional" hint={builders.length ? undefined : 'Primero añada un profesional en «Profesionales».'}>
+        <Select
+          required
+          value={d.builderUid}
+          onChange={(e) => {
+            const b = builders.find((x) => x.id === e.target.value)
+            setD({ ...d, builderUid: e.target.value, trade: b?.trade ?? 'construction' })
+          }}
+        >
+          <option value="">Elija un profesional</option>
           {builders.map((b) => (
             <option key={b.id} value={b.id}>
-              {b.companyName || b.name}
+              {b.companyName || b.name} · {tradeLabel[b.trade ?? 'construction']}
             </option>
           ))}
         </Select>
       </Field>
-      <Field label="Obra">
-        <Input required placeholder="Reforma de la cocina" value={d.title} onChange={(e) => setD({ ...d, title: e.target.value })} />
+      <Field label="Oficio en este contrato">
+        <Select value={d.trade} onChange={(e) => setD({ ...d, trade: e.target.value as Trade })}>
+          {TRADES.map((tr) => (
+            <option key={tr} value={tr}>
+              {tradeLabel[tr]}
+            </option>
+          ))}
+        </Select>
       </Field>
       <div className="a-grid-2">
-        <Field label="Presupuesto inicial sin IVA (€)" hint={d.budget.trim() && Number.isFinite(budget) ? `= ${formatMoney(budget, 'es-ES')} + IVA` : undefined}>
-          <Input required inputMode="decimal" value={d.budget} onChange={(e) => setD({ ...d, budget: e.target.value })} />
+        <Field
+          label="Cifra global sin IVA (€, opcional)"
+          hint={d.budget.trim() && Number.isFinite(budget) ? `= ${formatMoney(budget, 'es-ES')} + IVA` : 'Solo si no se hace el presupuesto detallado en la pestaña «Presupuesto».'}
+        >
+          <Input inputMode="decimal" value={d.budget} onChange={(e) => setD({ ...d, budget: e.target.value })} />
         </Field>
         <Field label="IVA" hint="10 %: reformas de vivienda que cumplen los requisitos. Si no, 21 %.">
           <Select value={String(d.vatRate)} onChange={(e) => setD({ ...d, vatRate: e.target.value === '10' ? 10 : 21 })}>
@@ -122,26 +152,28 @@ function ProjectForm({ initial, onClose, onSaved }: { initial: Draft; onClose: (
   )
 }
 
-const emptyDraft: Draft = { clientId: '', builderUid: '', title: '', budget: '', vatRate: 21, status: 'planned', startDate: '', endDate: '' }
+const emptyDraft: Draft = { clientId: '', builderUid: '', trade: 'construction', title: '', budget: '', vatRate: 21, status: 'planned', startDate: '', endDate: '' }
 
 /** Panel: lista de obras */
 export function AdminProjects() {
   const projects = useLiveCollection<Project>('projects')
   const navigate = useNavigate()
   const [creating, setCreating] = useState(false)
-  const list = [...projects.data].sort((a, b) => (b.createdAt?.toMillis() ?? 0) - (a.createdAt?.toMillis() ?? 0))
+  const list = [...projects.data].sort(
+    (a, b) => a.familyName.localeCompare(b.familyName) || a.title.localeCompare(b.title) || tradeLabel[a.trade ?? 'construction'].localeCompare(tradeLabel[b.trade ?? 'construction']),
+  )
   return (
     <>
       <PageTitle eyebrow="Mi reforma" title="Reformas">
         <Link to="/admin/constructores" className="btn btn--ghost a-btn">
-          Constructores
+          Profesionales
         </Link>
         <button className="btn a-btn" onClick={() => setCreating(true)}>
-          Nueva obra
+          Nuevo contrato
         </button>
       </PageTitle>
       <p className="card__text">
-        Cada obra une una casa con un constructor. El cliente, el constructor y CJ ven lo mismo: conversación, avances, pagos y extras.
+        Cada contrato une una casa con un profesional (constructor, electricista, carpintero…), con su propio presupuesto, firmas, pagos, extras y repasos. Los contratos de la misma casa con el mismo nombre de reforma se ven juntos. Cada profesional solo ve el suyo.
       </p>
       <div className="card a-list">
         {list.map((p) => (
@@ -149,11 +181,11 @@ export function AdminProjects() {
             <div className="a-row__body">
               <span className="card__title">{p.title}</span>
               <span className="card__text">
-                {p.familyName} · {p.property} · {p.builderName}
+                {p.familyName} · {p.property} · {tradeLabel[p.trade ?? 'construction']}: {p.builderName}
               </span>
             </div>
             <span className="a-row__meta">
-              {statusLabel[p.status]} · {formatMoney(p.budget, 'es-ES')} + IVA
+              {statusLabel[p.status]}
             </span>
           </Link>
         ))}
@@ -191,8 +223,9 @@ export function AdminProject() {
           initial={{
             clientId: p.clientId,
             builderUid: p.builderUid,
+            trade: p.trade ?? 'construction',
             title: p.title,
-            budget: String(p.budget).replace('.', ','),
+            budget: p.budget ? String(p.budget).replace('.', ',') : '',
             vatRate: p.vatRate ?? 21,
             status: p.status,
             startDate: p.startDate ?? '',

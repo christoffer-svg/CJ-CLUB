@@ -2,12 +2,12 @@ import { Link, useParams } from 'react-router-dom'
 import { useAuth } from '../../auth/AuthProvider'
 import ProjectView from '../../components/ProjectView'
 import { useI18n } from '../../i18n'
-import { formatMoney, useProjects } from '../../lib/projects'
+import { useProjects } from '../../lib/projects'
 
 export default function BuilderProjects() {
   const { id } = useParams()
   const { user, profile } = useAuth()
-  const { t, locale } = useI18n()
+  const { t } = useI18n()
   const projects = useProjects({ builderUid: user?.uid })
   const author = { uid: user?.uid ?? '', name: profile?.name ?? '', role: 'builder' as const }
 
@@ -31,7 +31,7 @@ export default function BuilderProjects() {
             <span className="card__body">
               <span className="card__title">{p.title}</span>
               <span className="card__text">
-                {p.familyName} · {p.property} · {formatMoney(p.budget, locale)}
+                {t(`trade.${p.trade ?? 'construction'}`)} · {p.familyName} · {p.property}
               </span>
             </span>
             <span className={`status status--${p.status === 'finished' ? 'done' : p.status === 'in_progress' ? 'in_progress' : 'new'}`}>

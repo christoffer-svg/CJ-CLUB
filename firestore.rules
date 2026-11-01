@@ -645,6 +645,7 @@ service cloud.firestore {
         && (request.resource.data.budget is int || request.resource.data.budget is float)
         && request.resource.data.budget >= 0
         && request.resource.data.get('vatRate', 21) in [10, 21]
+        && request.resource.data.get('trade', 'construction') in ['construction', 'electrician', 'plumber', 'carpenter', 'painter', 'glazier', 'other']
         // Con el presupuesto ya firmado (aunque sea por uno), el IVA no cambia
         && (resource == null || budgetOpen(pid) || request.resource.data.get('vatRate', 21) == resource.data.get('vatRate', 21));
       allow delete: if isAdmin();
