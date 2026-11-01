@@ -2,7 +2,7 @@ import { addDoc, collection, doc, getDoc, getDocs, onSnapshot, orderBy, query, s
 import { useEffect, useState } from 'react'
 import { db } from './firebase'
 import { mergeCategories, PARTNER_CATEGORIES, type MergedCategory } from './services'
-import type { Client, Deal, GeneralContact, Partner, PartnerCategory, Place } from './types'
+import type { Client, CjService, Deal, GeneralContact, Partner, PartnerCategory, Place } from './types'
 
 type Result<T> = { loading: boolean; data: T | null; error: boolean }
 
@@ -168,4 +168,19 @@ export function useActiveDeals() {
 /** Registra que un cliente ha pulsado "Usar" en un descuento */
 export function logDealUse(dealId: string, clientId: string) {
   return addDoc(collection(db, 'dealUses'), { dealId, clientId, date: serverTimestamp() })
+}
+
+/** Servicios de CJ activos (key holding, reforma…), por orden */
+export function useServices() {
+  const [state, setState] = useState<{ loading: boolean; data: (CjService & { id: string })[] }>({ loading: true, data: [] })
+  useEffect(
+    () =>
+      onSnapshot(
+        query(collection(db, 'services'), where('active', '==', true)),
+        (snap) => setState({ loading: false, data: snap.docs.map((d) => ({ ...(d.data() as CjService), id: d.id })).sort((a, b) => a.order - b.order) }),
+        () => setState({ loading: false, data: [] }),
+      ),
+    [],
+  )
+  return state
 }

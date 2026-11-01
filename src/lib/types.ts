@@ -264,7 +264,26 @@ export type Message = {
 }
 
 export const requestTypes = ['repair', 'budget', 'keys', 'cleaning', 'other'] as const
-export type RequestType = (typeof requestTypes)[number]
+/** "service": petición de un servicio del catálogo de CJ (services/{id}) */
+export type RequestType = (typeof requestTypes)[number] | 'service'
+
+/**
+ * services/{id}: servicio que CJ ofrece a sus clientes (key holding, reforma, vigilancia de la casa…).
+ * Lo crea CJ en el panel; el cliente lo pide desde Peticiones.
+ */
+export type CjService = {
+  name_es: string
+  name_en: string
+  description_es: string
+  description_en: string
+  /** precio en euros, o null = a consultar */
+  price: number | null
+  /** junto al precio: "al mes", "desde", "IVA incluido"… */
+  priceNote_es: string
+  priceNote_en: string
+  active: boolean
+  order: number
+}
 export const requestStatuses = ['new', 'in_progress', 'done', 'cancelled'] as const
 export type RequestStatus = (typeof requestStatuses)[number]
 
@@ -273,6 +292,10 @@ export type ClientRequest = {
   clientId: string
   familyName: string
   type: RequestType
+  /** servicio del catálogo que pide (solo si type es "service") */
+  serviceId?: string
+  /** nombre del servicio al pedirlo (en español, para el panel) */
+  serviceName?: string
   description: string
   /** fecha preferida "2026-11-03", opcional */
   preferredDate?: string

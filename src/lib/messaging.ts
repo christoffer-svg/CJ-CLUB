@@ -127,6 +127,7 @@ export async function createRequest(opts: {
   familyName: string
   uid: string
   type: RequestType
+  service?: { id: string; name: string }
   description: string
   preferredDate?: string
 }) {
@@ -134,6 +135,7 @@ export async function createRequest(opts: {
     clientId: opts.clientId,
     familyName: opts.familyName,
     type: opts.type,
+    ...(opts.service ? { serviceId: opts.service.id, serviceName: opts.service.name } : {}),
     description: opts.description.trim().slice(0, 2000),
     ...(opts.preferredDate ? { preferredDate: opts.preferredDate } : {}),
     status: 'new',

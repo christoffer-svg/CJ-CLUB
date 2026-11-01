@@ -11,6 +11,7 @@ export const adminSections = [
   { to: '/admin/reservas', label: 'Reservas', text: 'Pinchazos y reservas de los restaurantes' },
   { to: '/admin/mensajes', label: 'Mensajes', text: 'Conversaciones con los clientes' },
   { to: '/admin/peticiones', label: 'Peticiones', text: 'Presupuestos, llaves, reparaciones y más' },
+  { to: '/admin/servicios', label: 'Servicios de CJ', text: 'Key holding, reformas, vigilancia… con o sin precio' },
   { to: '/admin/reformas', label: 'Reformas', text: 'Obras: avances, pagos y extras con el constructor' },
   { to: '/admin/clientes', label: 'Clientes', text: 'Fichas, contactos asignados e invitaciones' },
   { to: '/admin/colaboradores', label: 'Colaboradores', text: 'Abogados, gestorías, piscinas y más' },

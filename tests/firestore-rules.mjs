@@ -298,6 +298,22 @@ ok(await serverTime(J, 'eventBookings/bk7', bk(), ['createdAt'], false), 403, 'n
 ok(await serverTime(B, 'events/ev-t1', evF({ hiddenByAdmin: bool(true), title: str('Cata nueva') }), ['updatedAt']), 200, 'el negocio corrige su evento (sigue oculto)')
 ok(await req(B, 'events/ev-t1', 'DELETE'), 200, 'el negocio borra su evento')
 
+// Servicios de CJ y peticiones de un servicio
+const svc = (extra = {}) => ({ name_es: str('Key holding'), name_en: str('Key holding'), description_es: str(''), description_en: str(''), price: num(25), priceNote_es: str('al mes'), priceNote_en: str('per month'), active: bool(true), order: num(10), ...extra })
+ok(await req(AD, 'services/s-t1', 'PATCH', { fields: svc() }), 200, 'CJ crea un servicio')
+ok(await req(AD, 'services/s-t2', 'PATCH', { fields: svc({ price: { nullValue: null } }) }), 200, 'CJ crea un servicio con precio a consultar')
+ok(await req(J, 'services/s-t3', 'PATCH', { fields: svc() }), 403, 'el cliente no crea servicios')
+ok(await req(B, 'services/s-t1'), 403, 'un negocio no ve los servicios de CJ')
+ok(await req(J, 'services/s-t1'), 200, 'el cliente ve los servicios')
+const rqs = (extra = {}) => ({ clientId: str('jansen'), familyName: str('Familia Jansen'), type: str('service'), serviceId: str('s-t1'), serviceName: str('Key holding'), description: str(''), status: str('new'), createdByUid: str(j.localId), ...extra })
+ok(await serverTime(J, 'requests/rq-s1', rqs(), ['createdAt', 'updatedAt'], false), 200, 'el cliente pide un servicio sin detalles')
+ok(await serverTime(J, 'requests/rq-s2', rqs({ serviceName: str('Otro nombre') }), ['createdAt', 'updatedAt'], false), 403, 'la petición lleva el nombre real del servicio')
+ok(await serverTime(J, 'requests/rq-s3', rqs({ serviceId: str('no-existe') }), ['createdAt', 'updatedAt'], false), 403, 'un servicio que no existe')
+await patch(AD, 'services/s-t2', { active: bool(false) })
+ok(await serverTime(J, 'requests/rq-s4', rqs({ serviceId: str('s-t2') }), ['createdAt', 'updatedAt'], false), 403, 'un servicio oculto no se puede pedir')
+ok(await serverTime(J, 'requests/rq-s5', rqs({ type: str('repair') }), ['createdAt', 'updatedAt'], false), 403, 'una petición normal no lleva servicio')
+ok(await serverTime(J, 'requests/rq-s6', { clientId: str('jansen'), familyName: str('Familia Jansen'), type: str('repair'), description: str(''), status: str('new'), createdByUid: str(j.localId) }, ['createdAt', 'updatedAt'], false), 403, 'una petición normal necesita descripción')
+
 // Platos para pedir y pedidos
 const dish = (extra = {}) => ({ section: str('Arroces'), name: str('Paella'), description: str(''), price: { doubleValue: 38.5 }, available: bool(true), order: num(10), ...extra })
 ok(await req(B, 'places/rest-la-terraza/orderItems/t1', 'PATCH', { fields: dish() }), 200, 'el restaurante añade un plato')

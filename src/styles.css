@@ -4031,3 +4031,47 @@ button {
   gap: 16px;
   margin-top: 6px;
 }
+
+/* Servicios de CJ (Peticiones) */
+.svc-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.svc {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.svc__name {
+  margin: 0;
+  font-family: var(--font-title);
+  font-weight: 500;
+  font-size: 20px;
+  color: var(--text);
+}
+
+.svc__price {
+  color: var(--gold-dark);
+  font-weight: 600;
+  font-size: 14px;
+  text-align: right;
+}
+
+.svc__text {
+  font-size: 14px;
+}
+
+.svc__btn {
+  align-self: flex-start;
+  margin-top: 4px;
+}
+
+.request-form__service {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}

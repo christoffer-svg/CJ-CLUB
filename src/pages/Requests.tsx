@@ -2,7 +2,8 @@ import { useState, type FormEvent } from 'react'
 import { useAuth } from '../auth/AuthProvider'
 import Header from '../components/Header'
 import { useI18n } from '../i18n'
-import { useDoc } from '../lib/data'
+import { useDoc, useServices } from '../lib/data'
+import { formatMoney } from '../lib/projects'
 import { cancelRequest, createRequest, useClientRequests } from '../lib/messaging'
 import { requestTypes, type Client, type RequestType } from '../lib/types'
 import { useViewer } from '../lib/viewer'
@@ -14,16 +15,26 @@ const today = () => new Date().toISOString().slice(0, 10)
 export default function Requests() {
   const { clientId, base, preview } = useViewer()
   const { user } = useAuth()
-  const { t, locale } = useI18n()
+  const { t, locale, pick } = useI18n()
+  const services = useServices()
   const client = useDoc<Client>(clientId ? `clients/${clientId}` : null)
   const requests = useClientRequests(clientId)
-  const [form, setForm] = useState<{ type: RequestType; description: string; preferredDate: string } | null>(null)
+  const [form, setForm] = useState<{ type: RequestType; serviceId?: string; description: string; preferredDate: string } | null>(null)
+  const chosen = form?.serviceId ? (services.data.find((s) => s.id === form.serviceId) ?? null) : null
+  const priceOf = (s: { price: number | null }) =>
+    s.price == null ? t('requests.priceOnRequest') : `${formatMoney(s.price, locale)} ${pick(s, 'priceNote')}`.trim()
+  // Nombre de lo pedido: el servicio en el idioma del cliente, o el tipo de petición
+  const labelOf = (r: { type: RequestType; serviceId?: string; serviceName?: string }) => {
+    if (r.type !== 'service') return t(`requests.type.${r.type}`)
+    const s = services.data.find((x) => x.id === r.serviceId)
+    return s ? pick(s, 'name') : (r.serviceName ?? '')
+  }
   const [busy, setBusy] = useState(false)
   const [notice, setNotice] = useState<'sent' | 'error' | null>(null)
 
   async function submit(e: FormEvent) {
     e.preventDefault()
-    if (!form || !clientId || !user || !client.data || !form.description.trim()) return
+    if (!form || !clientId || !user || !client.data || (!chosen && !form.description.trim())) return
     setBusy(true)
     setNotice(null)
     try {
@@ -31,7 +42,8 @@ export default function Requests() {
         clientId,
         familyName: client.data.familyName,
         uid: user.uid,
-        type: form.type,
+        type: chosen ? 'service' : form.type,
+        service: chosen ? { id: chosen.id, name: chosen.name_es } : undefined,
         description: form.description,
         preferredDate: form.preferredDate || undefined,
       })
@@ -49,32 +61,45 @@ export default function Requests() {
       <Header back={`${base}/`} eyebrow={t('requests.eyebrow')} title={t('requests.title')} subtitle={t('requests.subtitle')} />
       <main className="page">
         {preview && <p className="chat__note">{t('preview.readOnly')}</p>}
+        {notice === 'sent' && (
+          <p className="chat__note chat__note--ok" role="status">
+            {t('requests.sent')}
+          </p>
+        )}
 
         {form ? (
           <form className="card request-form" onSubmit={submit}>
-            <fieldset className="request-form__types">
-              <legend className="eyebrow">{t('requests.type')}</legend>
-              <div className="pills pills--wrap">
-                {requestTypes.map((type) => (
-                  <button
-                    key={type}
-                    type="button"
-                    aria-pressed={form.type === type}
-                    className={form.type === type ? 'pill pill--active' : 'pill'}
-                    onClick={() => setForm({ ...form, type })}
-                  >
-                    {t(`requests.type.${type}`)}
-                  </button>
-                ))}
+            {chosen ? (
+              <div className="request-form__service">
+                <span className="eyebrow">{t('requests.services')}</span>
+                <span className="card__title">{pick(chosen, 'name')}</span>
+                <span className="card__text">{priceOf(chosen)}</span>
               </div>
-            </fieldset>
+            ) : (
+              <fieldset className="request-form__types">
+                <legend className="eyebrow">{t('requests.type')}</legend>
+                <div className="pills pills--wrap">
+                  {requestTypes.map((type) => (
+                    <button
+                      key={type}
+                      type="button"
+                      aria-pressed={form.type === type}
+                      className={form.type === type ? 'pill pill--active' : 'pill'}
+                      onClick={() => setForm({ ...form, type })}
+                    >
+                      {t(`requests.type.${type}`)}
+                    </button>
+                  ))}
+                </div>
+              </fieldset>
+            )}
             <label className="request-form__field">
-              <span className="eyebrow">{t('requests.description')}</span>
+              <span className="eyebrow">{chosen ? t('requests.detailsOptional') : t('requests.description')}</span>
               <textarea
                 className="composer__input"
                 rows={4}
                 maxLength={2000}
-                required
+                required={!chosen}
                 value={form.description}
                 onChange={(e) => setForm({ ...form, description: e.target.value })}
               />
@@ -94,34 +119,62 @@ export default function Requests() {
               <button type="button" className="btn btn--ghost" onClick={() => setForm(null)}>
                 {t('requests.cancelForm')}
               </button>
-              <button type="submit" className="btn" disabled={busy || !form.description.trim()}>
+              <button type="submit" className="btn" disabled={busy || (!chosen && !form.description.trim())}>
                 {t('requests.submit')}
               </button>
             </div>
           </form>
         ) : (
-          !preview && (
-            <button className="btn" onClick={() => setForm({ type: 'repair', description: '', preferredDate: '' })}>
-              {t('requests.new')}
-            </button>
-          )
-        )}
-
-        {notice === 'sent' && (
-          <p className="chat__note chat__note--ok" role="status">
-            {t('requests.sent')}
-          </p>
+          <>
+            {services.data.length > 0 && (
+              <section className="svc-list">
+                <span className="eyebrow">{t('requests.services')}</span>
+                {services.data.map((s) => (
+                  <article key={s.id} className="card svc">
+                    <div className="request__head">
+                      <h2 className="svc__name">{pick(s, 'name')}</h2>
+                      <span className="svc__price">{priceOf(s)}</span>
+                    </div>
+                    {pick(s, 'description') && <p className="pf-text svc__text">{pick(s, 'description')}</p>}
+                    {!preview && (
+                      <button
+                        className="btn svc__btn"
+                        onClick={() => {
+                          setNotice(null)
+                          setForm({ type: 'service', serviceId: s.id, description: '', preferredDate: '' })
+                        }}
+                      >
+                        {t('requests.request')}
+                      </button>
+                    )}
+                  </article>
+                ))}
+              </section>
+            )}
+            {!preview && (
+              <button
+                className={services.data.length ? 'btn btn--ghost' : 'btn'}
+                onClick={() => {
+                  setNotice(null)
+                  setForm({ type: 'repair', description: '', preferredDate: '' })
+                }}
+              >
+                {services.data.length ? t('requests.other') : t('requests.new')}
+              </button>
+            )}
+          </>
         )}
 
         <section className="section">
+          {requests.data.length > 0 && <span className="eyebrow">{t('requests.mine')}</span>}
           {!requests.loading && requests.data.length === 0 && <p className="empty">{t('requests.empty')}</p>}
           {requests.data.map((r) => (
             <article key={r.id} className="card request">
               <div className="request__head">
-                <span className="eyebrow">{t(`requests.type.${r.type}`)}</span>
+                <span className="eyebrow">{labelOf(r)}</span>
                 <span className={`status status--${r.status}`}>{t(`requests.status.${r.status}`)}</span>
               </div>
-              <p className="request__text">{r.description}</p>
+              {r.description && <p className="request__text">{r.description}</p>}
               <span className="card__text">
                 {[shortDate(r.createdAt, locale), r.preferredDate && t('requests.preferred', { date: shortDate(r.preferredDate, locale) })]
                   .filter(Boolean)

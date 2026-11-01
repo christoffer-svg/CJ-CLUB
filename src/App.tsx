@@ -34,6 +34,7 @@ import PartnerDetail from './pages/PartnerDetail'
 import BusinessProfile from './pages/business/BusinessProfile'
 import BusinessEvents from './pages/business/BusinessEvents'
 import AdminEvents from './pages/admin/AdminEvents'
+import AdminServices from './pages/admin/AdminServices'
 import BusinessOrders from './pages/business/BusinessOrders'
 import AdminOrders from './pages/admin/AdminOrders'
 import Deals from './pages/admin/Deals'
@@ -103,6 +104,7 @@ export default function App() {
             <Route path="mensajes" element={<AdminMessages />} />
             <Route path="mensajes/:clientId" element={<AdminThread />} />
             <Route path="peticiones" element={<AdminRequests />} />
+            <Route path="servicios" element={<AdminServices />} />
             <Route path="reformas" element={<AdminProjects />} />
             <Route path="reformas/:id" element={<AdminProject />} />
             <Route path="constructores" element={<Builders />} />

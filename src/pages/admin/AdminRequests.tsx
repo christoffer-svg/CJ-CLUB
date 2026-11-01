@@ -9,6 +9,7 @@ import type { ClientRequest, RequestStatus, RequestType } from '../../lib/types'
 import { shortDate } from '../../lib/when'
 
 const typeLabel: Record<RequestType, string> = {
+  service: 'Servicio',
   repair: 'Reparación',
   budget: 'Presupuesto',
   keys: 'Llaves',
@@ -72,7 +73,7 @@ export default function AdminRequests() {
             <div className="a-request__head">
               <div className="a-row__body">
                 <span className="eyebrow">
-                  {typeLabel[r.type]} · {shortDate(r.createdAt, 'es-ES')}
+                  {r.type === 'service' ? r.serviceName : typeLabel[r.type]} · {shortDate(r.createdAt, 'es-ES')}
                 </span>
                 <Link to={`/admin/clientes/${r.clientId}`} className="card__title a-request__family">
                   {r.familyName}
@@ -90,7 +91,7 @@ export default function AdminRequests() {
                 ))}
               </Select>
             </div>
-            <p className="request__text">{r.description}</p>
+            {r.description ? <p className="request__text">{r.description}</p> : <p className="card__text">Sin detalles.</p>}
             {r.preferredDate && <span className="card__text">Fecha preferida: {shortDate(r.preferredDate, 'es-ES')}</span>}
             <label className="a-field">
               <span className="a-field__label">Nota para el cliente</span>

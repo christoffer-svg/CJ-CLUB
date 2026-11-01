@@ -553,15 +553,44 @@ service cloud.firestore {
 
     // ---------- requests/{id} ----------
     // Peticiones a CJ. El cliente crea y ve las suyas, y solo puede cancelarlas mientras son nuevas.
+    // ---------- services/{id} ----------
+    // Servicios que CJ ofrece (key holding, reforma…). Los crea CJ; los clientes los leen y los piden.
+    match /services/{id} {
+      allow read: if isAdmin() || isClient();
+      allow write: if isAdmin() && (request.resource == null || (
+        request.resource.data.keys().hasOnly(['name_es', 'name_en', 'description_es', 'description_en', 'price', 'priceNote_es', 'priceNote_en', 'active', 'order'])
+        && validText(request.resource.data.name_es, 80)
+        && request.resource.data.name_en is string && request.resource.data.name_en.size() <= 80
+        && request.resource.data.description_es is string && request.resource.data.description_es.size() <= 2000
+        && request.resource.data.description_en is string && request.resource.data.description_en.size() <= 2000
+        && (request.resource.data.price == null || number(request.resource.data.price, 0, 1000000))
+        && request.resource.data.priceNote_es is string && request.resource.data.priceNote_es.size() <= 60
+        && request.resource.data.priceNote_en is string && request.resource.data.priceNote_en.size() <= 60
+        && request.resource.data.active is bool
+        && request.resource.data.order is int));
+    }
+
+    function serviceOf(id) {
+      return get(/databases/$(database)/documents/services/$(id)).data;
+    }
+
     match /requests/{id} {
       allow read: if isAdmin() || (isClient() && resource.data.clientId == me().clientId);
 
       allow create: if isClient()
-        && request.resource.data.keys().hasOnly(['clientId', 'familyName', 'type', 'description', 'preferredDate', 'status', 'createdByUid', 'createdAt', 'updatedAt'])
+        && request.resource.data.keys().hasOnly(['clientId', 'familyName', 'type', 'serviceId', 'serviceName', 'description', 'preferredDate', 'status', 'createdByUid', 'createdAt', 'updatedAt'])
         && request.resource.data.clientId == me().clientId
         && request.resource.data.familyName == familyNameOf(me().clientId)
-        && request.resource.data.type in ['repair', 'budget', 'keys', 'cleaning', 'other']
-        && validText(request.resource.data.description, 2000)
+        && request.resource.data.type in ['repair', 'budget', 'keys', 'cleaning', 'other', 'service']
+        // Un servicio del catálogo: tiene que existir, estar activo y llevar su nombre real; los detalles son opcionales
+        && (request.resource.data.type == 'service'
+            ? (request.resource.data.serviceId is string
+               && exists(/databases/$(database)/documents/services/$(request.resource.data.serviceId))
+               && serviceOf(request.resource.data.serviceId).active == true
+               && request.resource.data.serviceName == serviceOf(request.resource.data.serviceId).name_es
+               && request.resource.data.description is string && request.resource.data.description.size() <= 2000)
+            : (!('serviceId' in request.resource.data) && !('serviceName' in request.resource.data)
+               && validText(request.resource.data.description, 2000)))
         && (!('preferredDate' in request.resource.data) || request.resource.data.preferredDate.matches('[0-9]{4}-[0-9]{2}-[0-9]{2}'))
         && request.resource.data.status == 'new'
         && request.resource.data.createdByUid == request.auth.uid

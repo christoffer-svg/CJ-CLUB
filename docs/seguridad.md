@@ -71,6 +71,15 @@ Todo está denegado salvo lo que se permite expresamente.
 - Se usa el mismo Resend que las invitaciones (`RESEND_API_KEY` en Secret Manager). Cada envío queda anotado en `mailLog`: enviado, fallido o sin configurar. Si el correo falla, el pedido o la reserva siguen siendo válidos y se ven en el panel.
 - Logo de cada negocio o colaborador (`logo`): una imagen en la carpeta de fotos de ese colaborador. Lo comprueba `profilePhotoOk`.
 
+### Servicios de CJ y peticiones
+
+- **Servicios de CJ** (`services/{id}`): por ejemplo, key holding, reforma o vigilancia de la casa.
+  - Los crea solo CJ, con los campos limitados y un precio de 0 a 1.000.000 €, o «a consultar».
+  - Los leen los clientes; los negocios no.
+- **Peticiones** (`requests/{id}`):
+  - Una petición de tipo «service» tiene que apuntar a un servicio que exista y esté activo, con su nombre real. Los detalles son opcionales.
+  - Las demás peticiones siguen necesitando una descripción y no pueden llevar servicio.
+
 ### Eventos y reservas de eventos
 
 - **Eventos (`events/{id}`)**
