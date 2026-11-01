@@ -735,6 +735,43 @@ service cloud.firestore {
           && !exists(signaturePath(pid, r == 'client' ? 'builder' : 'client'));
       }
 
+      // Elecciones de productos (en tienda, con el cliente), una vez firmado el presupuesto por los dos:
+      // las anotan CJ o el constructor con foto, precio, tienda y referencia. El cliente y el constructor confirman una vez que están conformes. No se editan;
+      // solo CJ puede borrar una anotada por error.
+      match /selections/{id} {
+        allow read: if inProject(pid);
+        allow create: if projectRole(pid) in ['builder', 'cj']
+          && exists(signaturePath(pid, 'client')) && exists(signaturePath(pid, 'builder'))
+          && request.resource.data.keys().hasOnly(['title', 'store', 'price', 'reference', 'note', 'lineId', 'attachments', 'authorUid', 'authorRole', 'authorName', 'createdAt', 'builderOkUid', 'builderOkName', 'builderOkAt'])
+          && validText(request.resource.data.title, 200)
+          && validText(request.resource.data.store, 200)
+          && money(request.resource.data.price)
+          && (request.resource.data.reference == '' || validText(request.resource.data.reference, 200))
+          && (request.resource.data.note == '' || validText(request.resource.data.note, 2000))
+          && (!('lineId' in request.resource.data) || (request.resource.data.lineId is string && request.resource.data.lineId.matches('[A-Za-z0-9]{1,40}')))
+          && validAttachments(pid, 'selections', id)
+          && signedBy(projectRole(pid))
+          // Si la anota el constructor, queda ya conforme por su parte
+          && (!('builderOkUid' in request.resource.data)
+              || (projectRole(pid) == 'builder'
+                  && request.resource.data.builderOkUid == request.auth.uid
+                  && request.resource.data.builderOkName is string
+                  && request.resource.data.builderOkAt == request.time));
+        allow update: if (projectRole(pid) == 'client'
+            && !('clientOkUid' in resource.data)
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['clientOkUid', 'clientOkName', 'clientOkAt'])
+            && request.resource.data.clientOkUid == request.auth.uid
+            && request.resource.data.clientOkName is string
+            && request.resource.data.clientOkAt == request.time)
+          || (projectRole(pid) == 'builder'
+            && !('builderOkUid' in resource.data)
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['builderOkUid', 'builderOkName', 'builderOkAt'])
+            && request.resource.data.builderOkUid == request.auth.uid
+            && request.resource.data.builderOkName is string
+            && request.resource.data.builderOkAt == request.time);
+        allow delete: if isAdmin();
+      }
+
       // Extras: los propone el constructor o CJ con precio; solo el cliente los aprueba o rechaza.
       // Quien lo propuso puede retirarlo mientras no se haya decidido.
       match /extras/{id} {

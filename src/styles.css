@@ -2930,6 +2930,43 @@ button {
   letter-spacing: 0.04em;
 }
 
+.sel-facts {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px 12px;
+  margin: 0;
+  font-size: 14px;
+}
+
+.sel-facts dt {
+  color: var(--text-2);
+}
+
+.sel-facts dd {
+  margin: 0;
+  color: var(--text);
+}
+
+.sel-oks {
+  list-style: none;
+  margin: 4px 0 0;
+  padding: 10px 0 0;
+  border-top: 1px solid var(--card-border);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sel-oks li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.sel-oks__who {
+  font-size: 15px;
+}
+
 .budget-form__row {
   display: grid;
   grid-template-columns: 1fr 1fr;

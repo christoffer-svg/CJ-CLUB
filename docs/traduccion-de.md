@@ -335,6 +335,31 @@ Bitte prüfen Sie, ob jeder Text natürlich und korrekt auf Deutsch ist. Korrekt
 | `budget.withdraw` | Retirar mi firma | Withdraw my signature | Meine Unterschrift zurückziehen | |
 | `budget.signedNote` | Presupuesto firmado por los dos el {date}. | Budget signed by both on {date}. | Kostenvoranschlag von beiden unterschrieben am {date}. | |
 | `budget.pleaseSign` | Falta su firma en el presupuesto | Your signature is missing on the budget | Ihre Unterschrift auf dem Kostenvoranschlag fehlt | |
+| `project.tab.selections` | Elecciones | Selections | Auswahl | |
+| `sel.eyebrow` | Productos elegidos | Selected products | Ausgewählte Produkte | |
+| `sel.intro` | Lo que se elige en tienda con el cliente: foto, precio, tienda y referencia. El cliente y el constructor confirman que están conformes, para que después no haya dudas. Si se elige algo más caro que el precio de referencia, la diferencia va como extra. | What is chosen in the shop with the client: photo, price, shop and reference. The client and the builder confirm they agree, so there are no doubts later. If something more expensive than the reference price is chosen, the difference becomes an extra. | Was mit dem Kunden im Geschäft ausgewählt wird: Foto, Preis, Geschäft und Referenz. Kunde und Bauunternehmer bestätigen ihr Einverständnis, damit später keine Zweifel entstehen. Wird etwas Teureres als der Richtpreis gewählt, geht die Differenz als Zusatzarbeit. | |
+| `sel.afterSigning` | Las elecciones de productos se anotan cuando el presupuesto está firmado por el cliente y el constructor. | Product selections are recorded once the budget has been signed by the client and the builder. | Die Produktauswahl wird erfasst, sobald der Kostenvoranschlag von Kunde und Bauunternehmer unterschrieben ist. | |
+| `sel.add` | Anotar elección | Record selection | Auswahl erfassen | |
+| `sel.product` | Producto | Product | Produkt | |
+| `sel.productExample` | Por ejemplo: grifo termostático Hansgrohe Ecostat | For example: Hansgrohe Ecostat thermostatic mixer | Zum Beispiel: Thermostatarmatur Hansgrohe Ecostat | |
+| `sel.for` | Corresponde a | Relates to | Gehört zu | |
+| `sel.forNone` | Nada en concreto del presupuesto | Nothing specific in the budget | Nichts Bestimmtes im Kostenvoranschlag | |
+| `sel.store` | Dónde se eligió | Where it was chosen | Wo ausgewählt | |
+| `sel.storeExample` | Por ejemplo: Porcelanosa, Jávea | For example: Porcelanosa, Jávea | Zum Beispiel: Porcelanosa, Jávea | |
+| `sel.price` | Precio con IVA (€) | Price incl. VAT (€) | Preis inkl. MwSt. (€) | |
+| `sel.reference` | Referencia o modelo (opcional) | Reference or model (optional) | Referenz oder Modell (optional) | |
+| `sel.referenceShort` | Referencia | Reference | Referenz | |
+| `sel.note` | Notas (opcional) | Notes (optional) | Notizen (optional) | |
+| `sel.photos` | Fotos del producto y de la etiqueta | Photos of the product and its label | Fotos von Produkt und Etikett | |
+| `sel.empty` | Aún no hay productos elegidos. | No products selected yet. | Noch keine Produkte ausgewählt. | |
+| `sel.agreed` | Conformes | Agreed | Einverstanden | |
+| `sel.waiting` | Falta confirmar | Awaiting confirmation | Bestätigung ausstehend | |
+| `sel.vatIncluded` | IVA incluido | VAT included | inkl. MwSt. | |
+| `sel.addedBy` | Anotado por {name} · {date} | Recorded by {name} · {date} | Erfasst von {name} · {date} | |
+| `sel.okOn` | Conforme: {name}, {date} | Agreed: {name}, {date} | Einverstanden: {name}, {date} | |
+| `sel.okPending` | Pendiente | Pending | Ausstehend | |
+| `sel.confirm` | Estoy conforme con esta elección | I agree with this selection | Ich bin mit dieser Auswahl einverstanden | |
+| `sel.budgetReference` | Precio de referencia en el presupuesto: {net} + IVA ({gross} con IVA) | Reference price in the budget: {net} + VAT ({gross} incl. VAT) | Richtpreis im Kostenvoranschlag: {net} + MwSt. ({gross} inkl. MwSt.) | |
 | `budget.referenceNote` | Productos y precios de referencia incluidos en el precio de la partida. Si elige otro más caro, la diferencia se añade como extra. | Products and reference prices included in the group price. If you choose a more expensive one, the difference is added as an extra. | Produkte und Richtpreise, die im Preis der Position enthalten sind. Wählen Sie etwas Teureres, wird die Differenz als Zusatzarbeit hinzugefügt. | |
 | `budget.reference` | referencia | reference | Richtpreis | |
 | `budget.referencePrice` | Precio de referencia sin IVA (€) | Reference price excl. VAT (€) | Richtpreis netto (€) | |

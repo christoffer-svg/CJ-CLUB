@@ -508,7 +508,7 @@ async function projectRoleOf(uid: string, projectId: string): Promise<'cj' | 'bu
 }
 
 /**
- * Sube una foto o un PDF de un avance o de una línea del presupuesto (constructor o CJ) o de un pago
+ * Sube una foto o un PDF de un avance, una línea del presupuesto o una elección de producto (constructor o CJ) o de un pago
  * (cualquiera de los tres).
  * Devuelve la ficha del archivo con un enlace privado (código imposible de adivinar) para guardarla
  * dentro del avance o pago. Los archivos no se pueden reemplazar.
@@ -518,7 +518,7 @@ export const uploadProjectFile = onCall({ memory: '512MiB', timeoutSeconds: 120 
   if (!uid) throw new HttpsError('unauthenticated', 'Inicie sesión de nuevo.')
   const d = (request.data ?? {}) as Record<string, unknown>
   const projectId = text(d.projectId, 'obra')
-  const kind = d.kind === 'updates' || d.kind === 'payments' || d.kind === 'budget' ? d.kind : null
+  const kind = d.kind === 'updates' || d.kind === 'payments' || d.kind === 'budget' || d.kind === 'selections' ? d.kind : null
   const entryId = text(d.entryId, 'entrada')
   const index = Number(d.index)
   const contentType = text(d.contentType, 'tipo')
@@ -535,10 +535,12 @@ export const uploadProjectFile = onCall({ memory: '512MiB', timeoutSeconds: 120 
   if (role === 'none' || (kind !== 'payments' && role === 'client')) {
     throw new HttpsError('permission-denied', 'No puede añadir archivos aquí.')
   }
-  // Fotos del presupuesto: solo mientras nadie lo haya firmado
-  if (kind === 'budget') {
-    const signed = await db.collection(`projects/${projectId}/signatures`).limit(1).get()
-    if (!signed.empty) throw new HttpsError('failed-precondition', 'El presupuesto ya está firmado.')
+  // Fotos del presupuesto: solo mientras nadie lo haya firmado. Elecciones de productos: solo con el
+  // presupuesto ya firmado por los dos.
+  if (kind === 'budget' || kind === 'selections') {
+    const signed = await db.collection(`projects/${projectId}/signatures`).get()
+    if (kind === 'budget' && !signed.empty) throw new HttpsError('failed-precondition', 'El presupuesto ya está firmado.')
+    if (kind === 'selections' && signed.size < 2) throw new HttpsError('failed-precondition', 'Primero hay que firmar el presupuesto.')
   }
 
   const name =

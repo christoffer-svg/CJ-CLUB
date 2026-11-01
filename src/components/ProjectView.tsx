@@ -1,6 +1,8 @@
 import { useState, type FormEvent, type ReactNode } from 'react'
 import { AttachmentList, FilePicker } from './Attachments'
 import ProjectBudget from './ProjectBudget'
+import ProjectSelections from './ProjectSelections'
+import { useSelections } from '../lib/selections'
 import { useBudgetLines, useBudgetSignatures } from '../lib/budget'
 import { useI18n } from '../i18n'
 import type { TranslationKey } from '../i18n/translations'
@@ -25,8 +27,8 @@ import type { ProjectRole } from '../lib/types'
 import { parseAmount } from '../lib/amount'
 import { messageTime, shortDate } from '../lib/when'
 
-type Tab = 'summary' | 'budget' | 'chat' | 'updates' | 'payments' | 'extras'
-const tabs: Tab[] = ['summary', 'budget', 'chat', 'updates', 'payments', 'extras']
+type Tab = 'summary' | 'budget' | 'selections' | 'chat' | 'updates' | 'payments' | 'extras'
+const tabs: Tab[] = ['summary', 'budget', 'selections', 'chat', 'updates', 'payments', 'extras']
 
 const today = () => new Date().toISOString().slice(0, 10)
 function Block({ children }: { children: ReactNode }) {
@@ -46,6 +48,7 @@ export default function ProjectView({ projectId, author, readOnly }: { projectId
   const extras = useProjectExtras(projectId)
   const lines = useBudgetLines(projectId)
   const sigs = useBudgetSignatures(projectId)
+  const selections = useSelections(projectId)
   const [tab, setTab] = useState<Tab>('summary')
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState(false)
@@ -57,6 +60,7 @@ export default function ProjectView({ projectId, author, readOnly }: { projectId
   const needsMySignature = (role === 'client' || role === 'builder') && lines.data.length > 0 && !sigs.loading && !sigs[role]
   const lastPercent = [...updates.data].reverse().find((u) => typeof u.percent === 'number')?.percent
   const pendingForClient = extras.data.filter((e) => e.status === 'pending').length
+  const selectionsToConfirm = role === 'client' || role === 'builder' ? selections.data.filter((s) => !s[`${role}OkUid`]).length : 0
 
   async function run(action: () => Promise<unknown>, after?: () => void) {
     setBusy(true)
@@ -117,6 +121,7 @@ export default function ProjectView({ projectId, author, readOnly }: { projectId
             {t(`project.tab.${k}`)}
             {k === 'extras' && role === 'client' && pendingForClient > 0 && <span className="pv-count">{pendingForClient}</span>}
             {k === 'budget' && canWrite && needsMySignature && <span className="pv-count">1</span>}
+            {k === 'selections' && canWrite && selectionsToConfirm > 0 && <span className="pv-count">{selectionsToConfirm}</span>}
           </button>
         ))}
       </div>
@@ -287,6 +292,18 @@ export default function ProjectView({ projectId, author, readOnly }: { projectId
 
       {tab === 'budget' && (
         <ProjectBudget projectId={projectId} vatRate={p.vatRate ?? 21} author={author} canWrite={canWrite} lines={lines.data} sigs={sigs} />
+      )}
+
+      {tab === 'selections' && (
+        <ProjectSelections
+          projectId={projectId}
+          author={author}
+          canWrite={canWrite}
+          budgetSigned={Boolean(sigs.client && sigs.builder)}
+          vatRate={p.vatRate ?? 21}
+          lines={lines.data}
+          selections={selections.data}
+        />
       )}
 
       {tab === 'payments' && (

@@ -48,7 +48,7 @@ function toBase64(blob: Blob) {
   })
 }
 
-export type FileKind = 'updates' | 'payments' | 'budget'
+export type FileKind = 'updates' | 'payments' | 'budget' | 'selections'
 type UploadRequest = { projectId: string; kind: FileKind; entryId: string; index: number; name: string; contentType: string; data: string }
 
 /**

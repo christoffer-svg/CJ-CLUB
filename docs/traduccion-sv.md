@@ -335,6 +335,31 @@ Kontrollera att varje text är naturlig och korrekt på svenska. Skriv dina rät
 | `budget.withdraw` | Retirar mi firma | Withdraw my signature | Dra tillbaka min signatur | |
 | `budget.signedNote` | Presupuesto firmado por los dos el {date}. | Budget signed by both on {date}. | Offerten signerades av båda den {date}. | |
 | `budget.pleaseSign` | Falta su firma en el presupuesto | Your signature is missing on the budget | Din signatur saknas på offerten | |
+| `project.tab.selections` | Elecciones | Selections | Produktval | |
+| `sel.eyebrow` | Productos elegidos | Selected products | Valda produkter | |
+| `sel.intro` | Lo que se elige en tienda con el cliente: foto, precio, tienda y referencia. El cliente y el constructor confirman que están conformes, para que después no haya dudas. Si se elige algo más caro que el precio de referencia, la diferencia va como extra. | What is chosen in the shop with the client: photo, price, shop and reference. The client and the builder confirm they agree, so there are no doubts later. If something more expensive than the reference price is chosen, the difference becomes an extra. | Det som väljs i butiken tillsammans med kunden: foto, pris, butik och referens. Kunden och byggaren bekräftar att de är överens, så att det inte blir några tvivel senare. Väljs något dyrare än referenspriset läggs mellanskillnaden till som extraarbete. | |
+| `sel.afterSigning` | Las elecciones de productos se anotan cuando el presupuesto está firmado por el cliente y el constructor. | Product selections are recorded once the budget has been signed by the client and the builder. | Produktval registreras när offerten är signerad av kunden och byggaren. | |
+| `sel.add` | Anotar elección | Record selection | Registrera val | |
+| `sel.product` | Producto | Product | Produkt | |
+| `sel.productExample` | Por ejemplo: grifo termostático Hansgrohe Ecostat | For example: Hansgrohe Ecostat thermostatic mixer | Till exempel: termostatblandare Hansgrohe Ecostat | |
+| `sel.for` | Corresponde a | Relates to | Gäller | |
+| `sel.forNone` | Nada en concreto del presupuesto | Nothing specific in the budget | Inget särskilt i offerten | |
+| `sel.store` | Dónde se eligió | Where it was chosen | Var den valdes | |
+| `sel.storeExample` | Por ejemplo: Porcelanosa, Jávea | For example: Porcelanosa, Jávea | Till exempel: Porcelanosa, Jávea | |
+| `sel.price` | Precio con IVA (€) | Price incl. VAT (€) | Pris inkl. moms (€) | |
+| `sel.reference` | Referencia o modelo (opcional) | Reference or model (optional) | Referens eller modell (valfritt) | |
+| `sel.referenceShort` | Referencia | Reference | Referens | |
+| `sel.note` | Notas (opcional) | Notes (optional) | Anteckningar (valfritt) | |
+| `sel.photos` | Fotos del producto y de la etiqueta | Photos of the product and its label | Foton på produkten och etiketten | |
+| `sel.empty` | Aún no hay productos elegidos. | No products selected yet. | Inga produkter valda ännu. | |
+| `sel.agreed` | Conformes | Agreed | Överens | |
+| `sel.waiting` | Falta confirmar | Awaiting confirmation | Väntar på bekräftelse | |
+| `sel.vatIncluded` | IVA incluido | VAT included | inkl. moms | |
+| `sel.addedBy` | Anotado por {name} · {date} | Recorded by {name} · {date} | Registrerat av {name} · {date} | |
+| `sel.okOn` | Conforme: {name}, {date} | Agreed: {name}, {date} | Överens: {name}, {date} | |
+| `sel.okPending` | Pendiente | Pending | Väntar | |
+| `sel.confirm` | Estoy conforme con esta elección | I agree with this selection | Jag godkänner det här valet | |
+| `sel.budgetReference` | Precio de referencia en el presupuesto: {net} + IVA ({gross} con IVA) | Reference price in the budget: {net} + VAT ({gross} incl. VAT) | Referenspris i offerten: {net} + moms ({gross} inkl. moms) | |
 | `budget.referenceNote` | Productos y precios de referencia incluidos en el precio de la partida. Si elige otro más caro, la diferencia se añade como extra. | Products and reference prices included in the group price. If you choose a more expensive one, the difference is added as an extra. | Produkter och referenspriser som ingår i postens pris. Väljer du något dyrare läggs mellanskillnaden till som extraarbete. | |
 | `budget.reference` | referencia | reference | referens | |
 | `budget.referencePrice` | Precio de referencia sin IVA (€) | Reference price excl. VAT (€) | Referenspris exkl. moms (€) | |

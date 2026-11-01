@@ -346,6 +346,31 @@ export type BudgetSignature = {
   signedAt: Timestamp | null
 }
 
+/** projects/{id}/selections: producto elegido en tienda con el cliente, con constancia de ambas partes */
+export type ProductSelection = {
+  title: string
+  /** tienda o proveedor donde se eligió */
+  store: string
+  /** precio en tienda, IVA incluido */
+  price: number
+  /** referencia o modelo */
+  reference: string
+  note: string
+  /** partida o elemento del presupuesto al que corresponde */
+  lineId?: string
+  attachments?: Attachment[]
+  authorUid: string
+  authorRole: ProjectRole
+  authorName: string
+  createdAt: Timestamp | null
+  clientOkUid?: string
+  clientOkName?: string
+  clientOkAt?: Timestamp | null
+  builderOkUid?: string
+  builderOkName?: string
+  builderOkAt?: Timestamp | null
+}
+
 /** projects/{id}/messages: conversación a tres */
 export type ProjectMessage = {
   text: string

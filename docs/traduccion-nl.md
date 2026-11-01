@@ -335,6 +335,31 @@ Controleer of elke tekst natuurlijk en correct Nederlands is. Noteer correcties 
 | `budget.withdraw` | Retirar mi firma | Withdraw my signature | Mijn handtekening intrekken | |
 | `budget.signedNote` | Presupuesto firmado por los dos el {date}. | Budget signed by both on {date}. | Begroting door beide ondertekend op {date}. | |
 | `budget.pleaseSign` | Falta su firma en el presupuesto | Your signature is missing on the budget | Uw handtekening op de begroting ontbreekt | |
+| `project.tab.selections` | Elecciones | Selections | Keuzes | |
+| `sel.eyebrow` | Productos elegidos | Selected products | Gekozen producten | |
+| `sel.intro` | Lo que se elige en tienda con el cliente: foto, precio, tienda y referencia. El cliente y el constructor confirman que están conformes, para que después no haya dudas. Si se elige algo más caro que el precio de referencia, la diferencia va como extra. | What is chosen in the shop with the client: photo, price, shop and reference. The client and the builder confirm they agree, so there are no doubts later. If something more expensive than the reference price is chosen, the difference becomes an extra. | Wat samen met de klant in de winkel wordt gekozen: foto, prijs, winkel en referentie. De klant en de aannemer bevestigen dat ze akkoord zijn, zodat er later geen twijfel is. Wordt er iets duurders dan de richtprijs gekozen, dan gaat het verschil als meerwerk. | |
+| `sel.afterSigning` | Las elecciones de productos se anotan cuando el presupuesto está firmado por el cliente y el constructor. | Product selections are recorded once the budget has been signed by the client and the builder. | Productkeuzes worden vastgelegd zodra de begroting door de klant en de aannemer is ondertekend. | |
+| `sel.add` | Anotar elección | Record selection | Keuze vastleggen | |
+| `sel.product` | Producto | Product | Product | |
+| `sel.productExample` | Por ejemplo: grifo termostático Hansgrohe Ecostat | For example: Hansgrohe Ecostat thermostatic mixer | Bijvoorbeeld: thermostaatkraan Hansgrohe Ecostat | |
+| `sel.for` | Corresponde a | Relates to | Hoort bij | |
+| `sel.forNone` | Nada en concreto del presupuesto | Nothing specific in the budget | Niets specifieks uit de begroting | |
+| `sel.store` | Dónde se eligió | Where it was chosen | Waar gekozen | |
+| `sel.storeExample` | Por ejemplo: Porcelanosa, Jávea | For example: Porcelanosa, Jávea | Bijvoorbeeld: Porcelanosa, Jávea | |
+| `sel.price` | Precio con IVA (€) | Price incl. VAT (€) | Prijs incl. btw (€) | |
+| `sel.reference` | Referencia o modelo (opcional) | Reference or model (optional) | Referentie of model (optioneel) | |
+| `sel.referenceShort` | Referencia | Reference | Referentie | |
+| `sel.note` | Notas (opcional) | Notes (optional) | Opmerkingen (optioneel) | |
+| `sel.photos` | Fotos del producto y de la etiqueta | Photos of the product and its label | Foto's van het product en het etiket | |
+| `sel.empty` | Aún no hay productos elegidos. | No products selected yet. | Nog geen producten gekozen. | |
+| `sel.agreed` | Conformes | Agreed | Akkoord | |
+| `sel.waiting` | Falta confirmar | Awaiting confirmation | Wacht op bevestiging | |
+| `sel.vatIncluded` | IVA incluido | VAT included | incl. btw | |
+| `sel.addedBy` | Anotado por {name} · {date} | Recorded by {name} · {date} | Vastgelegd door {name} · {date} | |
+| `sel.okOn` | Conforme: {name}, {date} | Agreed: {name}, {date} | Akkoord: {name}, {date} | |
+| `sel.okPending` | Pendiente | Pending | Nog niet | |
+| `sel.confirm` | Estoy conforme con esta elección | I agree with this selection | Ik ga akkoord met deze keuze | |
+| `sel.budgetReference` | Precio de referencia en el presupuesto: {net} + IVA ({gross} con IVA) | Reference price in the budget: {net} + VAT ({gross} incl. VAT) | Richtprijs in de begroting: {net} + btw ({gross} incl. btw) | |
 | `budget.referenceNote` | Productos y precios de referencia incluidos en el precio de la partida. Si elige otro más caro, la diferencia se añade como extra. | Products and reference prices included in the group price. If you choose a more expensive one, the difference is added as an extra. | Producten en richtprijzen die in de prijs van de post zijn inbegrepen. Kiest u iets duurders, dan wordt het verschil als meerwerk toegevoegd. | |
 | `budget.reference` | referencia | reference | richtprijs | |
 | `budget.referencePrice` | Precio de referencia sin IVA (€) | Reference price excl. VAT (€) | Richtprijs excl. btw (€) | |
