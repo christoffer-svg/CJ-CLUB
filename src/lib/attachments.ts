@@ -22,7 +22,7 @@ export function checkFiles(files: File[], max = MAX_FILES): FileProblem | null {
 }
 
 /** Reduce una foto a 1600 px como mucho y la guarda como JPEG; los PDF se suben tal cual */
-async function prepare(file: File): Promise<{ blob: Blob; name: string; type: string }> {
+export async function prepare(file: File): Promise<{ blob: Blob; name: string; type: string }> {
   if (!file.type.startsWith('image/') || file.type === 'image/gif') return { blob: file, name: file.name, type: file.type }
   try {
     const bitmap = await createImageBitmap(file)
@@ -39,7 +39,7 @@ async function prepare(file: File): Promise<{ blob: Blob; name: string; type: st
   }
 }
 
-function toBase64(blob: Blob) {
+export function toBase64(blob: Blob) {
   return new Promise<string>((resolve, reject) => {
     const reader = new FileReader()
     reader.onload = () => resolve(String(reader.result).split(',')[1] ?? '')

@@ -626,3 +626,59 @@ export const uploadProjectFile = onCall({ memory: '512MiB', timeoutSeconds: 120 
   const url = `${host}/v0/b/${BUCKET}/o/${encodeURIComponent(path)}?alt=media&token=${token}`
   return { path, name, contentType, size: buffer.length, url }
 })
+
+/**
+ * Documento de identidad (DNI, NIE o pasaporte) de quien firma el presupuesto: el cliente o el profesional.
+ * Una llamada por foto: la parte 1 sustituye lo que hubiera (borra las fotos anteriores) y la parte 2
+ * (la otra cara del DNI) se añade. Solo se puede cambiar mientras esa persona no haya firmado.
+ * Queda en projects/{id}/identities/{client|builder}, que solo leen CJ y la propia persona.
+ */
+export const uploadIdentity = onCall({ memory: '512MiB', timeoutSeconds: 120 }, async (request) => {
+  const uid = request.auth?.uid
+  if (!uid) throw new HttpsError('unauthenticated', 'Inicie sesión de nuevo.')
+  const d = (request.data ?? {}) as Record<string, unknown>
+  const projectId = text(d.projectId, 'obra')
+  const docType = d.docType === 'dni' || d.docType === 'nie' || d.docType === 'passport' ? d.docType : null
+  const part = Number(d.part)
+  const contentType = text(d.contentType, 'tipo')
+  if (!docType || !/^[A-Za-z0-9_-]{6,60}$/.test(projectId) || !(part === 1 || part === 2)) throw new HttpsError('invalid-argument', 'Datos del documento no válidos.')
+  if (!(contentType.startsWith('image/') || contentType === 'application/pdf')) throw new HttpsError('invalid-argument', 'Solo se admiten fotos y PDF.')
+  const buffer = Buffer.from(typeof d.data === 'string' ? d.data : '', 'base64')
+  if (!buffer.length || buffer.length > MAX_FILE_BYTES) throw new HttpsError('invalid-argument', 'El archivo pasa de 10 MB.')
+
+  const role = await projectRoleOf(uid, projectId)
+  if (role !== 'client' && role !== 'builder') throw new HttpsError('permission-denied', 'Solo el cliente y el profesional firman el presupuesto.')
+  if ((await db.doc(`projects/${projectId}/signatures/${role}`).get()).exists) throw new HttpsError('failed-precondition', 'Ya ha firmado.')
+
+  const ref = db.doc(`projects/${projectId}/identities/${role}`)
+  const before = await ref.get()
+  const prev = (before.get('files') as { path: string }[] | undefined) ?? []
+  if (part === 2 && (!before.exists || before.get('uid') !== uid || prev.length !== 1)) throw new HttpsError('failed-precondition', 'Suba primero la parte delantera.')
+
+  const name =
+    (typeof d.name === 'string' ? d.name : 'documento')
+      .normalize('NFD')
+      .replace(/[̀-ͯ]/g, '')
+      .replace(/[^\w.-]+/g, '_')
+      .slice(-80) || 'documento'
+  const path = `projects/${projectId}/identity/${role}/${Date.now()}-${part}-${name}`
+  const bucket = await projectBucket()
+  const token = randomUUID()
+  try {
+    await bucket.file(path).save(buffer, { contentType, resumable: false, metadata: { metadata: { firebaseStorageDownloadTokens: token, uploadedBy: uid, role } } })
+  } catch (e) {
+    console.error('uploadIdentity', e)
+    throw new HttpsError('internal', 'No se pudo guardar el documento.')
+  }
+  const host = process.env.FUNCTIONS_EMULATOR === 'true' && process.env.STORAGE_EMULATOR_HOST ? process.env.STORAGE_EMULATOR_HOST : 'https://firebasestorage.googleapis.com'
+  const file = { path, name, contentType, size: buffer.length, url: `${host}/v0/b/${BUCKET}/o/${encodeURIComponent(path)}?alt=media&token=${token}` }
+
+  if (part === 1) {
+    // Documento nuevo: se borran las fotos del anterior
+    await Promise.all(prev.map((f) => bucket.file(f.path).delete().catch(() => undefined)))
+    await ref.set({ role, uid, docType, files: [file], createdAt: FieldValue.serverTimestamp() })
+  } else {
+    await ref.update({ files: FieldValue.arrayUnion(file) })
+  }
+  return { ok: true }
+})

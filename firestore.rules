@@ -768,7 +768,11 @@ service cloud.firestore {
         allow read: if inDeal(pid);
         allow create: if r in ['client', 'builder']
           && projectRole(pid) == r
-          && request.resource.data.keys().hasOnly(['role', 'uid', 'name', 'accepted', 'image', 'hash', 'lines', 'plan', 'base', 'vatRate', 'signedAt'])
+          && request.resource.data.keys().hasOnly(['role', 'uid', 'name', 'accepted', 'image', 'hash', 'lines', 'plan', 'base', 'vatRate', 'idType', 'signedAt'])
+          // Antes de firmar, la persona ha subido su DNI, NIE o pasaporte (lo guarda el servidor)
+          && exists(/databases/$(database)/documents/projects/$(pid)/identities/$(r))
+          && get(/databases/$(database)/documents/projects/$(pid)/identities/$(r)).data.uid == request.auth.uid
+          && request.resource.data.idType == get(/databases/$(database)/documents/projects/$(pid)/identities/$(r)).data.docType
           && (!('plan' in request.resource.data) || planOk(request.resource.data.plan))
           && request.resource.data.role == r
           && request.resource.data.uid == request.auth.uid
@@ -787,6 +791,15 @@ service cloud.firestore {
         allow delete: if r in ['client', 'builder']
           && (projectRole(pid) == r || projectRole(pid) == 'cj')
           && !exists(signaturePath(pid, r == 'client' ? 'builder' : 'client'));
+      }
+
+      // Documento de identidad de quien firma (DNI, NIE o pasaporte). Lo escribe solo el servidor
+      // (función uploadIdentity) y lo ven CJ y la propia persona; la otra parte, no.
+      match /identities/{r} {
+        allow get: if projectRole(pid) == 'cj'
+          || (r in ['client', 'builder'] && projectRole(pid) == r && (resource == null || resource.data.uid == request.auth.uid));
+        allow list: if projectRole(pid) == 'cj';
+        allow write: if false;
       }
 
       // Plan de pagos: lo escriben el constructor o CJ junto con el presupuesto, y se firma con él

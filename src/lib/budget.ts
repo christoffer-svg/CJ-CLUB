@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { uploadAttachments } from './attachments'
 import { db } from './firebase'
 import type { Author, WithId } from './projects'
-import type { Attachment, BudgetLine, BudgetSignature, Milestone, SignedLine } from './types'
+import type { Attachment, BudgetLine, BudgetSignature, IdDocType, Milestone, SignedLine } from './types'
 
 export function useBudgetLines(projectId: string | null) {
   const [state, setState] = useState<{ loading: boolean; data: WithId<BudgetLine>[] }>({ loading: true, data: [] })
@@ -119,6 +119,7 @@ export async function signBudget(
   lines: WithId<BudgetLine>[],
   vatRate: 10 | 21,
   plan: Milestone[],
+  idType: IdDocType,
 ) {
   const snapshot = snapshotLines(lines)
   await setDoc(doc(db, 'projects', projectId, 'signatures', a.role), {
@@ -132,6 +133,7 @@ export async function signBudget(
     plan: plan.map((m) => ({ id: m.id, title: m.title, percent: m.percent })),
     base: linesBase(lines),
     vatRate,
+    idType,
     signedAt: serverTimestamp(),
   })
 }

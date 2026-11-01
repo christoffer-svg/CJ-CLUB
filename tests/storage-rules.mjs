@@ -76,5 +76,28 @@ ok(await direct(J, `projects/p-jansen-cocina/payments/${e}d/1.jpg`), 403, 'clien
 ok(await readDirect(L, pdf.path), 403, 'otra familia no lee el almacén sin enlace')
 ok(await readDirect(null, pdf.path), 403, 'anónimo no lee el almacén sin enlace')
 
+// Documento de identidad para firmar (función uploadIdentity)
+const IDFN = FN.replace('uploadProjectFile', 'uploadIdentity')
+const upId = async (t, d) => {
+  const r = await fetch(IDFN, { method: 'POST', headers: { ...H, ...(t ? { authorization: 'Bearer ' + t } : {}) }, body: JSON.stringify({ data: { projectId: 'p-jansen-cocina', docType: 'dni', part: 1, name: 'dni.jpg', contentType: 'image/jpeg', data: b64(2048), ...d } }) })
+  const j = await r.json(); return j.error ? j.error.status : 'ok'
+}
+ok(await upId(J, { part: 2 }), 'FAILED_PRECONDITION', 'la parte trasera no va sin la delantera')
+ok(await upId(J, {}), 'ok', 'el cliente sube su DNI por delante')
+ok(await upId(J, { part: 2 }), 'ok', 'y por detrás')
+ok(await upId(J, { part: 2 }), 'FAILED_PRECONDITION', 'no más de dos fotos')
+ok(await upId(J, { docType: 'passport' }), 'ok', 'el cliente lo cambia por su pasaporte')
+const idDocR = await fetch('http://127.0.0.1:8080/v1/projects/cj-club/databases/(default)/documents/projects/p-jansen-cocina/identities/client', { headers: { authorization: 'Bearer owner' } }).then(r => r.json())
+ok(idDocR.fields?.docType?.stringValue === 'passport' && idDocR.fields?.files?.arrayValue?.values?.length === 1, true, 'al cambiarlo queda solo el documento nuevo')
+const oldFront = idDocR.fields.files.arrayValue.values[0].mapValue.fields
+ok(await fetch(oldFront.url.stringValue).then(r => r.status), 200, 'el documento se abre con su enlace privado')
+ok(await readDirect(J, oldFront.path.stringValue), 403, 'nadie lee el documento sin el enlace')
+ok(await upId(B, { docType: 'nie' }), 'ok', 'el constructor sube su NIE')
+ok(await upId(AD, {}), 'PERMISSION_DENIED', 'CJ no se identifica por las partes')
+ok(await upId(DS, {}), 'PERMISSION_DENIED', 'la arquitecta no firma')
+ok(await upId(L, {}), 'PERMISSION_DENIED', 'otra familia no sube documentos')
+ok(await upId(J, { projectId: 'p-firmas' }), 'FAILED_PRECONDITION', 'después de firmar ya no se cambia el documento')
+ok(await upId(J, { docType: 'carnet' }), 'INVALID_ARGUMENT', 'solo DNI, NIE o pasaporte')
+
 console.log(`Archivos: ${pass} OK, ${fail} FAIL`)
 if (fail) process.exit(1)

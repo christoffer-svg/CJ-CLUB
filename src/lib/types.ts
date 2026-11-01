@@ -387,7 +387,20 @@ export type BudgetSignature = {
   /** total sin IVA de las líneas firmadas */
   base: number
   vatRate: 10 | 21
+  /** documento con el que se identificó (las fotos están en identities/{role}, solo para CJ y esa persona) */
+  idType?: IdDocType
   signedAt: Timestamp | null
+}
+
+export type IdDocType = 'dni' | 'nie' | 'passport'
+
+/** projects/{id}/identities/{client|builder}: DNI, NIE o pasaporte de quien firma. Lo escribe el servidor. */
+export type Identity = {
+  role: 'client' | 'builder'
+  uid: string
+  docType: IdDocType
+  files: Attachment[]
+  createdAt: Timestamp | null
 }
 
 /** projects/{id}/selections: producto elegido en tienda con el cliente, con constancia de ambas partes */

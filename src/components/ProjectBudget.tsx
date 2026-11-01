@@ -8,7 +8,8 @@ import { useRoleName } from './projectRoles'
 import { parseAmount } from '../lib/amount'
 import { budgetHash, deleteBudgetGroup, deleteBudgetLine, lineTotal, linesBase, saveBudgetLine, signBudget, snapshotLines, withdrawSignature } from '../lib/budget'
 import { formatMoney, type Author, type WithId } from '../lib/projects'
-import type { Attachment, BudgetLine, BudgetSignature, Milestone } from '../lib/types'
+import type { Attachment, BudgetLine, BudgetSignature, IdDocType, Milestone } from '../lib/types'
+import { uploadIdentity, useIdentity } from '../lib/identity'
 import { shortDate } from '../lib/when'
 
 type Draft = {
@@ -55,7 +56,11 @@ export default function ProjectBudget({
   const roleName = useRoleName()
   const money = (n: number) => formatMoney(n, locale)
   const [form, setForm] = useState<Draft | null>(null)
-  const [signing, setSigning] = useState<{ name: string; accepted: boolean; image: string | null } | null>(null)
+  const [signing, setSigning] = useState<{ name: string; accepted: boolean; image: string | null; docType: IdDocType; idFiles: File[] } | null>(null)
+  // Documento de identidad de cada parte: CJ ve los dos; el cliente y el profesional, solo el suyo
+  const idClient = useIdentity(projectId, author.role === 'cj' || author.role === 'client' ? 'client' : null).data
+  const idBuilder = useIdentity(projectId, author.role === 'cj' || author.role === 'builder' ? 'builder' : null).data
+  const identities = { client: idClient, builder: idBuilder }
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
   const [hash, setHash] = useState('')
@@ -336,6 +341,8 @@ export default function ProjectBudget({
   }
 
   const signer = author.role === 'client' || author.role === 'builder' ? author.role : null
+  // Para firmar: aceptar, nombre, firma dibujada y documento de identidad (nuevo o ya subido)
+  const signReady = Boolean(signing && signer && signing.accepted && signing.name.trim() && signing.image && (signing.idFiles.length || identities[signer]))
   const status = bothSigned ? 'signed' : anySigned ? 'partial' : 'draft'
   const addingGroup = form && form.kind === 'group' && !form.id
 
@@ -440,6 +447,13 @@ export default function ProjectBudget({
                     <span className="card__text">
                       {s.name} · {t('budget.signedOn', { date: shortDate(s.signedAt, locale) })}
                     </span>
+                    {s.idType && <span className="card__text budget-sig__id">{t('budget.identified', { doc: t(`budget.id.${s.idType}`) })}</span>}
+                    {identities[r] && (
+                      <div className="budget-sig__docs">
+                        <span className="eyebrow">{t('budget.idPrivate')}</span>
+                        <AttachmentList items={identities[r]!.files} />
+                      </div>
+                    )}
                     {hash && s.hash !== hash && <p className="composer__error">{t('budget.mismatch')}</p>}
                     {canWrite && !bothSigned && (author.role === r || author.role === 'cj') && (
                       <button className="link-btn link-btn--dark" disabled={busy} onClick={() => run(() => withdrawSignature(projectId, r))}>
@@ -451,7 +465,7 @@ export default function ProjectBudget({
                   <>
                     <span className="card__text">{t('budget.pending')}</span>
                     {canWrite && signer === r && !signing && !form && planReady(plan) && (
-                      <button className="btn" onClick={() => setSigning({ name: author.name, accepted: false, image: null })}>
+                      <button className="btn" onClick={() => setSigning({ name: author.name, accepted: false, image: null, docType: identities[r]?.docType ?? 'passport', idFiles: [] })}>
                         {t('budget.sign')}
                       </button>
                     )}
@@ -468,9 +482,24 @@ export default function ProjectBudget({
           className="card request-form"
           onSubmit={(e) => {
             e.preventDefault()
-            if (!signing.accepted || !signing.name.trim() || !signing.image) return
-            const image = signing.image
-            run(() => signBudget(projectId, { ...author, role: signer }, signing.name, image, lines, vatRate, plan), () => setSigning(null), t('budget.signError'))
+            if (!signReady || !signing.image) return
+            const { image, docType, idFiles } = signing
+            const onFile = identities[signer]
+            run(
+              async () => {
+                // Primero el documento de identidad (si ha elegido fotos nuevas), después la firma
+                if (idFiles.length) {
+                  try {
+                    await uploadIdentity(projectId, docType, idFiles)
+                  } catch {
+                    throw new Error('id')
+                  }
+                }
+                await signBudget(projectId, { ...author, role: signer }, signing.name, image, lines, vatRate, plan, idFiles.length ? docType : onFile!.docType)
+              },
+              () => setSigning(null),
+              t('budget.signError'),
+            )
           }}
         >
           <span className="card__title">{t('budget.sign')}</span>
@@ -482,13 +511,31 @@ export default function ProjectBudget({
             <span className="eyebrow">{t('budget.signName')}</span>
             <input className="composer__input" required maxLength={120} value={signing.name} onChange={(e) => setSigning({ ...signing, name: e.target.value })} />
           </label>
+          <div className="budget-id">
+            <span className="eyebrow">{t('budget.idTitle')}</span>
+            <p className="card__text">{t('budget.idHint')}</p>
+            <label className="request-form__field">
+              <span className="eyebrow">{t('budget.idType')}</span>
+              <select className="composer__input" value={signing.docType} onChange={(e) => setSigning({ ...signing, docType: e.target.value as IdDocType })}>
+                {(['passport', 'dni', 'nie'] as const).map((d) => (
+                  <option key={d} value={d}>
+                    {t(`budget.id.${d}`)}
+                  </option>
+                ))}
+              </select>
+            </label>
+            {identities[signer] && !signing.idFiles.length && (
+              <p className="card__text">{t('budget.idOnFile', { doc: t(`budget.id.${identities[signer]!.docType}`) })}</p>
+            )}
+            <FilePicker label={t('budget.idPhotos')} files={signing.idFiles} max={2} onChange={(idFiles) => setSigning({ ...signing, idFiles })} />
+          </div>
           <SignaturePad label={t('budget.signHere')} clearLabel={t('budget.clear')} onChange={(image) => setSigning((s) => s && { ...s, image })} />
           {error && <p className="composer__error">{error}</p>}
           <div className="request-form__actions">
             <button type="button" className="btn btn--ghost" onClick={() => setSigning(null)}>
               {t('requests.cancelForm')}
             </button>
-            <button type="submit" className="btn" disabled={busy || !signing.accepted || !signing.name.trim() || !signing.image}>
+            <button type="submit" className="btn" disabled={busy || !signReady}>
               {t('budget.confirmSign')}
             </button>
           </div>

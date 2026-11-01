@@ -47,6 +47,14 @@ Todo está denegado salvo lo que se permite expresamente.
 - `projects/{id}/snags`: lista de repasos. El cliente o CJ los apuntan (con fotos); solo el constructor los marca como arreglados (con fotos); solo el cliente o CJ los dan por buenos o los reabren. Nadie cambia lo apuntado; CJ puede borrar un repaso puesto por error.
 - Es una firma electrónica simple: prueba de quién aceptó qué y cuándo, no una firma cualificada.
 
+### Identificación al firmar (Mi reforma)
+
+- Para firmar el presupuesto, el cliente y el profesional suben una foto de su pasaporte, o de su DNI o NIE por las dos caras.
+- La sube solo la función `uploadIdentity`. Comprueba que la persona es el cliente o el profesional de ese contrato y que aún no ha firmado. Acepta una o dos fotos o PDF de hasta 10 MB y guarda el resultado en `projects/{id}/identities/{client|builder}`; nadie puede escribir ese documento desde la app. Si se sube un documento nuevo, se borran las fotos del anterior.
+- Lo leen solo CJ y la propia persona. La otra parte ve únicamente «Identificado con pasaporte/DNI/NIE», el campo `idType` de la firma.
+- La regla de la firma exige que exista el documento de identidad de esa persona (mismo `uid`) y que el tipo coincida.
+- Son datos personales sensibles: se borran con el contrato al dar de baja al cliente. Conviene indicarlo en la política de privacidad.
+
 ### Varios accesos con un mismo correo
 - Una persona puede tener varios accesos con el mismo correo (por ejemplo, cliente y negocio). En `users/{uid}`, `roles` guarda todos los que le ha dado CJ y `role` el que está usando ahora; las fichas antiguas sin `roles` tienen solo su `role`.
 - Las reglas miran siempre el acceso que está usando: como cliente no gestiona su negocio, y como negocio no ve su casa.

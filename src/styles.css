@@ -3350,3 +3350,19 @@ button {
   justify-content: space-between;
   gap: 12px;
 }
+
+.budget-id {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px 0;
+  border-top: 1px solid var(--card-border);
+  border-bottom: 1px solid var(--card-border);
+}
+
+.budget-sig__docs {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 6px;
+}
