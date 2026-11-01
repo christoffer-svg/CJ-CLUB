@@ -79,9 +79,19 @@ export type PublicProfile = {
   address?: string
   /** fotos (las sube el servidor: función uploadProfilePhoto); la primera es la portada */
   photos?: Attachment[]
+  /** carta del restaurante: fotos o PDF, tal como la tienen */
+  menu?: Attachment[]
+  /** hace comida para llevar */
+  takeaway?: boolean
+  /** hace entrega a domicilio */
+  delivery?: boolean
+  /** cómo pedir: horario de pedidos, zona de reparto, pedido mínimo… */
+  orderInfo_es?: string
+  orderInfo_en?: string
 }
 
-export const PROFILE_FIELDS = ['about_es', 'about_en', 'hours_es', 'hours_en', 'phone', 'email', 'website', 'instagram', 'address', 'photos'] as const
+export const PROFILE_FIELDS = ['about_es', 'about_en', 'hours_es', 'hours_en', 'phone', 'email', 'website', 'instagram', 'address', 'photos', 'menu', 'takeaway', 'delivery', 'orderInfo_es', 'orderInfo_en'] as const
+export const MAX_MENU_FILES = 10
 export const MAX_PROFILE_PHOTOS = 10
 
 export type Partner = {

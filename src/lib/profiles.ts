@@ -7,16 +7,16 @@ import { PROFILE_FIELDS, type Attachment, type PublicProfile } from './types'
 
 export type ProfileCollection = 'places' | 'partners'
 
-type Req = { collection: ProfileCollection; id: string; name: string; contentType: string; data: string }
+type Req = { collection: ProfileCollection; id: string; kind: 'photos' | 'menu'; name: string; contentType: string; data: string }
 
-/** Sube fotos de la presentación (reducidas a 1600 px) y devuelve sus fichas */
-export async function uploadProfilePhotos(coll: ProfileCollection, id: string, files: File[]): Promise<Attachment[]> {
+/** Sube fotos de la presentación (reducidas a 1600 px), o de la carta (fotos o PDF), y devuelve sus fichas */
+export async function uploadProfilePhotos(coll: ProfileCollection, id: string, files: File[], kind: 'photos' | 'menu' = 'photos'): Promise<Attachment[]> {
   const call = httpsCallable<Req, Attachment>(functions, 'uploadProfilePhoto', { timeout: 120_000 })
   const out: Attachment[] = []
   for (const file of files) {
     const { blob, name, type } = await prepare(file)
     if (blob.size > MAX_BYTES) throw new Error('too-big')
-    out.push((await call({ collection: coll, id, name, contentType: type, data: await toBase64(blob) })).data)
+    out.push((await call({ collection: coll, id, kind, name, contentType: type, data: await toBase64(blob) })).data)
   }
   return out
 }
@@ -38,6 +38,11 @@ export function cleanProfile(p: PublicProfile): PublicProfile {
     instagram: tr(p.instagram, 100).replace(/^@/, '').replace(/^https?:\/\/(www\.)?instagram\.com\//i, '').replace(/\/$/, ''),
     address: tr(p.address, 300),
     photos: (p.photos ?? []).slice(0, 10),
+    menu: (p.menu ?? []).slice(0, 10),
+    takeaway: p.takeaway === true,
+    delivery: p.delivery === true,
+    orderInfo_es: tr(p.orderInfo_es, 600),
+    orderInfo_en: tr(p.orderInfo_en, 600),
   }
 }
 
@@ -55,7 +60,8 @@ export const profileOf = (item: object | null | undefined): PublicProfile => {
 }
 
 /** ¿Tiene algo que enseñar más allá del nombre? */
-export const hasProfile = (p: PublicProfile) => Boolean(p.about_es || p.about_en || p.photos?.length || p.hours_es || p.website || p.instagram || p.email || p.address)
+export const hasProfile = (p: PublicProfile) =>
+  Boolean(p.about_es || p.about_en || p.photos?.length || p.menu?.length || p.takeaway || p.delivery || p.hours_es || p.website || p.instagram || p.email || p.address)
 
 export const instagramUrl = (user: string) => `https://www.instagram.com/${encodeURIComponent(user)}/`
 export const websiteLabel = (url: string) => url.replace(/^https?:\/\/(www\.)?/i, '').replace(/\/$/, '')

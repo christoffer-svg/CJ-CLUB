@@ -200,8 +200,35 @@ service cloud.firestore {
         && (list.size() < 10 || profilePhotoOk(list[9], coll, id));
     }
 
+    // Carta: fotos o PDF subidos por el servidor a la carpeta "menu" de ese colaborador
+    function menuFileOk(a, coll, id) {
+      return a is map
+        && a.path is string && a.path.matches('profiles/' + coll + '/' + id + '/menu/.+')
+        && a.url is string
+        && (a.url.matches('https://firebasestorage[.]googleapis[.]com/.+') || a.url.matches('http://127[.]0[.]0[.]1:9199/.+'));
+    }
+
+    function menuOk(coll, id) {
+      let list = request.resource.data.get('menu', []);
+      return list is list && list.size() <= 10
+        && (list.size() < 1 || menuFileOk(list[0], coll, id))
+        && (list.size() < 2 || menuFileOk(list[1], coll, id))
+        && (list.size() < 3 || menuFileOk(list[2], coll, id))
+        && (list.size() < 4 || menuFileOk(list[3], coll, id))
+        && (list.size() < 5 || menuFileOk(list[4], coll, id))
+        && (list.size() < 6 || menuFileOk(list[5], coll, id))
+        && (list.size() < 7 || menuFileOk(list[6], coll, id))
+        && (list.size() < 8 || menuFileOk(list[7], coll, id))
+        && (list.size() < 9 || menuFileOk(list[8], coll, id))
+        && (list.size() < 10 || menuFileOk(list[9], coll, id));
+    }
+
     function profileOk(coll, id) {
       return profileText('about_es', 4000) && profileText('about_en', 4000)
+        && profileText('orderInfo_es', 600) && profileText('orderInfo_en', 600)
+        && request.resource.data.get('takeaway', false) is bool
+        && request.resource.data.get('delivery', false) is bool
+        && menuOk(coll, id)
         && profileText('hours_es', 600) && profileText('hours_en', 600)
         && profileText('phone', 40) && profileText('email', 120)
         && profileText('instagram', 100) && profileText('address', 300)
@@ -217,7 +244,8 @@ service cloud.firestore {
       // El negocio escribe su presentación (y nada más de la ficha, que es de CJ)
       allow update: if isBusiness() && id == myPlaceId()
         && request.resource.data.diff(resource.data).affectedKeys()
-             .hasOnly(['about_es', 'about_en', 'hours_es', 'hours_en', 'phone', 'email', 'website', 'instagram', 'address', 'photos'])
+             .hasOnly(['about_es', 'about_en', 'hours_es', 'hours_en', 'phone', 'email', 'website', 'instagram', 'address', 'photos',
+                       'menu', 'takeaway', 'delivery', 'orderInfo_es', 'orderInfo_en'])
         && profileOk('places', id);
     }
 

@@ -4,6 +4,8 @@ import { HeartIcon } from '../components/Icons'
 import { ProfileDetails, ProfileGallery } from '../components/ProfileView'
 import ReserveButton from '../components/ReserveButton'
 import EventCard from '../components/EventCard'
+import { AttachmentList } from '../components/Attachments'
+import { telLink } from '../lib/format'
 import { useBookings, useUpcomingEvents } from '../lib/events'
 import { useI18n } from '../i18n'
 import { useActiveDeals, useDoc } from '../lib/data'
@@ -52,6 +54,27 @@ export default function PlaceDetail() {
               </p>
             )}
             <ProfileDetails profile={profileOf(p)} directions={location ? directionsUrl(location) : null}>
+              {p.menu && p.menu.length > 0 && (
+                <section className="card pf-block">
+                  <span className="eyebrow">{t('profile.menu')}</span>
+                  <AttachmentList items={p.menu} />
+                </section>
+              )}
+              {(p.takeaway || p.delivery) && (
+                <section className="card pf-block">
+                  <span className="eyebrow">{t('profile.ordering')}</span>
+                  <div className="pf-tags">
+                    {p.takeaway && <span className="tag">{t('profile.takeaway')}</span>}
+                    {p.delivery && <span className="tag">{t('profile.delivery')}</span>}
+                  </div>
+                  {pick(p, 'orderInfo') && <p className="pf-text">{pick(p, 'orderInfo')}</p>}
+                  {p.phone && (
+                    <a className="btn btn--ghost pf-order" href={telLink(p.phone)}>
+                      {t('profile.orderCall')}
+                    </a>
+                  )}
+                </section>
+              )}
               {(p.discountPercent || myDeals.length > 0) && (
                 <section className="card pf-block">
                   <span className="eyebrow">{t('profile.deals')}</span>

@@ -16,6 +16,7 @@ export default function BusinessProfile() {
           coll="places"
           id={placeId}
           value={profileOf(place)}
+          restaurant={place.category === 'restaurants'}
           audience="Es lo que ven los clientes de CJ Club al pinchar en su negocio en la app. Añada fotos y cuente qué les hace especiales; si puede, escríbalo también en inglés."
         />
       ) : (

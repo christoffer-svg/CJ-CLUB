@@ -25,6 +25,7 @@ export default function AdminProfile({ coll }: { coll: ProfileCollection }) {
           id={id}
           value={profileOf(item.data)}
           withPhone={coll === 'places'}
+          restaurant={coll === 'places' && (item.data as Place).category === 'restaurants'}
           audience={
             coll === 'places'
               ? 'Es lo que ve el cliente al pinchar en este lugar en Descubrir. Si el negocio tiene acceso al panel, también la puede cambiar él.'

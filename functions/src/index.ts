@@ -698,8 +698,12 @@ export const uploadProfilePhoto = onCall({ memory: '512MiB', timeoutSeconds: 120
   const coll = d.collection === 'places' || d.collection === 'partners' ? d.collection : null
   const id = text(d.id, 'colaborador')
   const contentType = text(d.contentType, 'tipo')
+  // "photos": fotos de la presentación; "menu": la carta, en fotos o PDF
+  const folder = d.kind === 'menu' ? 'menu' : 'photos'
   if (!coll || !/^[A-Za-z0-9_-]{1,100}$/.test(id)) throw new HttpsError('invalid-argument', 'Datos de la foto no válidos.')
-  if (!contentType.startsWith('image/')) throw new HttpsError('invalid-argument', 'Solo se admiten fotos.')
+  if (!(contentType.startsWith('image/') || (folder === 'menu' && contentType === 'application/pdf'))) {
+    throw new HttpsError('invalid-argument', folder === 'menu' ? 'Solo se admiten fotos y PDF.' : 'Solo se admiten fotos.')
+  }
   const buffer = Buffer.from(typeof d.data === 'string' ? d.data : '', 'base64')
   if (!buffer.length || buffer.length > MAX_FILE_BYTES) throw new HttpsError('invalid-argument', 'La foto pasa de 10 MB.')
 
@@ -715,7 +719,7 @@ export const uploadProfilePhoto = onCall({ memory: '512MiB', timeoutSeconds: 120
       .replace(/[̀-ͯ]/g, '')
       .replace(/[^\w.-]+/g, '_')
       .slice(-80) || 'foto'
-  const path = `profiles/${coll}/${id}/photos/${Date.now()}-${randomBytes(4).toString('hex')}-${name}`
+  const path = `profiles/${coll}/${id}/${folder}/${Date.now()}-${randomBytes(4).toString('hex')}-${name}`
   const token = randomUUID()
   try {
     await (await projectBucket()).file(path).save(buffer, { contentType, resumable: false, metadata: { metadata: { firebaseStorageDownloadTokens: token, uploadedBy: uid } } })

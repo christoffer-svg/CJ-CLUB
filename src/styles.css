@@ -3793,3 +3793,35 @@ button {
     flex-wrap: wrap;
   }
 }
+
+.profile-editor__section {
+  padding-top: 14px;
+  border-top: 1px solid var(--card-border);
+  gap: 10px;
+}
+
+.profile-editor__menu a {
+  color: var(--text);
+}
+
+.profile-editor__menu-tools {
+  display: flex;
+  gap: 12px;
+}
+
+.pf-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tag--plain {
+  background: transparent;
+  border: 1px solid var(--card-border);
+}
+
+.pf-order {
+  align-self: flex-start;
+  margin-top: 4px;
+  text-decoration: none;
+}

@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
-import { Field, Input, Textarea } from './admin/Fields'
+import { Field, Input, Textarea, Toggle } from './admin/Fields'
 import { useToast } from './admin/Toast'
 import { cleanProfile, saveProfile, uploadProfilePhotos, type ProfileCollection } from '../lib/profiles'
-import { MAX_PROFILE_PHOTOS, type PublicProfile } from '../lib/types'
+import { MAX_MENU_FILES, MAX_PROFILE_PHOTOS, type PublicProfile } from '../lib/types'
 
 /**
  * Presentación de un colaborador, en el panel (del negocio o de CJ): textos, contacto y fotos.
@@ -13,6 +13,7 @@ export default function ProfileEditor({
   id,
   value,
   withPhone = true,
+  restaurant = false,
   audience,
 }: {
   coll: ProfileCollection
@@ -20,6 +21,8 @@ export default function ProfileEditor({
   value: PublicProfile
   /** los colaboradores de servicios ya tienen su teléfono en la ficha */
   withPhone?: boolean
+  /** restaurantes: carta y comida para llevar o a domicilio */
+  restaurant?: boolean
   /** texto de ayuda sobre quién lo ve */
   audience: string
 }) {
@@ -37,6 +40,24 @@ export default function ProfileEditor({
   }, [id, loadedId, value])
   const dirty = JSON.stringify(cleanProfile(draft)) !== JSON.stringify(cleanProfile(value))
   const photos = draft.photos ?? []
+  const menu = draft.menu ?? []
+  const [uploadingMenu, setUploadingMenu] = useState(false)
+
+  async function addMenu(files: File[]) {
+    const room = MAX_MENU_FILES - menu.length
+    const ok = files.filter((f) => f.type.startsWith('image/') || f.type === 'application/pdf').slice(0, room)
+    if (!ok.length) return
+    setUploadingMenu(true)
+    try {
+      const added = await uploadProfilePhotos(coll, id, ok, 'menu')
+      setDraft((d) => ({ ...d, menu: [...(d.menu ?? []), ...added] }))
+      toast('Carta añadida. Pulse «Guardar presentación» para publicarla.')
+    } catch {
+      toast('No se pudo subir la carta. Use fotos o PDF de hasta 10 MB.', 'error')
+    } finally {
+      setUploadingMenu(false)
+    }
+  }
   const set = (patch: Partial<PublicProfile>) => setDraft((d) => ({ ...d, ...patch }))
 
   async function addPhotos(files: File[]) {
@@ -111,6 +132,68 @@ export default function ProfileEditor({
         )}
       </div>
 
+      {restaurant && (
+        <div className="a-field profile-editor__section">
+          <span className="a-field__label">Carta ({menu.length} de {MAX_MENU_FILES})</span>
+          <span className="a-field__hint">Suba la carta tal como la tiene: fotos de cada página o un PDF. Puede añadir también la carta de vinos o el menú del día.</span>
+          {menu.length > 0 && (
+            <ul className="att-chosen profile-editor__menu">
+              {menu.map((a, i) => (
+                <li key={a.path}>
+                  <a href={a.url} target="_blank" rel="noreferrer">
+                    {a.contentType === 'application/pdf' ? 'PDF' : 'Foto'} · {a.name}
+                  </a>
+                  <span className="profile-editor__menu-tools">
+                    {i > 0 && (
+                      <button type="button" className="a-link" onClick={() => set({ menu: [...menu.slice(0, i - 1), a, menu[i - 1], ...menu.slice(i + 1)] })}>
+                        Subir
+                      </button>
+                    )}
+                    <button type="button" className="a-link" onClick={() => set({ menu: menu.filter((x) => x.path !== a.path) })}>
+                      Quitar
+                    </button>
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+          {menu.length < MAX_MENU_FILES && (
+            <label className="btn btn--ghost a-btn profile-editor__add">
+              {uploadingMenu ? 'Subiendo…' : 'Añadir carta (fotos o PDF)'}
+              <input
+                type="file"
+                accept="image/*,application/pdf"
+                multiple
+                hidden
+                disabled={uploadingMenu}
+                onChange={(e) => {
+                  addMenu([...(e.target.files ?? [])])
+                  e.target.value = ''
+                }}
+              />
+            </label>
+          )}
+        </div>
+      )}
+
+      {restaurant && (
+        <div className="a-field profile-editor__section">
+          <span className="a-field__label">Para llevar y a domicilio</span>
+          <Toggle checked={draft.takeaway === true} onChange={(v) => set({ takeaway: v })} label="Hacemos comida para llevar" />
+          <Toggle checked={draft.delivery === true} onChange={(v) => set({ delivery: v })} label="Hacemos entrega a domicilio" />
+          {(draft.takeaway || draft.delivery) && (
+            <div className="a-bilingual">
+              <Field label="Cómo pedir · Español" hint="Por ejemplo: pedidos por teléfono de 12:00 a 21:00. Reparto en Jávea y Dénia, pedido mínimo 25 €.">
+                <Textarea rows={3} maxLength={600} value={draft.orderInfo_es ?? ''} onChange={(e) => set({ orderInfo_es: e.target.value })} />
+              </Field>
+              <Field label="Cómo pedir · Inglés">
+                <Textarea rows={3} maxLength={600} value={draft.orderInfo_en ?? ''} onChange={(e) => set({ orderInfo_en: e.target.value })} />
+              </Field>
+            </div>
+          )}
+        </div>
+      )}
+
       <div className="a-bilingual">
         <Field label="Presentación · Español" hint="Quiénes son, qué ofrecen y qué les hace especiales.">
           <Textarea rows={6} maxLength={4000} value={draft.about_es ?? ''} onChange={(e) => set({ about_es: e.target.value })} />
@@ -148,7 +231,7 @@ export default function ProfileEditor({
       </Field>
 
       <div className="profile-editor__actions">
-        <button type="button" className="btn a-btn" disabled={busy || uploading || !dirty} onClick={save}>
+        <button type="button" className="btn a-btn" disabled={busy || uploading || uploadingMenu || !dirty} onClick={save}>
           {busy ? 'Guardando…' : 'Guardar presentación'}
         </button>
         {dirty && <span className="a-field__hint">Hay cambios sin guardar.</span>}

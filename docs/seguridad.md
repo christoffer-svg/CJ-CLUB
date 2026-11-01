@@ -61,6 +61,7 @@ Todo está denegado salvo lo que se permite expresamente.
 - El negocio solo puede cambiar esos campos de su propio lugar (`affectedKeys().hasOnly(...)`); el nombre, el descuento, la nota de CJ y la reserva siguen siendo cosa de CJ. Los colaboradores de servicios no tienen cuenta: su presentación la escribe CJ.
 - La web tiene que empezar por `https://`. Las fotos tienen que estar en la carpeta de ese colaborador (`profiles/{places|partners}/{id}/photos/`).
 - Las fotos las sube solo la función `uploadProfilePhoto`: el negocio a su propio lugar y CJ a cualquiera. Solo admite imágenes de hasta 10 MB.
+- Carta (`menu`): hasta 10 fotos o PDF en `profiles/{places|partners}/{id}/menu/`. Los sube la función `uploadProfilePhoto` con `kind: 'menu'`, la única vía que admite PDF. También forman parte de la presentación: «para llevar» y «a domicilio» (sí o no) y «cómo pedir» (`orderInfo_es/en`, hasta 600 caracteres).
 - El formulario de la ficha en el panel (Lugares y Colaboradores) no guarda los campos de la presentación, para no pisar lo que haya escrito el negocio.
 
 ### Eventos y reservas de eventos

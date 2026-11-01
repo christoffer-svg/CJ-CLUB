@@ -115,6 +115,9 @@ ok(await upPf(J, {}), 'PERMISSION_DENIED', 'el cliente no sube fotos de presenta
 ok(typeof (await upPf(AD, { collection: 'partners', id: 'lawyer-ruiz' })) === 'object', true, 'CJ sube la foto de un colaborador de servicios')
 ok(await upPf(AD, { id: 'no-existe' }), 'NOT_FOUND', 'no se sube a un lugar que no existe')
 ok(await upPf(BZ, { name: 'carta.pdf', contentType: 'application/pdf' }), 'INVALID_ARGUMENT', 'en la presentación solo fotos')
+const carta = await upPf(BZ, { kind: 'menu', name: 'carta.pdf', contentType: 'application/pdf' })
+ok(typeof carta === 'object' && carta.path.startsWith('profiles/places/rest-la-terraza/menu/'), true, 'el negocio sube la carta en PDF')
+ok(await upPf(BZ, { kind: 'menu', name: 'virus.exe', contentType: 'application/octet-stream' }), 'INVALID_ARGUMENT', 'la carta solo en fotos o PDF')
 ok(await upPf(null, {}), 'UNAUTHENTICATED', 'anónimo no sube fotos')
 
 console.log(`Archivos: ${pass} OK, ${fail} FAIL`)

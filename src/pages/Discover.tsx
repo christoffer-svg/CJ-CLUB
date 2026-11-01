@@ -50,7 +50,13 @@ function PlaceCard({ p, home }: { p: PlaceItem; home: GeoPoint | null }) {
           <span className="place__note-mark">CJ ·</span> {pick(p, 'cjNote')}
         </p>
       )}
-      {p.discountPercent ? <span className="tag">{t('discover.discount', { n: p.discountPercent })}</span> : null}
+      {(p.discountPercent || p.takeaway || p.delivery) && (
+        <div className="pf-tags">
+          {p.discountPercent ? <span className="tag">{t('discover.discount', { n: p.discountPercent })}</span> : null}
+          {p.takeaway && <span className="tag tag--plain">{t('profile.takeaway')}</span>}
+          {p.delivery && <span className="tag tag--plain">{t('profile.delivery')}</span>}
+        </div>
+      )}
       {location && (
         <div className="place__where">
           {home && (
