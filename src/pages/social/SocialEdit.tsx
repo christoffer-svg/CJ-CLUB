@@ -9,7 +9,7 @@ import { SOCIAL_ACTIVITIES } from '../../lib/types'
 import { useViewer } from '../../lib/viewer'
 import { useMe } from './common'
 
-const blank: PostDraft = { kind: 'plan', activity: 'golf', title: '', text: '', dateFrom: '', dateTo: '', place: '', photos: [] }
+const blank: PostDraft = { kind: 'plan', activity: 'golf', title: '', text: '', dateFrom: '', dateTo: '', place: '', address: '', location: null, photos: [] }
 
 /** Publicar un plan o una recomendación en Social, o corregir uno propio */
 export default function SocialEdit() {
@@ -24,10 +24,24 @@ export default function SocialEdit() {
   const [files, setFiles] = useState<File[]>([])
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
+  const [locating, setLocating] = useState<'idle' | 'busy' | 'error'>('idle')
+
+  function useMyLocation() {
+    if (!navigator.geolocation) return setLocating('error')
+    setLocating('busy')
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setDraft((x) => x && { ...x, location: { lat: pos.coords.latitude, lng: pos.coords.longitude } })
+        setLocating('idle')
+      },
+      () => setLocating('error'),
+      { enableHighAccuracy: true, timeout: 15000 },
+    )
+  }
 
   // Al corregir: se empieza con lo publicado
   const e = existing.data
-  if (postId && !draft && e) setDraft({ kind: e.kind, activity: e.activity, title: e.title, text: e.text, dateFrom: e.dateFrom, dateTo: e.dateTo, place: e.place, photos: e.photos })
+  if (postId && !draft && e) setDraft({ kind: e.kind, activity: e.activity, title: e.title, text: e.text, dateFrom: e.dateFrom, dateTo: e.dateTo, place: e.place, address: e.address ?? '', location: e.location ?? null, photos: e.photos })
   if (!draft) return null
   const d = draft
   const set = (patch: Partial<PostDraft>) => setDraft({ ...d, ...patch })
@@ -110,6 +124,26 @@ export default function SocialEdit() {
             <span className="eyebrow">{isPlan ? t('social.where') : t('social.placeName')}</span>
             <input className="composer__input" maxLength={120} value={d.place} onChange={(ev) => set({ place: ev.target.value })} />
           </label>
+          <label className="request-form__field">
+            <span className="eyebrow">{t('social.address')}</span>
+            <input className="composer__input" maxLength={500} placeholder={t('social.addressPlaceholder')} value={d.address} onChange={(ev) => set({ address: ev.target.value })} />
+            <span className="card__text sp-hint">{t('social.addressHint')}</span>
+          </label>
+          <div className="sp-location">
+            {d.location ? (
+              <>
+                <span className="card__text">{t('social.locationSaved')}</span>
+                <button type="button" className="link-btn link-btn--dark" onClick={() => set({ location: null })}>
+                  {t('social.removeLocation')}
+                </button>
+              </>
+            ) : (
+              <button type="button" className="btn btn--ghost" disabled={locating === 'busy'} onClick={useMyLocation}>
+                {locating === 'busy' ? '…' : t('social.useLocation')}
+              </button>
+            )}
+            {locating === 'error' && <span className="composer__error">{t('social.locationError')}</span>}
+          </div>
           <label className="request-form__field">
             <span className="eyebrow">{t('social.text')}</span>
             <textarea className="composer__input" rows={4} maxLength={2000} value={d.text} onChange={(ev) => set({ text: ev.target.value })} />

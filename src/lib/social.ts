@@ -20,7 +20,7 @@ import { useEffect, useState } from 'react'
 import { MAX_BYTES, prepare, toBase64 } from './attachments'
 import { todayKey } from './data'
 import { db, functions } from './firebase'
-import type { Attachment, SocialActivity, SocialChat, SocialJoin, SocialMessage, SocialPost } from './types'
+import type { Attachment, GeoPoint, SocialActivity, SocialChat, SocialJoin, SocialMessage, SocialPost } from './types'
 
 export type WithId<T> = T & { id: string }
 export type Me = { clientId: string; uid: string; familyName: string }
@@ -91,7 +91,18 @@ export async function uploadSocialPhotos(postId: string, files: File[]): Promise
   return out
 }
 
-export type PostDraft = { kind: 'plan' | 'tip'; activity: SocialActivity; title: string; text: string; dateFrom: string; dateTo: string; place: string; photos: Attachment[] }
+export type PostDraft = {
+  kind: 'plan' | 'tip'
+  activity: SocialActivity
+  title: string
+  text: string
+  dateFrom: string
+  dateTo: string
+  place: string
+  address: string
+  location: GeoPoint | null
+  photos: Attachment[]
+}
 
 /** Crea (exists = false) o corrige una publicación */
 export function savePost(id: string, me: Me, d: PostDraft, exists: boolean) {
@@ -102,6 +113,8 @@ export function savePost(id: string, me: Me, d: PostDraft, exists: boolean) {
     dateFrom: d.kind === 'plan' ? d.dateFrom : '',
     dateTo: d.kind === 'plan' && d.dateTo && d.dateTo !== d.dateFrom ? d.dateTo : '',
     place: d.place.trim().slice(0, 120),
+    address: d.address.trim().slice(0, 500),
+    location: d.location ? { lat: Math.round(d.location.lat * 1e6) / 1e6, lng: Math.round(d.location.lng * 1e6) / 1e6 } : null,
     photos: d.photos.slice(0, 4),
   }
   if (exists) return updateDoc(doc(db, 'socialPosts', id), data)
@@ -212,8 +225,8 @@ export const CJ_NAME = 'CJ Club'
 export const isCjPost = (p: Pick<SocialPost, 'clientId'>) => p.clientId === CJ_ID
 
 /** CJ publica (o corrige) una recomendación suya */
-export function saveCjPost(id: string, uid: string, d: { title: string; text: string; place: string; photos: Attachment[] }, exists: boolean) {
-  const data = { title: d.title.trim().slice(0, 120), text: d.text.trim().slice(0, 2000), place: d.place.trim().slice(0, 120), photos: d.photos.slice(0, 4) }
+export function saveCjPost(id: string, uid: string, d: { title: string; text: string; place: string; address: string; photos: Attachment[] }, exists: boolean) {
+  const data = { title: d.title.trim().slice(0, 120), text: d.text.trim().slice(0, 2000), place: d.place.trim().slice(0, 120), address: d.address.trim().slice(0, 500), photos: d.photos.slice(0, 4) }
   if (exists) return updateDoc(doc(db, 'socialPosts', id), data)
   return setDoc(doc(db, 'socialPosts', id), {
     ...data,
@@ -227,4 +240,16 @@ export function saveCjPost(id: string, uid: string, d: { title: string; text: st
     hidden: false,
     createdAt: serverTimestamp(),
   })
+}
+
+/** ¿Es un enlace de mapas (Google Maps o Apple Maps)? */
+export const isMapLink = (s: string) => /^https:\/\/((www\.)?google\.[a-z.]+\/maps|maps\.google\.[a-z.]+|maps\.app\.goo\.gl|goo\.gl\/maps|maps\.apple\.com)\S*$/i.test(s.trim())
+
+/** Enlace "Cómo llegar": el punto exacto, el enlace de mapas, la dirección o, si no hay nada más, el nombre del sitio */
+export function postMapUrl(p: Pick<SocialPost, 'place' | 'address' | 'location'>): string | null {
+  if (p.location && Number.isFinite(p.location.lat) && Number.isFinite(p.location.lng)) return `https://www.google.com/maps/dir/?api=1&destination=${p.location.lat},${p.location.lng}`
+  const address = (p.address ?? '').trim()
+  if (address && isMapLink(address)) return address
+  const query = address || p.place.trim()
+  return query ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}` : null
 }

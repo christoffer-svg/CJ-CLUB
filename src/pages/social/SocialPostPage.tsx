@@ -3,7 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import Header from '../../components/Header'
 import { ProfileGallery } from '../../components/ProfileView'
 import { useI18n } from '../../i18n'
-import { chatIdOf, isCjPost, deletePost, joinPlan, leavePlan, reportPost, useJoins, useMyChats, useSocialPost } from '../../lib/social'
+import { chatIdOf, isCjPost, isMapLink, postMapUrl, deletePost, joinPlan, leavePlan, reportPost, useJoins, useMyChats, useSocialPost } from '../../lib/social'
 import { useViewer } from '../../lib/viewer'
 import { useMe, usePlanDates } from './common'
 import { FamilyAvatar } from '../../components/FamilyAvatar'
@@ -65,7 +65,13 @@ export default function SocialPostPage() {
                   <span className="eyebrow">{p.kind === 'plan' ? t('social.where') : t('social.placeName')}</span> {p.place}
                 </p>
               )}
+              {p.address && !isMapLink(p.address) && <p className="card__text">{p.address}</p>}
               {p.text && <p className="pf-text">{p.text}</p>}
+              {postMapUrl(p) && (
+                <a className="btn btn--ghost sp-directions" href={postMapUrl(p)!} target="_blank" rel="noopener noreferrer">
+                  {t('discover.directions')}
+                </a>
+              )}
             </section>
 
             {p.kind === 'plan' && (

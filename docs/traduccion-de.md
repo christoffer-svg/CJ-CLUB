@@ -118,6 +118,13 @@ Bitte prüfen Sie, ob jeder Text natürlich und korrekt auf Deutsch ist. Korrekt
 | `benefits.validUntil` | Válido hasta el {date} | Valid until {date} | Gültig bis zum {date} | |
 | `benefits.validRange` | Válido del {from} al {until} | Valid from {from} to {until} | Gültig vom {from} bis zum {until} | |
 | `common.back` | Volver | Back | Zurück | |
+| `social.address` | Dirección o enlace de Google Maps (opcional) | Address or Google Maps link (optional) | Adresse oder Google-Maps-Link (optional) | |
+| `social.addressPlaceholder` | Calle y pueblo, o el enlace | Street and town, or the link | Straße und Ort, oder der Link | |
+| `social.addressHint` | En Google Maps: «Compartir» → «Copiar enlace», y péguelo aquí. | In Google Maps: “Share” → “Copy link”, and paste it here. | In Google Maps: „Teilen“ → „Link kopieren“ und hier einfügen. | |
+| `social.useLocation` | Usar mi ubicación actual | Use my current location | Meinen aktuellen Standort verwenden | |
+| `social.locationSaved` | Ubicación guardada: se compartirá el punto exacto. | Location saved: the exact spot will be shared. | Standort gespeichert: der genaue Ort wird geteilt. | |
+| `social.removeLocation` | Quitar ubicación | Remove location | Standort entfernen | |
+| `social.locationError` | No se pudo obtener la ubicación. Revise los permisos del teléfono. | Could not get your location. Please check your phone’s permissions. | Standort konnte nicht ermittelt werden. Bitte prüfen Sie die Berechtigungen Ihres Telefons. | |
 | `social.byCj` | Recomendación de CJ | CJ recommends | Empfehlung von CJ | |
 | `photo.add` | Añadir foto de su casa o familia | Add a photo of your home or family | Foto Ihres Hauses oder Ihrer Familie hinzufügen | |
 | `photo.change` | Cambiar foto | Change photo | Foto ändern | |

@@ -118,6 +118,13 @@ Kontrollera att varje text är naturlig och korrekt på svenska. Skriv dina rät
 | `benefits.validUntil` | Válido hasta el {date} | Valid until {date} | Gäller till {date} | |
 | `benefits.validRange` | Válido del {from} al {until} | Valid from {from} to {until} | Gäller från {from} till {until} | |
 | `common.back` | Volver | Back | Tillbaka | |
+| `social.address` | Dirección o enlace de Google Maps (opcional) | Address or Google Maps link (optional) | Adress eller Google Maps-länk (valfritt) | |
+| `social.addressPlaceholder` | Calle y pueblo, o el enlace | Street and town, or the link | Gata och ort, eller länken | |
+| `social.addressHint` | En Google Maps: «Compartir» → «Copiar enlace», y péguelo aquí. | In Google Maps: “Share” → “Copy link”, and paste it here. | I Google Maps: ”Dela” → ”Kopiera länk”, och klistra in den här. | |
+| `social.useLocation` | Usar mi ubicación actual | Use my current location | Använd min nuvarande plats | |
+| `social.locationSaved` | Ubicación guardada: se compartirá el punto exacto. | Location saved: the exact spot will be shared. | Plats sparad: den exakta platsen delas. | |
+| `social.removeLocation` | Quitar ubicación | Remove location | Ta bort plats | |
+| `social.locationError` | No se pudo obtener la ubicación. Revise los permisos del teléfono. | Could not get your location. Please check your phone’s permissions. | Det gick inte att hämta platsen. Kontrollera telefonens behörigheter. | |
 | `social.byCj` | Recomendación de CJ | CJ recommends | CJ tipsar | |
 | `photo.add` | Añadir foto de su casa o familia | Add a photo of your home or family | Lägg till ett foto på ert hus eller er familj | |
 | `photo.change` | Cambiar foto | Change photo | Byt foto | |

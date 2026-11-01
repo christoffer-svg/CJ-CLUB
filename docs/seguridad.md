@@ -78,6 +78,7 @@ Todo está denegado salvo lo que se permite expresamente.
   - Hasta 4 fotos, en `social/{casa}/{publicación}/`, subidas solo con la función `uploadSocialPhoto`.
   - Las ven todos los clientes, salvo las ocultas por CJ (`hidden`), que solo ve quien las publicó. Los negocios y los profesionales de obra no ven Social.
   - Quien publica la corrige o la borra. CJ solo puede ocultarla o borrarla, no cambiar su texto.
+- **Dónde está** (opcional): cada publicación puede llevar `address` (texto o enlace de mapas, hasta 500 caracteres) y `location` (latitud y longitud, en rango). En la app, el botón «Cómo llegar» abre el punto exacto, el enlace de mapas o una búsqueda en Google Maps.
 - **Recomendaciones de CJ**: CJ publica solo recomendaciones (no planes), como la casa `cj` con el nombre «CJ Club». Puede corregir las suyas (título, texto, sitio y fotos), pero no el texto de los clientes. Sus fotos van en `social/cj/`.
 - **Apuntarse** (`socialPosts/{id}/joins/{casa}`): una casa por plan, solo a planes visibles y de otra casa.
 - **Chat privado** (`socialChats/{plan}_{casa que se apunta}`):

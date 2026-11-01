@@ -10,7 +10,7 @@ import { Field, Input, Textarea } from '../../components/admin/Fields'
 import { deletePost, isCjPost, newPostId, saveCjPost, setPostHidden, uploadSocialPhotos, useSocialPosts } from '../../lib/social'
 import type { Attachment, SocialReport } from '../../lib/types'
 
-type CjForm = { id: string; exists: boolean; title: string; place: string; text: string; photos: Attachment[] }
+type CjForm = { id: string; exists: boolean; title: string; place: string; address: string; text: string; photos: Attachment[] }
 import { shortDate } from '../../lib/when'
 
 /** Moderación de Social: CJ ve todas las publicaciones y los avisos de los clientes, y puede ocultar o borrar */
@@ -86,7 +86,7 @@ export default function AdminSocial() {
         onChange={(v) => setPostHidden(p.id, !v).then(() => toast(v ? 'Publicación visible.' : 'Publicación oculta para los clientes.')).catch(() => toast('No se pudo guardar.', 'error'))}
       />
       {isCjPost(p) && (
-        <button className="a-link" onClick={() => setForm({ id: p.id, exists: true, title: p.title, place: p.place, text: p.text, photos: p.photos })}>
+        <button className="a-link" onClick={() => setForm({ id: p.id, exists: true, title: p.title, place: p.place, address: p.address ?? '', text: p.text, photos: p.photos })}>
           Editar
         </button>
       )}
@@ -102,7 +102,7 @@ export default function AdminSocial() {
   return (
     <>
       <PageTitle eyebrow="Panel" title="Social">
-        <button className="btn a-btn" onClick={() => setForm({ id: newPostId(), exists: false, title: '', place: '', text: '', photos: [] })}>
+        <button className="btn a-btn" onClick={() => setForm({ id: newPostId(), exists: false, title: '', place: '', address: '', text: '', photos: [] })}>
           Nueva recomendación de CJ
         </button>
       </PageTitle>
@@ -129,6 +129,9 @@ export default function AdminSocial() {
           </Field>
           <Field label="Sitio (opcional)">
             <Input maxLength={120} value={form.place} onChange={(e) => setForm({ ...form, place: e.target.value })} />
+          </Field>
+          <Field label="Dirección o enlace de Google Maps (opcional)" hint="Escriba la dirección o pegue el enlace de «Compartir» de Google Maps. El cliente verá el botón «Cómo llegar».">
+            <Input maxLength={500} value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} />
           </Field>
           <Field label="Texto">
             <Textarea rows={5} maxLength={2000} value={form.text} onChange={(e) => setForm({ ...form, text: e.target.value })} />

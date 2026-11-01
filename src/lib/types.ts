@@ -703,6 +703,10 @@ export type SocialPost = {
   dateTo: string
   /** dónde: club de golf, restaurante, playa… (opcional) */
   place: string
+  /** dirección escrita o enlace de Google Maps (opcional) */
+  address?: string
+  /** punto exacto, si quien publica usó "mi ubicación actual" */
+  location?: GeoPoint | null
   /** hasta 4 fotos (función uploadSocialPhoto) */
   photos: Attachment[]
   clientId: string

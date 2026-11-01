@@ -118,6 +118,13 @@ Controleer of elke tekst natuurlijk en correct Nederlands is. Noteer correcties 
 | `benefits.validUntil` | Válido hasta el {date} | Valid until {date} | Geldig tot {date} | |
 | `benefits.validRange` | Válido del {from} al {until} | Valid from {from} to {until} | Geldig van {from} tot {until} | |
 | `common.back` | Volver | Back | Terug | |
+| `social.address` | Dirección o enlace de Google Maps (opcional) | Address or Google Maps link (optional) | Adres of Google Maps-link (optioneel) | |
+| `social.addressPlaceholder` | Calle y pueblo, o el enlace | Street and town, or the link | Straat en plaats, of de link | |
+| `social.addressHint` | En Google Maps: «Compartir» → «Copiar enlace», y péguelo aquí. | In Google Maps: “Share” → “Copy link”, and paste it here. | In Google Maps: ‘Delen’ → ‘Link kopiëren’, en plak hem hier. | |
+| `social.useLocation` | Usar mi ubicación actual | Use my current location | Mijn huidige locatie gebruiken | |
+| `social.locationSaved` | Ubicación guardada: se compartirá el punto exacto. | Location saved: the exact spot will be shared. | Locatie opgeslagen: de precieze plek wordt gedeeld. | |
+| `social.removeLocation` | Quitar ubicación | Remove location | Locatie verwijderen | |
+| `social.locationError` | No se pudo obtener la ubicación. Revise los permisos del teléfono. | Could not get your location. Please check your phone’s permissions. | Kon uw locatie niet ophalen. Controleer de rechten van uw telefoon. | |
 | `social.byCj` | Recomendación de CJ | CJ recommends | Tip van CJ | |
 | `photo.add` | Añadir foto de su casa o familia | Add a photo of your home or family | Foto van uw huis of familie toevoegen | |
 | `photo.change` | Cambiar foto | Change photo | Foto wijzigen | |

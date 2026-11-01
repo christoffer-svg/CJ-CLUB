@@ -4287,3 +4287,19 @@ button {
   border-color: var(--gold);
   box-shadow: 0 0 0 1px var(--gold);
 }
+
+.sp-hint {
+  font-size: 12px;
+}
+
+.sp-location {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.sp-directions {
+  align-self: flex-start;
+  text-decoration: none;
+}
