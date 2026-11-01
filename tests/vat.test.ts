@@ -39,14 +39,15 @@ assert.equal(t.total, 1493.82)
 t = projectTotals({ budget: 100, vatRate: 21 } as Project, [], [{ amount: 200, status: 'confirmed' }] as ProjectPayment[])
 assert.equal(t.outstanding, 0)
 
-// Presupuesto por partidas: la partida no tiene precio propio; cuentan solo los elementos
+// Presupuesto por partidas: cuenta el precio cerrado de la partida; lo que incluye es orientativo
 t = projectTotals({ budget: 99999, vatRate: 21 } as Project, [], [], [
-  { kind: 'group', quantity: 1, unitPrice: 0 },
-  { kind: 'item', quantity: 2, unitPrice: 189.9 },
-  { kind: 'item', quantity: 1, unitPrice: 310 },
-  { quantity: 1, unitPrice: 100 },
+  { id: 'g', kind: 'group', quantity: 1, unitPrice: 1200 },
+  { id: 'a', kind: 'item', parentId: 'g', quantity: 2, unitPrice: 189.9 },
+  { id: 'b', kind: 'item', parentId: 'g', quantity: 1, unitPrice: 310 },
+  { id: 'c', quantity: 1, unitPrice: 100 },
+  { id: 'd', kind: 'item', parentId: 'ya-no-existe', quantity: 1, unitPrice: 50 },
 ])
-assert.equal(t.budget, 789.8, 'con líneas, el presupuesto es su suma')
-assert.equal(t.total, 955.66)
+assert.equal(t.budget, 1350, 'partida + líneas sueltas; lo incluido no se suma')
+assert.equal(t.total, 1633.5)
 
 console.log('IVA: OK')

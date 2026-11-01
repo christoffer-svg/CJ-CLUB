@@ -2966,6 +2966,14 @@ button {
   color: var(--text);
 }
 
+.budget-item__price--ref {
+  color: var(--text-2);
+}
+
+.budget-group__note {
+  font-size: 13px;
+}
+
 .budget-item-form {
   padding: 12px 0 12px 14px;
   border-left: 2px solid var(--gold);

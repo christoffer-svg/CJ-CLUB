@@ -450,14 +450,14 @@ async function main() {
       endDate: '2026-12-15',
       createdAt: day('2026-10-01T10:00:00'),
     })
-    // Presupuesto (sin IVA), aún sin firmar: la partida "Cocina completa" con lo que incluye; suma los mismos 18.500 €
+    // Presupuesto (sin IVA), aún sin firmar: la partida "Cocina completa" a precio cerrado (18.500 €) con lo que incluye, a título orientativo
     batch.set(pr.collection('budgetLines').doc('g1'), {
       kind: 'group',
       title: 'Cocina completa',
       description: 'Desmontaje de la cocina antigua, montaje y remates',
       quantity: 1,
       unit: 'ud',
-      unitPrice: 0,
+      unitPrice: 18500,
       order: 1,
       authorUid: builder.uid,
       authorRole: 'builder',

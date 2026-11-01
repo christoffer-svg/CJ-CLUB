@@ -27,7 +27,7 @@ Todo está denegado salvo lo que se permite expresamente.
 | Cualquier otra | Denegado. Un negocio colaborador no es ni cliente ni admin: no lee contactos ni notas. | Denegado. |
 
 ### Presupuesto por líneas y firmas (Mi reforma)
-- `projects/{id}/budgetLines`: partidas (`kind: group`, p. ej. «Baño completo», sin precio propio) y lo que incluye cada una (`kind: item` con `parentId`: grifo, plato de ducha…, con cantidad, precio sin IVA y fotos). El precio de una partida es la suma de lo que incluye. Solo las escriben el constructor de la obra y CJ, y solo mientras nadie haya firmado. El cliente las ve.
+- `projects/{id}/budgetLines`: partidas (`kind: group`, p. ej. «Baño completo», con su precio cerrado sin IVA, que es el que cuenta) y lo que incluye cada una (`kind: item` con `parentId`: grifo, plato de ducha…, con precio de referencia y fotos; es orientativo y no se suma: si el cliente elige algo más caro, la diferencia va como extra). Solo las escriben el constructor de la obra y CJ, y solo mientras nadie haya firmado. El cliente las ve.
 - `projects/{id}/signatures/{client|builder}`: cada parte firma solo como sí misma (el cliente de la casa y el constructor asignado; CJ no firma por nadie). La firma guarda el nombre, el dibujo de la firma (PNG), la aceptación, la fecha y hora del servidor, una copia de las líneas firmadas y su huella SHA-256 con el tipo de IVA. Una firma no se edita.
 - Con una firma, las líneas quedan congeladas y el IVA de la obra no se puede cambiar. Quien firmó (o CJ) puede retirar su firma solo mientras falte la otra. Con las dos firmas, el presupuesto queda cerrado para siempre; los cambios se hacen como extras.
 - Es una firma electrónica simple: prueba de quién aceptó qué y cuándo, no una firma cualificada.

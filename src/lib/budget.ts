@@ -36,9 +36,9 @@ export function useBudgetSignatures(projectId: string | null) {
 }
 
 export const lineTotal = (l: Pick<BudgetLine, 'quantity' | 'unitPrice'>) => Math.round(l.quantity * l.unitPrice * 100) / 100
-/** Suma sin IVA (las partidas no tienen precio propio: suman lo que incluyen) */
-export const linesBase = (lines: Pick<BudgetLine, 'kind' | 'quantity' | 'unitPrice'>[]) =>
-  Math.round(lines.filter((l) => l.kind !== 'group').reduce((s, l) => s + lineTotal(l), 0) * 100) / 100
+/** Suma sin IVA: precio de las partidas y elementos sueltos (lo incluido en una partida es orientativo) */
+import { budgetBase } from './projectTotals'
+export const linesBase = budgetBase
 
 export type LineDraft = { kind: 'group' | 'item'; parentId?: string; title: string; description: string; quantity: number; unit: string; unitPrice: number }
 
@@ -64,7 +64,7 @@ export async function saveBudgetLine(
     description: draft.description.trim().slice(0, 2000),
     quantity: draft.kind === 'group' ? 1 : draft.quantity,
     unit: draft.unit.trim().slice(0, 20) || 'ud',
-    unitPrice: draft.kind === 'group' ? 0 : Math.round(draft.unitPrice * 100) / 100,
+    unitPrice: Math.round(draft.unitPrice * 100) / 100,
     order,
     ...(attachments.length ? { attachments } : {}),
     authorUid: a.uid,

@@ -61,6 +61,8 @@ export default function ProjectBudget({
   // Elementos sueltos (fuera de una partida, o de una partida que ya no existe)
   const loose = lines.filter((l) => l.kind !== 'group' && !(l.parentId && groups.some((g) => g.id === l.parentId)))
   const partidas = groups.length + loose.length
+  // Dentro de una partida: orientativo (no se suma)
+  const isReference = (l: WithId<BudgetLine>) => Boolean(l.parentId && groups.some((g) => g.id === l.parentId))
 
   // Huella de lo que se ve ahora, para comprobar que cada firma corresponde a este presupuesto
   const key = JSON.stringify(snapshotLines(lines)) + vatRate
@@ -113,7 +115,7 @@ export default function ProjectBudget({
 
   const quantity = form ? parseAmount(form.quantity) : NaN
   const unitPrice = form ? (form.unitPrice.trim() === '0' ? 0 : parseAmount(form.unitPrice)) : NaN
-  const formValid = Boolean(form && form.title.trim() && (form.kind === 'group' || (quantity > 0 && unitPrice >= 0)))
+  const formValid = Boolean(form && form.title.trim() && (form.kind === 'group' ? unitPrice >= 0 : quantity > 0 && unitPrice >= 0))
 
   function save(e: FormEvent) {
     e.preventDefault()
@@ -128,7 +130,7 @@ export default function ProjectBudget({
       description: form.description,
       quantity: form.kind === 'group' ? 1 : quantity,
       unit: form.unit,
-      unitPrice: form.kind === 'group' ? 0 : unitPrice,
+      unitPrice,
     }
     const saving = form
     run(
@@ -159,10 +161,17 @@ export default function ProjectBudget({
           <span className="eyebrow">{t('budget.description')}</span>
           <textarea className="composer__input" rows={2} maxLength={2000} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
         </label>
+        {isGroup && (
+          <label className="request-form__field">
+            <span className="eyebrow">{t('budget.groupPrice')}</span>
+            <input className="composer__input" required inputMode="decimal" value={form.unitPrice} onChange={(e) => setForm({ ...form, unitPrice: e.target.value })} />
+            {form.unitPrice.trim() && <span className="pv-parsed">{unitPrice >= 0 ? `= ${money(unitPrice)} ${t('project.plusVat')}` : '?'}</span>}
+          </label>
+        )}
         {!isGroup && (
           <>
             <label className="request-form__field">
-              <span className="eyebrow">{t('budget.unitPrice')}</span>
+              <span className="eyebrow">{form.parentId ? t('budget.referencePrice') : t('budget.unitPrice')}</span>
               <input className="composer__input" required inputMode="decimal" value={form.unitPrice} onChange={(e) => setForm({ ...form, unitPrice: e.target.value })} />
             </label>
             <div className="budget-form__row">
@@ -178,7 +187,7 @@ export default function ProjectBudget({
             {form.unitPrice.trim() && (
               <span className="pv-parsed">
                 {quantity > 0 && unitPrice >= 0
-                  ? `${quantity === 1 ? '' : `${form.quantity} × ${money(unitPrice)} = `}${money(lineTotal({ quantity, unitPrice }))} ${t('project.plusVat')}`
+                  ? `${quantity === 1 ? '' : `${form.quantity} × ${money(unitPrice)} = `}${money(lineTotal({ quantity, unitPrice }))}${form.parentId ? ` · ${t('budget.reference')}` : ` ${t('project.plusVat')}`}`
                   : '?'}
               </span>
             )}
@@ -217,9 +226,15 @@ export default function ProjectBudget({
       <div key={l.id} className="budget-item">
         <div className="request__head">
           <span className="budget-item__title">{l.title}</span>
-          <span className="budget-item__price">
-            {money(lineTotal(l))} <span className="pv-vat">{t('project.plusVat')}</span>
-          </span>
+          {isReference(l) ? (
+            <span className="budget-item__price budget-item__price--ref">
+              {money(lineTotal(l))} <span className="pv-vat">{t('budget.reference')}</span>
+            </span>
+          ) : (
+            <span className="budget-item__price">
+              {money(lineTotal(l))} <span className="pv-vat">{t('project.plusVat')}</span>
+            </span>
+          )}
         </div>
         {l.quantity !== 1 && (
           <span className="card__text">
@@ -270,7 +285,7 @@ export default function ProjectBudget({
                 <div className="request__head">
                   <span className="card__title budget-group__title">{g.title}</span>
                   <span className="pv-amount">
-                    {money(linesBase(items))} <span className="pv-vat">{t('project.plusVat')}</span>
+                    {money(lineTotal(g))} <span className="pv-vat">{t('project.plusVat')}</span>
                   </span>
                 </div>
                 {g.description && <p className="request__text">{g.description}</p>}
@@ -291,6 +306,7 @@ export default function ProjectBudget({
               </>
             )}
             {(items.length > 0 || canEdit) && <span className="eyebrow budget-group__includes">{t('budget.includes')}</span>}
+            {items.length > 0 && <p className="card__text budget-group__note">{t('budget.referenceNote')}</p>}
             {items.length === 0 && canEdit && !addingHere && <p className="card__text">{t('budget.groupEmpty')}</p>}
             {items.map((l) => renderItem(l))}
             {addingHere && renderForm()}

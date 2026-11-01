@@ -303,8 +303,9 @@ export type Project = {
 
 /**
  * projects/{id}/budgetLines: el presupuesto (sin IVA); lo escriben el constructor o CJ.
- * "group": una partida (p. ej. baño completo), sin precio propio: suma lo que incluye.
- * "item" (o sin kind): un elemento con precio; con parentId va dentro de esa partida.
+ * "group": una partida (p. ej. baño completo) con su precio cerrado, que es el que cuenta.
+ * "item" (o sin kind): un elemento con precio. Con parentId va dentro de una partida y es orientativo
+ * (qué incluye y su precio de referencia; no se suma). Sin parentId, es una línea suelta que sí cuenta.
  */
 export type BudgetLine = {
   kind?: 'group' | 'item'
