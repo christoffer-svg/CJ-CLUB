@@ -365,6 +365,48 @@ async function main() {
   put('generalContacts', generalContacts)
   put('places', places)
   put('deals', deals)
+  // Eventos de ejemplo de La Terraza: dentro de unos días (las fechas se calculan al cargar los datos)
+  const inDays = (n: number) => {
+    const d = new Date(Date.now() + n * 86_400_000)
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+  }
+  const event = (extra: object) => ({
+    placeId: 'rest-la-terraza',
+    businessName: 'La Terraza del Puerto',
+    endTime: '',
+    capacity: 0,
+    bookable: true,
+    active: true,
+    hiddenByAdmin: false,
+    photo: null,
+    createdByUid: 'seed',
+    createdAt: Timestamp.now(),
+    updatedAt: Timestamp.now(),
+    ...extra,
+  })
+  put('events', {
+    'ev-cata': event({
+      kind: 'tasting',
+      title: 'Cata de vinos de la Marina Alta',
+      about_es: 'Cinco vinos de bodegas de la comarca con tapas del chef. Plazas limitadas.',
+      about_en: 'Five wines from local wineries with tapas by the chef. Limited places.',
+      date: inDays(5),
+      time: '19:30',
+      endTime: '21:30',
+      price: 35,
+      capacity: 20,
+    }),
+    'ev-jazz': event({
+      kind: 'music',
+      title: 'Jazz en la terraza',
+      about_es: 'Trío de jazz en directo al atardecer. Entrada libre con consumición.',
+      about_en: 'Live jazz trio at sunset. Free entry with a drink.',
+      date: inDays(9),
+      time: '20:30',
+      price: 0,
+      bookable: false,
+    }),
+  })
   put('settings', { tipOfTheWeek })
 
   // Conversación y petición de ejemplo de la Familia Jansen

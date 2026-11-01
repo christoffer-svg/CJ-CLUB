@@ -3,6 +3,8 @@ import Header from '../components/Header'
 import { HeartIcon } from '../components/Icons'
 import { ProfileDetails, ProfileGallery } from '../components/ProfileView'
 import ReserveButton from '../components/ReserveButton'
+import EventCard from '../components/EventCard'
+import { useBookings, useUpcomingEvents } from '../lib/events'
 import { useI18n } from '../i18n'
 import { useActiveDeals, useDoc } from '../lib/data'
 import { directionsUrl, distanceKm, formatKm, isGeoPoint } from '../lib/geo'
@@ -23,6 +25,8 @@ export default function PlaceDetail() {
   const location = p && isGeoPoint(p.location) ? p.location : null
   const home = isGeoPoint(client.data?.location) ? client.data!.location! : null
   const myDeals = deals.data.filter((d) => d.placeId === placeId)
+  const events = useUpcomingEvents(placeId)
+  const bookings = useBookings({ clientId })
 
   return (
     <>
@@ -61,6 +65,14 @@ export default function PlaceDetail() {
                 </section>
               )}
             </ProfileDetails>
+            {events.data.length > 0 && (
+              <section className="pf-events">
+                <span className="eyebrow">{t('events.upcoming')}</span>
+                {events.data.map((e) => (
+                  <EventCard key={e.id} e={e} bookings={bookings.data} />
+                ))}
+              </section>
+            )}
             {location && home && <p className="card__text pf-distance">{t('discover.distance', { km: formatKm(distanceKm(home, location), locale) })}</p>}
           </>
         )}

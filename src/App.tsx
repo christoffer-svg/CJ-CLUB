@@ -31,6 +31,8 @@ import AdminProfile from './pages/admin/AdminProfile'
 import PlaceDetail from './pages/PlaceDetail'
 import PartnerDetail from './pages/PartnerDetail'
 import BusinessProfile from './pages/business/BusinessProfile'
+import BusinessEvents from './pages/business/BusinessEvents'
+import AdminEvents from './pages/admin/AdminEvents'
 import Deals from './pages/admin/Deals'
 import Businesses from './pages/admin/Businesses'
 import BusinessLayout from './pages/business/BusinessLayout'
@@ -109,6 +111,7 @@ export default function App() {
             <Route path="lugares/:id/presentacion" element={<AdminProfile coll="places" />} />
             <Route path="negocios" element={<Businesses />} />
             <Route path="descuentos" element={<Deals />} />
+            <Route path="eventos" element={<AdminEvents />} />
             <Route path="consejo" element={<Tip />} />
           </Route>
         </Route>
@@ -129,6 +132,7 @@ export default function App() {
             <Route index element={<BusinessDeals />} />
             <Route path="reservas" element={<BusinessReservations />} />
             <Route path="presentacion" element={<BusinessProfile />} />
+            <Route path="eventos" element={<BusinessEvents />} />
           </Route>
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />

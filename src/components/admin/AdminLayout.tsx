@@ -17,6 +17,7 @@ export const adminSections = [
   { to: '/admin/contactos', label: 'Contactos generales', text: 'Urgencias, salud y transporte' },
   { to: '/admin/lugares', label: 'Lugares', text: 'Restaurantes, golf, playas y planes' },
   { to: '/admin/negocios', label: 'Negocios', text: 'Acceso para que cada negocio publique sus descuentos' },
+  { to: '/admin/eventos', label: 'Eventos', text: 'Catas, música en vivo y reservas de los negocios' },
   { to: '/admin/descuentos', label: 'Descuentos', text: 'Ocultar o retirar ofertas. Las publica el negocio' },
   { to: '/admin/consejo', label: 'Consejo de la semana', text: 'Texto en español e inglés' },
 ]

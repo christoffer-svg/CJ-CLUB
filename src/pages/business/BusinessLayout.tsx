@@ -4,10 +4,12 @@ import RoleSwitcher from '../../components/RoleSwitcher'
 import { ToastProvider } from '../../components/admin/Toast'
 import { useLiveDoc } from '../../lib/admin'
 import type { Place } from '../../lib/types'
+import { useBookings } from '../../lib/events'
 
 const sections = [
   { to: '/negocio/presentacion', label: 'Presentación', end: false },
   { to: '/negocio', label: 'Descuentos', end: true },
+  { to: '/negocio/eventos', label: 'Eventos', end: false },
   { to: '/negocio/reservas', label: 'Reservas', end: false },
 ]
 
@@ -15,6 +17,8 @@ export default function BusinessLayout() {
   const { profile, logout } = useAuth()
   const place = useLiveDoc<Place>(profile?.placeId ? `places/${profile.placeId}` : null)
   const placeName = place.data?.name || profile?.businessName || 'Su negocio'
+  // Solicitudes de reserva de eventos sin responder
+  const pending = useBookings({ placeId: profile?.placeId ?? null }).data.filter((b) => b.status === 'pending').length
 
   return (
     <ToastProvider>
@@ -39,6 +43,7 @@ export default function BusinessLayout() {
           {sections.map((s) => (
             <NavLink key={s.to} to={s.to} end={s.end} className="pill a-menu__item">
               {s.label}
+              {s.to === '/negocio/eventos' && pending > 0 && <span className="a-badge-count">{pending}</span>}
             </NavLink>
           ))}
         </nav>

@@ -526,3 +526,68 @@ export type ReformPlan = {
   authorName: string
   createdAt: Timestamp | null
 }
+
+export const EVENT_KINDS = ['tasting', 'music', 'dinner', 'other'] as const
+export type EventKind = (typeof EVENT_KINDS)[number]
+
+/**
+ * events/{id}: evento de un negocio de Descubrir (cata de vino, música en vivo, cena especial…).
+ * Lo publica el negocio desde su panel (o CJ). Los clientes lo ven y, si se puede, piden reserva.
+ */
+export type PlaceEvent = {
+  placeId: string
+  /** nombre del negocio, copiado de la ficha del lugar */
+  businessName: string
+  kind: EventKind
+  title: string
+  about_es: string
+  about_en: string
+  /** "2026-11-12" */
+  date: string
+  /** "20:30" */
+  time: string
+  /** "23:00", o vacío */
+  endTime: string
+  /** precio por persona con IVA, en euros; 0 = gratis */
+  price: number
+  /** plazas en total; 0 = sin límite indicado */
+  capacity: number
+  /** true: los clientes pueden pedir reserva en la app */
+  bookable: boolean
+  active: boolean
+  /** CJ lo ha ocultado (el negocio no puede volver a mostrarlo) */
+  hiddenByAdmin: boolean
+  /** foto del evento (subida con uploadProfilePhoto, en la carpeta del lugar) */
+  photo?: Attachment | null
+  createdByUid: string
+  createdAt: Timestamp | null
+  updatedAt: Timestamp | null
+}
+
+export type BookingStatus = 'pending' | 'confirmed' | 'declined' | 'cancelled'
+
+/**
+ * eventBookings/{id}: solicitud de reserva de un cliente para un evento. El negocio la confirma o
+ * la rechaza; el cliente puede cancelarla. Se paga en el local.
+ */
+export type EventBooking = {
+  eventId: string
+  placeId: string
+  /** copia para que el negocio y el cliente lo vean sin abrir el evento */
+  eventTitle: string
+  eventDate: string
+  eventTime: string
+  clientId: string
+  uid: string
+  /** nombre con el que reserva */
+  name: string
+  people: number
+  phone: string
+  note: string
+  status: BookingStatus
+  /** respuesta del negocio (opcional) */
+  reply: string
+  createdAt: Timestamp | null
+  answeredAt: Timestamp | null
+  cancelledAt: Timestamp | null
+}

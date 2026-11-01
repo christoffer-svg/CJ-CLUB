@@ -7,13 +7,15 @@ import { useI18n } from '../i18n'
 import { useActivePlaces, useDoc } from '../lib/data'
 import { directionsUrl, distanceKm, formatKm, isGeoPoint } from '../lib/geo'
 import ReserveButton from '../components/ReserveButton'
+import EventCard from '../components/EventCard'
+import { useBookings, useUpcomingEvents } from '../lib/events'
 import type { Client, GeoPoint, Place } from '../lib/types'
 import { useViewer } from '../lib/viewer'
 
-type Filter = 'all' | Place['category'] | 'saved'
+type Filter = 'all' | Place['category'] | 'events' | 'saved'
 type PlaceItem = Place & { id: string }
 
-const filters: Filter[] = ['all', 'restaurants', 'golf', 'beaches', 'plans', 'saved']
+const filters: Filter[] = ['all', 'restaurants', 'golf', 'beaches', 'plans', 'events', 'saved']
 const categoryOrder: Place['category'][] = ['restaurants', 'golf', 'beaches', 'plans']
 
 function PlaceCard({ p, home }: { p: PlaceItem; home: GeoPoint | null }) {
@@ -51,7 +53,13 @@ function PlaceCard({ p, home }: { p: PlaceItem; home: GeoPoint | null }) {
       {p.discountPercent ? <span className="tag">{t('discover.discount', { n: p.discountPercent })}</span> : null}
       {location && (
         <div className="place__where">
-          {home && <span className="card__text">{t('discover.distance', { km: formatKm(distanceKm(home, location), locale) })}</span>}
+          {home && (
+            <span className="card__text">
+              {t('discover.distance', {
+                km: formatKm(distanceKm(home, location), locale),
+              })}
+            </span>
+          )}
           <a className="place__directions" href={directionsUrl(location)} target="_blank" rel="noreferrer">
             {t('discover.directions')}
           </a>
@@ -86,6 +94,8 @@ export default function Discover() {
   const client = useDoc<Client>(clientId ? `clients/${clientId}` : null)
   const home = isGeoPoint(client.data?.location) ? client.data!.location! : null
   const [selected, setSelected] = useState<string | null>(null)
+  const events = useUpcomingEvents()
+  const bookings = useBookings({ clientId })
 
   const shown = places.data
     .filter((p) => (active === 'all' ? true : active === 'saved' ? favorites.includes(p.id) : p.category === active))
@@ -114,39 +124,58 @@ export default function Discover() {
           ))}
         </div>
 
-        <div className="view-switch" role="group" aria-label={t('discover.view')}>
-          <button aria-pressed={view === 'list'} className={view === 'list' ? 'view-switch__btn view-switch__btn--on' : 'view-switch__btn'} onClick={() => setParam('vista', null)}>
-            {t('discover.view.list')}
-          </button>
-          <button aria-pressed={view === 'map'} className={view === 'map' ? 'view-switch__btn view-switch__btn--on' : 'view-switch__btn'} onClick={() => setParam('vista', 'mapa')}>
-            {t('discover.view.map')}
-          </button>
-        </div>
-
-        {!places.loading && active === 'saved' && shown.length === 0 && <p className="empty">{t('discover.emptySaved')}</p>}
-
-        {view === 'list' ? (
+        {active === 'events' ? (
           <div className="place-list">
-            {shown.map((p) => (
-              <PlaceCard key={p.id} p={p} home={home} />
+            {!events.loading && events.data.length === 0 && <p className="empty">{t('events.none')}</p>}
+            {events.data.map((e) => (
+              <EventCard key={e.id} e={e} bookings={bookings.data} showPlace />
             ))}
           </div>
         ) : (
-          <div className="place-map">
-            <MapView
-              label={t('discover.view.map')}
-              points={onMap.map((p) => ({ id: p.id, label: p.name, ...p.location! }))}
-              home={home}
-              homeLabel={t('discover.home')}
-              selected={selected}
-              onSelect={setSelected}
-            />
-            {selectedPlace ? (
-              <PlaceCard p={selectedPlace} home={home} />
+          <>
+            <div className="view-switch" role="group" aria-label={t('discover.view')}>
+              <button
+                aria-pressed={view === 'list'}
+                className={view === 'list' ? 'view-switch__btn view-switch__btn--on' : 'view-switch__btn'}
+                onClick={() => setParam('vista', null)}
+              >
+                {t('discover.view.list')}
+              </button>
+              <button
+                aria-pressed={view === 'map'}
+                className={view === 'map' ? 'view-switch__btn view-switch__btn--on' : 'view-switch__btn'}
+                onClick={() => setParam('vista', 'mapa')}
+              >
+                {t('discover.view.map')}
+              </button>
+            </div>
+
+            {!places.loading && active === 'saved' && shown.length === 0 && <p className="empty">{t('discover.emptySaved')}</p>}
+
+            {view === 'list' ? (
+              <div className="place-list">
+                {shown.map((p) => (
+                  <PlaceCard key={p.id} p={p} home={home} />
+                ))}
+              </div>
             ) : (
-              <p className="empty">{t('discover.mapHint')}</p>
+              <div className="place-map">
+                <MapView
+                  label={t('discover.view.map')}
+                  points={onMap.map((p) => ({
+                    id: p.id,
+                    label: p.name,
+                    ...p.location!,
+                  }))}
+                  home={home}
+                  homeLabel={t('discover.home')}
+                  selected={selected}
+                  onSelect={setSelected}
+                />
+                {selectedPlace ? <PlaceCard p={selectedPlace} home={home} /> : <p className="empty">{t('discover.mapHint')}</p>}
+              </div>
             )}
-          </div>
+          </>
         )}
       </main>
     </>

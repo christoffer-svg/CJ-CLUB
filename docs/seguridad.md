@@ -63,6 +63,21 @@ Todo está denegado salvo lo que se permite expresamente.
 - Las fotos las sube solo la función `uploadProfilePhoto`: el negocio a su propio lugar y CJ a cualquiera. Solo admite imágenes de hasta 10 MB.
 - El formulario de la ficha en el panel (Lugares y Colaboradores) no guarda los campos de la presentación, para no pisar lo que haya escrito el negocio.
 
+### Eventos y reservas de eventos
+
+- **Eventos (`events/{id}`)**
+  - Los publica el negocio solo para su propio lugar, con el nombre real del lugar, o CJ.
+  - `eventOk` limita los campos: fecha y hora con formato, precio de 0 a 100.000 €, plazas de 0 a 5.000 y la foto en la carpeta del lugar.
+  - CJ puede ocultar un evento (`hiddenByAdmin`) y el negocio no puede deshacerlo.
+  - Los clientes leen todos los eventos.
+- **Reservas (`eventBookings/{id}`)**
+  - Las crea el cliente, siempre a nombre de su casa y como «pending». Solo para un evento que existe, admite reservas, está visible y no está oculto.
+  - El título, la fecha y la hora deben ser los del evento. Entre 1 y 20 personas.
+  - Las ven la casa que reserva, el negocio del evento y CJ.
+  - El negocio (o CJ) solo cambia el estado a confirmada o rechazada y añade un mensaje. El cliente solo puede cancelar la suya.
+  - No se borran, salvo al dar de baja al cliente: `deleteClient` borra sus reservas.
+- El pago se hace en el local. La app no maneja dinero.
+
 ### Varios accesos con un mismo correo
 - Una persona puede tener varios accesos con el mismo correo (por ejemplo, cliente y negocio). En `users/{uid}`, `roles` guarda todos los que le ha dado CJ y `role` el que está usando ahora; las fichas antiguas sin `roles` tienen solo su `role`.
 - Las reglas miran siempre el acceso que está usando: como cliente no gestiona su negocio, y como negocio no ve su casa.

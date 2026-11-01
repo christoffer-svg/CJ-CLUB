@@ -403,6 +403,7 @@ export const deleteClient = onCall(async (request) => {
   const requests = await db.collection('requests').where('clientId', '==', clientId).get()
   const reservationClicks = await db.collection('reservationClicks').where('clientId', '==', clientId).get()
   const reservationConfirms = await db.collection('reservationConfirms').where('clientId', '==', clientId).get()
+  const eventBookings = await db.collection('eventBookings').where('clientId', '==', clientId).get()
   // Contactos propios y notas de la casa: privados y compartidos con CJ
   const [ownContacts, sharedContacts, houseNotes, sharedHouseNotes] = await Promise.all([
     db.collection(`clients/${clientId}/ownContacts`).get(),
@@ -431,6 +432,7 @@ export const deleteClient = onCall(async (request) => {
     ...requests.docs.map((d) => d.ref),
     ...reservationClicks.docs.map((d) => d.ref),
     ...reservationConfirms.docs.map((d) => d.ref),
+    ...eventBookings.docs.map((d) => d.ref),
     ...ownContacts.docs.map((d) => d.ref),
     ...sharedContacts.docs.map((d) => d.ref),
     ...houseNotes.docs.map((d) => d.ref),
@@ -451,6 +453,7 @@ export const deleteClient = onCall(async (request) => {
     requests: requests.size,
     reservationClicks: reservationClicks.size,
     reservationConfirms: reservationConfirms.size,
+    eventBookings: eventBookings.size,
     ownContacts: ownContacts.size + sharedContacts.size,
     houseNotes: houseNotes.size + sharedHouseNotes.size,
   }
