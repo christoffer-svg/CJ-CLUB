@@ -943,6 +943,19 @@ ok(await patch(J, `users/${j.localId}`, { role: str('business') }), 403, 'client
 
 // colecciones no previstas
 ok(await req(B, 'secretos/x'), 403, 'negocio lee colección no prevista')
+// La arquitecta cobra su parte: contrato propio en la misma reforma
+const PA = 'projects/p-arquitecta'
+const arqProject = { clientId: str('jansen'), familyName: str('Familia Jansen'), property: str('Villa'), title: str('Baño'), builderUid: str(ds.localId), builderName: str('Ana Arquitecta'), trade: str('architect'), status: str('planned'), budget: num(0), vatRate: num(21), reformId: str('r-firmas'), designerUids: uids([ds.localId]) }
+ok(await req(AD, PA, 'PATCH', { fields: arqProject }), 200, 'CJ crea un contrato con la arquitecta como profesional')
+ok(await req(AD, PA, 'PATCH', { fields: { ...arqProject, trade: str('fontanería') } }), 403, 'el oficio del contrato tiene que ser uno de la lista')
+ok(await req(DS, PA), 200, 'la arquitecta ve su contrato')
+ok(await runQuery(DS, { from: [{ collectionId: 'projects' }], where: { fieldFilter: { field: { fieldPath: 'builderUid' }, op: 'EQUAL', value: str(ds.localId) } } }), 200, 'la arquitecta lista los contratos que cobra')
+ok(await serverTime(DS, `${PA}/budgetLines/al1`, { kind: str('group'), title: str('Proyecto básico y de ejecución'), description: str(''), quantity: num(1), unit: str('ud'), unitPrice: num(4500), order: num(1), authorUid: str(ds.localId), authorRole: str('builder'), authorName: str('Ana') }, ['createdAt', 'updatedAt'], false), 200, 'la arquitecta escribe su presupuesto')
+ok(await req(DS, `${PA}/payments`), 200, 'la arquitecta ve los pagos de su contrato')
+ok(await req(DS, `${PF}/payments`), 403, 'pero sigue sin ver el dinero del constructor')
+ok(await req(BU, PA), 403, 'el constructor no ve el contrato de la arquitecta')
+ok(await req(BU, `${PA}/budgetLines/al1`), 403, 'ni su presupuesto')
+ok(await req(J, `${PA}/budgetLines/al1`), 200, 'el cliente ve el presupuesto de la arquitecta')
 ok(await req(AD, 'secretos/x', 'PATCH', { fields: { a: str('1') } }), 403, 'admin escribe en colección no prevista')
 ok(await req(J, 'secretos/x'), 403, 'cliente lee colección no prevista')
 

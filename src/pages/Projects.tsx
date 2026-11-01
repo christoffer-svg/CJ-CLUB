@@ -2,6 +2,7 @@ import { Link, useParams } from 'react-router-dom'
 import { useAuth } from '../auth/AuthProvider'
 import Header from '../components/Header'
 import ProjectView from '../components/ProjectView'
+import ReformSummary from '../components/ReformSummary'
 import { useI18n } from '../i18n'
 import { useProjects } from '../lib/projects'
 import { useViewer } from '../lib/viewer'
@@ -41,6 +42,7 @@ export default function Projects() {
                     <span className="eyebrow">{t('project.list.contracts', { n: list.length })}</span>
                   </div>
                 )}
+                {list.length > 1 && <ReformSummary projects={list} hrefOf={(p) => `${base}/reformas/${p.id}`} />}
                 {list.map((p) => (
                   <Link key={p.id} to={`${base}/reformas/${p.id}`} className="card team__row pv-item">
                     <span className="card__body">

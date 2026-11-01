@@ -11,4 +11,6 @@ export const tradeLabel: Record<Trade, string> = {
   painter: 'Pintor',
   glazier: 'Cristalero',
   other: 'Otro oficio',
+  architect: 'Arquitecto',
+  designer: 'Diseñador de interiores',
 }

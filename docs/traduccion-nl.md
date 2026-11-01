@@ -118,6 +118,24 @@ Controleer of elke tekst natuurlijk en correct Nederlands is. Noteer correcties 
 | `benefits.validUntil` | Válido hasta el {date} | Valid until {date} | Geldig tot {date} | |
 | `benefits.validRange` | Válido del {from} al {until} | Valid from {from} to {until} | Geldig van {from} tot {until} | |
 | `common.back` | Volver | Back | Terug | |
+| `reform.totalPlanned` | Total previsto de la obra | Expected total for the works | Verwacht totaal van de werken | |
+| `designer.yourContract` | Su contrato: presupuesto, pagos y extras | Your contract: budget, payments and extras | Uw contract: offerte, betalingen en extra’s | |
+| `trade.architect` | Arquitecto | Architect | Architect | |
+| `trade.designer` | Diseñador de interiores | Interior designer | Interieurontwerper | |
+| `reform.summary` | Resumen de toda la reforma | Summary of the whole renovation | Overzicht van de hele verbouwing | |
+| `reform.state.accepted` | Aceptado | Accepted | Geaccepteerd | |
+| `reform.state.pending` | Pendiente de firma | Awaiting signature | Wacht op handtekening | |
+| `reform.state.estimate` | Precio estimado | Estimated price | Geschatte prijs | |
+| `reform.state.none` | Sin presupuesto | No budget yet | Nog geen offerte | |
+| `reform.budget` | Presupuesto | Budget | Offerte | |
+| `reform.extras` | Extras | Extras | Extra’s | |
+| `reform.extrasPending` | (+{amount} pendientes) | (+{amount} pending) | (+{amount} in afwachting) | |
+| `reform.paid` | Pagado | Paid | Betaald | |
+| `reform.totalAccepted` | Total de la obra aceptado | Accepted total for the works | Geaccepteerd totaal van de werken | |
+| `reform.toAccept` | Pendiente de aceptar | Awaiting acceptance | Nog te accepteren | |
+| `reform.paidTotal` | Pagado | Paid | Betaald | |
+| `reform.outstanding` | Por pagar | Outstanding | Nog te betalen | |
+| `reform.note` | Importes con IVA. El total incluye los presupuestos firmados y los extras aprobados de cada profesional. Cada profesional solo ve su propio contrato. | Amounts incl. VAT. The total includes each professional’s signed budget and approved extras. Each professional only sees their own contract. | Bedragen incl. btw. Het totaal omvat de ondertekende offertes en goedgekeurde extra’s van elke vakman. Elke vakman ziet alleen zijn eigen contract. | |
 | `social.address` | Dirección o enlace de Google Maps (opcional) | Address or Google Maps link (optional) | Adres of Google Maps-link (optioneel) | |
 | `social.addressPlaceholder` | Calle y pueblo, o el enlace | Street and town, or the link | Straat en plaats, of de link | |
 | `social.addressHint` | En Google Maps: «Compartir» → «Copiar enlace», y péguelo aquí. | In Google Maps: “Share” → “Copy link”, and paste it here. | In Google Maps: ‘Delen’ → ‘Link kopiëren’, en plak hem hier. | |

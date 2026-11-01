@@ -1,3 +1,4 @@
+import ReformSummary from '../../components/ReformSummary'
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore'
 import { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
@@ -30,6 +31,8 @@ function ProjectForm({ initial, onClose, onSaved }: { initial: Draft; onClose: (
   const [d, setD] = useState(initial)
   const [busy, setBusy] = useState(false)
   const builders = users.data.filter((u) => hasRole(u, 'builder'))
+  // Profesional del contrato: un oficio o, si cobra su parte, un arquitecto o diseñador
+  const professionals = users.data.filter((u) => hasRole(u, 'builder') || hasRole(u, 'designer'))
   const allProjects = useLiveCollection<Project>('projects')
   const reformTitles = [...new Set(allProjects.data.filter((x) => x.clientId === d.clientId).map((x) => x.title))]
   const designers = users.data.filter((u) => hasRole(u, 'designer'))
@@ -43,8 +46,11 @@ function ProjectForm({ initial, onClose, onSaved }: { initial: Draft; onClose: (
   async function save() {
     if (!valid) return
     const house = clients.data.find((c) => c.id === d.clientId)
-    const builder = builders.find((b) => b.id === d.builderUid)
+    const builder = professionals.find((b) => b.id === d.builderUid)
     if (!house || !builder) return
+    // Un arquitecto o diseñador que cobra un contrato también participa en la reforma (planos)
+    const isDesignPro = !builders.some((b) => b.id === d.builderUid)
+    const designerUids = isDesignPro && !d.designerUids.includes(d.builderUid) ? [...d.designerUids, d.builderUid] : d.designerUids
     setBusy(true)
     const data = {
       clientId: d.clientId,
@@ -65,12 +71,12 @@ function ProjectForm({ initial, onClose, onSaved }: { initial: Draft; onClose: (
       const current = id ? allProjects.data.find((x) => x.id === id) : undefined
       if (id) {
         await patchDoc(`projects/${id}`, data)
-        await syncReform(id, { ...data, reformId: current?.title === data.title && current?.clientId === data.clientId ? current?.reformId : undefined }, allProjects.data, d.designerUids)
+        await syncReform(id, { ...data, reformId: current?.title === data.title && current?.clientId === data.clientId ? current?.reformId : undefined }, allProjects.data, designerUids)
         toast(`Guardado para ${house.familyName}`)
         onSaved(id)
       } else {
         const ref = await addDoc(collection(db, 'projects'), { ...data, createdAt: serverTimestamp() })
-        await syncReform(ref.id, data, allProjects.data, d.designerUids)
+        await syncReform(ref.id, data, allProjects.data, designerUids)
         toast(`Contrato creado para ${house.familyName}`)
         onSaved(ref.id)
       }
@@ -114,15 +120,29 @@ function ProjectForm({ initial, onClose, onSaved }: { initial: Draft; onClose: (
           value={d.builderUid}
           onChange={(e) => {
             const b = builders.find((x) => x.id === e.target.value)
-            setD({ ...d, builderUid: e.target.value, trade: b?.trade ?? 'construction' })
+            const dz = designers.find((x) => x.id === e.target.value)
+            setD({ ...d, builderUid: e.target.value, trade: b ? (b.trade ?? 'construction') : dz ? (dz.profession ?? 'architect') : d.trade })
           }}
         >
           <option value="">Elija un profesional</option>
-          {builders.map((b) => (
-            <option key={b.id} value={b.id}>
-              {b.companyName || b.name} · {tradeLabel[b.trade ?? 'construction']}
-            </option>
-          ))}
+          <optgroup label="Oficios de obra">
+            {builders.map((b) => (
+              <option key={b.id} value={b.id}>
+                {b.companyName || b.name} · {tradeLabel[b.trade ?? 'construction']}
+              </option>
+            ))}
+          </optgroup>
+          {designers.filter((x) => !builders.some((b) => b.id === x.id)).length > 0 && (
+            <optgroup label="Arquitectura y diseño (cobra su parte)">
+              {designers
+                .filter((x) => !builders.some((b) => b.id === x.id))
+                .map((u) => (
+                  <option key={u.id} value={u.id}>
+                    {u.companyName || u.name} · {professionLabel[u.profession ?? 'architect']}
+                  </option>
+                ))}
+            </optgroup>
+          )}
         </Select>
       </Field>
       {designers.length > 0 && (
@@ -253,6 +273,11 @@ export function AdminProject() {
           Editar contrato
         </button>
       </PageTitle>
+      {(() => {
+        // Toda la reforma (mismos casa y nombre): presupuesto, extras y pagos de cada profesional
+        const same = all.data.filter((x) => x.clientId === p.clientId && x.title === p.title)
+        return same.length > 1 ? <ReformSummary projects={same} hrefOf={(x) => `/admin/reformas/${x.id}`} /> : null
+      })()}
       <div className="a-project">
         <ProjectView projectId={id} author={{ uid: user?.uid ?? '', name: profile?.name ? `${profile.name} · CJ` : 'Equipo CJ', role: 'cj' }} />
       </div>

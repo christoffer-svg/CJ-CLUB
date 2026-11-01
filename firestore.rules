@@ -948,7 +948,8 @@ service cloud.firestore {
 
     function projectRole(pid) {
       return isAdmin() ? 'cj'
-        : (isBuilder() && project(pid).builderUid == request.auth.uid) ? 'builder'
+        // El profesional del contrato (también un arquitecto o diseñador cuando cobra su parte)
+        : ((isBuilder() || isDesigner()) && project(pid).builderUid == request.auth.uid) ? 'builder'
         : (isClient() && project(pid).clientId == me().clientId) ? 'client'
         : (isDesigner() && request.auth.uid in project(pid).get('designerUids', [])) ? 'designer'
         : 'none';
@@ -1038,12 +1039,12 @@ service cloud.firestore {
 
     match /projects/{pid} {
       allow get: if isAdmin()
-        || (isBuilder() && resource.data.builderUid == request.auth.uid)
+        || ((isBuilder() || isDesigner()) && resource.data.builderUid == request.auth.uid)
         || (isClient() && resource.data.clientId == me().clientId)
         || (isDesigner() && request.auth.uid in resource.data.get('designerUids', []));
       // Listas: el profesional filtra por builderUid, el cliente por clientId y el arquitecto por designerUids
       allow list: if isAdmin()
-        || (isBuilder() && resource.data.builderUid == request.auth.uid)
+        || ((isBuilder() || isDesigner()) && resource.data.builderUid == request.auth.uid)
         || (isClient() && resource.data.clientId == me().clientId)
         || (isDesigner() && request.auth.uid in resource.data.get('designerUids', []));
       allow create, update: if isAdmin()
@@ -1055,7 +1056,7 @@ service cloud.firestore {
         && request.resource.data.get('vatRate', 21) in [10, 21]
         && (!('designerUids' in request.resource.data) || (request.resource.data.designerUids is list && request.resource.data.designerUids.size() <= 10))
         && (!('reformId' in request.resource.data) || (request.resource.data.reformId is string && request.resource.data.reformId.matches('[A-Za-z0-9_-]{1,40}')))
-        && request.resource.data.get('trade', 'construction') in ['construction', 'electrician', 'plumber', 'carpenter', 'painter', 'glazier', 'other']
+        && request.resource.data.get('trade', 'construction') in ['construction', 'electrician', 'plumber', 'carpenter', 'painter', 'glazier', 'other', 'architect', 'designer']
         // Con el presupuesto ya firmado (aunque sea por uno), el IVA no cambia
         && (resource == null || budgetOpen(pid) || request.resource.data.get('vatRate', 21) == resource.data.get('vatRate', 21));
       allow delete: if isAdmin();
@@ -1332,7 +1333,7 @@ service cloud.firestore {
     function inReform(rid) {
       return isAdmin()
         || (isClient() && reform(rid).clientId == me().clientId)
-        || (isBuilder() && request.auth.uid in reform(rid).builderUids)
+        || ((isBuilder() || isDesigner()) && request.auth.uid in reform(rid).builderUids)
         || (isDesigner() && request.auth.uid in reform(rid).designerUids);
     }
 

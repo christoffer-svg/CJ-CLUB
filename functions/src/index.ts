@@ -575,7 +575,8 @@ async function projectRoleOf(uid: string, projectId: string): Promise<'cj' | 'bu
   if (!me.exists || !project.exists) return 'none'
   const role = me.get('role')
   if (role === 'admin') return 'cj'
-  if (role === 'builder' && project.get('builderUid') === uid) return 'builder'
+  // El profesional del contrato (también un arquitecto o diseñador cuando cobra su parte)
+  if ((role === 'builder' || role === 'designer') && project.get('builderUid') === uid) return 'builder'
   if (role === 'client' && project.get('clientId') === me.get('clientId')) return 'client'
   if (role === 'designer' && ((project.get('designerUids') as string[] | undefined) ?? []).includes(uid)) return 'designer'
   return 'none'

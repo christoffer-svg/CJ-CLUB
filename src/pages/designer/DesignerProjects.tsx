@@ -9,8 +9,12 @@ export default function DesignerProjects() {
   const { id } = useParams()
   const { user, profile } = useAuth()
   const { t } = useI18n()
-  const projects = useProjects({ designerUid: user?.uid })
-  const author = { uid: user?.uid ?? '', name: profile?.name ?? '', role: 'designer' as const }
+  const shared = useProjects({ designerUid: user?.uid })
+  // Contratos en los que cobra su parte (presupuesto, firmas, pagos y extras propios)
+  const own = useProjects({ builderUid: user?.uid })
+  const projects = { loading: shared.loading || own.loading, data: [...own.data, ...shared.data.filter((p) => !own.data.some((o) => o.id === p.id))] }
+  const mine = (pid: string) => own.data.some((p) => p.id === pid)
+  const author = { uid: user?.uid ?? '', name: profile?.name ?? '', role: (id && mine(id) ? 'builder' : 'designer') as 'builder' | 'designer' }
   // Contratos de la misma reforma, juntos
   const groups = [...projects.data.reduce((m, p) => m.set(`${p.familyName} · ${p.title}`, [...(m.get(`${p.familyName} · ${p.title}`) ?? []), p]), new Map<string, typeof projects.data>())]
 
@@ -20,7 +24,7 @@ export default function DesignerProjects() {
         <Link to="/estudio" className="header__back builder-back">
           ‹ {t('common.back')}
         </Link>
-        <ProjectView projectId={id} author={author} />
+        <ProjectView key={`${id}-${author.role}`} projectId={id} author={author} />
       </>
     )
 
@@ -38,7 +42,7 @@ export default function DesignerProjects() {
             <Link key={p.id} to={`/estudio/${p.id}`} className="card team__row pv-item">
               <span className="card__body">
                 <span className="card__title">{t(`trade.${p.trade ?? 'construction'}`)}</span>
-                <span className="card__text">{p.builderName}</span>
+                <span className="card__text">{mine(p.id) ? t('designer.yourContract') : p.builderName}</span>
               </span>
               <span className={`status status--${p.status === 'finished' ? 'done' : p.status === 'in_progress' ? 'in_progress' : 'new'}`}>
                 {t(`project.status.${p.status}`)}

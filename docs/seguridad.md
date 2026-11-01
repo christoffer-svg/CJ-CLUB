@@ -31,6 +31,9 @@ Todo está denegado salvo lo que se permite expresamente.
 - Cada profesional entra con el papel `builder` y solo ve los contratos donde es `builderUid`: el electricista no ve el contrato del constructor ni al revés. Solo CJ cambia el oficio de un contrato.
 
 ### Arquitectos y diseñadores (Mi reforma)
+
+- **Arquitecto o diseñador que cobra su parte:** puede ser el profesional de un contrato (`builderUid`, con oficio `architect` o `designer`). En ese contrato tiene el papel `builder`: ve y gestiona su presupuesto, firmas, pagos y extras, igual que cualquier oficio (reglas `projectRole` y función `projectRoleOf`). Los contratos de los demás profesionales los sigue viendo sin el dinero.
+- **Resumen de toda la reforma:** lo ven solo el cliente y CJ. Suma, con IVA, el presupuesto de cada contrato, sus extras aprobados y lo pagado. No hay datos nuevos: se calcula con lo que el cliente ya puede leer de cada uno de sus contratos.
 - Papel `designer` (arquitecto o diseñador), con alta por la función `createDesigner` (solo CJ; si el correo ya tiene cuenta, se le añade el acceso).
 - `reforms/{id}`: la reforma (contratos de la misma casa con el mismo título), con sus profesionales (`builderUids`) y arquitectos o diseñadores (`designerUids`). Solo la escribe CJ; la leen CJ, el cliente de la casa y sus participantes.
 - `reforms/{id}/plans`: planos, diseños y renders (PDF o imágenes). Los suben CJ y los arquitectos o diseñadores de esa reforma (también los archivos, por `uploadProjectFile`); los ven todos los de la reforma. No se editan; solo CJ los borra.

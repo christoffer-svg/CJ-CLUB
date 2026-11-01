@@ -118,6 +118,24 @@ Kontrollera att varje text är naturlig och korrekt på svenska. Skriv dina rät
 | `benefits.validUntil` | Válido hasta el {date} | Valid until {date} | Gäller till {date} | |
 | `benefits.validRange` | Válido del {from} al {until} | Valid from {from} to {until} | Gäller från {from} till {until} | |
 | `common.back` | Volver | Back | Tillbaka | |
+| `reform.totalPlanned` | Total previsto de la obra | Expected total for the works | Beräknad totalsumma för arbetet | |
+| `designer.yourContract` | Su contrato: presupuesto, pagos y extras | Your contract: budget, payments and extras | Ert avtal: offert, betalningar och tillägg | |
+| `trade.architect` | Arquitecto | Architect | Arkitekt | |
+| `trade.designer` | Diseñador de interiores | Interior designer | Inredningsarkitekt | |
+| `reform.summary` | Resumen de toda la reforma | Summary of the whole renovation | Sammanfattning av hela renoveringen | |
+| `reform.state.accepted` | Aceptado | Accepted | Godkänd | |
+| `reform.state.pending` | Pendiente de firma | Awaiting signature | Väntar på underskrift | |
+| `reform.state.estimate` | Precio estimado | Estimated price | Uppskattat pris | |
+| `reform.state.none` | Sin presupuesto | No budget yet | Ingen offert ännu | |
+| `reform.budget` | Presupuesto | Budget | Offert | |
+| `reform.extras` | Extras | Extras | Tillägg | |
+| `reform.extrasPending` | (+{amount} pendientes) | (+{amount} pending) | (+{amount} väntar) | |
+| `reform.paid` | Pagado | Paid | Betalt | |
+| `reform.totalAccepted` | Total de la obra aceptado | Accepted total for the works | Godkänd totalsumma för arbetet | |
+| `reform.toAccept` | Pendiente de aceptar | Awaiting acceptance | Väntar på godkännande | |
+| `reform.paidTotal` | Pagado | Paid | Betalt | |
+| `reform.outstanding` | Por pagar | Outstanding | Kvar att betala | |
+| `reform.note` | Importes con IVA. El total incluye los presupuestos firmados y los extras aprobados de cada profesional. Cada profesional solo ve su propio contrato. | Amounts incl. VAT. The total includes each professional’s signed budget and approved extras. Each professional only sees their own contract. | Belopp inkl. moms. Totalen omfattar varje hantverkares undertecknade offert och godkända tillägg. Varje hantverkare ser bara sitt eget avtal. | |
 | `social.address` | Dirección o enlace de Google Maps (opcional) | Address or Google Maps link (optional) | Adress eller Google Maps-länk (valfritt) | |
 | `social.addressPlaceholder` | Calle y pueblo, o el enlace | Street and town, or the link | Gata och ort, eller länken | |
 | `social.addressHint` | En Google Maps: «Compartir» → «Copiar enlace», y péguelo aquí. | In Google Maps: “Share” → “Copy link”, and paste it here. | I Google Maps: ”Dela” → ”Kopiera länk”, och klistra in den här. | |

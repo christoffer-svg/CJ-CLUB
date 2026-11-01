@@ -4455,3 +4455,59 @@ button {
   height: 100%;
   object-fit: cover;
 }
+
+/* Resumen de toda la reforma */
+.rf {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.rf-rows {
+  display: flex;
+  flex-direction: column;
+}
+
+.rf-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--card-border);
+  text-decoration: none;
+  color: var(--text);
+}
+
+.rf-row__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.rf-row__nums {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 2px 12px;
+  margin: 4px 0 0;
+  font-size: 14px;
+}
+
+.rf-row__nums dt {
+  color: var(--text-2);
+}
+
+.rf-row__nums dd {
+  margin: 0;
+  text-align: right;
+}
+
+.rf-row__pending {
+  color: var(--text-2);
+  font-size: 12px;
+}
+
+.rf-note {
+  font-size: 12px;
+}

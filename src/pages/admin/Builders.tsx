@@ -6,7 +6,7 @@ import { Field, Input, Select } from '../../components/admin/Fields'
 import { useToast } from '../../components/admin/Toast'
 import { createBuilderAccount, createDesignerAccount, invitationNotice, languageOptions, sendInvitation, useLiveCollection, type NewBuilder } from '../../lib/admin'
 import { professionLabel, tradeLabel } from '../../lib/trades'
-import { TRADES, type Project, type Trade, type UserProfile } from '../../lib/types'
+import { WORK_TRADES, type Project, type Trade, type UserProfile } from '../../lib/types'
 import { hasRole } from '../../lib/roles'
 
 type Kind = Trade | 'architect' | 'designer'
@@ -116,7 +116,7 @@ export default function Builders() {
           <Field label="Oficio">
             <Select value={form.trade} onChange={(e) => setForm({ ...form, trade: e.target.value as Kind })}>
               <optgroup label="Oficios de obra">
-                {TRADES.map((tr) => (
+                {WORK_TRADES.map((tr) => (
                   <option key={tr} value={tr}>
                     {tradeLabel[tr]}
                   </option>

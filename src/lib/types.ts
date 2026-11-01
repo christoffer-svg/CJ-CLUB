@@ -9,7 +9,10 @@ import type { Language } from '../i18n/translations'
 
 /** users/{uid} */
 /** Oficio de un profesional de la obra (constructor, electricista…) */
-export const TRADES = ['construction', 'electrician', 'plumber', 'carpenter', 'painter', 'glazier', 'other'] as const
+/** Oficios de obra (cuentas de profesional) */
+export const WORK_TRADES = ['construction', 'electrician', 'plumber', 'carpenter', 'painter', 'glazier', 'other'] as const
+/** Lo que puede ser un contrato: un oficio, o el arquitecto o el diseñador cuando cobran su parte */
+export const TRADES = [...WORK_TRADES, 'architect', 'designer'] as const
 export type Trade = (typeof TRADES)[number]
 
 export type UserProfile = {

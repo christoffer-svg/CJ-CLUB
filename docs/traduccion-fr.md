@@ -118,6 +118,24 @@ Vérifiez que chaque texte est naturel et correct en français. Notez vos correc
 | `benefits.validUntil` | Válido hasta el {date} | Valid until {date} | Valable jusqu'au {date} | |
 | `benefits.validRange` | Válido del {from} al {until} | Valid from {from} to {until} | Valable du {from} au {until} | |
 | `common.back` | Volver | Back | Retour | |
+| `reform.totalPlanned` | Total previsto de la obra | Expected total for the works | Total prévu des travaux | |
+| `designer.yourContract` | Su contrato: presupuesto, pagos y extras | Your contract: budget, payments and extras | Votre contrat : devis, paiements et suppléments | |
+| `trade.architect` | Arquitecto | Architect | Architecte | |
+| `trade.designer` | Diseñador de interiores | Interior designer | Architecte d’intérieur | |
+| `reform.summary` | Resumen de toda la reforma | Summary of the whole renovation | Récapitulatif de toute la rénovation | |
+| `reform.state.accepted` | Aceptado | Accepted | Accepté | |
+| `reform.state.pending` | Pendiente de firma | Awaiting signature | En attente de signature | |
+| `reform.state.estimate` | Precio estimado | Estimated price | Prix estimé | |
+| `reform.state.none` | Sin presupuesto | No budget yet | Pas encore de devis | |
+| `reform.budget` | Presupuesto | Budget | Devis | |
+| `reform.extras` | Extras | Extras | Suppléments | |
+| `reform.extrasPending` | (+{amount} pendientes) | (+{amount} pending) | (+{amount} en attente) | |
+| `reform.paid` | Pagado | Paid | Payé | |
+| `reform.totalAccepted` | Total de la obra aceptado | Accepted total for the works | Total accepté des travaux | |
+| `reform.toAccept` | Pendiente de aceptar | Awaiting acceptance | À accepter | |
+| `reform.paidTotal` | Pagado | Paid | Payé | |
+| `reform.outstanding` | Por pagar | Outstanding | Reste à payer | |
+| `reform.note` | Importes con IVA. El total incluye los presupuestos firmados y los extras aprobados de cada profesional. Cada profesional solo ve su propio contrato. | Amounts incl. VAT. The total includes each professional’s signed budget and approved extras. Each professional only sees their own contract. | Montants TTC. Le total comprend le devis signé et les suppléments approuvés de chaque professionnel. Chaque professionnel ne voit que son propre contrat. | |
 | `social.address` | Dirección o enlace de Google Maps (opcional) | Address or Google Maps link (optional) | Adresse ou lien Google Maps (facultatif) | |
 | `social.addressPlaceholder` | Calle y pueblo, o el enlace | Street and town, or the link | Rue et ville, ou le lien | |
 | `social.addressHint` | En Google Maps: «Compartir» → «Copiar enlace», y péguelo aquí. | In Google Maps: “Share” → “Copy link”, and paste it here. | Dans Google Maps : « Partager » → « Copier le lien », puis collez-le ici. | |
