@@ -2795,3 +2795,146 @@ button {
   border-color: var(--gold);
   color: var(--white);
 }
+
+/* Mi reforma */
+.pv {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.pv-head {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.pv-head__row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.pv-head__title {
+  font-size: 21px;
+  line-height: 1.25;
+  color: var(--text);
+}
+
+.pv-tabs {
+  margin-top: 2px;
+}
+
+.pv-count {
+  display: inline-grid;
+  place-items: center;
+  min-width: 18px;
+  height: 18px;
+  margin-left: 6px;
+  padding: 0 5px;
+  border-radius: 9px;
+  background: var(--gold);
+  color: var(--black);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.pv-block {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pv-money {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px 16px;
+  margin: 0;
+  font-size: 14px;
+}
+
+.pv-money dt {
+  color: var(--text-2);
+}
+
+.pv-money dd {
+  margin: 0;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.pv-money__strong {
+  padding-top: 8px;
+  border-top: 1px solid var(--card-border);
+  color: var(--text) !important;
+  font-weight: 600;
+}
+
+.pv-progress {
+  height: 8px;
+  border-radius: 4px;
+  background: var(--personal);
+  overflow: hidden;
+}
+
+.pv-progress span {
+  display: block;
+  height: 100%;
+  background: var(--gold-dark);
+}
+
+.pv-amount {
+  font-family: var(--font-title);
+  font-size: 20px;
+  color: var(--text);
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+.pv-extra--pending {
+  border-left: 2px solid var(--gold);
+}
+
+.pv-composer {
+  position: static;
+}
+
+.pv-item {
+  padding: 16px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.pv-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.a-header__tools {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.builder-page {
+  max-width: 760px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.builder-back {
+  margin-top: 0;
+  color: var(--gold-dark);
+}
+
+.a-project {
+  max-width: 760px;
+}
+
+.pv-parsed {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--gold-dark);
+  font-variant-numeric: tabular-nums;
+}

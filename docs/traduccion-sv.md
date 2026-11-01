@@ -277,3 +277,68 @@ Kontrollera att varje text är naturlig och korrekt på svenska. Skriv dina rät
 | `weather.notice.ice` | Posible lluvia helada | Freezing rain possible | Underkylt regn möjligt | |
 | `home.houses` | Sus casas | Your homes | Dina hus | |
 | `home.house` | Casa | Home | Hus | |
+| `team.project` | Mi reforma | My renovation | Min renovering | |
+| `team.projectText` | Avances, pagos y extras de su obra | Progress, payments and extras of your works | Framsteg, betalningar och extraarbeten | |
+| `project.eyebrow` | Mi reforma | My renovation | Min renovering | |
+| `project.list.title` | Sus obras | Your works | Dina projekt | |
+| `project.list.subtitle` | Todo lo de la obra en un solo sitio, compartido con el constructor y con CJ. | Everything about the works in one place, shared with the builder and CJ. | Allt om projektet på ett ställe, delat med byggaren och CJ. | |
+| `project.list.empty` | No hay ninguna obra en esta casa. | There are no works for this home. | Det finns inga projekt för det här huset. | |
+| `project.builder` | Constructor | Builder | Byggare | |
+| `project.status.planned` | Prevista | Planned | Planerad | |
+| `project.status.in_progress` | En obras | In progress | Pågår | |
+| `project.status.finished` | Terminada | Finished | Klar | |
+| `project.tab.summary` | Resumen | Summary | Översikt | |
+| `project.tab.chat` | Conversación | Conversation | Samtal | |
+| `project.tab.updates` | Avances | Progress | Framsteg | |
+| `project.tab.payments` | Pagos | Payments | Betalningar | |
+| `project.tab.extras` | Extras | Extras | Extraarbeten | |
+| `project.budget` | Presupuesto inicial | Initial budget | Ursprunglig budget | |
+| `project.extrasApproved` | Extras aprobados | Approved extras | Godkända extraarbeten | |
+| `project.total` | Total de la obra | Total for the works | Totalt | |
+| `project.paid` | Pagado (confirmado) | Paid (confirmed) | Betalt (bekräftat) | |
+| `project.outstanding` | Pendiente de pago | Outstanding | Kvar att betala | |
+| `project.pendingExtrasNote` | Extras esperando la aprobación del cliente: {amount} | Extras awaiting the client’s approval: {amount} | Extraarbeten som väntar på kundens godkännande: {amount} | |
+| `project.unconfirmedNote` | Pagos sin confirmar: {amount} | Unconfirmed payments: {amount} | Obekräftade betalningar: {amount} | |
+| `project.progress` | Avance de la obra | Progress of the works | Arbetets framsteg | |
+| `project.dates` | Fechas | Dates | Datum | |
+| `project.role.client` | Cliente | Client | Kund | |
+| `project.role.builder` | Constructor | Builder | Byggare | |
+| `project.role.cj` | CJ | CJ | CJ | |
+| `project.save` | Guardar | Save | Spara | |
+| `project.chat.empty` | Aún no hay mensajes. Lo que se escriba aquí lo ven el cliente, el constructor y CJ. | No messages yet. Everything written here is seen by the client, the builder and CJ. | Inga meddelanden än. Det som skrivs här ser kunden, byggaren och CJ. | |
+| `project.updates.empty` | Aún no hay avances. | No progress updates yet. | Inga framsteg än. | |
+| `project.updates.new` | Publicar avance | Post progress | Publicera framsteg | |
+| `project.updates.titleField` | Qué se ha hecho | What has been done | Vad har gjorts | |
+| `project.updates.textField` | Detalles (opcional) | Details (optional) | Detaljer (valfritt) | |
+| `project.updates.percentField` | Porcentaje de obra hecho (opcional) | Percentage completed (optional) | Andel klart i procent (valfritt) | |
+| `project.payments.empty` | Aún no hay pagos anotados. | No payments recorded yet. | Inga betalningar registrerade än. | |
+| `project.payments.new` | Anotar pago | Record payment | Registrera betalning | |
+| `project.payments.amount` | Importe (€) | Amount (€) | Belopp (€) | |
+| `project.payments.date` | Fecha del pago | Payment date | Betalningsdatum | |
+| `project.payments.concept` | Concepto | Description | Avser | |
+| `project.payments.recordedBy` | Anotado por {name} ({role}) | Recorded by {name} ({role}) | Registrerad av {name} ({role}) | |
+| `project.payments.status.pending` | Por confirmar | To be confirmed | Att bekräfta | |
+| `project.payments.status.confirmed` | Confirmado | Confirmed | Bekräftad | |
+| `project.payments.status.disputed` | Discutido | Disputed | Ifrågasatt | |
+| `project.payments.confirm` | Confirmar | Confirm | Bekräfta | |
+| `project.payments.dispute` | No es correcto | Not correct | Stämmer inte | |
+| `project.payments.waiting` | Esperando a que la otra parte lo confirme. | Waiting for the other party to confirm. | Väntar på att den andra parten bekräftar. | |
+| `project.answeredBy` | {status} por {name} el {date} | {status} by {name} on {date} | {status} av {name} den {date} | |
+| `project.extras.empty` | No hay trabajos extra. | No extra work. | Inga extraarbeten. | |
+| `project.extras.new` | Proponer extra | Propose extra | Föreslå extraarbete | |
+| `project.extras.titleField` | Trabajo | Work | Arbete | |
+| `project.extras.descField` | Descripción (opcional) | Description (optional) | Beskrivning (valfritt) | |
+| `project.extras.amount` | Precio (€) | Price (€) | Pris (€) | |
+| `project.extras.status.pending` | Esperando al cliente | Awaiting client | Väntar på kunden | |
+| `project.extras.status.approved` | Aprobado | Approved | Godkänt | |
+| `project.extras.status.rejected` | Rechazado | Rejected | Avslaget | |
+| `project.extras.status.withdrawn` | Retirado | Withdrawn | Återkallat | |
+| `project.extras.approve` | Aprobar | Approve | Godkänn | |
+| `project.extras.reject` | Rechazar | Reject | Avslå | |
+| `project.extras.withdraw` | Retirar | Withdraw | Återkalla | |
+| `project.extras.note` | Comentario (opcional) | Comment (optional) | Kommentar (valfritt) | |
+| `project.extras.proposedBy` | Propuesto por {name} el {date} | Proposed by {name} on {date} | Föreslaget av {name} den {date} | |
+| `project.extras.decideHint` | Al aprobar, el importe se suma al total de la obra. Queda registrado quién y cuándo. | Approving adds the amount to the total. Who and when is recorded. | När du godkänner läggs beloppet till totalen. Vem och när registreras. | |
+| `project.waitingClient` | {n} extra esperando su respuesta | {n} extra awaiting your answer | {n} extraarbete väntar på ditt svar | |
+| `builder.panel` | Panel del constructor | Builder panel | Byggarpanel | |
+| `builder.empty` | CJ aún no le ha asignado ninguna obra. | CJ has not assigned you any works yet. | CJ har inte tilldelat dig något projekt än. | |

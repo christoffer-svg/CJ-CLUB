@@ -192,6 +192,34 @@ export const createBusiness = onCall(async (request) => {
 })
 
 /**
+ * Crea el acceso de un constructor para "Mi reforma": cuenta (rol "builder") y ficha en users/.
+ * Solo ve las obras en las que CJ le asigne. La invitación la envía después la app.
+ */
+export const createBuilder = onCall(async (request) => {
+  await requireAdmin(request.auth?.uid)
+  const data = (request.data ?? {}) as Record<string, unknown>
+  const name = text(data.name, 'nombre de la persona')
+  const companyName = text(data.companyName, 'empresa')
+  const email = text(data.email, 'correo').toLowerCase()
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new HttpsError('invalid-argument', 'El correo no es válido.')
+  const languages = ['es', 'en', 'nl', 'sv', 'de', 'fr']
+  const language = typeof data.language === 'string' && languages.includes(data.language) ? data.language : 'es'
+
+  const auth = getAuth()
+  const existing = await auth.getUserByEmail(email).catch(() => null)
+  if (existing) throw new HttpsError('already-exists', 'Ya existe una cuenta con ese correo.')
+
+  const user = await auth.createUser({ email, displayName: name, password: randomBytes(24).toString('base64url') })
+  try {
+    await db.doc(`users/${user.uid}`).set({ role: 'builder', name, companyName, email, language })
+  } catch (e) {
+    await auth.deleteUser(user.uid).catch(() => {})
+    throw e
+  }
+  return { uid: user.uid }
+})
+
+/**
  * Resumen de reservas del propio negocio: solo el número de veces que han pulsado Reservar.
  * No devuelve nombres ni fichas de clientes. El negocio no puede leer esos registros.
  */
@@ -284,6 +312,9 @@ export const deleteClient = onCall(async (request) => {
   ])
   // La conversación y todos sus mensajes
   await db.recursiveDelete(db.doc(`conversations/${clientId}`))
+  // Las obras de esta casa (Mi reforma), con su conversación, avances, pagos y extras
+  const projects = await db.collection('projects').where('clientId', '==', clientId).get()
+  for (const pr of projects.docs) await db.recursiveDelete(pr.ref)
   const refs = [
     ...users.docs.map((d) => d.ref),
     ...uses.docs.map((d) => d.ref),
@@ -305,6 +336,7 @@ export const deleteClient = onCall(async (request) => {
   return {
     accounts: users.size,
     keptAccounts,
+    projects: projects.size,
     dealUses: uses.size,
     requests: requests.size,
     reservationClicks: reservationClicks.size,
@@ -341,7 +373,7 @@ export const sendInvitationEmail = onCall({ secrets: resendApiKey ? [resendApiKe
   const user = await getAuth().getUserByEmail(email).catch(() => null)
   if (!user) throw new HttpsError('not-found', 'No hay ninguna cuenta con ese correo.')
   const profile = await db.doc(`users/${user.uid}`).get()
-  const role = (['client', 'business', 'admin'].includes(profile.get('role')) ? profile.get('role') : 'client') as MailRole
+  const role = (['client', 'business', 'admin', 'builder'].includes(profile.get('role')) ? profile.get('role') : 'client') as MailRole
   const language = isMailLanguage(profile.get('language')) ? profile.get('language') : 'en'
   const name = (profile.get('name') as string | undefined) || user.displayName || ''
 

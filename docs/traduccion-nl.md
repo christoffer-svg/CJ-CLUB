@@ -277,3 +277,68 @@ Controleer of elke tekst natuurlijk en correct Nederlands is. Noteer correcties 
 | `weather.notice.ice` | Posible lluvia helada | Freezing rain possible | Mogelijk ijzel | |
 | `home.houses` | Sus casas | Your homes | Uw woningen | |
 | `home.house` | Casa | Home | Woning | |
+| `team.project` | Mi reforma | My renovation | Mijn verbouwing | |
+| `team.projectText` | Avances, pagos y extras de su obra | Progress, payments and extras of your works | Voortgang, betalingen en meerwerk | |
+| `project.eyebrow` | Mi reforma | My renovation | Mijn verbouwing | |
+| `project.list.title` | Sus obras | Your works | Uw werkzaamheden | |
+| `project.list.subtitle` | Todo lo de la obra en un solo sitio, compartido con el constructor y con CJ. | Everything about the works in one place, shared with the builder and CJ. | Alles over de werkzaamheden op één plek, gedeeld met de aannemer en CJ. | |
+| `project.list.empty` | No hay ninguna obra en esta casa. | There are no works for this home. | Er zijn geen werkzaamheden voor deze woning. | |
+| `project.builder` | Constructor | Builder | Aannemer | |
+| `project.status.planned` | Prevista | Planned | Gepland | |
+| `project.status.in_progress` | En obras | In progress | In uitvoering | |
+| `project.status.finished` | Terminada | Finished | Afgerond | |
+| `project.tab.summary` | Resumen | Summary | Overzicht | |
+| `project.tab.chat` | Conversación | Conversation | Gesprek | |
+| `project.tab.updates` | Avances | Progress | Voortgang | |
+| `project.tab.payments` | Pagos | Payments | Betalingen | |
+| `project.tab.extras` | Extras | Extras | Meerwerk | |
+| `project.budget` | Presupuesto inicial | Initial budget | Oorspronkelijke begroting | |
+| `project.extrasApproved` | Extras aprobados | Approved extras | Goedgekeurd meerwerk | |
+| `project.total` | Total de la obra | Total for the works | Totaal | |
+| `project.paid` | Pagado (confirmado) | Paid (confirmed) | Betaald (bevestigd) | |
+| `project.outstanding` | Pendiente de pago | Outstanding | Nog te betalen | |
+| `project.pendingExtrasNote` | Extras esperando la aprobación del cliente: {amount} | Extras awaiting the client’s approval: {amount} | Meerwerk dat wacht op goedkeuring van de klant: {amount} | |
+| `project.unconfirmedNote` | Pagos sin confirmar: {amount} | Unconfirmed payments: {amount} | Onbevestigde betalingen: {amount} | |
+| `project.progress` | Avance de la obra | Progress of the works | Voortgang | |
+| `project.dates` | Fechas | Dates | Data | |
+| `project.role.client` | Cliente | Client | Klant | |
+| `project.role.builder` | Constructor | Builder | Aannemer | |
+| `project.role.cj` | CJ | CJ | CJ | |
+| `project.save` | Guardar | Save | Opslaan | |
+| `project.chat.empty` | Aún no hay mensajes. Lo que se escriba aquí lo ven el cliente, el constructor y CJ. | No messages yet. Everything written here is seen by the client, the builder and CJ. | Nog geen berichten. Wat hier staat, zien de klant, de aannemer en CJ. | |
+| `project.updates.empty` | Aún no hay avances. | No progress updates yet. | Nog geen voortgang. | |
+| `project.updates.new` | Publicar avance | Post progress | Voortgang plaatsen | |
+| `project.updates.titleField` | Qué se ha hecho | What has been done | Wat is er gedaan | |
+| `project.updates.textField` | Detalles (opcional) | Details (optional) | Details (optioneel) | |
+| `project.updates.percentField` | Porcentaje de obra hecho (opcional) | Percentage completed (optional) | Percentage klaar (optioneel) | |
+| `project.payments.empty` | Aún no hay pagos anotados. | No payments recorded yet. | Nog geen betalingen geregistreerd. | |
+| `project.payments.new` | Anotar pago | Record payment | Betaling registreren | |
+| `project.payments.amount` | Importe (€) | Amount (€) | Bedrag (€) | |
+| `project.payments.date` | Fecha del pago | Payment date | Datum van betaling | |
+| `project.payments.concept` | Concepto | Description | Omschrijving | |
+| `project.payments.recordedBy` | Anotado por {name} ({role}) | Recorded by {name} ({role}) | Geregistreerd door {name} ({role}) | |
+| `project.payments.status.pending` | Por confirmar | To be confirmed | Te bevestigen | |
+| `project.payments.status.confirmed` | Confirmado | Confirmed | Bevestigd | |
+| `project.payments.status.disputed` | Discutido | Disputed | Betwist | |
+| `project.payments.confirm` | Confirmar | Confirm | Bevestigen | |
+| `project.payments.dispute` | No es correcto | Not correct | Klopt niet | |
+| `project.payments.waiting` | Esperando a que la otra parte lo confirme. | Waiting for the other party to confirm. | Wacht op bevestiging van de andere partij. | |
+| `project.answeredBy` | {status} por {name} el {date} | {status} by {name} on {date} | {status} door {name} op {date} | |
+| `project.extras.empty` | No hay trabajos extra. | No extra work. | Geen meerwerk. | |
+| `project.extras.new` | Proponer extra | Propose extra | Meerwerk voorstellen | |
+| `project.extras.titleField` | Trabajo | Work | Werk | |
+| `project.extras.descField` | Descripción (opcional) | Description (optional) | Omschrijving (optioneel) | |
+| `project.extras.amount` | Precio (€) | Price (€) | Prijs (€) | |
+| `project.extras.status.pending` | Esperando al cliente | Awaiting client | Wacht op klant | |
+| `project.extras.status.approved` | Aprobado | Approved | Goedgekeurd | |
+| `project.extras.status.rejected` | Rechazado | Rejected | Afgewezen | |
+| `project.extras.status.withdrawn` | Retirado | Withdrawn | Ingetrokken | |
+| `project.extras.approve` | Aprobar | Approve | Goedkeuren | |
+| `project.extras.reject` | Rechazar | Reject | Afwijzen | |
+| `project.extras.withdraw` | Retirar | Withdraw | Intrekken | |
+| `project.extras.note` | Comentario (opcional) | Comment (optional) | Opmerking (optioneel) | |
+| `project.extras.proposedBy` | Propuesto por {name} el {date} | Proposed by {name} on {date} | Voorgesteld door {name} op {date} | |
+| `project.extras.decideHint` | Al aprobar, el importe se suma al total de la obra. Queda registrado quién y cuándo. | Approving adds the amount to the total. Who and when is recorded. | Bij goedkeuring wordt het bedrag bij het totaal opgeteld. Wie en wanneer wordt vastgelegd. | |
+| `project.waitingClient` | {n} extra esperando su respuesta | {n} extra awaiting your answer | {n} meerwerk wacht op uw antwoord | |
+| `builder.panel` | Panel del constructor | Builder panel | Aannemerspaneel | |
+| `builder.empty` | CJ aún no le ha asignado ninguna obra. | CJ has not assigned you any works yet. | CJ heeft u nog geen werk toegewezen. | |

@@ -4,9 +4,10 @@ import { useViewer } from '../lib/viewer'
 import Header from '../components/Header'
 import HouseSwitcher from '../components/HouseSwitcher'
 import WeatherCard from '../components/WeatherCard'
-import { AlertIcon, ChatIcon, ChevronIcon, CrossIcon, DishIcon, KeyIcon, NoteIcon, PhoneIcon, StarIcon, WhatsAppIcon } from '../components/Icons'
+import { AlertIcon, ChatIcon, ChevronIcon, CrossIcon, DishIcon, KeyIcon, NoteIcon, PhoneIcon, StarIcon, WhatsAppIcon, WrenchIcon } from '../components/Icons'
 import { useActiveDealsCount, useDoc } from '../lib/data'
 import { isUnread, useClientRequests, useConversation } from '../lib/messaging'
+import { useProjects } from '../lib/projects'
 import { useI18n } from '../i18n'
 import { familyName, monthYear, telLink, whatsappLink } from '../lib/format'
 import { isGeoPoint } from '../lib/geo'
@@ -22,6 +23,7 @@ export default function Home() {
   const conv = useConversation(clientId)
   const requests = useClientRequests(clientId)
   const unread = isUnread(conv, 'client')
+  const projects = useProjects({ clientId })
   const openRequests = requests.data.filter((r) => r.status === 'new' || r.status === 'in_progress').length
   const c = client.data
 
@@ -129,6 +131,20 @@ export default function Home() {
                 <ChevronIcon />
               </span>
             </Link>
+            {projects.data.length > 0 && (
+              <Link to={`${base}/reformas`} className="team__row">
+                <span className="card__icon">
+                  <WrenchIcon />
+                </span>
+                <span className="card__body">
+                  <span className="card__title">{t('team.project')}</span>
+                  <span className="card__text">{t('team.projectText')}</span>
+                </span>
+                <span className="card__chevron">
+                  <ChevronIcon />
+                </span>
+              </Link>
+            )}
             <Link to={`${base}/peticiones`} className="team__row">
               <span className="card__icon">
                 <KeyIcon />

@@ -34,6 +34,9 @@ const adminPassword = args['admin-password']
 // Opcional: crea un acceso de cliente de prueba vinculado a la Familia Jansen
 const clientEmail = args['client-email']
 const clientPassword = args['client-password']
+// Opcional: constructor de prueba con una obra de ejemplo de la Familia Jansen (Mi reforma)
+const builderEmail = args['builder-email']
+const builderPassword = args['builder-password']
 
 if (!adminEmail && !only) {
   console.error('Falta --admin-email=...')
@@ -420,6 +423,72 @@ async function main() {
       email: clientEmail,
       language: 'en',
       clientId: 'jansen',
+    })
+  }
+
+  if (builderEmail) {
+    const builder = await ensureAuthUser(builderEmail, 'Marta Ruiz', builderPassword)
+    batch.set(db.collection('users').doc(builder.uid), {
+      role: 'builder',
+      name: 'Marta Ruiz',
+      companyName: 'Reformas Costa Azul',
+      email: builderEmail,
+      language: 'es',
+    })
+    const day = (iso: string) => Timestamp.fromDate(new Date(iso))
+    const pr = db.doc('projects/p-jansen-cocina')
+    batch.set(pr, {
+      clientId: 'jansen',
+      familyName: 'Familia Jansen',
+      property: 'Villa en Jávea',
+      title: 'Reforma de la cocina',
+      builderUid: builder.uid,
+      builderName: 'Reformas Costa Azul',
+      status: 'in_progress',
+      budget: 18500,
+      startDate: '2026-10-05',
+      endDate: '2026-12-15',
+      createdAt: day('2026-10-01T10:00:00'),
+    })
+    batch.set(pr.collection('updates').doc('u1'), {
+      title: 'Demolición terminada',
+      text: 'Retirados los muebles antiguos y el alicatado. Mañana empieza la fontanería.',
+      percent: 25,
+      authorUid: builder.uid,
+      authorRole: 'builder',
+      authorName: 'Marta Ruiz',
+      createdAt: day('2026-10-12T17:00:00'),
+    })
+    batch.set(pr.collection('payments').doc('pay1'), {
+      amount: 5550,
+      date: '2026-10-05',
+      concept: 'Primer pago (30 %) al empezar la obra',
+      recordedByUid: builder.uid,
+      recordedByRole: 'builder',
+      recordedByName: 'Marta Ruiz',
+      status: 'confirmed',
+      confirmedByUid: 'seed',
+      confirmedByRole: 'client',
+      confirmedByName: 'Familia Jansen',
+      confirmedAt: day('2026-10-06T09:00:00'),
+      createdAt: day('2026-10-05T12:00:00'),
+    })
+    batch.set(pr.collection('extras').doc('x1'), {
+      title: 'Enchufes adicionales en la isla',
+      description: 'Dos enchufes dobles y una toma USB en la isla central.',
+      amount: 420,
+      proposedByUid: builder.uid,
+      proposedByRole: 'builder',
+      proposedByName: 'Marta Ruiz',
+      status: 'pending',
+      createdAt: day('2026-10-14T11:00:00'),
+    })
+    batch.set(pr.collection('messages').doc('mm1'), {
+      text: 'Buenos días. El viernes llega la encimera; ¿podrá alguien abrir a las 9?',
+      sender: 'builder',
+      authorUid: builder.uid,
+      authorName: 'Marta Ruiz',
+      createdAt: day('2026-10-15T08:30:00'),
     })
   }
 

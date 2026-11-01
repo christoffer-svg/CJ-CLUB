@@ -9,7 +9,7 @@ Todo está denegado salvo lo que se permite expresamente.
 
 | Colección | Cliente (`client`) | Equipo CJ (`admin`) |
 |---|---|---|
-| `users/{uid}` | Lee solo su ficha. Solo puede cambiar `language` y `favorites` (lista, máx. 200). | Lee y gestiona todas. No puede cambiarse su propio rol ni borrarse a sí mismo. Rol limitado a `admin` / `client` / `business`. Un negocio tiene que quedar vinculado a un lugar que existe. |
+| `users/{uid}` | Lee solo su ficha. Solo puede cambiar `language`, `favorites` (lista, máx. 200) y `clientId`, este solo a una de sus casas (`clientIds`, que asigna CJ). Un constructor solo cambia `language`. | Lee y gestiona todas. No puede cambiarse su propio rol ni borrarse a sí mismo. Rol limitado a `admin` / `client` / `business` / `builder`. Un negocio tiene que quedar vinculado a un lugar que existe. |
 | `clients/{id}` | Lee la casa que está viendo y las demás de sus casas (`clientIds`). No escribe. | Lee y escribe. |
 | `partners/{id}` | Lee, de uno en uno, solo los asignados en su mapa `contacts`. No puede listar. | Lee, lista y escribe. |
 | `generalContacts`, `settings` | Lee (con sesión e invitación). No escribe. | Lee y escribe. El negocio no los lee. |
@@ -23,6 +23,7 @@ Todo está denegado salvo lo que se permite expresamente.
 | `requests/{id}` | Crea peticiones a su nombre (estado `new`, tipo válido, hora del servidor) y lee las suyas. Solo puede cancelarlas mientras son nuevas. No escribe la nota de CJ. | Lee todas, cambia estado y nota, borra. |
 | `clients/{id}/ownContacts` y `houseNotes` | La familia (cualquier acceso con ese `clientId`) crea, lee, edita y borra los suyos. Son privados. El servicio del contacto es uno de los seis de siempre, uno que exista en `partnerCategories`, o «Otro» con texto. Si CJ quita ese servicio después, el contacto se puede seguir corrigiendo. | No lee ni escribe. |
 | `clients/{id}/sharedContacts` y `sharedHouseNotes` | La familia los crea al marcar «Compartir con CJ», y puede editarlos o borrarlos. | Solo lee. No edita ni borra desde la app. |
+| `projects/{id}` (Mi reforma) | Ve las obras de la casa que está viendo. Escribe en la conversación, anota pagos y confirma o discute los de la otra parte, y es **el único que aprueba o rechaza extras**. No publica avances ni propone extras. El **constructor** asignado ve solo sus obras: escribe, publica avances, propone y retira sus extras, anota pagos y confirma o discute los del cliente; no edita la obra. Otro constructor no ve nada. | Crea y edita obras, escribe, publica avances, propone extras, anota y confirma pagos. No puede aprobar extras en nombre del cliente. Nada de lo escrito se edita después; solo CJ puede borrar. |
 | Cualquier otra | Denegado. Un negocio colaborador no es ni cliente ni admin: no lee contactos ni notas. | Denegado. |
 
 ### Negocio colaborador (`business`)
@@ -38,7 +39,7 @@ Cuenta invitada por CJ y vinculada a un lugar (`users.placeId`). No es un socio.
 
 "Con sesión" significa además estar invitado: tener ficha en `users/`. Una cuenta creada por libre no lee nada.
 
-Pruebas: `tests/firestore-rules.mjs` (345 comprobaciones; ver instrucciones en el archivo). Ejecutar antes de cada cambio de reglas.
+Pruebas: `tests/firestore-rules.mjs` (406 comprobaciones; ver instrucciones en el archivo). Ejecutar antes de cada cambio de reglas.
 
 ### Funciones de servidor (`functions/`)
 - `createClient` (Madrid, `europe-southwest1`): comprueba que quien llama es `admin`, valida los datos, crea la cuenta con contraseña aleatoria, la ficha y el perfil; si algo falla, no deja cuentas sueltas. Límite de 5 instancias.

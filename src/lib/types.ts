@@ -1,6 +1,6 @@
 import type { Timestamp } from 'firebase/firestore'
 
-export type Role = 'admin' | 'client' | 'business'
+export type Role = 'admin' | 'client' | 'business' | 'builder'
 
 /** Coordenadas de un punto en el mapa */
 export type GeoPoint = { lat: number; lng: number }
@@ -17,6 +17,8 @@ export type UserProfile = {
   clientId?: string
   /** todas sus casas; solo las asigna CJ */
   clientIds?: string[]
+  /** constructor: nombre de la empresa */
+  companyName?: string
   /** lugar vinculado; solo el rol "business" */
   placeId?: string
   /** nombre del lugar en el momento del alta */
@@ -268,4 +270,78 @@ export type HouseNote = {
   shareWithCj: boolean
   createdAt: Timestamp | null
   updatedAt: Timestamp | null
+}
+
+// ---------- Mi reforma ----------
+
+/** Quién actúa en una obra: el cliente, el constructor o el equipo de CJ */
+export type ProjectRole = 'client' | 'builder' | 'cj'
+
+/** projects/{id}: una obra o reforma de una casa (clients/{clientId}) con un constructor */
+export type Project = {
+  clientId: string
+  familyName: string
+  property: string
+  title: string
+  builderUid: string
+  builderName: string
+  status: 'planned' | 'in_progress' | 'finished'
+  /** presupuesto inicial acordado, en euros */
+  budget: number
+  startDate?: string
+  endDate?: string
+  createdAt: Timestamp | null
+}
+
+/** projects/{id}/messages: conversación a tres */
+export type ProjectMessage = {
+  text: string
+  sender: ProjectRole
+  authorUid: string
+  authorName: string
+  createdAt: Timestamp | null
+}
+
+/** projects/{id}/updates: avances de la obra (los publica el constructor o CJ) */
+export type ProjectUpdate = {
+  title: string
+  text: string
+  /** porcentaje de obra hecho, opcional */
+  percent?: number
+  authorUid: string
+  authorRole: ProjectRole
+  authorName: string
+  createdAt: Timestamp | null
+}
+
+/** projects/{id}/payments: pagos; la otra parte los confirma o los discute */
+export type ProjectPayment = {
+  amount: number
+  date: string
+  concept: string
+  recordedByUid: string
+  recordedByRole: ProjectRole
+  recordedByName: string
+  status: 'pending' | 'confirmed' | 'disputed'
+  confirmedByUid?: string
+  confirmedByRole?: ProjectRole
+  confirmedByName?: string
+  confirmedAt?: Timestamp | null
+  createdAt: Timestamp | null
+}
+
+/** projects/{id}/extras: trabajos extra con precio; solo el cliente los aprueba o rechaza */
+export type ProjectExtra = {
+  title: string
+  description: string
+  amount: number
+  proposedByUid: string
+  proposedByRole: ProjectRole
+  proposedByName: string
+  status: 'pending' | 'approved' | 'rejected' | 'withdrawn'
+  decidedByUid?: string
+  decidedByName?: string
+  decidedAt?: Timestamp | null
+  decisionNote?: string
+  createdAt: Timestamp | null
 }

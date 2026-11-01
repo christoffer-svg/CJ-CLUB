@@ -121,6 +121,16 @@ export async function createBusinessAccount(data: NewBusiness) {
   return (await call(data)).data
 }
 
+export type NewBuilder = { name: string; companyName: string; email: string; language: Language }
+
+/** Crea la cuenta de un constructor en el servidor (función createBuilder) y le envía la invitación */
+export async function createBuilderAccount(data: NewBuilder) {
+  const call = httpsCallable<NewBuilder, { uid: string }>(functions, 'createBuilder')
+  const res = await call(data)
+  const via = await sendInvitation(data.email, data.language)
+  return { ...res.data, via }
+}
+
 /** Da de baja a un cliente en el servidor (función deleteClient): borra cuenta, ficha y registros */
 export async function deleteClient(clientId: string) {
   const call = httpsCallable<

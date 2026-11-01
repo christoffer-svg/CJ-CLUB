@@ -9,6 +9,11 @@ import Home from './pages/Home'
 import Guide from './pages/Guide'
 import Discover from './pages/Discover'
 import Benefits from './pages/Benefits'
+import Projects from './pages/Projects'
+import BuilderLayout from './pages/builder/BuilderLayout'
+import BuilderProjects from './pages/builder/BuilderProjects'
+import Builders from './pages/admin/Builders'
+import { AdminProject, AdminProjects } from './pages/admin/AdminProjects'
 import Messages from './pages/Messages'
 import Requests from './pages/Requests'
 import House from './pages/House'
@@ -35,7 +40,7 @@ import AdminRequests from './pages/admin/AdminRequests'
 export default function App() {
   const { pathname } = useLocation()
   // El panel usa más ancho en ordenador; la vista previa del cliente mantiene el ancho de móvil
-  const wide = (pathname.startsWith('/admin') && !pathname.includes('/vista')) || pathname.startsWith('/negocio')
+  const wide = (pathname.startsWith('/admin') && !pathname.includes('/vista')) || pathname.startsWith('/negocio') || pathname.startsWith('/obra')
 
   return (
     <div className={wide ? 'app-frame app-frame--wide' : 'app-frame'}>
@@ -57,6 +62,8 @@ export default function App() {
             <Route path="ventajas" element={<Benefits />} />
             <Route path="mensajes" element={<Messages />} />
             <Route path="peticiones" element={<Requests />} />
+            <Route path="reformas" element={<Projects />} />
+            <Route path="reformas/:id" element={<Projects />} />
             <Route path="casa" element={<House />} />
           </Route>
         </Route>
@@ -68,6 +75,8 @@ export default function App() {
             <Route path="ventajas" element={<Benefits />} />
             <Route path="mensajes" element={<Messages />} />
             <Route path="peticiones" element={<Requests />} />
+            <Route path="reformas" element={<Projects />} />
+            <Route path="reformas/:id" element={<Projects />} />
             <Route path="casa" element={<House />} />
           </Route>
           <Route path="admin" element={<AdminLayout />}>
@@ -77,6 +86,9 @@ export default function App() {
             <Route path="mensajes" element={<AdminMessages />} />
             <Route path="mensajes/:clientId" element={<AdminThread />} />
             <Route path="peticiones" element={<AdminRequests />} />
+            <Route path="reformas" element={<AdminProjects />} />
+            <Route path="reformas/:id" element={<AdminProject />} />
+            <Route path="constructores" element={<Builders />} />
             <Route path="clientes" element={<Clients />} />
             <Route path="clientes/nuevo" element={<ClientNew />} />
             <Route path="clientes/:id" element={<ClientDetail />} />
@@ -86,6 +98,12 @@ export default function App() {
             <Route path="negocios" element={<Businesses />} />
             <Route path="descuentos" element={<Deals />} />
             <Route path="consejo" element={<Tip />} />
+          </Route>
+        </Route>
+        <Route element={<RequireRole role="builder" />}>
+          <Route path="obra" element={<BuilderLayout />}>
+            <Route index element={<BuilderProjects />} />
+            <Route path=":id" element={<BuilderProjects />} />
           </Route>
         </Route>
         <Route element={<RequireRole role="business" />}>

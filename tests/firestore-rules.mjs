@@ -4,7 +4,8 @@
  * Uso:
  *   1. npm run emulators                       (en otra terminal)
  *   2. npm run seed:emulator -- --admin-email=admin@prueba.test --admin-password=Admin1234 \
- *        --client-email=jansen@prueba.test --client-password=Prueba1234
+ *        --client-email=jansen@prueba.test --client-password=Prueba1234 \
+ *        --builder-email=constructor@prueba.test --builder-password=Obra1234
  *   3. npm run test:rules
  *
  * Personas: Jansen y Lindqvist (clientes), el admin, una cuenta no invitada,
@@ -461,6 +462,80 @@ for (const path of [
   'partnerCategories/placas-solares',
 ]) await wipe(path)
 
+
+// ---------- Mi reforma: projects ----------
+const bu = await signIn('constructor@prueba.test', 'Obra1234'); const BU = bu.idToken
+let b2 = await signUp('otro-constructor@prueba.test', 'Obra1234'); if (!b2.localId) b2 = await signIn('otro-constructor@prueba.test', 'Obra1234')
+await ownerPatch(`users/${b2.localId}`, { role: str('builder'), name: str('Otro'), companyName: str('Otra empresa'), email: str('otro-constructor@prueba.test'), language: str('es') })
+const BU2 = b2.idToken
+const PR = 'projects/p-jansen-cocina'
+const byField = (field, value) => ({ from: [{ collectionId: 'projects' }], where: { fieldFilter: { field: { fieldPath: field }, op: 'EQUAL', value: str(value) } } })
+ok(await req(J, PR), 200, 'cliente ve la obra de su casa')
+ok(await req(L, PR), 403, 'otra familia no ve la obra')
+ok(await req(BU, PR), 200, 'el constructor asignado ve la obra')
+ok(await req(BU2, PR), 403, 'otro constructor no ve la obra')
+ok(await req(X, PR), 403, 'no invitado no ve la obra')
+ok(await runQuery(J, byField('clientId', 'jansen')), 200, 'cliente lista las obras de su casa')
+ok(await runQuery(J, { from: [{ collectionId: 'projects' }] }), 403, 'cliente lista todas las obras')
+ok(await runQuery(BU, byField('builderUid', bu.localId)), 200, 'constructor lista sus obras')
+ok(await runQuery(BU2, byField('builderUid', bu.localId)), 403, 'constructor lista obras de otro')
+ok(await runQuery(BU2, { from: [{ collectionId: 'projects' }] }), 403, 'constructor lista todas las obras')
+ok(await patch(BU, PR, { budget: { integerValue: '99999' } }), 403, 'constructor cambia el presupuesto')
+ok(await patch(J, PR, { budget: { integerValue: '1' } }), 403, 'cliente cambia el presupuesto')
+ok(await patch(AD, PR, { status: str('in_progress') }), 200, 'CJ edita la obra')
+ok(await patch(BU, `users/${bu.localId}`, { language: str('en') }), 200, 'constructor cambia su idioma')
+ok(await patch(BU, `users/${bu.localId}`, { role: str('admin') }), 403, 'constructor se cambia el rol')
+
+// conversación a tres
+const pmsg = (sender, uid) => ({ text: str('Hola'), sender: str(sender), authorUid: str(uid), authorName: str('X') })
+ok(await serverTime(J, `${PR}/messages/c1`, pmsg('client', j.localId), ['createdAt']), 200, 'cliente escribe en la obra')
+ok(await serverTime(J, `${PR}/messages/c2`, pmsg('builder', j.localId), ['createdAt']), 403, 'cliente firma como constructor')
+ok(await serverTime(BU, `${PR}/messages/c3`, pmsg('builder', bu.localId), ['createdAt']), 200, 'constructor escribe en la obra')
+ok(await serverTime(BU, `${PR}/messages/c4`, pmsg('cj', bu.localId), ['createdAt']), 403, 'constructor firma como CJ')
+ok(await serverTime(AD, `${PR}/messages/c5`, pmsg('cj', a.localId), ['createdAt']), 200, 'CJ escribe en la obra')
+ok(await serverTime(BU2, `${PR}/messages/c6`, pmsg('builder', b2.localId), ['createdAt']), 403, 'otro constructor escribe en la obra')
+ok(await serverTime(L, `${PR}/messages/c7`, pmsg('client', l.localId), ['createdAt']), 403, 'otra familia escribe en la obra')
+ok(await patch(BU, `${PR}/messages/c3`, { text: str('cambiado') }), 403, 'nadie edita mensajes')
+ok(await req(J, `${PR}/messages/c1`, 'DELETE'), 403, 'cliente borra mensajes')
+
+// avances
+const upd = (role, uid, extra = {}) => ({ title: str('Fontanería'), text: str(''), authorUid: str(uid), authorRole: str(role), authorName: str('X'), ...extra })
+ok(await serverTime(BU, `${PR}/updates/v1`, upd('builder', bu.localId, { percent: { integerValue: '40' } }), ['createdAt']), 200, 'constructor publica un avance')
+ok(await serverTime(BU, `${PR}/updates/v2`, upd('builder', bu.localId, { percent: { integerValue: '150' } }), ['createdAt']), 403, 'porcentaje imposible')
+ok(await serverTime(J, `${PR}/updates/v3`, upd('client', j.localId), ['createdAt']), 403, 'cliente publica avances')
+ok(await patch(BU, `${PR}/updates/v1`, { percent: { integerValue: '90' } }), 403, 'constructor cambia un avance publicado')
+
+// pagos: los anota uno y los confirma la otra parte
+const pay = (role, uid, extra = {}) => ({ amount: { integerValue: '3000' }, date: str('2026-10-20'), concept: str('Segundo pago'), recordedByUid: str(uid), recordedByRole: str(role), recordedByName: str('X'), status: str('pending'), ...extra })
+const answer = (role, uid, status) => ({ status: str(status), confirmedByUid: str(uid), confirmedByRole: str(role), confirmedByName: str('X') })
+const answerMask = ['status', 'confirmedByUid', 'confirmedByRole', 'confirmedByName']
+ok(await serverTime(J, `${PR}/payments/pj`, pay('client', j.localId), ['createdAt'], false), 200, 'cliente anota un pago')
+ok(await serverTime(J, `${PR}/payments/px`, pay('client', j.localId, { status: str('confirmed') }), ['createdAt'], false), 403, 'cliente anota un pago ya confirmado')
+ok(await serverTime(J, `${PR}/payments/py`, pay('client', j.localId, { amount: { integerValue: '-5' } }), ['createdAt'], false), 403, 'importe negativo')
+ok(await serverTime(J, `${PR}/payments/pj`, answer('client', j.localId, 'confirmed'), ['confirmedAt'], true, answerMask), 403, 'cliente confirma su propio pago')
+ok(await serverTime(BU, `${PR}/payments/pj`, answer('builder', bu.localId, 'confirmed'), ['confirmedAt'], true, answerMask), 200, 'constructor confirma el pago del cliente')
+ok(await serverTime(BU, `${PR}/payments/pj`, answer('builder', bu.localId, 'disputed'), ['confirmedAt'], true, answerMask), 403, 'un pago confirmado no se puede cambiar')
+ok(await patch(BU, `${PR}/payments/pj`, { amount: { integerValue: '1' } }), 403, 'constructor cambia el importe de un pago')
+ok(await serverTime(BU, `${PR}/payments/pb`, pay('builder', bu.localId), ['createdAt'], false), 200, 'constructor anota un pago recibido')
+ok(await serverTime(J, `${PR}/payments/pb`, answer('client', j.localId, 'disputed'), ['confirmedAt'], true, answerMask), 200, 'cliente discute un pago')
+ok(await serverTime(BU2, `${PR}/payments/pz`, pay('builder', b2.localId), ['createdAt'], false), 403, 'otro constructor anota pagos')
+ok(await req(BU, `${PR}/payments/pb`, 'DELETE'), 403, 'constructor borra un pago')
+
+// extras: solo el cliente aprueba o rechaza
+const extra = (role, uid) => ({ title: str('Enchufes'), description: str(''), amount: { integerValue: '200' }, proposedByUid: str(uid), proposedByRole: str(role), proposedByName: str('X'), status: str('pending') })
+const decide = (status) => ({ status: str(status), decidedByUid: str(j.localId), decidedByName: str('Familia Jansen'), decisionNote: str('') })
+const decideMask = ['status', 'decidedByUid', 'decidedByName', 'decisionNote']
+ok(await serverTime(J, `${PR}/extras/e0`, extra('client', j.localId), ['createdAt'], false), 403, 'cliente propone extras')
+ok(await serverTime(BU, `${PR}/extras/e1`, extra('builder', bu.localId), ['createdAt'], false), 200, 'constructor propone un extra')
+ok(await serverTime(BU, `${PR}/extras/e1`, { status: str('approved'), decidedByUid: str(bu.localId), decidedByName: str('X'), decisionNote: str('') }, ['decidedAt'], true, decideMask), 403, 'constructor se aprueba su extra')
+ok(await serverTime(AD, `${PR}/extras/e1`, { status: str('approved'), decidedByUid: str(a.localId), decidedByName: str('X'), decisionNote: str('') }, ['decidedAt'], true, decideMask), 403, 'CJ aprueba en nombre del cliente')
+ok(await serverTime(J, `${PR}/extras/e1`, decide('approved'), ['decidedAt'], true, decideMask), 200, 'cliente aprueba el extra')
+ok(await serverTime(J, `${PR}/extras/e1`, decide('rejected'), ['decidedAt'], true, decideMask), 403, 'una decisión no se puede cambiar')
+ok(await patch(BU, `${PR}/extras/e1`, { amount: { integerValue: '9999' } }), 403, 'constructor sube el precio de un extra aprobado')
+ok(await serverTime(BU, `${PR}/extras/e2`, extra('builder', bu.localId), ['createdAt'], false), 200, 'constructor propone otro extra')
+ok(await patch(BU, `${PR}/extras/e2`, { status: str('withdrawn') }), 200, 'constructor retira su extra pendiente')
+ok(await serverTime(J, `${PR}/extras/e2`, decide('approved'), ['decidedAt'], true, decideMask), 403, 'no se aprueba un extra retirado')
+ok(await req(AD, `${PR}/payments/pb`, 'DELETE'), 200, 'CJ puede borrar un pago')
 
 // mailLog: registro de correos del servidor
 ok(await runQuery(AD, { from: [{ collectionId: 'mailLog' }] }), 200, 'CJ lee el registro de correos')

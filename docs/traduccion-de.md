@@ -277,3 +277,68 @@ Bitte prüfen Sie, ob jeder Text natürlich und korrekt auf Deutsch ist. Korrekt
 | `weather.notice.ice` | Posible lluvia helada | Freezing rain possible | Gefrierender Regen möglich | |
 | `home.houses` | Sus casas | Your homes | Ihre Häuser | |
 | `home.house` | Casa | Home | Haus | |
+| `team.project` | Mi reforma | My renovation | Meine Renovierung | |
+| `team.projectText` | Avances, pagos y extras de su obra | Progress, payments and extras of your works | Fortschritt, Zahlungen und Zusatzarbeiten | |
+| `project.eyebrow` | Mi reforma | My renovation | Meine Renovierung | |
+| `project.list.title` | Sus obras | Your works | Ihre Bauprojekte | |
+| `project.list.subtitle` | Todo lo de la obra en un solo sitio, compartido con el constructor y con CJ. | Everything about the works in one place, shared with the builder and CJ. | Alles zum Bauprojekt an einem Ort, geteilt mit dem Bauunternehmen und CJ. | |
+| `project.list.empty` | No hay ninguna obra en esta casa. | There are no works for this home. | Für dieses Haus gibt es keine Bauprojekte. | |
+| `project.builder` | Constructor | Builder | Bauunternehmen | |
+| `project.status.planned` | Prevista | Planned | Geplant | |
+| `project.status.in_progress` | En obras | In progress | In Arbeit | |
+| `project.status.finished` | Terminada | Finished | Abgeschlossen | |
+| `project.tab.summary` | Resumen | Summary | Übersicht | |
+| `project.tab.chat` | Conversación | Conversation | Gespräch | |
+| `project.tab.updates` | Avances | Progress | Fortschritt | |
+| `project.tab.payments` | Pagos | Payments | Zahlungen | |
+| `project.tab.extras` | Extras | Extras | Zusatzarbeiten | |
+| `project.budget` | Presupuesto inicial | Initial budget | Ursprüngliches Budget | |
+| `project.extrasApproved` | Extras aprobados | Approved extras | Genehmigte Zusatzarbeiten | |
+| `project.total` | Total de la obra | Total for the works | Gesamtsumme | |
+| `project.paid` | Pagado (confirmado) | Paid (confirmed) | Bezahlt (bestätigt) | |
+| `project.outstanding` | Pendiente de pago | Outstanding | Offen | |
+| `project.pendingExtrasNote` | Extras esperando la aprobación del cliente: {amount} | Extras awaiting the client’s approval: {amount} | Zusatzarbeiten, die auf die Genehmigung des Kunden warten: {amount} | |
+| `project.unconfirmedNote` | Pagos sin confirmar: {amount} | Unconfirmed payments: {amount} | Unbestätigte Zahlungen: {amount} | |
+| `project.progress` | Avance de la obra | Progress of the works | Baufortschritt | |
+| `project.dates` | Fechas | Dates | Termine | |
+| `project.role.client` | Cliente | Client | Kunde | |
+| `project.role.builder` | Constructor | Builder | Bauunternehmen | |
+| `project.role.cj` | CJ | CJ | CJ | |
+| `project.save` | Guardar | Save | Speichern | |
+| `project.chat.empty` | Aún no hay mensajes. Lo que se escriba aquí lo ven el cliente, el constructor y CJ. | No messages yet. Everything written here is seen by the client, the builder and CJ. | Noch keine Nachrichten. Was hier steht, sehen Kunde, Bauunternehmen und CJ. | |
+| `project.updates.empty` | Aún no hay avances. | No progress updates yet. | Noch keine Fortschritte. | |
+| `project.updates.new` | Publicar avance | Post progress | Fortschritt veröffentlichen | |
+| `project.updates.titleField` | Qué se ha hecho | What has been done | Was wurde gemacht | |
+| `project.updates.textField` | Detalles (opcional) | Details (optional) | Details (optional) | |
+| `project.updates.percentField` | Porcentaje de obra hecho (opcional) | Percentage completed (optional) | Fertigstellung in Prozent (optional) | |
+| `project.payments.empty` | Aún no hay pagos anotados. | No payments recorded yet. | Noch keine Zahlungen erfasst. | |
+| `project.payments.new` | Anotar pago | Record payment | Zahlung erfassen | |
+| `project.payments.amount` | Importe (€) | Amount (€) | Betrag (€) | |
+| `project.payments.date` | Fecha del pago | Payment date | Zahlungsdatum | |
+| `project.payments.concept` | Concepto | Description | Verwendungszweck | |
+| `project.payments.recordedBy` | Anotado por {name} ({role}) | Recorded by {name} ({role}) | Erfasst von {name} ({role}) | |
+| `project.payments.status.pending` | Por confirmar | To be confirmed | Zu bestätigen | |
+| `project.payments.status.confirmed` | Confirmado | Confirmed | Bestätigt | |
+| `project.payments.status.disputed` | Discutido | Disputed | Beanstandet | |
+| `project.payments.confirm` | Confirmar | Confirm | Bestätigen | |
+| `project.payments.dispute` | No es correcto | Not correct | Nicht korrekt | |
+| `project.payments.waiting` | Esperando a que la otra parte lo confirme. | Waiting for the other party to confirm. | Wartet auf Bestätigung der anderen Seite. | |
+| `project.answeredBy` | {status} por {name} el {date} | {status} by {name} on {date} | {status} von {name} am {date} | |
+| `project.extras.empty` | No hay trabajos extra. | No extra work. | Keine Zusatzarbeiten. | |
+| `project.extras.new` | Proponer extra | Propose extra | Zusatzarbeit vorschlagen | |
+| `project.extras.titleField` | Trabajo | Work | Arbeit | |
+| `project.extras.descField` | Descripción (opcional) | Description (optional) | Beschreibung (optional) | |
+| `project.extras.amount` | Precio (€) | Price (€) | Preis (€) | |
+| `project.extras.status.pending` | Esperando al cliente | Awaiting client | Wartet auf Kunden | |
+| `project.extras.status.approved` | Aprobado | Approved | Genehmigt | |
+| `project.extras.status.rejected` | Rechazado | Rejected | Abgelehnt | |
+| `project.extras.status.withdrawn` | Retirado | Withdrawn | Zurückgezogen | |
+| `project.extras.approve` | Aprobar | Approve | Genehmigen | |
+| `project.extras.reject` | Rechazar | Reject | Ablehnen | |
+| `project.extras.withdraw` | Retirar | Withdraw | Zurückziehen | |
+| `project.extras.note` | Comentario (opcional) | Comment (optional) | Kommentar (optional) | |
+| `project.extras.proposedBy` | Propuesto por {name} el {date} | Proposed by {name} on {date} | Vorgeschlagen von {name} am {date} | |
+| `project.extras.decideHint` | Al aprobar, el importe se suma al total de la obra. Queda registrado quién y cuándo. | Approving adds the amount to the total. Who and when is recorded. | Mit der Genehmigung wird der Betrag zur Gesamtsumme addiert. Wer und wann wird festgehalten. | |
+| `project.waitingClient` | {n} extra esperando su respuesta | {n} extra awaiting your answer | {n} Zusatzarbeit wartet auf Ihre Antwort | |
+| `builder.panel` | Panel del constructor | Builder panel | Bereich für Bauunternehmen | |
+| `builder.empty` | CJ aún no le ha asignado ninguna obra. | CJ has not assigned you any works yet. | CJ hat Ihnen noch kein Bauprojekt zugewiesen. | |
