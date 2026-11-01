@@ -604,7 +604,8 @@ service cloud.firestore {
         && request.resource.data.builderUid is string
         && request.resource.data.status in ['planned', 'in_progress', 'finished']
         && (request.resource.data.budget is int || request.resource.data.budget is float)
-        && request.resource.data.budget >= 0;
+        && request.resource.data.budget >= 0
+        && request.resource.data.get('vatRate', 21) in [10, 21];
       allow delete: if isAdmin();
 
       match /messages/{id} {

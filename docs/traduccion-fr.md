@@ -298,9 +298,12 @@ Vérifiez que chaque texte est naturel et correct en français. Notez vos correc
 | `project.tab.updates` | Avances | Progress | Avancement | |
 | `project.tab.payments` | Pagos | Payments | Paiements | |
 | `project.tab.extras` | Extras | Extras | Suppléments | |
-| `project.budget` | Presupuesto inicial | Initial budget | Budget initial | |
-| `project.extrasApproved` | Extras aprobados | Approved extras | Suppléments approuvés | |
-| `project.total` | Total de la obra | Total for the works | Total du chantier | |
+| `project.budget` | Presupuesto inicial (sin IVA) | Initial budget (excl. VAT) | Budget initial (HT) | |
+| `project.extrasApproved` | Extras aprobados (sin IVA) | Approved extras (excl. VAT) | Suppléments approuvés (HT) | |
+| `project.total` | Total con IVA | Total incl. VAT | Total TTC | |
+| `project.base` | Base imponible | Subtotal excl. VAT | Total HT | |
+| `project.vat` | IVA ({rate} %) | VAT ({rate} %) | TVA ({rate} %) | |
+| `project.plusVat` | + IVA | + VAT | + TVA | |
 | `project.paid` | Pagado (confirmado) | Paid (confirmed) | Payé (confirmé) | |
 | `project.outstanding` | Pendiente de pago | Outstanding | Reste à payer | |
 | `project.pendingExtrasNote` | Extras esperando la aprobación del cliente: {amount} | Extras awaiting the client’s approval: {amount} | Suppléments en attente de l'approbation du client : {amount} | |
@@ -319,7 +322,7 @@ Vérifiez que chaque texte est naturel et correct en français. Notez vos correc
 | `project.updates.percentField` | Porcentaje de obra hecho (opcional) | Percentage completed (optional) | Pourcentage réalisé (facultatif) | |
 | `project.payments.empty` | Aún no hay pagos anotados. | No payments recorded yet. | Aucun paiement enregistré. | |
 | `project.payments.new` | Anotar pago | Record payment | Enregistrer un paiement | |
-| `project.payments.amount` | Importe (€) | Amount (€) | Montant (€) | |
+| `project.payments.amount` | Importe pagado, IVA incluido (€) | Amount paid, VAT included (€) | Montant payé, TTC (€) | |
 | `project.payments.date` | Fecha del pago | Payment date | Date du paiement | |
 | `project.payments.concept` | Concepto | Description | Objet | |
 | `project.payments.recordedBy` | Anotado por {name} ({role}) | Recorded by {name} ({role}) | Enregistré par {name} ({role}) | |
@@ -334,7 +337,7 @@ Vérifiez que chaque texte est naturel et correct en français. Notez vos correc
 | `project.extras.new` | Proponer extra | Propose extra | Proposer un supplément | |
 | `project.extras.titleField` | Trabajo | Work | Travail | |
 | `project.extras.descField` | Descripción (opcional) | Description (optional) | Description (facultatif) | |
-| `project.extras.amount` | Precio (€) | Price (€) | Prix (€) | |
+| `project.extras.amount` | Precio sin IVA (€) | Price excl. VAT (€) | Prix HT (€) | |
 | `project.extras.status.pending` | Esperando al cliente | Awaiting client | En attente du client | |
 | `project.extras.status.approved` | Aprobado | Approved | Approuvé | |
 | `project.extras.status.rejected` | Rechazado | Rejected | Refusé | |

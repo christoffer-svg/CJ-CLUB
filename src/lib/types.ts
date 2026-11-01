@@ -292,8 +292,10 @@ export type Project = {
   builderUid: string
   builderName: string
   status: 'planned' | 'in_progress' | 'finished'
-  /** presupuesto inicial acordado, en euros */
+  /** presupuesto inicial acordado, en euros, sin IVA */
   budget: number
+  /** tipo de IVA de la obra: 21 (general) o 10 (reformas de vivienda); las obras antiguas no lo tienen = 21 */
+  vatRate?: 10 | 21
   startDate?: string
   endDate?: string
   createdAt: Timestamp | null

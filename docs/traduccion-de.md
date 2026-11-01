@@ -298,9 +298,12 @@ Bitte prüfen Sie, ob jeder Text natürlich und korrekt auf Deutsch ist. Korrekt
 | `project.tab.updates` | Avances | Progress | Fortschritt | |
 | `project.tab.payments` | Pagos | Payments | Zahlungen | |
 | `project.tab.extras` | Extras | Extras | Zusatzarbeiten | |
-| `project.budget` | Presupuesto inicial | Initial budget | Ursprüngliches Budget | |
-| `project.extrasApproved` | Extras aprobados | Approved extras | Genehmigte Zusatzarbeiten | |
-| `project.total` | Total de la obra | Total for the works | Gesamtsumme | |
+| `project.budget` | Presupuesto inicial (sin IVA) | Initial budget (excl. VAT) | Ursprüngliches Budget (netto) | |
+| `project.extrasApproved` | Extras aprobados (sin IVA) | Approved extras (excl. VAT) | Genehmigte Zusatzarbeiten (netto) | |
+| `project.total` | Total con IVA | Total incl. VAT | Gesamtsumme inkl. MwSt. | |
+| `project.base` | Base imponible | Subtotal excl. VAT | Nettosumme | |
+| `project.vat` | IVA ({rate} %) | VAT ({rate} %) | MwSt. ({rate} %) | |
+| `project.plusVat` | + IVA | + VAT | + MwSt. | |
 | `project.paid` | Pagado (confirmado) | Paid (confirmed) | Bezahlt (bestätigt) | |
 | `project.outstanding` | Pendiente de pago | Outstanding | Offen | |
 | `project.pendingExtrasNote` | Extras esperando la aprobación del cliente: {amount} | Extras awaiting the client’s approval: {amount} | Zusatzarbeiten, die auf die Genehmigung des Kunden warten: {amount} | |
@@ -319,7 +322,7 @@ Bitte prüfen Sie, ob jeder Text natürlich und korrekt auf Deutsch ist. Korrekt
 | `project.updates.percentField` | Porcentaje de obra hecho (opcional) | Percentage completed (optional) | Fertigstellung in Prozent (optional) | |
 | `project.payments.empty` | Aún no hay pagos anotados. | No payments recorded yet. | Noch keine Zahlungen erfasst. | |
 | `project.payments.new` | Anotar pago | Record payment | Zahlung erfassen | |
-| `project.payments.amount` | Importe (€) | Amount (€) | Betrag (€) | |
+| `project.payments.amount` | Importe pagado, IVA incluido (€) | Amount paid, VAT included (€) | Gezahlter Betrag, inkl. MwSt. (€) | |
 | `project.payments.date` | Fecha del pago | Payment date | Zahlungsdatum | |
 | `project.payments.concept` | Concepto | Description | Verwendungszweck | |
 | `project.payments.recordedBy` | Anotado por {name} ({role}) | Recorded by {name} ({role}) | Erfasst von {name} ({role}) | |
@@ -334,7 +337,7 @@ Bitte prüfen Sie, ob jeder Text natürlich und korrekt auf Deutsch ist. Korrekt
 | `project.extras.new` | Proponer extra | Propose extra | Zusatzarbeit vorschlagen | |
 | `project.extras.titleField` | Trabajo | Work | Arbeit | |
 | `project.extras.descField` | Descripción (opcional) | Description (optional) | Beschreibung (optional) | |
-| `project.extras.amount` | Precio (€) | Price (€) | Preis (€) | |
+| `project.extras.amount` | Precio sin IVA (€) | Price excl. VAT (€) | Preis netto (€) | |
 | `project.extras.status.pending` | Esperando al cliente | Awaiting client | Wartet auf Kunden | |
 | `project.extras.status.approved` | Aprobado | Approved | Genehmigt | |
 | `project.extras.status.rejected` | Rechazado | Rejected | Abgelehnt | |

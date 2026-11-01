@@ -298,9 +298,12 @@ Controleer of elke tekst natuurlijk en correct Nederlands is. Noteer correcties 
 | `project.tab.updates` | Avances | Progress | Voortgang | |
 | `project.tab.payments` | Pagos | Payments | Betalingen | |
 | `project.tab.extras` | Extras | Extras | Meerwerk | |
-| `project.budget` | Presupuesto inicial | Initial budget | Oorspronkelijke begroting | |
-| `project.extrasApproved` | Extras aprobados | Approved extras | Goedgekeurd meerwerk | |
-| `project.total` | Total de la obra | Total for the works | Totaal | |
+| `project.budget` | Presupuesto inicial (sin IVA) | Initial budget (excl. VAT) | Oorspronkelijke begroting (excl. btw) | |
+| `project.extrasApproved` | Extras aprobados (sin IVA) | Approved extras (excl. VAT) | Goedgekeurd meerwerk (excl. btw) | |
+| `project.total` | Total con IVA | Total incl. VAT | Totaal incl. btw | |
+| `project.base` | Base imponible | Subtotal excl. VAT | Subtotaal excl. btw | |
+| `project.vat` | IVA ({rate} %) | VAT ({rate} %) | Btw ({rate} %) | |
+| `project.plusVat` | + IVA | + VAT | + btw | |
 | `project.paid` | Pagado (confirmado) | Paid (confirmed) | Betaald (bevestigd) | |
 | `project.outstanding` | Pendiente de pago | Outstanding | Nog te betalen | |
 | `project.pendingExtrasNote` | Extras esperando la aprobación del cliente: {amount} | Extras awaiting the client’s approval: {amount} | Meerwerk dat wacht op goedkeuring van de klant: {amount} | |
@@ -319,7 +322,7 @@ Controleer of elke tekst natuurlijk en correct Nederlands is. Noteer correcties 
 | `project.updates.percentField` | Porcentaje de obra hecho (opcional) | Percentage completed (optional) | Percentage klaar (optioneel) | |
 | `project.payments.empty` | Aún no hay pagos anotados. | No payments recorded yet. | Nog geen betalingen geregistreerd. | |
 | `project.payments.new` | Anotar pago | Record payment | Betaling registreren | |
-| `project.payments.amount` | Importe (€) | Amount (€) | Bedrag (€) | |
+| `project.payments.amount` | Importe pagado, IVA incluido (€) | Amount paid, VAT included (€) | Betaald bedrag, incl. btw (€) | |
 | `project.payments.date` | Fecha del pago | Payment date | Datum van betaling | |
 | `project.payments.concept` | Concepto | Description | Omschrijving | |
 | `project.payments.recordedBy` | Anotado por {name} ({role}) | Recorded by {name} ({role}) | Geregistreerd door {name} ({role}) | |
@@ -334,7 +337,7 @@ Controleer of elke tekst natuurlijk en correct Nederlands is. Noteer correcties 
 | `project.extras.new` | Proponer extra | Propose extra | Meerwerk voorstellen | |
 | `project.extras.titleField` | Trabajo | Work | Werk | |
 | `project.extras.descField` | Descripción (opcional) | Description (optional) | Omschrijving (optioneel) | |
-| `project.extras.amount` | Precio (€) | Price (€) | Prijs (€) | |
+| `project.extras.amount` | Precio sin IVA (€) | Price excl. VAT (€) | Prijs excl. btw (€) | |
 | `project.extras.status.pending` | Esperando al cliente | Awaiting client | Wacht op klant | |
 | `project.extras.status.approved` | Aprobado | Approved | Goedgekeurd | |
 | `project.extras.status.rejected` | Rechazado | Rejected | Afgewezen | |

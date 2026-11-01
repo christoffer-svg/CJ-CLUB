@@ -126,6 +126,10 @@ export default function ProjectView({ projectId, author, readOnly }: { projectId
               <dd>{money(totals.budget)}</dd>
               <dt>{t('project.extrasApproved')}</dt>
               <dd>+ {money(totals.approvedExtras)}</dd>
+              <dt>{t('project.base')}</dt>
+              <dd>{money(totals.base)}</dd>
+              <dt>{t('project.vat', { rate: totals.vatRate })}</dt>
+              <dd>+ {money(totals.vat)}</dd>
               <dt className="pv-money__strong">{t('project.total')}</dt>
               <dd className="pv-money__strong">{money(totals.total)}</dd>
               <dt>{t('project.paid')}</dt>
@@ -133,7 +137,7 @@ export default function ProjectView({ projectId, author, readOnly }: { projectId
               <dt className="pv-money__strong">{t('project.outstanding')}</dt>
               <dd className="pv-money__strong">{money(totals.outstanding)}</dd>
             </dl>
-            {totals.pendingExtras > 0 && <p className="card__text">{t('project.pendingExtrasNote', { amount: money(totals.pendingExtras) })}</p>}
+            {totals.pendingExtras > 0 && <p className="card__text">{t('project.pendingExtrasNote', { amount: `${money(totals.pendingExtras)} ${t('project.plusVat')}` })}</p>}
             {totals.unconfirmed > 0 && <p className="card__text">{t('project.unconfirmedNote', { amount: money(totals.unconfirmed) })}</p>}
             {role === 'client' && pendingForClient > 0 && (
               <button className="btn" onClick={() => setTab('extras')}>
@@ -399,7 +403,9 @@ export default function ProjectView({ projectId, author, readOnly }: { projectId
                   <span className="card__title">{x.title}</span>
                   {status(`project.extras.status.${x.status}`, statusCls)}
                 </div>
-                <span className="pv-amount">{money(x.amount)}</span>
+                <span className="pv-amount">
+                  {money(x.amount)} <span className="pv-vat">{t('project.plusVat')}</span>
+                </span>
                 {x.description && <p className="request__text">{x.description}</p>}
                 <span className="card__text">
                   {t('project.extras.proposedBy', { name: `${x.proposedByName} (${roleName(x.proposedByRole)})`, date: shortDate(x.createdAt, locale) })}

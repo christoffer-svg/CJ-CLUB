@@ -298,9 +298,12 @@ Kontrollera att varje text är naturlig och korrekt på svenska. Skriv dina rät
 | `project.tab.updates` | Avances | Progress | Framsteg | |
 | `project.tab.payments` | Pagos | Payments | Betalningar | |
 | `project.tab.extras` | Extras | Extras | Extraarbeten | |
-| `project.budget` | Presupuesto inicial | Initial budget | Ursprunglig budget | |
-| `project.extrasApproved` | Extras aprobados | Approved extras | Godkända extraarbeten | |
-| `project.total` | Total de la obra | Total for the works | Totalt | |
+| `project.budget` | Presupuesto inicial (sin IVA) | Initial budget (excl. VAT) | Ursprunglig budget (exkl. moms) | |
+| `project.extrasApproved` | Extras aprobados (sin IVA) | Approved extras (excl. VAT) | Godkända extraarbeten (exkl. moms) | |
+| `project.total` | Total con IVA | Total incl. VAT | Totalt inkl. moms | |
+| `project.base` | Base imponible | Subtotal excl. VAT | Summa exkl. moms | |
+| `project.vat` | IVA ({rate} %) | VAT ({rate} %) | Moms ({rate} %) | |
+| `project.plusVat` | + IVA | + VAT | + moms | |
 | `project.paid` | Pagado (confirmado) | Paid (confirmed) | Betalt (bekräftat) | |
 | `project.outstanding` | Pendiente de pago | Outstanding | Kvar att betala | |
 | `project.pendingExtrasNote` | Extras esperando la aprobación del cliente: {amount} | Extras awaiting the client’s approval: {amount} | Extraarbeten som väntar på kundens godkännande: {amount} | |
@@ -319,7 +322,7 @@ Kontrollera att varje text är naturlig och korrekt på svenska. Skriv dina rät
 | `project.updates.percentField` | Porcentaje de obra hecho (opcional) | Percentage completed (optional) | Andel klart i procent (valfritt) | |
 | `project.payments.empty` | Aún no hay pagos anotados. | No payments recorded yet. | Inga betalningar registrerade än. | |
 | `project.payments.new` | Anotar pago | Record payment | Registrera betalning | |
-| `project.payments.amount` | Importe (€) | Amount (€) | Belopp (€) | |
+| `project.payments.amount` | Importe pagado, IVA incluido (€) | Amount paid, VAT included (€) | Betalt belopp, inkl. moms (€) | |
 | `project.payments.date` | Fecha del pago | Payment date | Betalningsdatum | |
 | `project.payments.concept` | Concepto | Description | Avser | |
 | `project.payments.recordedBy` | Anotado por {name} ({role}) | Recorded by {name} ({role}) | Registrerad av {name} ({role}) | |
@@ -334,7 +337,7 @@ Kontrollera att varje text är naturlig och korrekt på svenska. Skriv dina rät
 | `project.extras.new` | Proponer extra | Propose extra | Föreslå extraarbete | |
 | `project.extras.titleField` | Trabajo | Work | Arbete | |
 | `project.extras.descField` | Descripción (opcional) | Description (optional) | Beskrivning (valfritt) | |
-| `project.extras.amount` | Precio (€) | Price (€) | Pris (€) | |
+| `project.extras.amount` | Precio sin IVA (€) | Price excl. VAT (€) | Pris exkl. moms (€) | |
 | `project.extras.status.pending` | Esperando al cliente | Awaiting client | Väntar på kunden | |
 | `project.extras.status.approved` | Aprobado | Approved | Godkänt | |
 | `project.extras.status.rejected` | Rechazado | Rejected | Avslaget | |

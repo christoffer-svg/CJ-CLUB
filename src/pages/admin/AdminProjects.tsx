@@ -12,10 +12,11 @@ import { db } from '../../lib/firebase'
 import { formatMoney, useProject } from '../../lib/projects'
 import type { Client, Project, UserProfile } from '../../lib/types'
 import { hasRole } from '../../lib/roles'
+import { parseAmount } from '../../lib/amount'
 
 const statusLabel: Record<Project['status'], string> = { planned: 'Prevista', in_progress: 'En obras', finished: 'Terminada' }
 
-type Draft = { clientId: string; builderUid: string; title: string; budget: string; status: Project['status']; startDate: string; endDate: string }
+type Draft = { clientId: string; builderUid: string; title: string; budget: string; vatRate: 10 | 21; status: Project['status']; startDate: string; endDate: string }
 
 /** Formulario de obra (nueva o editar) */
 function ProjectForm({ initial, onClose, onSaved }: { initial: Draft; onClose: () => void; onSaved: (id: string) => void }) {
@@ -26,7 +27,7 @@ function ProjectForm({ initial, onClose, onSaved }: { initial: Draft; onClose: (
   const [d, setD] = useState(initial)
   const [busy, setBusy] = useState(false)
   const builders = users.data.filter((u) => hasRole(u, 'builder'))
-  const budget = Number(d.budget.replace(/\./g, '').replace(',', '.'))
+  const budget = parseAmount(d.budget)
   const valid = d.clientId && d.builderUid && d.title.trim() && Number.isFinite(budget) && budget >= 0
 
   async function save() {
@@ -44,6 +45,7 @@ function ProjectForm({ initial, onClose, onSaved }: { initial: Draft; onClose: (
       builderName: builder.companyName || builder.name,
       status: d.status,
       budget: Math.round(budget * 100) / 100,
+      vatRate: d.vatRate,
       ...(d.startDate ? { startDate: d.startDate } : {}),
       ...(d.endDate ? { endDate: d.endDate } : {}),
     }
@@ -91,8 +93,14 @@ function ProjectForm({ initial, onClose, onSaved }: { initial: Draft; onClose: (
         <Input required placeholder="Reforma de la cocina" value={d.title} onChange={(e) => setD({ ...d, title: e.target.value })} />
       </Field>
       <div className="a-grid-2">
-        <Field label="Presupuesto inicial (€)">
+        <Field label="Presupuesto inicial sin IVA (€)" hint={d.budget.trim() && Number.isFinite(budget) ? `= ${formatMoney(budget, 'es-ES')} + IVA` : undefined}>
           <Input required inputMode="decimal" value={d.budget} onChange={(e) => setD({ ...d, budget: e.target.value })} />
+        </Field>
+        <Field label="IVA" hint="10 %: reformas de vivienda que cumplen los requisitos. Si no, 21 %.">
+          <Select value={String(d.vatRate)} onChange={(e) => setD({ ...d, vatRate: e.target.value === '10' ? 10 : 21 })}>
+            <option value="21">21 % (general)</option>
+            <option value="10">10 % (reforma de vivienda)</option>
+          </Select>
         </Field>
         <Field label="Estado">
           <Select value={d.status} onChange={(e) => setD({ ...d, status: e.target.value as Project['status'] })}>
@@ -114,7 +122,7 @@ function ProjectForm({ initial, onClose, onSaved }: { initial: Draft; onClose: (
   )
 }
 
-const emptyDraft: Draft = { clientId: '', builderUid: '', title: '', budget: '', status: 'planned', startDate: '', endDate: '' }
+const emptyDraft: Draft = { clientId: '', builderUid: '', title: '', budget: '', vatRate: 21, status: 'planned', startDate: '', endDate: '' }
 
 /** Panel: lista de obras */
 export function AdminProjects() {
@@ -145,7 +153,7 @@ export function AdminProjects() {
               </span>
             </div>
             <span className="a-row__meta">
-              {statusLabel[p.status]} · {formatMoney(p.budget, 'es-ES')}
+              {statusLabel[p.status]} · {formatMoney(p.budget, 'es-ES')} + IVA
             </span>
           </Link>
         ))}
@@ -184,7 +192,8 @@ export function AdminProject() {
             clientId: p.clientId,
             builderUid: p.builderUid,
             title: p.title,
-            budget: String(p.budget),
+            budget: String(p.budget).replace('.', ','),
+            vatRate: p.vatRate ?? 21,
             status: p.status,
             startDate: p.startDate ?? '',
             endDate: p.endDate ?? '',

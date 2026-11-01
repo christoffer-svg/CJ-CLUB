@@ -157,16 +157,8 @@ export function withdrawProjectExtra(projectId: string, extraId: string) {
   return updateDoc(doc(db, 'projects', projectId, 'extras', extraId), { status: 'withdrawn' })
 }
 
-/** Cuentas de la obra: presupuesto + extras aprobados, pagado (confirmado) y pendiente */
-export function projectTotals(project: Project | null, extras: ProjectExtra[], payments: ProjectPayment[]) {
-  const budget = project?.budget ?? 0
-  const approvedExtras = extras.filter((e) => e.status === 'approved').reduce((s, e) => s + e.amount, 0)
-  const pendingExtras = extras.filter((e) => e.status === 'pending').reduce((s, e) => s + e.amount, 0)
-  const total = budget + approvedExtras
-  const paid = payments.filter((p) => p.status === 'confirmed').reduce((s, p) => s + p.amount, 0)
-  const unconfirmed = payments.filter((p) => p.status === 'pending').reduce((s, p) => s + p.amount, 0)
-  return { budget, approvedExtras, pendingExtras, total, paid, unconfirmed, outstanding: Math.max(0, total - paid) }
-}
+/** Cuentas de la obra: presupuesto y extras sin IVA, IVA, total con IVA, pagado y pendiente */
+export { projectTotals } from './projectTotals'
 
 export const formatMoney = (n: number, locale: string) =>
   new Intl.NumberFormat(locale, { style: 'currency', currency: 'EUR', maximumFractionDigits: n % 1 ? 2 : 0 }).format(n)

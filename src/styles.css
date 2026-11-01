@@ -2923,6 +2923,13 @@ button {
   margin-right: 4px;
 }
 
+.pv-vat {
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: var(--text-2);
+  letter-spacing: 0.04em;
+}
+
 .a-header__tools {
   display: flex;
   align-items: center;
