@@ -298,6 +298,44 @@ Kontrollera att varje text är naturlig och korrekt på svenska. Skriv dina rät
 | `project.tab.updates` | Avances | Progress | Framsteg | |
 | `project.tab.payments` | Pagos | Payments | Betalningar | |
 | `project.tab.extras` | Extras | Extras | Extraarbeten | |
+| `project.tab.budget` | Presupuesto | Budget | Offert | |
+| `budget.eyebrow` | Presupuesto detallado | Detailed budget | Detaljerad offert | |
+| `budget.status.draft` | Borrador · sin firmar | Draft · not signed | Utkast · inte signerad | |
+| `budget.status.partial` | Falta una firma | One signature missing | En signatur saknas | |
+| `budget.status.signed` | Firmado por los dos | Signed by both | Signerad av båda | |
+| `budget.intro` | Añada cada partida con su cantidad y su precio sin IVA; puede adjuntar fotos. Cuando esté listo, el cliente y el constructor lo firman en la app. | Add each item with its quantity and price excluding VAT; you can attach photos. When it is ready, the client and the builder sign it in the app. | Lägg till varje post med antal och pris exkl. moms; du kan bifoga foton. När den är klar signerar kunden och byggaren i appen. | |
+| `budget.introRead` | Revise cada línea. Si tiene dudas, pregunte en la conversación antes de firmar. | Please review each line. If you have any questions, ask in the conversation before signing. | Gå igenom varje rad. Har du frågor, ställ dem i konversationen innan du signerar. | |
+| `budget.notYet` | El constructor aún no ha preparado el presupuesto detallado. | The builder has not prepared the detailed budget yet. | Byggaren har inte tagit fram den detaljerade offerten ännu. | |
+| `budget.frozen` | Ya hay una firma: las líneas no se pueden cambiar. Para cambiarlas, hay que retirar esa firma. | There is already a signature: the lines can no longer be changed. To change them, that signature must be withdrawn. | Det finns redan en signatur: raderna kan inte ändras. För att ändra dem måste den signaturen dras tillbaka. | |
+| `budget.locked` | Presupuesto firmado por el cliente y el constructor. Está cerrado: cualquier cambio se hace como extra. | Budget signed by the client and the builder. It is now closed: any change is made as an extra. | Offerten är signerad av kunden och byggaren. Den är nu stängd: alla ändringar görs som extraarbeten. | |
+| `budget.add` | Añadir línea | Add line | Lägg till rad | |
+| `budget.concept` | Concepto | Item | Post | |
+| `budget.conceptExample` | Por ejemplo: grifo termostático de ducha | For example: thermostatic shower mixer | Till exempel: termostatblandare för dusch | |
+| `budget.description` | Detalles (opcional) | Details (optional) | Detaljer (valfritt) | |
+| `budget.quantity` | Cantidad | Quantity | Antal | |
+| `budget.unit` | Unidad | Unit | Enhet | |
+| `budget.unitPrice` | Precio por unidad sin IVA (€) | Unit price excl. VAT (€) | Pris per enhet exkl. moms (€) | |
+| `budget.saveLine` | Guardar línea | Save line | Spara rad | |
+| `budget.edit` | Editar | Edit | Ändra | |
+| `budget.delete` | Quitar | Remove | Ta bort | |
+| `budget.deleteConfirm` | ¿Quitar esta línea del presupuesto? | Remove this line from the budget? | Ta bort den här raden från offerten? | |
+| `budget.removePhoto` | Quitar foto | Remove photo | Ta bort foto | |
+| `budget.saveError` | No se pudo guardar. Inténtelo de nuevo. | Could not save. Please try again. | Det gick inte att spara. Försök igen. | |
+| `budget.signatures` | Firmas | Signatures | Signaturer | |
+| `budget.pending` | Pendiente de firma | Awaiting signature | Väntar på signatur | |
+| `budget.sign` | Firmar el presupuesto | Sign the budget | Signera offerten | |
+| `budget.accept` | He leído el presupuesto completo ({n} líneas, {total} con IVA) y lo acepto. | I have read the full budget ({n} lines, {total} incl. VAT) and I accept it. | Jag har läst hela offerten ({n} rader, {total} inkl. moms) och godkänner den. | |
+| `budget.signName` | Nombre de quien firma | Name of the signatory | Namn på den som signerar | |
+| `budget.signHere` | Firme aquí con el dedo o el ratón | Sign here with your finger or mouse | Signera här med fingret eller musen | |
+| `budget.clear` | Borrar | Clear | Rensa | |
+| `budget.confirmSign` | Firmar | Sign | Signera | |
+| `budget.signError` | No se pudo guardar la firma. Inténtelo de nuevo. | Could not save the signature. Please try again. | Det gick inte att spara signaturen. Försök igen. | |
+| `budget.signedOn` | Firmado el {date} | Signed on {date} | Signerad {date} | |
+| `budget.signatureOf` | Firma de {name} | Signature of {name} | Signatur av {name} | |
+| `budget.mismatch` | Esta firma no corresponde a las líneas actuales del presupuesto. | This signature does not match the current lines of the budget. | Den här signaturen stämmer inte med offertens nuvarande rader. | |
+| `budget.withdraw` | Retirar mi firma | Withdraw my signature | Dra tillbaka min signatur | |
+| `budget.signedNote` | Presupuesto firmado por los dos el {date}. | Budget signed by both on {date}. | Offerten signerades av båda den {date}. | |
+| `budget.pleaseSign` | Falta su firma en el presupuesto | Your signature is missing on the budget | Din signatur saknas på offerten | |
 | `project.budget` | Presupuesto inicial (sin IVA) | Initial budget (excl. VAT) | Ursprunglig budget (exkl. moms) | |
 | `project.extrasApproved` | Extras aprobados (sin IVA) | Approved extras (excl. VAT) | Godkända extraarbeten (exkl. moms) | |
 | `project.total` | Total con IVA | Total incl. VAT | Totalt inkl. moms | |

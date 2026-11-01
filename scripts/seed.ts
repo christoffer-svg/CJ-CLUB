@@ -450,6 +450,28 @@ async function main() {
       endDate: '2026-12-15',
       createdAt: day('2026-10-01T10:00:00'),
     })
+    // Presupuesto por líneas (sin IVA), aún sin firmar: suma los mismos 18.500 €
+    const lines: [string, string, string, number, string, number][] = [
+      ['l1', 'Muebles de cocina', 'Lacado blanco mate, con cajones de cierre suave', 1, 'ud', 9800],
+      ['l2', 'Encimera de cuarzo', 'Color arena, 2 cm, con frente de la zona de cocción', 6.2, 'm²', 450],
+      ['l3', 'Electrodomésticos', 'Placa de inducción, horno, campana, lavavajillas y frigorífico integrados', 1, 'ud', 3400],
+      ['l4', 'Fontanería y electricidad', 'Nuevas tomas de agua, desagües y circuito de cocina', 1, 'ud', 2510],
+    ]
+    lines.forEach(([id, title, description, quantity, unit, unitPrice], i) =>
+      batch.set(pr.collection('budgetLines').doc(id), {
+        title,
+        description,
+        quantity,
+        unit,
+        unitPrice,
+        order: i + 1,
+        authorUid: builder.uid,
+        authorRole: 'builder',
+        authorName: 'Marta Ruiz',
+        createdAt: day('2026-10-02T10:00:00'),
+        updatedAt: day('2026-10-02T10:00:00'),
+      }),
+    )
     batch.set(pr.collection('updates').doc('u1'), {
       title: 'Demolición terminada',
       text: 'Retirados los muebles antiguos y el alicatado. Mañana empieza la fontanería.',

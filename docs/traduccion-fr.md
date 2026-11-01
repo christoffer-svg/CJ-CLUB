@@ -298,6 +298,44 @@ Vérifiez que chaque texte est naturel et correct en français. Notez vos correc
 | `project.tab.updates` | Avances | Progress | Avancement | |
 | `project.tab.payments` | Pagos | Payments | Paiements | |
 | `project.tab.extras` | Extras | Extras | Suppléments | |
+| `project.tab.budget` | Presupuesto | Budget | Devis | |
+| `budget.eyebrow` | Presupuesto detallado | Detailed budget | Devis détaillé | |
+| `budget.status.draft` | Borrador · sin firmar | Draft · not signed | Brouillon · non signé | |
+| `budget.status.partial` | Falta una firma | One signature missing | Il manque une signature | |
+| `budget.status.signed` | Firmado por los dos | Signed by both | Signé par les deux parties | |
+| `budget.intro` | Añada cada partida con su cantidad y su precio sin IVA; puede adjuntar fotos. Cuando esté listo, el cliente y el constructor lo firman en la app. | Add each item with its quantity and price excluding VAT; you can attach photos. When it is ready, the client and the builder sign it in the app. | Ajoutez chaque poste avec sa quantité et son prix HT ; vous pouvez joindre des photos. Une fois prêt, le client et l'entrepreneur le signent dans l'application. | |
+| `budget.introRead` | Revise cada línea. Si tiene dudas, pregunte en la conversación antes de firmar. | Please review each line. If you have any questions, ask in the conversation before signing. | Vérifiez chaque ligne. Si vous avez des questions, posez-les dans la conversation avant de signer. | |
+| `budget.notYet` | El constructor aún no ha preparado el presupuesto detallado. | The builder has not prepared the detailed budget yet. | L'entrepreneur n'a pas encore préparé le devis détaillé. | |
+| `budget.frozen` | Ya hay una firma: las líneas no se pueden cambiar. Para cambiarlas, hay que retirar esa firma. | There is already a signature: the lines can no longer be changed. To change them, that signature must be withdrawn. | Il y a déjà une signature : les lignes ne peuvent plus être modifiées. Pour les modifier, il faut retirer cette signature. | |
+| `budget.locked` | Presupuesto firmado por el cliente y el constructor. Está cerrado: cualquier cambio se hace como extra. | Budget signed by the client and the builder. It is now closed: any change is made as an extra. | Devis signé par le client et l'entrepreneur. Il est désormais clos : toute modification se fait en supplément. | |
+| `budget.add` | Añadir línea | Add line | Ajouter une ligne | |
+| `budget.concept` | Concepto | Item | Désignation | |
+| `budget.conceptExample` | Por ejemplo: grifo termostático de ducha | For example: thermostatic shower mixer | Par exemple : mitigeur thermostatique de douche | |
+| `budget.description` | Detalles (opcional) | Details (optional) | Détails (facultatif) | |
+| `budget.quantity` | Cantidad | Quantity | Quantité | |
+| `budget.unit` | Unidad | Unit | Unité | |
+| `budget.unitPrice` | Precio por unidad sin IVA (€) | Unit price excl. VAT (€) | Prix unitaire HT (€) | |
+| `budget.saveLine` | Guardar línea | Save line | Enregistrer la ligne | |
+| `budget.edit` | Editar | Edit | Modifier | |
+| `budget.delete` | Quitar | Remove | Retirer | |
+| `budget.deleteConfirm` | ¿Quitar esta línea del presupuesto? | Remove this line from the budget? | Retirer cette ligne du devis ? | |
+| `budget.removePhoto` | Quitar foto | Remove photo | Retirer la photo | |
+| `budget.saveError` | No se pudo guardar. Inténtelo de nuevo. | Could not save. Please try again. | Impossible d'enregistrer. Veuillez réessayer. | |
+| `budget.signatures` | Firmas | Signatures | Signatures | |
+| `budget.pending` | Pendiente de firma | Awaiting signature | En attente de signature | |
+| `budget.sign` | Firmar el presupuesto | Sign the budget | Signer le devis | |
+| `budget.accept` | He leído el presupuesto completo ({n} líneas, {total} con IVA) y lo acepto. | I have read the full budget ({n} lines, {total} incl. VAT) and I accept it. | J'ai lu le devis complet ({n} lignes, {total} TTC) et je l'accepte. | |
+| `budget.signName` | Nombre de quien firma | Name of the signatory | Nom du signataire | |
+| `budget.signHere` | Firme aquí con el dedo o el ratón | Sign here with your finger or mouse | Signez ici avec le doigt ou la souris | |
+| `budget.clear` | Borrar | Clear | Effacer | |
+| `budget.confirmSign` | Firmar | Sign | Signer | |
+| `budget.signError` | No se pudo guardar la firma. Inténtelo de nuevo. | Could not save the signature. Please try again. | Impossible d'enregistrer la signature. Veuillez réessayer. | |
+| `budget.signedOn` | Firmado el {date} | Signed on {date} | Signé le {date} | |
+| `budget.signatureOf` | Firma de {name} | Signature of {name} | Signature de {name} | |
+| `budget.mismatch` | Esta firma no corresponde a las líneas actuales del presupuesto. | This signature does not match the current lines of the budget. | Cette signature ne correspond pas aux lignes actuelles du devis. | |
+| `budget.withdraw` | Retirar mi firma | Withdraw my signature | Retirer ma signature | |
+| `budget.signedNote` | Presupuesto firmado por los dos el {date}. | Budget signed by both on {date}. | Devis signé par les deux parties le {date}. | |
+| `budget.pleaseSign` | Falta su firma en el presupuesto | Your signature is missing on the budget | Votre signature manque sur le devis | |
 | `project.budget` | Presupuesto inicial (sin IVA) | Initial budget (excl. VAT) | Budget initial (HT) | |
 | `project.extrasApproved` | Extras aprobados (sin IVA) | Approved extras (excl. VAT) | Suppléments approuvés (HT) | |
 | `project.total` | Total con IVA | Total incl. VAT | Total TTC | |

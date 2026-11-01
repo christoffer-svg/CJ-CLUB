@@ -46,7 +46,7 @@ export function AttachmentList({ items }: { items?: Attachment[] }) {
 }
 
 /** Elegir fotos (también con la cámara del móvil) o PDF para adjuntar */
-export function FilePicker({ files, onChange, label }: { files: File[]; onChange: (f: File[]) => void; label: string }) {
+export function FilePicker({ files, onChange, label, max = MAX_FILES }: { files: File[]; onChange: (f: File[]) => void; label: string; max?: number }) {
   const { t } = useI18n()
   const [problem, setProblem] = useState<FileProblem | null>(null)
   return (
@@ -62,20 +62,20 @@ export function FilePicker({ files, onChange, label }: { files: File[]; onChange
           onChange={(e) => {
             const next = [...files, ...Array.from(e.target.files ?? [])]
             e.target.value = ''
-            const p = checkFiles(next)
+            const p = checkFiles(next, max)
             setProblem(p)
             if (!p) onChange(next)
           }}
         />
       </label>
-      <span className="card__text">{t('project.files.hint', { n: MAX_FILES })}</span>
+      <span className="card__text">{t('project.files.hint', { n: max })}</span>
       {problem && (
         <span className="composer__error">
           {problem.kind === 'type'
             ? t('project.files.type', { name: problem.name })
             : problem.kind === 'size'
               ? t('project.files.size', { name: problem.name })
-              : t('project.files.count', { n: MAX_FILES })}
+              : t('project.files.count', { n: max })}
         </span>
       )}
       {files.length > 0 && (

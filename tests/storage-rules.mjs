@@ -47,6 +47,10 @@ ok(code(await up(B, { projectId: 'otra-obra', kind: 'updates', entryId: e + 'u6'
 ok(code(await up(B, { kind: 'otra-carpeta', entryId: e + 'u7' })), 'INVALID_ARGUMENT', 'nadie sube fuera de las carpetas previstas')
 ok(code(await up(B, { kind: 'updates', entryId: '../../x' })), 'INVALID_ARGUMENT', 'nombre de entrada no válido')
 
+ok(code(await up(B, { kind: 'budget', entryId: e + 'b1' })), 'ok', 'constructor sube la foto de una línea del presupuesto')
+ok(code(await up(AD, { kind: 'budget', entryId: e + 'b2', index: 7 })), 'ok', 'CJ añade una foto más a una línea')
+ok(code(await up(J, { kind: 'budget', entryId: e + 'b3' })), 'PERMISSION_DENIED', 'cliente sube fotos al presupuesto')
+ok(code(await up(B, { projectId: 'p-firmas', kind: 'budget', entryId: e + 'b4' })), 'FAILED_PRECONDITION', 'presupuesto ya firmado: no se suben fotos (requiere haber pasado firestore-rules.mjs)')
 ok(typeof foto.url === 'string' && foto.url.includes('token='), true, 'la foto tiene enlace privado')
 ok(foto.path?.startsWith(`projects/p-jansen-cocina/updates/${e}u1/1-`), true, 'la foto queda en la carpeta de su avance')
 ok(await fetch(foto.url).then(r => r.status), 200, 'el enlace privado abre la foto')

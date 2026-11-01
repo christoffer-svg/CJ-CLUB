@@ -26,6 +26,12 @@ Todo está denegado salvo lo que se permite expresamente.
 | `projects/{id}` (Mi reforma) | Ve las obras de la casa que está viendo. Escribe en la conversación, anota pagos y confirma o discute los de la otra parte, y es **el único que aprueba o rechaza extras**. No publica avances ni propone extras. El **constructor** asignado ve solo sus obras: escribe, publica avances, propone y retira sus extras, anota pagos y confirma o discute los del cliente; no edita la obra. Otro constructor no ve nada. | Crea y edita obras, escribe, publica avances, propone extras, anota y confirma pagos. No puede aprobar extras en nombre del cliente. Nada de lo escrito se edita después; solo CJ puede borrar. |
 | Cualquier otra | Denegado. Un negocio colaborador no es ni cliente ni admin: no lee contactos ni notas. | Denegado. |
 
+### Presupuesto por líneas y firmas (Mi reforma)
+- `projects/{id}/budgetLines`: las líneas (concepto, cantidad, unidad, precio sin IVA y fotos) solo las escriben el constructor de la obra y CJ, y solo mientras nadie haya firmado. El cliente las ve.
+- `projects/{id}/signatures/{client|builder}`: cada parte firma solo como sí misma (el cliente de la casa y el constructor asignado; CJ no firma por nadie). La firma guarda el nombre, el dibujo de la firma (PNG), la aceptación, la fecha y hora del servidor, una copia de las líneas firmadas y su huella SHA-256 con el tipo de IVA. Una firma no se edita.
+- Con una firma, las líneas quedan congeladas y el IVA de la obra no se puede cambiar. Quien firmó (o CJ) puede retirar su firma solo mientras falte la otra. Con las dos firmas, el presupuesto queda cerrado para siempre; los cambios se hacen como extras.
+- Es una firma electrónica simple: prueba de quién aceptó qué y cuándo, no una firma cualificada.
+
 ### Varios accesos con un mismo correo
 - Una persona puede tener varios accesos con el mismo correo (por ejemplo, cliente y negocio). En `users/{uid}`, `roles` guarda todos los que le ha dado CJ y `role` el que está usando ahora; las fichas antiguas sin `roles` tienen solo su `role`.
 - Las reglas miran siempre el acceso que está usando: como cliente no gestiona su negocio, y como negocio no ve su casa.

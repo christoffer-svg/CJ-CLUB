@@ -301,6 +301,44 @@ export type Project = {
   createdAt: Timestamp | null
 }
 
+/** projects/{id}/budgetLines: partidas del presupuesto (sin IVA); las escriben el constructor o CJ */
+export type BudgetLine = {
+  title: string
+  description: string
+  quantity: number
+  /** ud, m², m, h… */
+  unit: string
+  /** precio por unidad, sin IVA */
+  unitPrice: number
+  order: number
+  attachments?: Attachment[]
+  authorUid: string
+  authorRole: ProjectRole
+  authorName: string
+  createdAt: Timestamp | null
+  updatedAt: Timestamp | null
+}
+
+/** Copia de una línea tal como se firmó */
+export type SignedLine = { id: string; title: string; description: string; quantity: number; unit: string; unitPrice: number; photos: number }
+
+/** projects/{id}/signatures/{client|builder}: firma del presupuesto */
+export type BudgetSignature = {
+  role: 'client' | 'builder'
+  uid: string
+  name: string
+  accepted: true
+  /** firma dibujada (PNG) */
+  image: string
+  /** huella SHA-256 de las líneas firmadas y el tipo de IVA */
+  hash: string
+  lines: SignedLine[]
+  /** total sin IVA de las líneas firmadas */
+  base: number
+  vatRate: 10 | 21
+  signedAt: Timestamp | null
+}
+
 /** projects/{id}/messages: conversación a tres */
 export type ProjectMessage = {
   text: string

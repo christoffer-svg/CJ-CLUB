@@ -1,5 +1,7 @@
 import { useState, type FormEvent, type ReactNode } from 'react'
 import { AttachmentList, FilePicker } from './Attachments'
+import ProjectBudget from './ProjectBudget'
+import { useBudgetLines, useBudgetSignatures } from '../lib/budget'
 import { useI18n } from '../i18n'
 import type { TranslationKey } from '../i18n/translations'
 import {
@@ -23,8 +25,8 @@ import type { ProjectRole } from '../lib/types'
 import { parseAmount } from '../lib/amount'
 import { messageTime, shortDate } from '../lib/when'
 
-type Tab = 'summary' | 'chat' | 'updates' | 'payments' | 'extras'
-const tabs: Tab[] = ['summary', 'chat', 'updates', 'payments', 'extras']
+type Tab = 'summary' | 'budget' | 'chat' | 'updates' | 'payments' | 'extras'
+const tabs: Tab[] = ['summary', 'budget', 'chat', 'updates', 'payments', 'extras']
 
 const today = () => new Date().toISOString().slice(0, 10)
 function Block({ children }: { children: ReactNode }) {
@@ -42,6 +44,8 @@ export default function ProjectView({ projectId, author, readOnly }: { projectId
   const updates = useProjectUpdates(projectId)
   const payments = useProjectPayments(projectId)
   const extras = useProjectExtras(projectId)
+  const lines = useBudgetLines(projectId)
+  const sigs = useBudgetSignatures(projectId)
   const [tab, setTab] = useState<Tab>('summary')
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState(false)
@@ -49,7 +53,8 @@ export default function ProjectView({ projectId, author, readOnly }: { projectId
   const money = (n: number) => formatMoney(n, locale)
   const roleName = (r: ProjectRole) => t(`project.role.${r}`)
   const p = project.data
-  const totals = projectTotals(p, extras.data, payments.data)
+  const totals = projectTotals(p, extras.data, payments.data, lines.data)
+  const needsMySignature = (role === 'client' || role === 'builder') && lines.data.length > 0 && !sigs.loading && !sigs[role]
   const lastPercent = [...updates.data].reverse().find((u) => typeof u.percent === 'number')?.percent
   const pendingForClient = extras.data.filter((e) => e.status === 'pending').length
 
@@ -74,7 +79,7 @@ export default function ProjectView({ projectId, author, readOnly }: { projectId
   const [deciding, setDeciding] = useState<{ id: string; note: string } | null>(null)
 
   if (project.loading) return null
-  const accountsReady = !payments.loading && !extras.loading
+  const accountsReady = !payments.loading && !extras.loading && !lines.loading
   if (!p) return <p className="empty">{t('project.list.empty')}</p>
 
   const canWrite = !readOnly
@@ -111,6 +116,7 @@ export default function ProjectView({ projectId, author, readOnly }: { projectId
           >
             {t(`project.tab.${k}`)}
             {k === 'extras' && role === 'client' && pendingForClient > 0 && <span className="pv-count">{pendingForClient}</span>}
+            {k === 'budget' && canWrite && needsMySignature && <span className="pv-count">1</span>}
           </button>
         ))}
       </div>
@@ -139,6 +145,12 @@ export default function ProjectView({ projectId, author, readOnly }: { projectId
             </dl>
             {totals.pendingExtras > 0 && <p className="card__text">{t('project.pendingExtrasNote', { amount: `${money(totals.pendingExtras)} ${t('project.plusVat')}` })}</p>}
             {totals.unconfirmed > 0 && <p className="card__text">{t('project.unconfirmedNote', { amount: money(totals.unconfirmed) })}</p>}
+            {sigs.client && sigs.builder && <p className="card__text">{t('budget.signedNote', { date: shortDate(sigs.client.signedAt && sigs.builder.signedAt && sigs.client.signedAt.toMillis() > sigs.builder.signedAt.toMillis() ? sigs.client.signedAt : sigs.builder.signedAt, locale) })}</p>}
+            {canWrite && needsMySignature && (
+              <button className="btn btn--ghost" onClick={() => setTab('budget')}>
+                {t('budget.pleaseSign')}
+              </button>
+            )}
             {role === 'client' && pendingForClient > 0 && (
               <button className="btn" onClick={() => setTab('extras')}>
                 {t('project.waitingClient', { n: pendingForClient })}
@@ -271,6 +283,10 @@ export default function ProjectView({ projectId, author, readOnly }: { projectId
             </article>
           ))}
         </>
+      )}
+
+      {tab === 'budget' && (
+        <ProjectBudget projectId={projectId} vatRate={p.vatRate ?? 21} author={author} canWrite={canWrite} lines={lines.data} sigs={sigs} />
       )}
 
       {tab === 'payments' && (

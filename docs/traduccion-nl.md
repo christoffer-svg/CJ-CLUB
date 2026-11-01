@@ -298,6 +298,44 @@ Controleer of elke tekst natuurlijk en correct Nederlands is. Noteer correcties 
 | `project.tab.updates` | Avances | Progress | Voortgang | |
 | `project.tab.payments` | Pagos | Payments | Betalingen | |
 | `project.tab.extras` | Extras | Extras | Meerwerk | |
+| `project.tab.budget` | Presupuesto | Budget | Begroting | |
+| `budget.eyebrow` | Presupuesto detallado | Detailed budget | Gedetailleerde begroting | |
+| `budget.status.draft` | Borrador · sin firmar | Draft · not signed | Concept · niet ondertekend | |
+| `budget.status.partial` | Falta una firma | One signature missing | Er ontbreekt een handtekening | |
+| `budget.status.signed` | Firmado por los dos | Signed by both | Door beide ondertekend | |
+| `budget.intro` | Añada cada partida con su cantidad y su precio sin IVA; puede adjuntar fotos. Cuando esté listo, el cliente y el constructor lo firman en la app. | Add each item with its quantity and price excluding VAT; you can attach photos. When it is ready, the client and the builder sign it in the app. | Voeg elke post toe met aantal en prijs excl. btw; u kunt foto's toevoegen. Als alles klaar is, ondertekenen de klant en de aannemer in de app. | |
+| `budget.introRead` | Revise cada línea. Si tiene dudas, pregunte en la conversación antes de firmar. | Please review each line. If you have any questions, ask in the conversation before signing. | Controleer elke regel. Heeft u vragen, stel ze dan in het gesprek voordat u ondertekent. | |
+| `budget.notYet` | El constructor aún no ha preparado el presupuesto detallado. | The builder has not prepared the detailed budget yet. | De aannemer heeft de gedetailleerde begroting nog niet opgesteld. | |
+| `budget.frozen` | Ya hay una firma: las líneas no se pueden cambiar. Para cambiarlas, hay que retirar esa firma. | There is already a signature: the lines can no longer be changed. To change them, that signature must be withdrawn. | Er is al een handtekening: de regels kunnen niet meer worden gewijzigd. Om ze te wijzigen, moet die handtekening worden ingetrokken. | |
+| `budget.locked` | Presupuesto firmado por el cliente y el constructor. Está cerrado: cualquier cambio se hace como extra. | Budget signed by the client and the builder. It is now closed: any change is made as an extra. | Begroting ondertekend door de klant en de aannemer. Ze is nu gesloten: elke wijziging gaat als meerwerk. | |
+| `budget.add` | Añadir línea | Add line | Regel toevoegen | |
+| `budget.concept` | Concepto | Item | Omschrijving | |
+| `budget.conceptExample` | Por ejemplo: grifo termostático de ducha | For example: thermostatic shower mixer | Bijvoorbeeld: thermostatische douchekraan | |
+| `budget.description` | Detalles (opcional) | Details (optional) | Details (optioneel) | |
+| `budget.quantity` | Cantidad | Quantity | Aantal | |
+| `budget.unit` | Unidad | Unit | Eenheid | |
+| `budget.unitPrice` | Precio por unidad sin IVA (€) | Unit price excl. VAT (€) | Prijs per eenheid excl. btw (€) | |
+| `budget.saveLine` | Guardar línea | Save line | Regel opslaan | |
+| `budget.edit` | Editar | Edit | Wijzigen | |
+| `budget.delete` | Quitar | Remove | Verwijderen | |
+| `budget.deleteConfirm` | ¿Quitar esta línea del presupuesto? | Remove this line from the budget? | Deze regel uit de begroting verwijderen? | |
+| `budget.removePhoto` | Quitar foto | Remove photo | Foto verwijderen | |
+| `budget.saveError` | No se pudo guardar. Inténtelo de nuevo. | Could not save. Please try again. | Opslaan is niet gelukt. Probeer het opnieuw. | |
+| `budget.signatures` | Firmas | Signatures | Handtekeningen | |
+| `budget.pending` | Pendiente de firma | Awaiting signature | Wacht op handtekening | |
+| `budget.sign` | Firmar el presupuesto | Sign the budget | Begroting ondertekenen | |
+| `budget.accept` | He leído el presupuesto completo ({n} líneas, {total} con IVA) y lo acepto. | I have read the full budget ({n} lines, {total} incl. VAT) and I accept it. | Ik heb de volledige begroting gelezen ({n} regels, {total} incl. btw) en ga ermee akkoord. | |
+| `budget.signName` | Nombre de quien firma | Name of the signatory | Naam van de ondertekenaar | |
+| `budget.signHere` | Firme aquí con el dedo o el ratón | Sign here with your finger or mouse | Onderteken hier met uw vinger of muis | |
+| `budget.clear` | Borrar | Clear | Wissen | |
+| `budget.confirmSign` | Firmar | Sign | Ondertekenen | |
+| `budget.signError` | No se pudo guardar la firma. Inténtelo de nuevo. | Could not save the signature. Please try again. | De handtekening kon niet worden opgeslagen. Probeer het opnieuw. | |
+| `budget.signedOn` | Firmado el {date} | Signed on {date} | Ondertekend op {date} | |
+| `budget.signatureOf` | Firma de {name} | Signature of {name} | Handtekening van {name} | |
+| `budget.mismatch` | Esta firma no corresponde a las líneas actuales del presupuesto. | This signature does not match the current lines of the budget. | Deze handtekening hoort niet bij de huidige regels van de begroting. | |
+| `budget.withdraw` | Retirar mi firma | Withdraw my signature | Mijn handtekening intrekken | |
+| `budget.signedNote` | Presupuesto firmado por los dos el {date}. | Budget signed by both on {date}. | Begroting door beide ondertekend op {date}. | |
+| `budget.pleaseSign` | Falta su firma en el presupuesto | Your signature is missing on the budget | Uw handtekening op de begroting ontbreekt | |
 | `project.budget` | Presupuesto inicial (sin IVA) | Initial budget (excl. VAT) | Oorspronkelijke begroting (excl. btw) | |
 | `project.extrasApproved` | Extras aprobados (sin IVA) | Approved extras (excl. VAT) | Goedgekeurd meerwerk (excl. btw) | |
 | `project.total` | Total con IVA | Total incl. VAT | Totaal incl. btw | |

@@ -508,7 +508,8 @@ async function projectRoleOf(uid: string, projectId: string): Promise<'cj' | 'bu
 }
 
 /**
- * Sube una foto o un PDF de un avance (constructor o CJ) o de un pago (cualquiera de los tres).
+ * Sube una foto o un PDF de un avance o de una línea del presupuesto (constructor o CJ) o de un pago
+ * (cualquiera de los tres).
  * Devuelve la ficha del archivo con un enlace privado (código imposible de adivinar) para guardarla
  * dentro del avance o pago. Los archivos no se pueden reemplazar.
  */
@@ -517,11 +518,11 @@ export const uploadProjectFile = onCall({ memory: '512MiB', timeoutSeconds: 120 
   if (!uid) throw new HttpsError('unauthenticated', 'Inicie sesión de nuevo.')
   const d = (request.data ?? {}) as Record<string, unknown>
   const projectId = text(d.projectId, 'obra')
-  const kind = d.kind === 'updates' || d.kind === 'payments' ? d.kind : null
+  const kind = d.kind === 'updates' || d.kind === 'payments' || d.kind === 'budget' ? d.kind : null
   const entryId = text(d.entryId, 'entrada')
   const index = Number(d.index)
   const contentType = text(d.contentType, 'tipo')
-  if (!kind || !/^[A-Za-z0-9_-]{6,60}$/.test(projectId) || !/^[A-Za-z0-9]{10,40}$/.test(entryId) || !(index >= 1 && index <= 6)) {
+  if (!kind || !/^[A-Za-z0-9_-]{6,60}$/.test(projectId) || !/^[A-Za-z0-9]{10,40}$/.test(entryId) || !(Number.isInteger(index) && index >= 1 && index <= 50)) {
     throw new HttpsError('invalid-argument', 'Datos del archivo no válidos.')
   }
   if (!(contentType.startsWith('image/') || contentType === 'application/pdf')) {
@@ -531,8 +532,13 @@ export const uploadProjectFile = onCall({ memory: '512MiB', timeoutSeconds: 120 
   if (!buffer.length || buffer.length > MAX_FILE_BYTES) throw new HttpsError('invalid-argument', 'El archivo pasa de 10 MB.')
 
   const role = await projectRoleOf(uid, projectId)
-  if (role === 'none' || (kind === 'updates' && role === 'client')) {
+  if (role === 'none' || (kind !== 'payments' && role === 'client')) {
     throw new HttpsError('permission-denied', 'No puede añadir archivos aquí.')
+  }
+  // Fotos del presupuesto: solo mientras nadie lo haya firmado
+  if (kind === 'budget') {
+    const signed = await db.collection(`projects/${projectId}/signatures`).limit(1).get()
+    if (!signed.empty) throw new HttpsError('failed-precondition', 'El presupuesto ya está firmado.')
   }
 
   const name =

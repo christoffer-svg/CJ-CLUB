@@ -12,8 +12,8 @@ export const MAX_BYTES = 10 * 1024 * 1024
 export type FileProblem = { kind: 'type' | 'size' | 'count'; name: string }
 
 /** Comprueba los archivos elegidos: solo fotos y PDF, de hasta 10 MB, y como mucho 6 */
-export function checkFiles(files: File[]): FileProblem | null {
-  if (files.length > MAX_FILES) return { kind: 'count', name: '' }
+export function checkFiles(files: File[], max = MAX_FILES): FileProblem | null {
+  if (files.length > max) return { kind: 'count', name: '' }
   for (const f of files) {
     if (!(f.type.startsWith('image/') || f.type === 'application/pdf')) return { kind: 'type', name: f.name }
     if (f.size > MAX_BYTES) return { kind: 'size', name: f.name }
@@ -48,16 +48,20 @@ function toBase64(blob: Blob) {
   })
 }
 
-type UploadRequest = { projectId: string; kind: 'updates' | 'payments'; entryId: string; index: number; name: string; contentType: string; data: string }
+export type FileKind = 'updates' | 'payments' | 'budget'
+type UploadRequest = { projectId: string; kind: FileKind; entryId: string; index: number; name: string; contentType: string; data: string }
 
-/** Sube los archivos de un avance o pago y devuelve su ficha (con su enlace privado) */
-export async function uploadAttachments(projectId: string, kind: 'updates' | 'payments', entryId: string, files: File[]): Promise<Attachment[]> {
+/**
+ * Sube los archivos de un avance, pago o línea del presupuesto y devuelve su ficha (con su enlace privado).
+ * firstIndex: número del primer archivo (al añadir fotos a una línea que ya tiene).
+ */
+export async function uploadAttachments(projectId: string, kind: FileKind, entryId: string, files: File[], firstIndex = 1): Promise<Attachment[]> {
   const call = httpsCallable<UploadRequest, Attachment>(functions, 'uploadProjectFile', { timeout: 120_000 })
   const out: Attachment[] = []
   for (const [i, file] of files.entries()) {
     const { blob, name, type } = await prepare(file)
     if (blob.size > MAX_BYTES) throw new Error('too-big')
-    const res = await call({ projectId, kind, entryId, index: i + 1, name, contentType: type, data: await toBase64(blob) })
+    const res = await call({ projectId, kind, entryId, index: firstIndex + i, name, contentType: type, data: await toBase64(blob) })
     out.push(res.data)
   }
   return out

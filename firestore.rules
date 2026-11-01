@@ -591,6 +591,20 @@ service cloud.firestore {
       return (n is int || n is float) && n > 0 && n < 100000000;
     }
 
+    function number(n, min, max) {
+      return (n is int || n is float) && n >= min && n <= max;
+    }
+
+    // Presupuesto por líneas: abierto mientras nadie lo ha firmado. Con una firma, las líneas quedan
+    // congeladas (para cambiarlas hay que retirar esa firma); con las dos, cerrado para siempre.
+    function signaturePath(pid, r) {
+      return /databases/$(database)/documents/projects/$(pid)/signatures/$(r);
+    }
+
+    function budgetOpen(pid) {
+      return !exists(signaturePath(pid, 'client')) && !exists(signaturePath(pid, 'builder'));
+    }
+
     match /projects/{pid} {
       allow get: if isAdmin()
         || (isBuilder() && resource.data.builderUid == request.auth.uid)
@@ -605,7 +619,9 @@ service cloud.firestore {
         && request.resource.data.status in ['planned', 'in_progress', 'finished']
         && (request.resource.data.budget is int || request.resource.data.budget is float)
         && request.resource.data.budget >= 0
-        && request.resource.data.get('vatRate', 21) in [10, 21];
+        && request.resource.data.get('vatRate', 21) in [10, 21]
+        // Con el presupuesto ya firmado (aunque sea por uno), el IVA no cambia
+        && (resource == null || budgetOpen(pid) || request.resource.data.get('vatRate', 21) == resource.data.get('vatRate', 21));
       allow delete: if isAdmin();
 
       match /messages/{id} {
@@ -661,6 +677,57 @@ service cloud.firestore {
           && request.resource.data.confirmedByName is string
           && request.resource.data.confirmedAt == request.time;
         allow delete: if isAdmin();
+      }
+
+      // Líneas del presupuesto (grifo, mampara, plato de ducha…): las escriben el constructor o CJ,
+      // sin IVA, mientras nadie haya firmado
+      match /budgetLines/{id} {
+        allow read: if inProject(pid);
+        allow create, update: if projectRole(pid) in ['builder', 'cj']
+          && budgetOpen(pid)
+          && request.resource.data.keys().hasOnly(['title', 'description', 'quantity', 'unit', 'unitPrice', 'order', 'attachments', 'authorUid', 'authorRole', 'authorName', 'createdAt', 'updatedAt'])
+          && validText(request.resource.data.title, 200)
+          && (request.resource.data.description == '' || validText(request.resource.data.description, 2000))
+          && number(request.resource.data.quantity, 0.001, 1000000)
+          && request.resource.data.unit is string && request.resource.data.unit.size() >= 1 && request.resource.data.unit.size() <= 20
+          && number(request.resource.data.unitPrice, 0, 10000000)
+          && request.resource.data.order is int
+          && validAttachments(pid, 'budget', id)
+          && request.resource.data.authorUid == request.auth.uid
+          && request.resource.data.authorRole == projectRole(pid)
+          && request.resource.data.authorName is string
+          && request.resource.data.updatedAt == request.time
+          && (resource == null
+              ? request.resource.data.createdAt == request.time
+              : request.resource.data.createdAt == resource.data.createdAt);
+        allow delete: if projectRole(pid) in ['builder', 'cj'] && budgetOpen(pid);
+      }
+
+      // Firmas del presupuesto: una del cliente y otra del constructor (el id es el papel).
+      // Guardan copia de las líneas firmadas y su huella. No se editan; quien firmó (o CJ) puede
+      // retirar su firma solo mientras falte la otra.
+      match /signatures/{r} {
+        allow read: if inProject(pid);
+        allow create: if r in ['client', 'builder']
+          && projectRole(pid) == r
+          && request.resource.data.keys().hasOnly(['role', 'uid', 'name', 'accepted', 'image', 'hash', 'lines', 'base', 'vatRate', 'signedAt'])
+          && request.resource.data.role == r
+          && request.resource.data.uid == request.auth.uid
+          && validText(request.resource.data.name, 120)
+          && request.resource.data.accepted == true
+          && request.resource.data.image is string
+          && request.resource.data.image.size() <= 200000
+          && request.resource.data.image.matches('data:image/png;base64,[A-Za-z0-9+/=]+')
+          && request.resource.data.hash is string && request.resource.data.hash.matches('[0-9a-f]{64}')
+          && request.resource.data.lines is list
+          && request.resource.data.lines.size() >= 1 && request.resource.data.lines.size() <= 200
+          && number(request.resource.data.base, 0, 1000000000)
+          && request.resource.data.vatRate == project(pid).get('vatRate', 21)
+          && request.resource.data.signedAt == request.time;
+        allow update: if false;
+        allow delete: if r in ['client', 'builder']
+          && (projectRole(pid) == r || projectRole(pid) == 'cj')
+          && !exists(signaturePath(pid, r == 'client' ? 'builder' : 'client'));
       }
 
       // Extras: los propone el constructor o CJ con precio; solo el cliente los aprueba o rechaza.
