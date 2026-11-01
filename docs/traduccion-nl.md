@@ -162,3 +162,118 @@ Controleer of elke tekst natuurlijk en correct Nederlands is. Noteer correcties 
 | `requests.cjNote` | Nota de CJ | Note from CJ | Notitie van CJ | |
 | `requests.error` | No se pudo enviar. Inténtelo de nuevo. | Couldn't send. Please try again. | Versturen is niet gelukt. Probeer het opnieuw. | |
 | `preview.readOnly` | Vista previa: solo lectura. | Preview: read only. | Voorbeeld: alleen lezen. | |
+| `mine.contacts.title` | Mis contactos | My contacts | Mijn contacten | |
+| `mine.contacts.intro` | Los suyos, además de los que le recomienda CJ. Si no marca compartir, solo los ve usted. | Your own, as well as those recommended by CJ. Unless you choose to share one, only you can see it. | Uw eigen contacten, naast die van CJ. Deelt u er een niet, dan ziet alleen u die. | |
+| `mine.contacts.empty` | Aún no ha añadido contactos propios. Puede guardar, por ejemplo, a su jardinero o a quien lleve las placas solares. | You have not added your own contacts yet. You can save, for example, your gardener or the person who looks after your solar panels. | U hebt nog geen eigen contacten toegevoegd. U kunt bijvoorbeeld uw tuinman bewaren, of degene die uw zonnepanelen verzorgt. | |
+| `mine.contacts.emptyShared` | No hay contactos compartidos con CJ. | No contacts shared with CJ. | Geen contacten gedeeld met CJ. | |
+| `mine.contacts.add` | Añadir contacto | Add a contact | Contact toevoegen | |
+| `mine.contacts.edit` | Editar | Edit | Bewerken | |
+| `mine.contacts.delete` | Borrar | Delete | Verwijderen | |
+| `mine.contacts.deleteAsk` | ¿Borrar este contacto? | Delete this contact? | Dit contact verwijderen? | |
+| `mine.contacts.deleteYes` | Sí, borrar | Yes, delete | Ja, verwijderen | |
+| `mine.contacts.name` | Nombre | Name | Naam | |
+| `mine.contacts.service` | Servicio | Service | Dienst | |
+| `mine.contacts.serviceOther` | Qué servicio es | What kind of service | Welke dienst | |
+| `mine.contacts.serviceOtherPlaceholder` | Por ejemplo, placas solares | For example, solar panels | Bijvoorbeeld zonnepanelen | |
+| `mine.contacts.phone` | Teléfono | Phone | Telefoon | |
+| `mine.contacts.email` | Correo electrónico | Email | E-mail | |
+| `mine.contacts.notes` | Notas | Notes | Notities | |
+| `mine.contacts.save` | Guardar | Save | Opslaan | |
+| `mine.contacts.cancel` | Cancelar | Cancel | Annuleren | |
+| `mine.contacts.share` | Compartir con CJ | Share with CJ | Delen met CJ | |
+| `mine.contacts.shareHint` | El equipo de CJ podrá verlo para ayudarle. Si no lo marca, solo lo ven usted y las personas de su cuenta. | The CJ team will be able to see it in order to help you. If you leave this off, only you and the people on your account can see it. | Het team van CJ kan het zien om u te helpen. Laat u dit uit, dan zien alleen u en de personen van uw account het. | |
+| `mine.contacts.shared` | Compartido con CJ | Shared with CJ | Gedeeld met CJ | |
+| `mine.contacts.added` | Añadido por usted | Added by you | Door u toegevoegd | |
+| `mine.contacts.whatsapp` | WhatsApp | WhatsApp | WhatsApp | |
+| `mine.contacts.write` | Escribir | Email | E-mail | |
+| `mine.contacts.error` | No se pudo guardar. Inténtelo de nuevo. | Could not save. Please try again. | Opslaan is niet gelukt. Probeer het opnieuw. | |
+| `mine.contacts.invalidEmail` | El correo no parece válido. | That email does not look valid. | Dit e-mailadres lijkt ongeldig. | |
+| `mine.service.lawyer` | Abogado | Lawyer | Advocaat | |
+| `mine.service.gestoria` | Gestoría | Gestoría | Gestoría | |
+| `mine.service.pool` | Piscina | Pool | Zwembad | |
+| `mine.service.maintenance` | Mantenimiento | Maintenance | Onderhoud | |
+| `mine.service.garden` | Jardinería | Gardening | Tuin | |
+| `mine.service.communityAdmin` | Administrador de fincas | Community administrator | VvE-beheerder | |
+| `mine.service.other` | Otro | Other | Andere | |
+| `house.eyebrow` | Su vivienda | Your home | Uw woning | |
+| `house.title` | Notas de mi casa | Notes about my home | Notities over mijn huis | |
+| `house.subtitle` | Wifi, alarma, llaves y lo que quiera tener a mano. Si no marca compartir, solo lo ve usted. | Wifi, alarm, keys and anything you want to keep to hand. Unless you choose to share a note, only you can see it. | Wifi, alarm, sleutels en wat u bij de hand wilt hebben. Deelt u een notitie niet, dan ziet alleen u die. | |
+| `house.homeTitle` | Notas de mi casa | Notes about my home | Notities over mijn huis | |
+| `house.homeText` | Wifi, alarma, contadores, llaves… | Wifi, alarm, meters, keys… | Wifi, alarm, meters, sleutels… | |
+| `house.add` | Añadir nota | Add a note | Notitie toevoegen | |
+| `house.edit` | Editar | Edit | Bewerken | |
+| `house.delete` | Borrar | Delete | Verwijderen | |
+| `house.deleteAsk` | ¿Borrar esta nota? | Delete this note? | Deze notitie verwijderen? | |
+| `house.deleteYes` | Sí, borrar | Yes, delete | Ja, verwijderen | |
+| `house.empty` | Aún no hay notas. Puede anotar el wifi, la alarma, los contadores, las llaves o la basura. | There are no notes yet. You can write down the wifi, the alarm, the meters, the keys or the rubbish collection. | Er zijn nog geen notities. U kunt de wifi, het alarm, de meters, de sleutels of het afval noteren. | |
+| `house.emptyShared` | No hay notas compartidas con CJ. | No notes shared with CJ. | Geen notities gedeeld met CJ. | |
+| `house.section` | Apartado | Section | Rubriek | |
+| `house.section.wifi` | Wifi | Wifi | Wifi | |
+| `house.section.alarm` | Alarma | Alarm | Alarm | |
+| `house.section.meters` | Contadores | Meters | Meters | |
+| `house.section.keys` | Llaves | Keys | Sleutels | |
+| `house.section.rubbish` | Basura | Rubbish | Afval | |
+| `house.section.other` | Otros | Other | Overige | |
+| `house.noteTitle` | Título | Title | Titel | |
+| `house.titlePlaceholder` | Por ejemplo, Wifi de casa | For example, Home wifi | Bijvoorbeeld wifi thuis | |
+| `house.body` | Nota | Note | Notitie | |
+| `house.bodyPlaceholder` | Lo que quiera recordar | Anything you want to remember | Wat u wilt onthouden | |
+| `house.secret` | Contraseña o código | Password or code | Wachtwoord of code | |
+| `house.secretWifi` | Contraseña del wifi | Wifi password | Wifiwachtwoord | |
+| `house.secretOptional` | Opcional. Queda oculta hasta que pulse mostrar. | Optional. It stays hidden until you tap show. | Optioneel. Blijft verborgen tot u op tonen tikt. | |
+| `house.show` | Mostrar | Show | Tonen | |
+| `house.hide` | Ocultar | Hide | Verbergen | |
+| `house.copy` | Copiar | Copy | Kopiëren | |
+| `house.copied` | Copiado | Copied | Gekopieerd | |
+| `house.share` | Compartir con CJ | Share with CJ | Delen met CJ | |
+| `house.shareHint` | El equipo de CJ podrá verla para ayudarle. Si no lo marca, solo la ven usted y las personas de su cuenta. | The CJ team will be able to see it in order to help you. If you leave this off, only you and the people on your account can see it. | Het team van CJ kan haar zien om u te helpen. Laat u dit uit, dan zien alleen u en de personen van uw account haar. | |
+| `house.shared` | Compartido con CJ | Shared with CJ | Gedeeld met CJ | |
+| `house.save` | Guardar | Save | Opslaan | |
+| `house.cancel` | Cancelar | Cancel | Annuleren | |
+| `house.error` | No se pudo guardar. Inténtelo de nuevo. | Could not save. Please try again. | Opslaan is niet gelukt. Probeer het opnieuw. | |
+| `private.previewOnlyShared` | Vista previa: lo privado del cliente no se muestra. Solo aparece lo que ha compartido con CJ. | Preview: the client's private items are not shown. Only what they have shared with CJ appears here. | Voorbeeld: wat de klant privé houdt, wordt niet getoond. Alleen wat met CJ is gedeeld, verschijnt hier. | |
+| `weather.eyebrow` | El tiempo | Weather | Het weer | |
+| `weather.loading` | Consultando el tiempo… | Checking the weather… | Het weer wordt opgehaald… | |
+| `weather.error` | No se ha podido consultar el tiempo en este momento. | The weather could not be checked just now. | Het weer kan op dit moment niet worden opgehaald. | |
+| `weather.retry` | Reintentar | Try again | Opnieuw proberen | |
+| `weather.wind` | Viento {speed} km/h | Wind {speed} km/h | Wind {speed} km/h | |
+| `weather.humidity` | Humedad {n} % | Humidity {n}% | Luchtvochtigheid {n}% | |
+| `weather.feels` | Sensación {temp}° | Feels like {temp}° | Gevoelstemperatuur {temp}° | |
+| `weather.today` | Hoy | Today | Vandaag | |
+| `weather.tomorrow` | Mañana | Tomorrow | Morgen | |
+| `weather.yourLocation` | Su ubicación | Your location | Uw locatie | |
+| `weather.yourHome` | Su vivienda | Your home | Uw woning | |
+| `weather.useDevice` | Usar mi ubicación | Use my location | Mijn locatie gebruiken | |
+| `weather.usePlace` | Ver {place} | Show {place} | {place} bekijken | |
+| `weather.geoDenied` | No se ha permitido la ubicación del teléfono. Se muestra {place}. | The phone location was not allowed. Showing {place}. | De locatie van de telefoon is niet toegestaan. {place} wordt getoond. | |
+| `weather.geoUnavailable` | No se ha podido obtener la ubicación. Se muestra {place}. | The location could not be found. Showing {place}. | De locatie kon niet worden bepaald. {place} wordt getoond. | |
+| `weather.official` | Avisos oficiales de AEMET | Official AEMET warnings | Officiële AEMET-waarschuwingen | |
+| `weather.source` | Previsión de Open-Meteo | Forecast by Open-Meteo | Verwachting van Open-Meteo | |
+| `weather.osm` | OpenStreetMap | OpenStreetMap | OpenStreetMap | |
+| `weather.conditions.clear` | Despejado | Clear | Helder | |
+| `weather.conditions.mainlyClear` | Casi despejado | Mainly clear | Overwegend helder | |
+| `weather.conditions.partlyCloudy` | Parcialmente nuboso | Partly cloudy | Gedeeltelijk bewolkt | |
+| `weather.conditions.overcast` | Cubierto | Overcast | Bewolkt | |
+| `weather.conditions.fog` | Niebla | Fog | Mist | |
+| `weather.conditions.drizzle` | Llovizna | Drizzle | Motregen | |
+| `weather.conditions.rain` | Lluvia | Rain | Regen | |
+| `weather.conditions.freezingRain` | Lluvia helada | Freezing rain | IJzel | |
+| `weather.conditions.snow` | Nieve | Snow | Sneeuw | |
+| `weather.conditions.showers` | Chubascos | Showers | Buien | |
+| `weather.conditions.snowShowers` | Chubascos de nieve | Snow showers | Sneeuwbuien | |
+| `weather.conditions.thunderstorm` | Tormenta | Thunderstorm | Onweer | |
+| `weather.conditions.hail` | Tormenta con granizo | Thunderstorm with hail | Onweer met hagel | |
+| `weather.conditions.unknown` | Tiempo variable | Changeable | Veranderlijk | |
+| `weather.notice.disclaimer` | Según la previsión. No sustituye a un aviso oficial. | Based on the forecast. It does not replace an official warning. | Volgens de verwachting. Vervangt geen officiële waarschuwing. | |
+| `weather.notice.moderate` | Atención | Caution | Let op | |
+| `weather.notice.severe` | Importante | Important | Belangrijk | |
+| `weather.notice.extreme` | Peligro | Danger | Gevaar | |
+| `weather.notice.wind` | Rachas de viento de hasta {speed} km/h | Wind gusts up to {speed} km/h | Windstoten tot {speed} km/h | |
+| `weather.notice.rain` | Lluvia prevista de unos {amount} mm | Around {amount} mm of rain expected | Ongeveer {amount} mm regen verwacht | |
+| `weather.notice.heat` | Calor: hasta {temp}° | Heat: up to {temp}° | Hitte: tot {temp}° | |
+| `weather.notice.cold` | Frío: hasta {temp}° | Cold: down to {temp}° | Kou: tot {temp}° | |
+| `weather.notice.storm` | Posibles tormentas | Thunderstorms possible | Mogelijk onweer | |
+| `weather.notice.hail` | Tormentas con posible granizo | Thunderstorms with possible hail | Onweer met mogelijke hagel | |
+| `weather.notice.ice` | Posible lluvia helada | Freezing rain possible | Mogelijk ijzel | |
+| `home.houses` | Sus casas | Your homes | Uw woningen | |
+| `home.house` | Casa | Home | Woning | |

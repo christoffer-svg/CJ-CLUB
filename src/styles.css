@@ -2764,3 +2764,34 @@ button {
   padding-top: 8px;
   border-top: 1px solid var(--card-border);
 }
+
+/* Selector de casas (clientes con varias viviendas) */
+.houses {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.houses__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.house-pill {
+  height: 32px;
+  padding: 0 14px;
+  border-radius: 16px;
+  border: 1px solid rgba(183, 154, 104, 0.4);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.house-pill--active {
+  background: var(--black);
+  border-color: var(--gold);
+  color: var(--white);
+}

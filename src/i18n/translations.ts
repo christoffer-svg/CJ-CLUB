@@ -318,6 +318,8 @@ const es = {
   'weather.notice.storm': "Posibles tormentas",
   'weather.notice.hail': "Tormentas con posible granizo",
   'weather.notice.ice': "Posible lluvia helada",
+  'home.houses': "Sus casas",
+  'home.house': "Casa",
 }
 
 export type TranslationKey = keyof typeof es
@@ -602,6 +604,8 @@ const en: Record<TranslationKey, string> = {
   'weather.notice.storm': "Thunderstorms possible",
   'weather.notice.hail': "Thunderstorms with possible hail",
   'weather.notice.ice': "Freezing rain possible",
+  'home.houses': "Your homes",
+  'home.house': "Home",
 }
 
 // Neerlandés (trato formal: "u"). Pendiente de revisión por un hablante nativo.
@@ -879,6 +883,8 @@ const nl: Record<TranslationKey, string> = {
   'weather.notice.storm': "Mogelijk onweer",
   'weather.notice.hail': "Onweer met mogelijke hagel",
   'weather.notice.ice': "Mogelijk ijzel",
+  'home.houses': "Uw woningen",
+  'home.house': "Woning",
 }
 
 // Sueco (trato con "du", que es lo natural y cortés en sueco actual). Pendiente de revisión por un hablante nativo.
@@ -1156,6 +1162,8 @@ const sv: Record<TranslationKey, string> = {
   'weather.notice.storm': "Åska möjlig",
   'weather.notice.hail': "Åska med möjlig hagel",
   'weather.notice.ice': "Underkylt regn möjligt",
+  'home.houses': "Dina hus",
+  'home.house': "Hus",
 }
 
 // Alemán (trato formal: "Sie"). Pendiente de revisión por un hablante nativo.
@@ -1433,6 +1441,8 @@ const de: Record<TranslationKey, string> = {
   'weather.notice.storm': "Gewitter möglich",
   'weather.notice.hail': "Gewitter mit möglichem Hagel",
   'weather.notice.ice': "Gefrierender Regen möglich",
+  'home.houses': "Ihre Häuser",
+  'home.house': "Haus",
 }
 
 // Francés (trato formal: "vous"). Pendiente de revisión por un hablante nativo.
@@ -1710,6 +1720,8 @@ const fr: Record<TranslationKey, string> = {
   'weather.notice.storm': "Orages possibles",
   'weather.notice.hail': "Orages avec risque de grêle",
   'weather.notice.ice': "Pluie verglaçante possible",
+  'home.houses': "Vos maisons",
+  'home.house': "Maison",
 }
 
 export const translations: Record<Language, Record<TranslationKey, string>> = { es, en, nl, sv, de, fr }

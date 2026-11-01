@@ -40,8 +40,12 @@ export function PreviewViewer({ clientId, children }: { clientId: string; childr
   const [favorites, setFavorites] = useState<string[]>([])
   useEffect(() => {
     // Favoritos reales del cliente, para que la vista previa sea fiel
-    getDocs(query(collection(db, 'users'), where('clientId', '==', clientId), limit(1)))
-      .then((snap) => setFavorites((snap.docs[0]?.get('favorites') as string[] | undefined) ?? []))
+    // La persona puede tener esta casa como activa o entre sus casas
+    Promise.all([
+      getDocs(query(collection(db, 'users'), where('clientId', '==', clientId), limit(1))),
+      getDocs(query(collection(db, 'users'), where('clientIds', 'array-contains', clientId), limit(1))),
+    ])
+      .then(([a, b]) => setFavorites(((a.docs[0] ?? b.docs[0])?.get('favorites') as string[] | undefined) ?? []))
       .catch(() => setFavorites([]))
   }, [clientId])
   return (

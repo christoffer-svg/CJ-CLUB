@@ -1,6 +1,6 @@
 import { FirebaseError } from 'firebase/app'
 import { useState, type FormEvent } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { PageTitle } from '../../components/admin/AdminLayout'
 import { Field, Input, Select } from '../../components/admin/Fields'
 import { useToast } from '../../components/admin/Toast'
@@ -11,15 +11,18 @@ const today = () => new Date().toISOString().slice(0, 10)
 export default function ClientNew() {
   const navigate = useNavigate()
   const toast = useToast()
+  // "Añadir otra casa" desde una ficha: llega con el correo, la familia y el idioma rellenos
+  const [params] = useSearchParams()
+  const otherHouse = Boolean(params.get('email'))
   const [form, setForm] = useState<NewClient>({
-    familyName: 'Familia ',
-    email: '',
+    familyName: params.get('familia') || 'Familia ',
+    email: params.get('email') || '',
     property: '',
     clientSince: today(),
     agentName: '',
     agentPhone: '',
     agentWhatsapp: '',
-    language: 'en',
+    language: (params.get('idioma') as NewClient['language']) || 'en',
   })
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
@@ -31,7 +34,11 @@ export default function ClientNew() {
     setBusy(true)
     try {
       const res = await createClient(form)
-      toast(`${form.familyName} creada. ${invitationNotice(form.email, res.via)}`)
+      toast(
+        res.via
+          ? `${form.familyName} creada. ${invitationNotice(form.email, res.via)}`
+          : `Casa añadida a la cuenta de ${form.email}. Ya puede verla en la app, sin nueva invitación.`,
+      )
       navigate(`/admin/clientes/${res.clientId}`)
     } catch (err) {
       // Los mensajes de la función de servidor ya vienen en español
@@ -44,12 +51,15 @@ export default function ClientNew() {
 
   return (
     <>
-      <PageTitle eyebrow="Clientes" title="Nuevo cliente" />
+      <PageTitle eyebrow="Clientes" title={otherHouse ? 'Otra casa para este cliente' : 'Nuevo cliente'} />
       <form className="card a-form" onSubmit={submit}>
         <Field label="Nombre de la familia">
           <Input required value={form.familyName} onChange={set('familyName')} />
         </Field>
-        <Field label="Correo electrónico" hint="Recibirá un correo para elegir su contraseña.">
+        <Field
+          label="Correo electrónico"
+          hint="Si el correo ya es de un cliente, esta casa se añade a su cuenta y no se envía otra invitación. Si no, recibirá un correo para elegir su contraseña."
+        >
           <Input required type="email" value={form.email} onChange={set('email')} />
         </Field>
         <Field label="Propiedad">

@@ -12,6 +12,7 @@ import { useToast } from '../../components/admin/Toast'
 import {
   deleteClient,
   fromDateInput,
+  hasHouse,
   languageOptions,
   patchDoc,
   sendInvitation,
@@ -39,7 +40,12 @@ export default function ClientDetail() {
   const partners = useLiveCollection<Partner>('partners')
   const categories = usePartnerCategories()
   const c = client.data
-  const user = users.data.find((u) => u.clientId === id)
+  const user = users.data.find((u) => hasHouse(u, id))
+  const allClients = useLiveCollection<Client>('clients')
+  // Otras casas de la misma persona
+  const otherHouses = user
+    ? allClients.data.filter((h) => h.id !== id && hasHouse(user, h.id)).sort((a, b) => a.property.localeCompare(b.property))
+    : []
   const mails = useLiveCollection<MailLogEntry>('mailLog')
   const lastMail = mails.data
     .filter((m) => user && m.uid === user.id)
@@ -164,6 +170,43 @@ export default function ClientDetail() {
       </section>
 
       <section className="card a-form">
+        <h2 className="a-section-title">Casas de este cliente</h2>
+        <p className="card__text">
+          Con el mismo correo puede tener varias casas. En la app elige cuál ver; cada casa tiene sus contactos, su chat y sus
+          peticiones.
+        </p>
+        <div className="a-list">
+          <div className="a-row">
+            <div className="a-row__body">
+              <span className="card__title">{c.property || 'Esta casa'}</span>
+              <span className="card__text">Esta ficha · {c.memberNumber}</span>
+            </div>
+          </div>
+          {otherHouses.map((h) => (
+            <Link key={h.id} to={`/admin/clientes/${h.id}`} className="a-row">
+              <div className="a-row__body">
+                <span className="card__title">{h.property || h.familyName}</span>
+                <span className="card__text">
+                  {h.familyName} · {h.memberNumber}
+                </span>
+              </div>
+              <span className="a-link">Abrir</span>
+            </Link>
+          ))}
+        </div>
+        {user && (
+          <div className="a-actions">
+            <Link
+              to={`/admin/clientes/nuevo?email=${encodeURIComponent(user.email)}&familia=${encodeURIComponent(c.familyName)}&idioma=${user.language}`}
+              className="btn btn--ghost a-btn"
+            >
+              Añadir otra casa
+            </Link>
+          </div>
+        )}
+      </section>
+
+      <section className="card a-form">
         <h2 className="a-section-title">Contactos personales</h2>
         <p className="card__text">
           Un colaborador con varios servicios aparece en cada uno de ellos. Puede asignarle el mismo a más de un servicio.
@@ -199,9 +242,12 @@ export default function ClientDetail() {
       <section className="card a-form a-danger">
         <h2 className="a-section-title">Dar de baja</h2>
         <p className="card__text">
-          Borra su acceso a la app, su ficha, sus contactos asignados, los contactos que haya guardado, las notas de su casa,
-          sus favoritos y sus registros de uso de descuentos. Úselo cuando el cliente pida que se borren sus datos. No se puede
-          deshacer.
+          Borra esta casa: su ficha, sus contactos asignados, los contactos que haya guardado, las notas de la casa, su chat,
+          sus peticiones y sus registros de uso de descuentos.{' '}
+          {otherHouses.length
+            ? `El cliente conserva su acceso y sus otras ${otherHouses.length === 1 ? 'casa' : `${otherHouses.length} casas`}.`
+            : 'Como es su única casa, también se borra su acceso a la app y sus favoritos.'}{' '}
+          Úselo cuando el cliente lo pida. No se puede deshacer.
         </p>
         <div className="a-actions">
           <button

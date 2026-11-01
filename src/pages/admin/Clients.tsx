@@ -16,7 +16,9 @@ export default function Clients() {
   const users = useLiveCollection<UserProfile>('users')
   const [search, setSearch] = useState('')
 
-  const emailOf = Object.fromEntries(users.data.filter((u) => u.clientId).map((u) => [u.clientId, u.email]))
+  // Correo de cada casa (una persona puede tener varias)
+  const emailOf: Record<string, string> = {}
+  users.data.forEach((u) => [u.clientId, ...(u.clientIds ?? [])].forEach((id) => id && (emailOf[id] = u.email)))
   const q = normalize(search.trim())
   const list = clients.data
     .filter((c) => !q || normalize([c.familyName, c.property, c.memberNumber, emailOf[c.id] ?? ''].join(' ')).includes(q))

@@ -44,6 +44,8 @@ async function nextMemberNumber(date: Date) {
 /**
  * Crea un cliente nuevo: su cuenta de acceso (rol "client"), su ficha en clients/
  * y su perfil en users/. La invitación para elegir contraseña la envía después la app.
+ * Si el correo ya es de un cliente, la ficha nueva se añade como otra casa de esa cuenta
+ * (users/{uid}.clientIds) y no se crea otra cuenta.
  */
 export const createClient = onCall(async (request) => {
   await requireAdmin(request.auth?.uid)
@@ -63,7 +65,33 @@ export const createClient = onCall(async (request) => {
 
   const auth = getAuth()
   const existing = await auth.getUserByEmail(email).catch(() => null)
-  if (existing) throw new HttpsError('already-exists', 'Ya existe una cuenta con ese correo.')
+  if (existing) {
+    const profile = await db.doc(`users/${existing.uid}`).get()
+    if (profile.get('role') !== 'client') {
+      throw new HttpsError('already-exists', 'Ya existe una cuenta con ese correo que no es de cliente (equipo o negocio).')
+    }
+    // Otra casa para el mismo cliente
+    const memberNumber = await nextMemberNumber(since)
+    const clientRef = db.collection('clients').doc()
+    const current = profile.get('clientId') as string | undefined
+    const houses = new Set<string>([...((profile.get('clientIds') as string[] | undefined) ?? []), ...(current ? [current] : [])])
+    houses.add(clientRef.id)
+    const batch = db.batch()
+    batch.set(clientRef, {
+      familyName,
+      property,
+      clientSince: Timestamp.fromDate(since),
+      memberNumber,
+      agentName,
+      agentPhone,
+      agentWhatsapp,
+      contacts: {},
+      createdAt: FieldValue.serverTimestamp(),
+    })
+    batch.update(profile.ref, { clientIds: [...houses], ...(current ? {} : { clientId: clientRef.id }) })
+    await batch.commit()
+    return { clientId: clientRef.id, uid: existing.uid, memberNumber, addedToExisting: true }
+  }
 
   const memberNumber = await nextMemberNumber(since)
   const user = await auth.createUser({
@@ -93,6 +121,7 @@ export const createClient = onCall(async (request) => {
       email,
       language,
       clientId: clientRef.id,
+      clientIds: [clientRef.id],
     })
     await batch.commit()
   } catch (e) {
@@ -101,7 +130,7 @@ export const createClient = onCall(async (request) => {
     throw e
   }
 
-  return { clientId: clientRef.id, uid: user.uid, memberNumber }
+  return { clientId: clientRef.id, uid: user.uid, memberNumber, addedToExisting: false }
 })
 
 /** "2026-10" en el calendario de España */
@@ -210,17 +239,36 @@ export const deleteClient = onCall(async (request) => {
   const client = await clientRef.get()
   if (!client.exists) throw new HttpsError('not-found', 'Este cliente ya no existe.')
 
-  const users = await db.collection('users').where('clientId', '==', clientId).get()
-  if (users.docs.some((u) => u.get('role') !== 'client')) {
+  // Personas con esta casa: como casa activa (clientId) o entre sus casas (clientIds)
+  const [byActive, byList] = await Promise.all([
+    db.collection('users').where('clientId', '==', clientId).get(),
+    db.collection('users').where('clientIds', 'array-contains', clientId).get(),
+  ])
+  const linked = new Map([...byActive.docs, ...byList.docs].map((d) => [d.id, d]))
+  if ([...linked.values()].some((u) => u.get('role') !== 'client')) {
     throw new HttpsError('failed-precondition', 'Este cliente tiene una cuenta del equipo de CJ vinculada. Revísela antes de darle de baja.')
   }
 
+  // Si la persona tiene otras casas, se le quita solo esta; si era la última, se borra su cuenta
   const auth = getAuth()
-  for (const u of users.docs) {
-    await auth.deleteUser(u.id).catch((e: { code?: string }) => {
-      if (e.code !== 'auth/user-not-found') throw e
-    })
+  const usersToDelete: FirebaseFirestore.QueryDocumentSnapshot[] = []
+  let keptAccounts = 0
+  for (const u of linked.values()) {
+    const others = (((u.get('clientIds') as string[] | undefined) ?? [u.get('clientId')]) as string[]).filter(
+      (id) => id && id !== clientId,
+    )
+    if (others.length) {
+      const active = u.get('clientId') === clientId ? others[0] : u.get('clientId')
+      await u.ref.update({ clientIds: others, clientId: active })
+      keptAccounts++
+    } else {
+      await auth.deleteUser(u.id).catch((e: { code?: string }) => {
+        if (e.code !== 'auth/user-not-found') throw e
+      })
+      usersToDelete.push(u)
+    }
   }
+  const users = { docs: usersToDelete, size: usersToDelete.length }
 
   // Borrado en lotes (máx. 500 operaciones por lote)
   const uses = await db.collection('dealUses').where('clientId', '==', clientId).get()
@@ -256,6 +304,7 @@ export const deleteClient = onCall(async (request) => {
 
   return {
     accounts: users.size,
+    keptAccounts,
     dealUses: uses.size,
     requests: requests.size,
     reservationClicks: reservationClicks.size,

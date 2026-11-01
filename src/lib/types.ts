@@ -13,7 +13,10 @@ export type UserProfile = {
   name: string
   email: string
   language: Language
+  /** casa que está viendo ahora (ficha clients/{clientId}) */
   clientId?: string
+  /** todas sus casas; solo las asigna CJ */
+  clientIds?: string[]
   /** lugar vinculado; solo el rol "business" */
   placeId?: string
   /** nombre del lugar en el momento del alta */

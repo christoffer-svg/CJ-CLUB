@@ -13,12 +13,14 @@ type AuthState = {
   logout: () => Promise<void>
   /** Guarda o quita un lugar de los favoritos del usuario */
   toggleFavorite: (placeId: string) => Promise<void>
+  /** Cambia la casa que está viendo el cliente (una de sus clientIds) */
+  switchHouse: (clientId: string) => Promise<void>
 }
 
 const AuthContext = createContext<AuthState | null>(null)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [state, setState] = useState<Omit<AuthState, 'logout' | 'toggleFavorite'>>({ loading: true, user: null, profile: null })
+  const [state, setState] = useState<Omit<AuthState, 'logout' | 'toggleFavorite' | 'switchHouse'>>({ loading: true, user: null, profile: null })
 
   useEffect(() => {
     return onAuthStateChanged(auth, async (user) => {
@@ -38,6 +40,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     })
   }, [])
 
+  async function switchHouse(clientId: string) {
+    const { user, profile } = state
+    if (!user || !profile || profile.clientId === clientId || !profile.clientIds?.includes(clientId)) return
+    const previous = profile.clientId
+    setState((s) => ({ ...s, profile: s.profile && { ...s.profile, clientId } }))
+    try {
+      await updateDoc(doc(db, 'users', user.uid), { clientId })
+    } catch {
+      setState((s) => ({ ...s, profile: s.profile && { ...s.profile, clientId: previous } }))
+    }
+  }
+
   async function toggleFavorite(placeId: string) {
     const { user, profile } = state
     if (!user || !profile) return
@@ -55,7 +69,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ ...state, logout: () => signOut(auth), toggleFavorite }}>{children}</AuthContext.Provider>
+    <AuthContext.Provider value={{ ...state, logout: () => signOut(auth), toggleFavorite, switchHouse }}>{children}</AuthContext.Provider>
   )
 }
 

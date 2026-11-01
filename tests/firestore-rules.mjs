@@ -74,6 +74,18 @@ ok(await patch(AD, 'users/' + l.localId, { language: str('es') }), 200, 'admin c
 ok(await patch(AD, 'users/' + l.localId, { role: str('superadmin') }), 403, 'admin pone un rol que no existe')
 ok(await runQuery(AD, { from: [{ collectionId: 'users' }] }), 200, 'admin lista usuarios')
 
+// Varias casas por cliente: Jansen tiene también "jansen2"; solo puede cambiar entre SUS casas
+await ownerPatch('clients/jansen2', { familyName: str('Familia Jansen'), property: str('Apartamento en Altea'), contacts: { mapValue: { fields: {} } } })
+await fetch(`${F}/users/${j.localId}?updateMask.fieldPaths=clientIds`, { method: 'PATCH', headers: { ...H, authorization: 'Bearer owner' }, body: JSON.stringify({ fields: { clientIds: { arrayValue: { values: [str('jansen'), str('jansen2')] } } } }) })
+ok(await req(J, 'clients/jansen2'), 200, 'cliente lee su otra casa (selector)')
+ok(await patch(J, 'users/' + j.localId, { clientId: str('jansen2') }), 200, 'cliente cambia a su otra casa')
+ok(await req(J, 'clients/jansen'), 200, 'tras cambiar sigue leyendo la primera casa (selector)')
+ok(await patch(J, 'users/' + j.localId, { clientId: str('lindqvist') }), 403, 'cliente cambia a la casa de otra familia')
+ok(await patch(J, 'users/' + j.localId, { clientIds: { arrayValue: { values: [str('jansen'), str('jansen2'), str('lindqvist')] } } }), 403, 'cliente se añade casas')
+ok(await req(J, 'clients/lindqvist'), 403, 'cliente con varias casas no lee las de otros')
+ok(await patch(J, 'users/' + j.localId, { clientId: str('jansen') }), 200, 'cliente vuelve a su primera casa')
+ok(await patch(L, 'users/' + l.localId, { clientId: str('jansen') }), 403, 'cliente sin varias casas no puede cambiar de casa')
+
 // clients
 ok(await req(J, 'clients/jansen'), 200, 'cliente lee su ficha')
 ok(await req(J, 'clients/lindqvist'), 403, 'cliente lee ficha de otra familia')

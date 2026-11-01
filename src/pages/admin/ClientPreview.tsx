@@ -1,7 +1,7 @@
 import { Link, Outlet, useParams } from 'react-router-dom'
 import BottomNav from '../../components/BottomNav'
 import { PreviewLanguage } from '../../i18n'
-import { useLiveCollection, useLiveDoc } from '../../lib/admin'
+import { hasHouse, useLiveCollection, useLiveDoc } from '../../lib/admin'
 import type { Client, UserProfile } from '../../lib/types'
 import { PreviewViewer } from '../../lib/viewer'
 
@@ -10,7 +10,7 @@ export default function ClientPreview() {
   const { id = '' } = useParams()
   const client = useLiveDoc<Client>(`clients/${id}`)
   const users = useLiveCollection<UserProfile>('users')
-  const language = users.data.find((u) => u.clientId === id)?.language ?? 'es'
+  const language = users.data.find((u) => hasHouse(u, id))?.language ?? 'es'
   return (
     <PreviewViewer clientId={id}>
       <PreviewLanguage initial={language}>

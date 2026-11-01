@@ -8,18 +8,42 @@ type Result<T> = { loading: boolean; data: T | null; error: boolean }
 
 /** Carga un documento de Firestore una vez. Devuelve data = null si no existe. */
 export function useDoc<T>(path: string | null): Result<T> {
-  const [state, setState] = useState<Result<T>>({ loading: Boolean(path), data: null, error: false })
+  const [state, setState] = useState<Result<T> & { path: string | null }>({ loading: Boolean(path), data: null, error: false, path })
   useEffect(() => {
     if (!path) return
     let cancelled = false
     getDoc(doc(db, path))
-      .then((snap) => !cancelled && setState({ loading: false, data: snap.exists() ? (snap.data() as T) : null, error: false }))
-      .catch(() => !cancelled && setState({ loading: false, data: null, error: true }))
+      .then((snap) => !cancelled && setState({ loading: false, data: snap.exists() ? (snap.data() as T) : null, error: false, path }))
+      .catch(() => !cancelled && setState({ loading: false, data: null, error: true, path }))
     return () => {
       cancelled = true
     }
   }, [path])
+  // Si cambia el documento (p. ej. otra casa), no se muestran los datos del anterior mientras carga
+  if (state.path !== path) return { loading: Boolean(path), data: null, error: false }
   return state
+}
+
+/** Nombres de las casas de un cliente, para el selector */
+export function useHouses(clientIds: string[] | undefined) {
+  const key = (clientIds ?? []).join(',')
+  const [houses, setHouses] = useState<{ id: string; property: string }[]>([])
+  useEffect(() => {
+    const ids = key ? key.split(',') : []
+    if (ids.length < 2) return
+    let cancelled = false
+    Promise.all(
+      ids.map((id) =>
+        getDoc(doc(db, 'clients', id))
+          .then((s) => ({ id, property: (s.get('property') as string) || '' }))
+          .catch(() => ({ id, property: '' })),
+      ),
+    ).then((list) => !cancelled && setHouses(list))
+    return () => {
+      cancelled = true
+    }
+  }, [key])
+  return key.includes(',') ? houses : []
 }
 
 /** "2026-10-25" en el calendario de quien usa la app */

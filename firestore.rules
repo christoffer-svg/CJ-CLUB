@@ -76,9 +76,11 @@ service cloud.firestore {
       // Cada persona lee solo su ficha; el equipo de CJ, todas
       allow read: if (signedIn() && request.auth.uid == uid) || isAdmin();
 
-      // Un cliente solo puede cambiar su idioma y sus favoritos
+      // Un cliente solo puede cambiar su idioma, sus favoritos y cuál de SUS casas está viendo
+      // (clientId debe estar en clientIds, que solo asigna CJ)
       allow update: if isClient() && request.auth.uid == uid
-        && changedKeys().hasOnly(['language', 'favorites'])
+        && changedKeys().hasOnly(['language', 'favorites', 'clientId'])
+        && (!changedKeys().hasAny(['clientId']) || request.resource.data.clientId in resource.data.get('clientIds', []))
         && request.resource.data.language in ['es', 'en', 'nl', 'sv', 'de', 'fr']
         && (!('favorites' in request.resource.data)
             || (request.resource.data.favorites is list && request.resource.data.favorites.size() <= 200));
@@ -101,7 +103,8 @@ service cloud.firestore {
 
     // ---------- clients/{clientId} ----------
     match /clients/{clientId} {
-      allow read: if isAdmin() || (isClient() && me().clientId == clientId);
+      // Un cliente lee la casa que está viendo y las demás de sus casas (para el selector)
+      allow read: if isAdmin() || (isClient() && (me().clientId == clientId || clientId in me().get('clientIds', [])));
       allow write: if isAdmin();
     }
 

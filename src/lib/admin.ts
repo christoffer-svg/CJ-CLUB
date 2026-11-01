@@ -93,11 +93,20 @@ export type NewClient = {
 
 /** Crea la cuenta y la ficha del cliente en el servidor (función createClient) */
 export async function createClient(data: NewClient) {
-  const call = httpsCallable<NewClient, { clientId: string; uid: string; memberNumber: string }>(functions, 'createClient')
+  const call = httpsCallable<NewClient, { clientId: string; uid: string; memberNumber: string; addedToExisting?: boolean }>(
+    functions,
+    'createClient',
+  )
   const res = await call(data)
+  // Si el correo ya era de un cliente, la casa se añade a su cuenta: ya tiene acceso, no hace falta invitación
+  if (res.data.addedToExisting) return { ...res.data, via: null }
   const via = await sendInvitation(data.email, data.language)
   return { ...res.data, via }
 }
+
+/** ¿Esta persona tiene acceso a esta casa? (como casa activa o entre sus casas) */
+export const hasHouse = (u: { clientId?: string; clientIds?: string[] }, clientId: string) =>
+  u.clientId === clientId || Boolean(u.clientIds?.includes(clientId))
 
 export type NewBusiness = {
   placeId: string

@@ -10,7 +10,7 @@ Todo está denegado salvo lo que se permite expresamente.
 | Colección | Cliente (`client`) | Equipo CJ (`admin`) |
 |---|---|---|
 | `users/{uid}` | Lee solo su ficha. Solo puede cambiar `language` y `favorites` (lista, máx. 200). | Lee y gestiona todas. No puede cambiarse su propio rol ni borrarse a sí mismo. Rol limitado a `admin` / `client` / `business`. Un negocio tiene que quedar vinculado a un lugar que existe. |
-| `clients/{id}` | Lee solo la suya (`clientId` de su ficha). No escribe. | Lee y escribe. |
+| `clients/{id}` | Lee la casa que está viendo y las demás de sus casas (`clientIds`). No escribe. | Lee y escribe. |
 | `partners/{id}` | Lee, de uno en uno, solo los asignados en su mapa `contacts`. No puede listar. | Lee, lista y escribe. |
 | `generalContacts`, `settings` | Lee (con sesión e invitación). No escribe. | Lee y escribe. El negocio no los lee. |
 | `places` | Lee. No escribe. El negocio solo lee el suyo, de uno en uno, y no lo modifica. | Lee y escribe. |

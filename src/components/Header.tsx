@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { useI18n } from '../i18n'
 import LanguagePills from './LanguagePills'
@@ -10,9 +11,11 @@ type Props = {
   overlap?: boolean
   /** enlace "Volver" en páginas secundarias */
   back?: string
+  /** contenido extra bajo el subtítulo (p. ej. el selector de casas) */
+  children?: ReactNode
 }
 
-export default function Header({ eyebrow, title, subtitle, overlap, back }: Props) {
+export default function Header({ eyebrow, title, subtitle, overlap, back, children }: Props) {
   const { t } = useI18n()
   return (
     <header className={overlap ? 'header header--overlap' : 'header'}>
@@ -41,6 +44,7 @@ export default function Header({ eyebrow, title, subtitle, overlap, back }: Prop
         {title}
       </h1>
       {subtitle && <p className="header__subtitle">{subtitle}</p>}
+      {children}
     </header>
   )
 }

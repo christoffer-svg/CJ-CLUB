@@ -162,3 +162,118 @@ Bitte prüfen Sie, ob jeder Text natürlich und korrekt auf Deutsch ist. Korrekt
 | `requests.cjNote` | Nota de CJ | Note from CJ | Hinweis von CJ | |
 | `requests.error` | No se pudo enviar. Inténtelo de nuevo. | Couldn't send. Please try again. | Senden fehlgeschlagen. Bitte versuchen Sie es erneut. | |
 | `preview.readOnly` | Vista previa: solo lectura. | Preview: read only. | Vorschau: nur Lesen. | |
+| `mine.contacts.title` | Mis contactos | My contacts | Meine Kontakte | |
+| `mine.contacts.intro` | Los suyos, además de los que le recomienda CJ. Si no marca compartir, solo los ve usted. | Your own, as well as those recommended by CJ. Unless you choose to share one, only you can see it. | Ihre eigenen, neben denen, die CJ empfiehlt. Wenn Sie einen Kontakt nicht teilen, sehen nur Sie ihn. | |
+| `mine.contacts.empty` | Aún no ha añadido contactos propios. Puede guardar, por ejemplo, a su jardinero o a quien lleve las placas solares. | You have not added your own contacts yet. You can save, for example, your gardener or the person who looks after your solar panels. | Sie haben noch keine eigenen Kontakte hinzugefügt. Sie können zum Beispiel Ihren Gärtner oder die Person für Ihre Solaranlage speichern. | |
+| `mine.contacts.emptyShared` | No hay contactos compartidos con CJ. | No contacts shared with CJ. | Keine mit CJ geteilten Kontakte. | |
+| `mine.contacts.add` | Añadir contacto | Add a contact | Kontakt hinzufügen | |
+| `mine.contacts.edit` | Editar | Edit | Bearbeiten | |
+| `mine.contacts.delete` | Borrar | Delete | Löschen | |
+| `mine.contacts.deleteAsk` | ¿Borrar este contacto? | Delete this contact? | Diesen Kontakt löschen? | |
+| `mine.contacts.deleteYes` | Sí, borrar | Yes, delete | Ja, löschen | |
+| `mine.contacts.name` | Nombre | Name | Name | |
+| `mine.contacts.service` | Servicio | Service | Leistung | |
+| `mine.contacts.serviceOther` | Qué servicio es | What kind of service | Welche Leistung | |
+| `mine.contacts.serviceOtherPlaceholder` | Por ejemplo, placas solares | For example, solar panels | Zum Beispiel Solaranlage | |
+| `mine.contacts.phone` | Teléfono | Phone | Telefon | |
+| `mine.contacts.email` | Correo electrónico | Email | E-Mail | |
+| `mine.contacts.notes` | Notas | Notes | Notizen | |
+| `mine.contacts.save` | Guardar | Save | Speichern | |
+| `mine.contacts.cancel` | Cancelar | Cancel | Abbrechen | |
+| `mine.contacts.share` | Compartir con CJ | Share with CJ | Mit CJ teilen | |
+| `mine.contacts.shareHint` | El equipo de CJ podrá verlo para ayudarle. Si no lo marca, solo lo ven usted y las personas de su cuenta. | The CJ team will be able to see it in order to help you. If you leave this off, only you and the people on your account can see it. | Das Team von CJ kann ihn sehen, um Ihnen zu helfen. Lassen Sie dies aus, sehen ihn nur Sie und die Personen Ihres Kontos. | |
+| `mine.contacts.shared` | Compartido con CJ | Shared with CJ | Mit CJ geteilt | |
+| `mine.contacts.added` | Añadido por usted | Added by you | Von Ihnen hinzugefügt | |
+| `mine.contacts.whatsapp` | WhatsApp | WhatsApp | WhatsApp | |
+| `mine.contacts.write` | Escribir | Email | E-Mail | |
+| `mine.contacts.error` | No se pudo guardar. Inténtelo de nuevo. | Could not save. Please try again. | Speichern ist fehlgeschlagen. Bitte versuchen Sie es erneut. | |
+| `mine.contacts.invalidEmail` | El correo no parece válido. | That email does not look valid. | Diese E-Mail-Adresse scheint ungültig. | |
+| `mine.service.lawyer` | Abogado | Lawyer | Anwalt | |
+| `mine.service.gestoria` | Gestoría | Gestoría | Gestoría | |
+| `mine.service.pool` | Piscina | Pool | Pool | |
+| `mine.service.maintenance` | Mantenimiento | Maintenance | Instandhaltung | |
+| `mine.service.garden` | Jardinería | Gardening | Garten | |
+| `mine.service.communityAdmin` | Administrador de fincas | Community administrator | Hausverwaltung | |
+| `mine.service.other` | Otro | Other | Sonstiges | |
+| `house.eyebrow` | Su vivienda | Your home | Ihre Wohnung | |
+| `house.title` | Notas de mi casa | Notes about my home | Notizen zu meinem Haus | |
+| `house.subtitle` | Wifi, alarma, llaves y lo que quiera tener a mano. Si no marca compartir, solo lo ve usted. | Wifi, alarm, keys and anything you want to keep to hand. Unless you choose to share a note, only you can see it. | WLAN, Alarmanlage, Schlüssel und was Sie griffbereit haben möchten. Wenn Sie eine Notiz nicht teilen, sehen nur Sie sie. | |
+| `house.homeTitle` | Notas de mi casa | Notes about my home | Notizen zu meinem Haus | |
+| `house.homeText` | Wifi, alarma, contadores, llaves… | Wifi, alarm, meters, keys… | WLAN, Alarm, Zähler, Schlüssel… | |
+| `house.add` | Añadir nota | Add a note | Notiz hinzufügen | |
+| `house.edit` | Editar | Edit | Bearbeiten | |
+| `house.delete` | Borrar | Delete | Löschen | |
+| `house.deleteAsk` | ¿Borrar esta nota? | Delete this note? | Diese Notiz löschen? | |
+| `house.deleteYes` | Sí, borrar | Yes, delete | Ja, löschen | |
+| `house.empty` | Aún no hay notas. Puede anotar el wifi, la alarma, los contadores, las llaves o la basura. | There are no notes yet. You can write down the wifi, the alarm, the meters, the keys or the rubbish collection. | Noch keine Notizen. Sie können WLAN, Alarmanlage, Zähler, Schlüssel oder die Müllabfuhr notieren. | |
+| `house.emptyShared` | No hay notas compartidas con CJ. | No notes shared with CJ. | Keine mit CJ geteilten Notizen. | |
+| `house.section` | Apartado | Section | Bereich | |
+| `house.section.wifi` | Wifi | Wifi | WLAN | |
+| `house.section.alarm` | Alarma | Alarm | Alarmanlage | |
+| `house.section.meters` | Contadores | Meters | Zähler | |
+| `house.section.keys` | Llaves | Keys | Schlüssel | |
+| `house.section.rubbish` | Basura | Rubbish | Müll | |
+| `house.section.other` | Otros | Other | Sonstiges | |
+| `house.noteTitle` | Título | Title | Titel | |
+| `house.titlePlaceholder` | Por ejemplo, Wifi de casa | For example, Home wifi | Zum Beispiel WLAN zu Hause | |
+| `house.body` | Nota | Note | Notiz | |
+| `house.bodyPlaceholder` | Lo que quiera recordar | Anything you want to remember | Was Sie behalten möchten | |
+| `house.secret` | Contraseña o código | Password or code | Passwort oder Code | |
+| `house.secretWifi` | Contraseña del wifi | Wifi password | WLAN-Passwort | |
+| `house.secretOptional` | Opcional. Queda oculta hasta que pulse mostrar. | Optional. It stays hidden until you tap show. | Optional. Bleibt verborgen, bis Sie auf Anzeigen tippen. | |
+| `house.show` | Mostrar | Show | Anzeigen | |
+| `house.hide` | Ocultar | Hide | Verbergen | |
+| `house.copy` | Copiar | Copy | Kopieren | |
+| `house.copied` | Copiado | Copied | Kopiert | |
+| `house.share` | Compartir con CJ | Share with CJ | Mit CJ teilen | |
+| `house.shareHint` | El equipo de CJ podrá verla para ayudarle. Si no lo marca, solo la ven usted y las personas de su cuenta. | The CJ team will be able to see it in order to help you. If you leave this off, only you and the people on your account can see it. | Das Team von CJ kann sie sehen, um Ihnen zu helfen. Lassen Sie dies aus, sehen sie nur Sie und die Personen Ihres Kontos. | |
+| `house.shared` | Compartido con CJ | Shared with CJ | Mit CJ geteilt | |
+| `house.save` | Guardar | Save | Speichern | |
+| `house.cancel` | Cancelar | Cancel | Abbrechen | |
+| `house.error` | No se pudo guardar. Inténtelo de nuevo. | Could not save. Please try again. | Speichern ist fehlgeschlagen. Bitte versuchen Sie es erneut. | |
+| `private.previewOnlyShared` | Vista previa: lo privado del cliente no se muestra. Solo aparece lo que ha compartido con CJ. | Preview: the client's private items are not shown. Only what they have shared with CJ appears here. | Vorschau: Privates des Kunden wird nicht angezeigt. Nur was mit CJ geteilt wurde, erscheint hier. | |
+| `weather.eyebrow` | El tiempo | Weather | Das Wetter | |
+| `weather.loading` | Consultando el tiempo… | Checking the weather… | Das Wetter wird geladen… | |
+| `weather.error` | No se ha podido consultar el tiempo en este momento. | The weather could not be checked just now. | Das Wetter konnte gerade nicht geladen werden. | |
+| `weather.retry` | Reintentar | Try again | Erneut versuchen | |
+| `weather.wind` | Viento {speed} km/h | Wind {speed} km/h | Wind {speed} km/h | |
+| `weather.humidity` | Humedad {n} % | Humidity {n}% | Luftfeuchtigkeit {n} % | |
+| `weather.feels` | Sensación {temp}° | Feels like {temp}° | Gefühlt {temp}° | |
+| `weather.today` | Hoy | Today | Heute | |
+| `weather.tomorrow` | Mañana | Tomorrow | Morgen | |
+| `weather.yourLocation` | Su ubicación | Your location | Ihr Standort | |
+| `weather.yourHome` | Su vivienda | Your home | Ihr Haus | |
+| `weather.useDevice` | Usar mi ubicación | Use my location | Meinen Standort verwenden | |
+| `weather.usePlace` | Ver {place} | Show {place} | {place} anzeigen | |
+| `weather.geoDenied` | No se ha permitido la ubicación del teléfono. Se muestra {place}. | The phone location was not allowed. Showing {place}. | Der Standort des Telefons wurde nicht erlaubt. Es wird {place} angezeigt. | |
+| `weather.geoUnavailable` | No se ha podido obtener la ubicación. Se muestra {place}. | The location could not be found. Showing {place}. | Der Standort konnte nicht ermittelt werden. Es wird {place} angezeigt. | |
+| `weather.official` | Avisos oficiales de AEMET | Official AEMET warnings | Offizielle AEMET-Warnungen | |
+| `weather.source` | Previsión de Open-Meteo | Forecast by Open-Meteo | Vorhersage von Open-Meteo | |
+| `weather.osm` | OpenStreetMap | OpenStreetMap | OpenStreetMap | |
+| `weather.conditions.clear` | Despejado | Clear | Klar | |
+| `weather.conditions.mainlyClear` | Casi despejado | Mainly clear | Überwiegend klar | |
+| `weather.conditions.partlyCloudy` | Parcialmente nuboso | Partly cloudy | Teilweise bewölkt | |
+| `weather.conditions.overcast` | Cubierto | Overcast | Bedeckt | |
+| `weather.conditions.fog` | Niebla | Fog | Nebel | |
+| `weather.conditions.drizzle` | Llovizna | Drizzle | Nieselregen | |
+| `weather.conditions.rain` | Lluvia | Rain | Regen | |
+| `weather.conditions.freezingRain` | Lluvia helada | Freezing rain | Gefrierender Regen | |
+| `weather.conditions.snow` | Nieve | Snow | Schnee | |
+| `weather.conditions.showers` | Chubascos | Showers | Schauer | |
+| `weather.conditions.snowShowers` | Chubascos de nieve | Snow showers | Schneeschauer | |
+| `weather.conditions.thunderstorm` | Tormenta | Thunderstorm | Gewitter | |
+| `weather.conditions.hail` | Tormenta con granizo | Thunderstorm with hail | Gewitter mit Hagel | |
+| `weather.conditions.unknown` | Tiempo variable | Changeable | Wechselhaft | |
+| `weather.notice.disclaimer` | Según la previsión. No sustituye a un aviso oficial. | Based on the forecast. It does not replace an official warning. | Laut Vorhersage. Ersetzt keine amtliche Warnung. | |
+| `weather.notice.moderate` | Atención | Caution | Achtung | |
+| `weather.notice.severe` | Importante | Important | Wichtig | |
+| `weather.notice.extreme` | Peligro | Danger | Gefahr | |
+| `weather.notice.wind` | Rachas de viento de hasta {speed} km/h | Wind gusts up to {speed} km/h | Windböen bis {speed} km/h | |
+| `weather.notice.rain` | Lluvia prevista de unos {amount} mm | Around {amount} mm of rain expected | Etwa {amount} mm Regen erwartet | |
+| `weather.notice.heat` | Calor: hasta {temp}° | Heat: up to {temp}° | Hitze: bis {temp}° | |
+| `weather.notice.cold` | Frío: hasta {temp}° | Cold: down to {temp}° | Kälte: bis {temp}° | |
+| `weather.notice.storm` | Posibles tormentas | Thunderstorms possible | Gewitter möglich | |
+| `weather.notice.hail` | Tormentas con posible granizo | Thunderstorms with possible hail | Gewitter mit möglichem Hagel | |
+| `weather.notice.ice` | Posible lluvia helada | Freezing rain possible | Gefrierender Regen möglich | |
+| `home.houses` | Sus casas | Your homes | Ihre Häuser | |
+| `home.house` | Casa | Home | Haus | |

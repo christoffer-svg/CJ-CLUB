@@ -162,3 +162,118 @@ Kontrollera att varje text är naturlig och korrekt på svenska. Skriv dina rät
 | `requests.cjNote` | Nota de CJ | Note from CJ | Kommentar från CJ | |
 | `requests.error` | No se pudo enviar. Inténtelo de nuevo. | Couldn't send. Please try again. | Det gick inte att skicka. Försök igen. | |
 | `preview.readOnly` | Vista previa: solo lectura. | Preview: read only. | Förhandsvisning: endast läsning. | |
+| `mine.contacts.title` | Mis contactos | My contacts | Mina kontakter | |
+| `mine.contacts.intro` | Los suyos, además de los que le recomienda CJ. Si no marca compartir, solo los ve usted. | Your own, as well as those recommended by CJ. Unless you choose to share one, only you can see it. | Dina egna, vid sidan av dem som CJ rekommenderar. Delar du inte en kontakt ser bara du den. | |
+| `mine.contacts.empty` | Aún no ha añadido contactos propios. Puede guardar, por ejemplo, a su jardinero o a quien lleve las placas solares. | You have not added your own contacts yet. You can save, for example, your gardener or the person who looks after your solar panels. | Du har inte lagt till egna kontakter ännu. Du kan till exempel spara din trädgårdsmästare eller den som sköter dina solpaneler. | |
+| `mine.contacts.emptyShared` | No hay contactos compartidos con CJ. | No contacts shared with CJ. | Inga kontakter delade med CJ. | |
+| `mine.contacts.add` | Añadir contacto | Add a contact | Lägg till kontakt | |
+| `mine.contacts.edit` | Editar | Edit | Redigera | |
+| `mine.contacts.delete` | Borrar | Delete | Ta bort | |
+| `mine.contacts.deleteAsk` | ¿Borrar este contacto? | Delete this contact? | Ta bort den här kontakten? | |
+| `mine.contacts.deleteYes` | Sí, borrar | Yes, delete | Ja, ta bort | |
+| `mine.contacts.name` | Nombre | Name | Namn | |
+| `mine.contacts.service` | Servicio | Service | Tjänst | |
+| `mine.contacts.serviceOther` | Qué servicio es | What kind of service | Vilken tjänst | |
+| `mine.contacts.serviceOtherPlaceholder` | Por ejemplo, placas solares | For example, solar panels | Till exempel solpaneler | |
+| `mine.contacts.phone` | Teléfono | Phone | Telefon | |
+| `mine.contacts.email` | Correo electrónico | Email | E-post | |
+| `mine.contacts.notes` | Notas | Notes | Anteckningar | |
+| `mine.contacts.save` | Guardar | Save | Spara | |
+| `mine.contacts.cancel` | Cancelar | Cancel | Avbryt | |
+| `mine.contacts.share` | Compartir con CJ | Share with CJ | Dela med CJ | |
+| `mine.contacts.shareHint` | El equipo de CJ podrá verlo para ayudarle. Si no lo marca, solo lo ven usted y las personas de su cuenta. | The CJ team will be able to see it in order to help you. If you leave this off, only you and the people on your account can see it. | CJ-teamet kan se den för att hjälpa dig. Lämnar du detta av ser bara du och personerna på ditt konto den. | |
+| `mine.contacts.shared` | Compartido con CJ | Shared with CJ | Delad med CJ | |
+| `mine.contacts.added` | Añadido por usted | Added by you | Tillagd av dig | |
+| `mine.contacts.whatsapp` | WhatsApp | WhatsApp | WhatsApp | |
+| `mine.contacts.write` | Escribir | Email | E-post | |
+| `mine.contacts.error` | No se pudo guardar. Inténtelo de nuevo. | Could not save. Please try again. | Det gick inte att spara. Försök igen. | |
+| `mine.contacts.invalidEmail` | El correo no parece válido. | That email does not look valid. | E-postadressen verkar inte giltig. | |
+| `mine.service.lawyer` | Abogado | Lawyer | Advokat | |
+| `mine.service.gestoria` | Gestoría | Gestoría | Gestoría | |
+| `mine.service.pool` | Piscina | Pool | Pool | |
+| `mine.service.maintenance` | Mantenimiento | Maintenance | Underhåll | |
+| `mine.service.garden` | Jardinería | Gardening | Trädgård | |
+| `mine.service.communityAdmin` | Administrador de fincas | Community administrator | Samfällighetsförvaltare | |
+| `mine.service.other` | Otro | Other | Annat | |
+| `house.eyebrow` | Su vivienda | Your home | Din bostad | |
+| `house.title` | Notas de mi casa | Notes about my home | Anteckningar om mitt hus | |
+| `house.subtitle` | Wifi, alarma, llaves y lo que quiera tener a mano. Si no marca compartir, solo lo ve usted. | Wifi, alarm, keys and anything you want to keep to hand. Unless you choose to share a note, only you can see it. | Wifi, larm, nycklar och det du vill ha till hands. Delar du inte en anteckning ser bara du den. | |
+| `house.homeTitle` | Notas de mi casa | Notes about my home | Anteckningar om mitt hus | |
+| `house.homeText` | Wifi, alarma, contadores, llaves… | Wifi, alarm, meters, keys… | Wifi, larm, mätare, nycklar… | |
+| `house.add` | Añadir nota | Add a note | Lägg till anteckning | |
+| `house.edit` | Editar | Edit | Redigera | |
+| `house.delete` | Borrar | Delete | Ta bort | |
+| `house.deleteAsk` | ¿Borrar esta nota? | Delete this note? | Ta bort den här anteckningen? | |
+| `house.deleteYes` | Sí, borrar | Yes, delete | Ja, ta bort | |
+| `house.empty` | Aún no hay notas. Puede anotar el wifi, la alarma, los contadores, las llaves o la basura. | There are no notes yet. You can write down the wifi, the alarm, the meters, the keys or the rubbish collection. | Det finns inga anteckningar ännu. Du kan skriva upp wifi, larmet, mätarna, nycklarna eller soporna. | |
+| `house.emptyShared` | No hay notas compartidas con CJ. | No notes shared with CJ. | Inga anteckningar delade med CJ. | |
+| `house.section` | Apartado | Section | Avdelning | |
+| `house.section.wifi` | Wifi | Wifi | Wifi | |
+| `house.section.alarm` | Alarma | Alarm | Larm | |
+| `house.section.meters` | Contadores | Meters | Mätare | |
+| `house.section.keys` | Llaves | Keys | Nycklar | |
+| `house.section.rubbish` | Basura | Rubbish | Sopor | |
+| `house.section.other` | Otros | Other | Övrigt | |
+| `house.noteTitle` | Título | Title | Rubrik | |
+| `house.titlePlaceholder` | Por ejemplo, Wifi de casa | For example, Home wifi | Till exempel wifi hemma | |
+| `house.body` | Nota | Note | Anteckning | |
+| `house.bodyPlaceholder` | Lo que quiera recordar | Anything you want to remember | Det du vill komma ihåg | |
+| `house.secret` | Contraseña o código | Password or code | Lösenord eller kod | |
+| `house.secretWifi` | Contraseña del wifi | Wifi password | Wifi-lösenord | |
+| `house.secretOptional` | Opcional. Queda oculta hasta que pulse mostrar. | Optional. It stays hidden until you tap show. | Valfritt. Det är dolt tills du trycker på visa. | |
+| `house.show` | Mostrar | Show | Visa | |
+| `house.hide` | Ocultar | Hide | Dölj | |
+| `house.copy` | Copiar | Copy | Kopiera | |
+| `house.copied` | Copiado | Copied | Kopierat | |
+| `house.share` | Compartir con CJ | Share with CJ | Dela med CJ | |
+| `house.shareHint` | El equipo de CJ podrá verla para ayudarle. Si no lo marca, solo la ven usted y las personas de su cuenta. | The CJ team will be able to see it in order to help you. If you leave this off, only you and the people on your account can see it. | CJ-teamet kan se den för att hjälpa dig. Lämnar du detta av ser bara du och personerna på ditt konto den. | |
+| `house.shared` | Compartido con CJ | Shared with CJ | Delad med CJ | |
+| `house.save` | Guardar | Save | Spara | |
+| `house.cancel` | Cancelar | Cancel | Avbryt | |
+| `house.error` | No se pudo guardar. Inténtelo de nuevo. | Could not save. Please try again. | Det gick inte att spara. Försök igen. | |
+| `private.previewOnlyShared` | Vista previa: lo privado del cliente no se muestra. Solo aparece lo que ha compartido con CJ. | Preview: the client's private items are not shown. Only what they have shared with CJ appears here. | Förhandsvisning: det klienten håller privat visas inte. Bara det som delats med CJ syns här. | |
+| `weather.eyebrow` | El tiempo | Weather | Vädret | |
+| `weather.loading` | Consultando el tiempo… | Checking the weather… | Hämtar vädret… | |
+| `weather.error` | No se ha podido consultar el tiempo en este momento. | The weather could not be checked just now. | Vädret kunde inte hämtas just nu. | |
+| `weather.retry` | Reintentar | Try again | Försök igen | |
+| `weather.wind` | Viento {speed} km/h | Wind {speed} km/h | Vind {speed} km/h | |
+| `weather.humidity` | Humedad {n} % | Humidity {n}% | Luftfuktighet {n} % | |
+| `weather.feels` | Sensación {temp}° | Feels like {temp}° | Känns som {temp}° | |
+| `weather.today` | Hoy | Today | Idag | |
+| `weather.tomorrow` | Mañana | Tomorrow | I morgon | |
+| `weather.yourLocation` | Su ubicación | Your location | Er plats | |
+| `weather.yourHome` | Su vivienda | Your home | Ert hem | |
+| `weather.useDevice` | Usar mi ubicación | Use my location | Använd min plats | |
+| `weather.usePlace` | Ver {place} | Show {place} | Visa {place} | |
+| `weather.geoDenied` | No se ha permitido la ubicación del teléfono. Se muestra {place}. | The phone location was not allowed. Showing {place}. | Telefonens plats tilläts inte. Visar {place}. | |
+| `weather.geoUnavailable` | No se ha podido obtener la ubicación. Se muestra {place}. | The location could not be found. Showing {place}. | Platsen kunde inte hämtas. Visar {place}. | |
+| `weather.official` | Avisos oficiales de AEMET | Official AEMET warnings | Officiella AEMET-varningar | |
+| `weather.source` | Previsión de Open-Meteo | Forecast by Open-Meteo | Prognos från Open-Meteo | |
+| `weather.osm` | OpenStreetMap | OpenStreetMap | OpenStreetMap | |
+| `weather.conditions.clear` | Despejado | Clear | Klart | |
+| `weather.conditions.mainlyClear` | Casi despejado | Mainly clear | Mestadels klart | |
+| `weather.conditions.partlyCloudy` | Parcialmente nuboso | Partly cloudy | Delvis molnigt | |
+| `weather.conditions.overcast` | Cubierto | Overcast | Mulet | |
+| `weather.conditions.fog` | Niebla | Fog | Dimma | |
+| `weather.conditions.drizzle` | Llovizna | Drizzle | Duggregn | |
+| `weather.conditions.rain` | Lluvia | Rain | Regn | |
+| `weather.conditions.freezingRain` | Lluvia helada | Freezing rain | Underkylt regn | |
+| `weather.conditions.snow` | Nieve | Snow | Snö | |
+| `weather.conditions.showers` | Chubascos | Showers | Skurar | |
+| `weather.conditions.snowShowers` | Chubascos de nieve | Snow showers | Snöbyar | |
+| `weather.conditions.thunderstorm` | Tormenta | Thunderstorm | Åska | |
+| `weather.conditions.hail` | Tormenta con granizo | Thunderstorm with hail | Åska med hagel | |
+| `weather.conditions.unknown` | Tiempo variable | Changeable | Växlande | |
+| `weather.notice.disclaimer` | Según la previsión. No sustituye a un aviso oficial. | Based on the forecast. It does not replace an official warning. | Enligt prognosen. Ersätter inte en officiell varning. | |
+| `weather.notice.moderate` | Atención | Caution | Observera | |
+| `weather.notice.severe` | Importante | Important | Viktigt | |
+| `weather.notice.extreme` | Peligro | Danger | Fara | |
+| `weather.notice.wind` | Rachas de viento de hasta {speed} km/h | Wind gusts up to {speed} km/h | Vindbyar upp till {speed} km/h | |
+| `weather.notice.rain` | Lluvia prevista de unos {amount} mm | Around {amount} mm of rain expected | Omkring {amount} mm regn väntas | |
+| `weather.notice.heat` | Calor: hasta {temp}° | Heat: up to {temp}° | Värme: upp till {temp}° | |
+| `weather.notice.cold` | Frío: hasta {temp}° | Cold: down to {temp}° | Kyla: ned till {temp}° | |
+| `weather.notice.storm` | Posibles tormentas | Thunderstorms possible | Åska möjlig | |
+| `weather.notice.hail` | Tormentas con posible granizo | Thunderstorms with possible hail | Åska med möjlig hagel | |
+| `weather.notice.ice` | Posible lluvia helada | Freezing rain possible | Underkylt regn möjligt | |
+| `home.houses` | Sus casas | Your homes | Dina hus | |
+| `home.house` | Casa | Home | Hus | |

@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { useAuth } from '../auth/AuthProvider'
 import { useViewer } from '../lib/viewer'
 import Header from '../components/Header'
+import HouseSwitcher from '../components/HouseSwitcher'
 import WeatherCard from '../components/WeatherCard'
 import { AlertIcon, ChatIcon, ChevronIcon, CrossIcon, DishIcon, KeyIcon, NoteIcon, PhoneIcon, StarIcon, WhatsAppIcon } from '../components/Icons'
 import { useActiveDealsCount, useDoc } from '../lib/data'
@@ -32,7 +33,9 @@ export default function Home() {
 
   return (
     <>
-      <Header title={title} subtitle={subtitle} overlap />
+      <Header title={title} subtitle={subtitle} overlap>
+        <HouseSwitcher />
+      </Header>
       <main className="page page--overlap">
         <section className="card agent-card" aria-label={t('home.yourAgent')}>
           <img className="agent-card__logo" src="/logo.png" alt="" />
