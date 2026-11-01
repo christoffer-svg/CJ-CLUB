@@ -313,7 +313,7 @@ Kontrollera att varje text är naturlig och korrekt på svenska. Skriv dina rät
 | `requests.error` | No se pudo enviar. Inténtelo de nuevo. | Couldn't send. Please try again. | Det gick inte att skicka. Försök igen. | |
 | `preview.readOnly` | Vista previa: solo lectura. | Preview: read only. | Förhandsvisning: endast läsning. | |
 | `mine.contacts.title` | Mis contactos | My contacts | Mina kontakter | |
-| `mine.contacts.intro` | Los suyos, además de los que le recomienda CJ. Si no marca compartir, solo los ve usted. | Your own, as well as those recommended by CJ. Unless you choose to share one, only you can see it. | Dina egna, vid sidan av dem som CJ rekommenderar. Delar du inte en kontakt ser bara du den. | |
+| `mine.contacts.intro` | Los suyos, además de los que le recomienda CJ. El equipo de CJ también los ve, para poder ayudarle. | Your own, as well as those recommended by CJ. The CJ team can also see them, so they can help you. | Era egna, utöver dem som CJ rekommenderar. CJ:s team ser dem också, för att kunna hjälpa er. | |
 | `mine.contacts.empty` | Aún no ha añadido contactos propios. Puede guardar, por ejemplo, a su jardinero o a quien lleve las placas solares. | You have not added your own contacts yet. You can save, for example, your gardener or the person who looks after your solar panels. | Du har inte lagt till egna kontakter ännu. Du kan till exempel spara din trädgårdsmästare eller den som sköter dina solpaneler. | |
 | `mine.contacts.emptyShared` | No hay contactos compartidos con CJ. | No contacts shared with CJ. | Inga kontakter delade med CJ. | |
 | `mine.contacts.add` | Añadir contacto | Add a contact | Lägg till kontakt | |

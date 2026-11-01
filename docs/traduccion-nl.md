@@ -313,7 +313,7 @@ Controleer of elke tekst natuurlijk en correct Nederlands is. Noteer correcties 
 | `requests.error` | No se pudo enviar. Inténtelo de nuevo. | Couldn't send. Please try again. | Versturen is niet gelukt. Probeer het opnieuw. | |
 | `preview.readOnly` | Vista previa: solo lectura. | Preview: read only. | Voorbeeld: alleen lezen. | |
 | `mine.contacts.title` | Mis contactos | My contacts | Mijn contacten | |
-| `mine.contacts.intro` | Los suyos, además de los que le recomienda CJ. Si no marca compartir, solo los ve usted. | Your own, as well as those recommended by CJ. Unless you choose to share one, only you can see it. | Uw eigen contacten, naast die van CJ. Deelt u er een niet, dan ziet alleen u die. | |
+| `mine.contacts.intro` | Los suyos, además de los que le recomienda CJ. El equipo de CJ también los ve, para poder ayudarle. | Your own, as well as those recommended by CJ. The CJ team can also see them, so they can help you. | Uw eigen contacten, naast die van CJ. Het team van CJ ziet ze ook, zodat het u kan helpen. | |
 | `mine.contacts.empty` | Aún no ha añadido contactos propios. Puede guardar, por ejemplo, a su jardinero o a quien lleve las placas solares. | You have not added your own contacts yet. You can save, for example, your gardener or the person who looks after your solar panels. | U hebt nog geen eigen contacten toegevoegd. U kunt bijvoorbeeld uw tuinman bewaren, of degene die uw zonnepanelen verzorgt. | |
 | `mine.contacts.emptyShared` | No hay contactos compartidos con CJ. | No contacts shared with CJ. | Geen contacten gedeeld met CJ. | |
 | `mine.contacts.add` | Añadir contacto | Add a contact | Contact toevoegen | |

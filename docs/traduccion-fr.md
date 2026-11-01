@@ -313,7 +313,7 @@ Vérifiez que chaque texte est naturel et correct en français. Notez vos correc
 | `requests.error` | No se pudo enviar. Inténtelo de nuevo. | Couldn't send. Please try again. | L'envoi a échoué. Veuillez réessayer. | |
 | `preview.readOnly` | Vista previa: solo lectura. | Preview: read only. | Aperçu : lecture seule. | |
 | `mine.contacts.title` | Mis contactos | My contacts | Mes contacts | |
-| `mine.contacts.intro` | Los suyos, además de los que le recomienda CJ. Si no marca compartir, solo los ve usted. | Your own, as well as those recommended by CJ. Unless you choose to share one, only you can see it. | Les vôtres, en plus de ceux que CJ vous recommande. Si vous ne partagez pas un contact, vous seul le voyez. | |
+| `mine.contacts.intro` | Los suyos, además de los que le recomienda CJ. El equipo de CJ también los ve, para poder ayudarle. | Your own, as well as those recommended by CJ. The CJ team can also see them, so they can help you. | Les vôtres, en plus de ceux que CJ vous recommande. L’équipe de CJ les voit aussi, pour pouvoir vous aider. | |
 | `mine.contacts.empty` | Aún no ha añadido contactos propios. Puede guardar, por ejemplo, a su jardinero o a quien lleve las placas solares. | You have not added your own contacts yet. You can save, for example, your gardener or the person who looks after your solar panels. | Vous n'avez pas encore ajouté de contacts. Vous pouvez enregistrer, par exemple, votre jardinier ou la personne qui s'occupe de vos panneaux solaires. | |
 | `mine.contacts.emptyShared` | No hay contactos compartidos con CJ. | No contacts shared with CJ. | Aucun contact partagé avec CJ. | |
 | `mine.contacts.add` | Añadir contacto | Add a contact | Ajouter un contact | |

@@ -354,7 +354,7 @@ const es = {
 
   // Contactos propios y notas de la casa
   'mine.contacts.title': "Mis contactos",
-  'mine.contacts.intro': "Los suyos, además de los que le recomienda CJ. Si no marca compartir, solo los ve usted.",
+  'mine.contacts.intro': "Los suyos, además de los que le recomienda CJ. El equipo de CJ también los ve, para poder ayudarle.",
   'mine.contacts.empty': "Aún no ha añadido contactos propios. Puede guardar, por ejemplo, a su jardinero o a quien lleve las placas solares.",
   'mine.contacts.emptyShared': "No hay contactos compartidos con CJ.",
   'mine.contacts.add': "Añadir contacto",
@@ -1061,7 +1061,7 @@ const en: Record<TranslationKey, string> = {
   'preview.readOnly': "Preview: read only.",
 
   'mine.contacts.title': "My contacts",
-  'mine.contacts.intro': "Your own, as well as those recommended by CJ. Unless you choose to share one, only you can see it.",
+  'mine.contacts.intro': "Your own, as well as those recommended by CJ. The CJ team can also see them, so they can help you.",
   'mine.contacts.empty': "You have not added your own contacts yet. You can save, for example, your gardener or the person who looks after your solar panels.",
   'mine.contacts.emptyShared': "No contacts shared with CJ.",
   'mine.contacts.add': "Add a contact",
@@ -1758,7 +1758,7 @@ const nl: Record<TranslationKey, string> = {
   'preview.readOnly': "Voorbeeld: alleen lezen.",
 
   'mine.contacts.title': "Mijn contacten",
-  'mine.contacts.intro': "Uw eigen contacten, naast die van CJ. Deelt u er een niet, dan ziet alleen u die.",
+  'mine.contacts.intro': "Uw eigen contacten, naast die van CJ. Het team van CJ ziet ze ook, zodat het u kan helpen.",
   'mine.contacts.empty': "U hebt nog geen eigen contacten toegevoegd. U kunt bijvoorbeeld uw tuinman bewaren, of degene die uw zonnepanelen verzorgt.",
   'mine.contacts.emptyShared': "Geen contacten gedeeld met CJ.",
   'mine.contacts.add': "Contact toevoegen",
@@ -2455,7 +2455,7 @@ const sv: Record<TranslationKey, string> = {
   'preview.readOnly': "Förhandsvisning: endast läsning.",
 
   'mine.contacts.title': "Mina kontakter",
-  'mine.contacts.intro': "Dina egna, vid sidan av dem som CJ rekommenderar. Delar du inte en kontakt ser bara du den.",
+  'mine.contacts.intro': "Era egna, utöver dem som CJ rekommenderar. CJ:s team ser dem också, för att kunna hjälpa er.",
   'mine.contacts.empty': "Du har inte lagt till egna kontakter ännu. Du kan till exempel spara din trädgårdsmästare eller den som sköter dina solpaneler.",
   'mine.contacts.emptyShared': "Inga kontakter delade med CJ.",
   'mine.contacts.add': "Lägg till kontakt",
@@ -3152,7 +3152,7 @@ const de: Record<TranslationKey, string> = {
   'preview.readOnly': "Vorschau: nur Lesen.",
 
   'mine.contacts.title': "Meine Kontakte",
-  'mine.contacts.intro': "Ihre eigenen, neben denen, die CJ empfiehlt. Wenn Sie einen Kontakt nicht teilen, sehen nur Sie ihn.",
+  'mine.contacts.intro': "Ihre eigenen, zusätzlich zu den von CJ empfohlenen. Das CJ-Team sieht sie ebenfalls, um Ihnen helfen zu können.",
   'mine.contacts.empty': "Sie haben noch keine eigenen Kontakte hinzugefügt. Sie können zum Beispiel Ihren Gärtner oder die Person für Ihre Solaranlage speichern.",
   'mine.contacts.emptyShared': "Keine mit CJ geteilten Kontakte.",
   'mine.contacts.add': "Kontakt hinzufügen",
@@ -3849,7 +3849,7 @@ const fr: Record<TranslationKey, string> = {
   'preview.readOnly': "Aperçu : lecture seule.",
 
   'mine.contacts.title': "Mes contacts",
-  'mine.contacts.intro': "Les vôtres, en plus de ceux que CJ vous recommande. Si vous ne partagez pas un contact, vous seul le voyez.",
+  'mine.contacts.intro': "Les vôtres, en plus de ceux que CJ vous recommande. L’équipe de CJ les voit aussi, pour pouvoir vous aider.",
   'mine.contacts.empty': "Vous n'avez pas encore ajouté de contacts. Vous pouvez enregistrer, par exemple, votre jardinier ou la personne qui s'occupe de vos panneaux solaires.",
   'mine.contacts.emptyShared': "Aucun contact partagé avec CJ.",
   'mine.contacts.add': "Ajouter un contact",

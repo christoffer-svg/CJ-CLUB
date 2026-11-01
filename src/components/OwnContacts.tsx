@@ -1,6 +1,5 @@
 import { useState, type FormEvent } from 'react'
 import { useI18n } from '../i18n'
-import ShareField from './ShareField'
 import { deleteOwnContact, saveOwnContact, useOwnContacts, validEmail, type OwnContactInput } from '../lib/household'
 import { telLink, whatsappLink } from '../lib/format'
 import { usePartnerCategories } from '../lib/data'
@@ -18,7 +17,8 @@ const empty = {
   phone: '',
   email: '',
   notes: '',
-  shareWithCj: false,
+  // Los contactos del cliente los ve siempre también el equipo de CJ
+  shareWithCj: true,
 }
 
 function serviceName(item: Pick<OwnContact, 'service' | 'serviceOther'>, categories: MergedCategory[], lang: Language, otherLabel: string) {
@@ -72,7 +72,8 @@ export default function OwnContacts() {
       phone: item.phone,
       email: item.email,
       notes: item.notes,
-      shareWithCj: item.shareWithCj,
+      // Al editar uno antiguo privado, pasa a compartido con CJ
+      shareWithCj: true,
     })
   }
 
@@ -206,12 +207,6 @@ export default function OwnContacts() {
               onChange={(e) => setForm({ ...form, notes: e.target.value })}
             />
           </label>
-          <ShareField
-            checked={form.shareWithCj}
-            onChange={(shareWithCj) => setForm({ ...form, shareWithCj })}
-            label={t('mine.contacts.share')}
-            hint={t('mine.contacts.shareHint')}
-          />
           {(error || emailInvalid) && (
             <p className="composer__error">{emailInvalid ? t('mine.contacts.invalidEmail') : t('mine.contacts.error')}</p>
           )}
@@ -252,7 +247,6 @@ export default function OwnContacts() {
                     <span className="card__title own-contact__name">{item.name}</span>
                     <span className="card__text">{serviceName(item, categories.data, lang, t('mine.service.other'))}</span>
                     {item.notes?.trim() && <span className="own-contact__notes">{item.notes}</span>}
-                    {item.shareWithCj && <span className="status status--shared">{t('mine.contacts.shared')}</span>}
                   </div>
                 </div>
                 {(digits || email) && (
