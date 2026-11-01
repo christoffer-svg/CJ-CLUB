@@ -129,11 +129,12 @@ export function answerProjectPayment(projectId: string, paymentId: string, a: Au
   })
 }
 
-export function proposeProjectExtra(projectId: string, a: Author, e: { title: string; description: string; amount: number }) {
+export function proposeProjectExtra(projectId: string, a: Author, e: { title: string; description: string; amount: number; selectionId?: string }) {
   return addDoc(collection(db, 'projects', projectId, 'extras'), {
     title: e.title.trim().slice(0, 200),
     description: e.description.trim().slice(0, 4000),
     amount: Math.round(e.amount * 100) / 100,
+    ...(e.selectionId ? { selectionId: e.selectionId } : {}),
     proposedByUid: a.uid,
     proposedByRole: a.role,
     proposedByName: a.name,

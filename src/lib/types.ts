@@ -417,6 +417,8 @@ export type ProjectExtra = {
   title: string
   description: string
   amount: number
+  /** si sale de la diferencia de un producto elegido (projects/{id}/selections) */
+  selectionId?: string
   proposedByUid: string
   proposedByRole: ProjectRole
   proposedByName: string

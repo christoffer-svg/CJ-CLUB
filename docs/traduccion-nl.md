@@ -360,6 +360,15 @@ Controleer of elke tekst natuurlijk en correct Nederlands is. Noteer correcties 
 | `sel.okPending` | Pendiente | Pending | Nog niet | |
 | `sel.confirm` | Estoy conforme con esta elección | I agree with this selection | Ik ga akkoord met deze keuze | |
 | `sel.budgetReference` | Precio de referencia en el presupuesto: {net} + IVA ({gross} con IVA) | Reference price in the budget: {net} + VAT ({gross} incl. VAT) | Richtprijs in de begroting: {net} + btw ({gross} incl. btw) | |
+| `sel.priceHint` | Si son varias unidades, el precio total de todas. | If there are several units, the total price for all of them. | Bij meerdere stuks: de totaalprijs van alle. | |
+| `sel.diffMore` | Es {amount} + IVA más caro que la referencia. Después de guardar puede proponer un extra por la diferencia. | It is {amount} + VAT more than the reference. After saving you can propose an extra for the difference. | Het is {amount} + btw duurder dan de richtprijs. Na het opslaan kunt u meerwerk voor het verschil voorstellen. | |
+| `sel.diffWithin` | Dentro del precio de referencia: no hay diferencia que pagar. | Within the reference price: no difference to pay. | Binnen de richtprijs: geen verschil te betalen. | |
+| `sel.diffMoreShort` | Diferencia con la referencia: {amount} + IVA. | Difference from the reference: {amount} + VAT. | Verschil met de richtprijs: {amount} + btw. | |
+| `sel.diffWithinShort` | Dentro del precio de referencia. | Within the reference price. | Binnen de richtprijs. | |
+| `sel.proposeExtra` | Proponer extra por la diferencia ({amount} + IVA) | Propose an extra for the difference ({amount} + VAT) | Meerwerk voor het verschil voorstellen ({amount} + btw) | |
+| `sel.extraTitle` | Diferencia: {product} | Difference: {product} | Verschil: {product} | |
+| `sel.extraText` | Elegido en {store} por {price} con IVA. Referencia en el presupuesto: {reference} + IVA. Diferencia: {amount} + IVA. | Chosen at {store} for {price} incl. VAT. Reference in the budget: {reference} + VAT. Difference: {amount} + VAT. | Gekozen bij {store} voor {price} incl. btw. Richtprijs in de begroting: {reference} + btw. Verschil: {amount} + btw. | |
+| `sel.extraStatus` | Extra por la diferencia: {amount} + IVA · {status} | Extra for the difference: {amount} + VAT · {status} | Meerwerk voor het verschil: {amount} + btw · {status} | |
 | `budget.referenceNote` | Productos y precios de referencia incluidos en el precio de la partida. Si elige otro más caro, la diferencia se añade como extra. | Products and reference prices included in the group price. If you choose a more expensive one, the difference is added as an extra. | Producten en richtprijzen die in de prijs van de post zijn inbegrepen. Kiest u iets duurders, dan wordt het verschil als meerwerk toegevoegd. | |
 | `budget.reference` | referencia | reference | richtprijs | |
 | `budget.referencePrice` | Precio de referencia sin IVA (€) | Reference price excl. VAT (€) | Richtprijs excl. btw (€) | |

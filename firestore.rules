@@ -777,7 +777,11 @@ service cloud.firestore {
       match /extras/{id} {
         allow read: if inProject(pid);
         allow create: if projectRole(pid) in ['builder', 'cj']
-          && request.resource.data.keys().hasOnly(['title', 'description', 'amount', 'proposedByUid', 'proposedByRole', 'proposedByName', 'status', 'createdAt'])
+          && request.resource.data.keys().hasOnly(['title', 'description', 'amount', 'selectionId', 'proposedByUid', 'proposedByRole', 'proposedByName', 'status', 'createdAt'])
+          // Extra por la diferencia de un producto elegido: apunta a esa elección
+          && (!('selectionId' in request.resource.data)
+              || (request.resource.data.selectionId is string
+                  && exists(/databases/$(database)/documents/projects/$(pid)/selections/$(request.resource.data.selectionId))))
           && validText(request.resource.data.title, 200)
           && (request.resource.data.description == '' || validText(request.resource.data.description, 4000))
           && money(request.resource.data.amount)

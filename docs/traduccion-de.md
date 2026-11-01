@@ -360,6 +360,15 @@ Bitte prüfen Sie, ob jeder Text natürlich und korrekt auf Deutsch ist. Korrekt
 | `sel.okPending` | Pendiente | Pending | Ausstehend | |
 | `sel.confirm` | Estoy conforme con esta elección | I agree with this selection | Ich bin mit dieser Auswahl einverstanden | |
 | `sel.budgetReference` | Precio de referencia en el presupuesto: {net} + IVA ({gross} con IVA) | Reference price in the budget: {net} + VAT ({gross} incl. VAT) | Richtpreis im Kostenvoranschlag: {net} + MwSt. ({gross} inkl. MwSt.) | |
+| `sel.priceHint` | Si son varias unidades, el precio total de todas. | If there are several units, the total price for all of them. | Bei mehreren Stück: der Gesamtpreis für alle. | |
+| `sel.diffMore` | Es {amount} + IVA más caro que la referencia. Después de guardar puede proponer un extra por la diferencia. | It is {amount} + VAT more than the reference. After saving you can propose an extra for the difference. | Das sind {amount} + MwSt. mehr als der Richtpreis. Nach dem Speichern können Sie eine Zusatzarbeit für die Differenz vorschlagen. | |
+| `sel.diffWithin` | Dentro del precio de referencia: no hay diferencia que pagar. | Within the reference price: no difference to pay. | Innerhalb des Richtpreises: keine Differenz zu zahlen. | |
+| `sel.diffMoreShort` | Diferencia con la referencia: {amount} + IVA. | Difference from the reference: {amount} + VAT. | Differenz zum Richtpreis: {amount} + MwSt. | |
+| `sel.diffWithinShort` | Dentro del precio de referencia. | Within the reference price. | Innerhalb des Richtpreises. | |
+| `sel.proposeExtra` | Proponer extra por la diferencia ({amount} + IVA) | Propose an extra for the difference ({amount} + VAT) | Zusatzarbeit für die Differenz vorschlagen ({amount} + MwSt.) | |
+| `sel.extraTitle` | Diferencia: {product} | Difference: {product} | Differenz: {product} | |
+| `sel.extraText` | Elegido en {store} por {price} con IVA. Referencia en el presupuesto: {reference} + IVA. Diferencia: {amount} + IVA. | Chosen at {store} for {price} incl. VAT. Reference in the budget: {reference} + VAT. Difference: {amount} + VAT. | Ausgewählt bei {store} für {price} inkl. MwSt. Richtpreis im Kostenvoranschlag: {reference} + MwSt. Differenz: {amount} + MwSt. | |
+| `sel.extraStatus` | Extra por la diferencia: {amount} + IVA · {status} | Extra for the difference: {amount} + VAT · {status} | Zusatzarbeit für die Differenz: {amount} + MwSt. · {status} | |
 | `budget.referenceNote` | Productos y precios de referencia incluidos en el precio de la partida. Si elige otro más caro, la diferencia se añade como extra. | Products and reference prices included in the group price. If you choose a more expensive one, the difference is added as an extra. | Produkte und Richtpreise, die im Preis der Position enthalten sind. Wählen Sie etwas Teureres, wird die Differenz als Zusatzarbeit hinzugefügt. | |
 | `budget.reference` | referencia | reference | Richtpreis | |
 | `budget.referencePrice` | Precio de referencia sin IVA (€) | Reference price excl. VAT (€) | Richtpreis netto (€) | |

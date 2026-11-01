@@ -31,6 +31,7 @@ Todo está denegado salvo lo que se permite expresamente.
 - `projects/{id}/signatures/{client|builder}`: cada parte firma solo como sí misma (el cliente de la casa y el constructor asignado; CJ no firma por nadie). La firma guarda el nombre, el dibujo de la firma (PNG), la aceptación, la fecha y hora del servidor, una copia de las líneas firmadas y su huella SHA-256 con el tipo de IVA. Una firma no se edita.
 - Con una firma, las líneas quedan congeladas y el IVA de la obra no se puede cambiar. Quien firmó (o CJ) puede retirar su firma solo mientras falte la otra. Con las dos firmas, el presupuesto queda cerrado para siempre; los cambios se hacen como extras.
 - `projects/{id}/selections`: elecciones de productos en tienda (producto, tienda, precio con IVA, referencia, fotos y a qué partida corresponde). Solo se anotan con el presupuesto firmado por los dos, y solo CJ o el constructor. El cliente y el constructor dejan constancia una vez de que están conformes (nadie puede hacerlo por otro). No se editan; solo CJ borra una anotada por error.
+- Si lo elegido es más caro que la referencia, CJ o el constructor pueden proponer con un botón el extra por la diferencia (precio de tienda sin el IVA de la obra, menos la referencia). Ese extra apunta a la elección (`selectionId`, que debe existir) y el cliente lo aprueba o rechaza como cualquier extra.
 - Es una firma electrónica simple: prueba de quién aceptó qué y cuándo, no una firma cualificada.
 
 ### Varios accesos con un mismo correo

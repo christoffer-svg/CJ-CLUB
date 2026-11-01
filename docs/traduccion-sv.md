@@ -360,6 +360,15 @@ Kontrollera att varje text är naturlig och korrekt på svenska. Skriv dina rät
 | `sel.okPending` | Pendiente | Pending | Väntar | |
 | `sel.confirm` | Estoy conforme con esta elección | I agree with this selection | Jag godkänner det här valet | |
 | `sel.budgetReference` | Precio de referencia en el presupuesto: {net} + IVA ({gross} con IVA) | Reference price in the budget: {net} + VAT ({gross} incl. VAT) | Referenspris i offerten: {net} + moms ({gross} inkl. moms) | |
+| `sel.priceHint` | Si son varias unidades, el precio total de todas. | If there are several units, the total price for all of them. | Vid flera enheter: totalpriset för alla. | |
+| `sel.diffMore` | Es {amount} + IVA más caro que la referencia. Después de guardar puede proponer un extra por la diferencia. | It is {amount} + VAT more than the reference. After saving you can propose an extra for the difference. | Det är {amount} + moms dyrare än referensen. När du har sparat kan du föreslå ett extraarbete för mellanskillnaden. | |
+| `sel.diffWithin` | Dentro del precio de referencia: no hay diferencia que pagar. | Within the reference price: no difference to pay. | Inom referenspriset: ingen mellanskillnad att betala. | |
+| `sel.diffMoreShort` | Diferencia con la referencia: {amount} + IVA. | Difference from the reference: {amount} + VAT. | Skillnad mot referensen: {amount} + moms. | |
+| `sel.diffWithinShort` | Dentro del precio de referencia. | Within the reference price. | Inom referenspriset. | |
+| `sel.proposeExtra` | Proponer extra por la diferencia ({amount} + IVA) | Propose an extra for the difference ({amount} + VAT) | Föreslå extraarbete för mellanskillnaden ({amount} + moms) | |
+| `sel.extraTitle` | Diferencia: {product} | Difference: {product} | Mellanskillnad: {product} | |
+| `sel.extraText` | Elegido en {store} por {price} con IVA. Referencia en el presupuesto: {reference} + IVA. Diferencia: {amount} + IVA. | Chosen at {store} for {price} incl. VAT. Reference in the budget: {reference} + VAT. Difference: {amount} + VAT. | Valt hos {store} för {price} inkl. moms. Referens i offerten: {reference} + moms. Mellanskillnad: {amount} + moms. | |
+| `sel.extraStatus` | Extra por la diferencia: {amount} + IVA · {status} | Extra for the difference: {amount} + VAT · {status} | Extraarbete för mellanskillnaden: {amount} + moms · {status} | |
 | `budget.referenceNote` | Productos y precios de referencia incluidos en el precio de la partida. Si elige otro más caro, la diferencia se añade como extra. | Products and reference prices included in the group price. If you choose a more expensive one, the difference is added as an extra. | Produkter och referenspriser som ingår i postens pris. Väljer du något dyrare läggs mellanskillnaden till som extraarbete. | |
 | `budget.reference` | referencia | reference | referens | |
 | `budget.referencePrice` | Precio de referencia sin IVA (€) | Reference price excl. VAT (€) | Referenspris exkl. moms (€) | |

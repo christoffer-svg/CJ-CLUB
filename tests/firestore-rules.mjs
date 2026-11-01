@@ -628,6 +628,9 @@ ok(await req(J, `${PF}/selections/s1`), 200, 'el cliente ve las elecciones')
 ok(await req(L, `${PF}/selections/s1`), 403, 'otra familia no ve las elecciones')
 ok(await req(BU, `${PF}/selections/s2`, 'DELETE'), 403, 'el constructor no borra elecciones')
 ok(await req(AD, `${PF}/selections/s2`, 'DELETE'), 200, 'CJ borra una elección anotada por error')
+const xsel = (sid) => ({ title: str('Diferencia: grifo'), description: str(''), amount: { doubleValue: 31.77 }, selectionId: str(sid), proposedByUid: str(a.localId), proposedByRole: str('cj'), proposedByName: str('CJ'), status: str('pending') })
+ok(await serverTime(AD, `${PF}/extras/xs1`, xsel('s1'), ['createdAt'], false), 200, 'CJ propone el extra por la diferencia de una elección')
+ok(await serverTime(AD, `${PF}/extras/xs2`, xsel('no-existe'), ['createdAt'], false), 403, 'extra que apunta a una elección que no existe')
 
 // ---------- Una persona con varios accesos (mismo correo) ----------
 const arr = (xs) => ({ arrayValue: { values: xs.map(str) } })

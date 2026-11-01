@@ -3,9 +3,9 @@ import { AttachmentList, FilePicker } from './Attachments'
 import { useI18n } from '../i18n'
 import { parseAmount } from '../lib/amount'
 import { lineTotal } from '../lib/budget'
-import { formatMoney, type Author, type WithId } from '../lib/projects'
+import { formatMoney, proposeProjectExtra, type Author, type WithId } from '../lib/projects'
 import { addSelection, confirmSelection } from '../lib/selections'
-import type { BudgetLine, ProductSelection } from '../lib/types'
+import type { BudgetLine, ProductSelection, ProjectExtra } from '../lib/types'
 import { shortDate } from '../lib/when'
 
 type Draft = { title: string; store: string; price: string; reference: string; note: string; lineId: string; files: File[] }
@@ -23,6 +23,7 @@ export default function ProjectSelections({
   vatRate,
   lines,
   selections,
+  extras,
 }: {
   projectId: string
   author: Author
@@ -31,6 +32,7 @@ export default function ProjectSelections({
   vatRate: 10 | 21
   lines: WithId<BudgetLine>[]
   selections: WithId<ProductSelection>[]
+  extras: WithId<ProjectExtra>[]
 }) {
   const { t, locale } = useI18n()
   const money = (n: number) => formatMoney(n, locale)
@@ -75,6 +77,16 @@ export default function ProjectSelections({
       () => addSelection(projectId, author, { title: form.title, store: form.store, price, reference: form.reference, note: form.note, lineId: form.lineId }, form.files),
       () => setForm((f) => (f === saving ? null : f)),
     )
+  }
+
+  /**
+   * Diferencia sin IVA entre lo elegido y la referencia del presupuesto (null si no hay con qué comparar).
+   * El precio de la tienda lleva IVA: se le quita el IVA de la obra antes de restar.
+   */
+  function differenceOf(id: string | undefined, gross: number) {
+    const l = lineById(id)
+    if (!l || l.kind === 'group' || !(gross > 0)) return null
+    return Math.round((gross / (1 + vatRate / 100) - lineTotal(l)) * 100) / 100
   }
 
   /** Precio de referencia del presupuesto, con y sin IVA, para comparar */
@@ -127,6 +139,7 @@ export default function ProjectSelections({
               <span className="eyebrow">{t('sel.price')}</span>
               <input className="composer__input" required inputMode="decimal" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} />
               {form.price.trim() && <span className="pv-parsed">{price > 0 ? `= ${money(price)}` : '?'}</span>}
+              <span className="card__text">{t('sel.priceHint')}</span>
             </label>
             <label className="request-form__field">
               <span className="eyebrow">{t('sel.reference')}</span>
@@ -137,6 +150,11 @@ export default function ProjectSelections({
             <span className="eyebrow">{t('sel.note')}</span>
             <textarea className="composer__input" rows={2} maxLength={2000} value={form.note} onChange={(e) => setForm({ ...form, note: e.target.value })} />
           </label>
+          {(() => {
+            const d = differenceOf(form.lineId, price)
+            if (d === null) return null
+            return <p className="card__text sel-diff">{d > 0 ? t('sel.diffMore', { amount: money(d) }) : t('sel.diffWithin')}</p>
+          })()}
           <FilePicker label={t('sel.photos')} files={form.files} onChange={(files) => setForm({ ...form, files })} />
           {error && <p className="composer__error">{error}</p>}
           <div className="request-form__actions">
@@ -181,6 +199,41 @@ export default function ProjectSelections({
               )}
             </dl>
             {referenceOf(s.lineId) && <span className="card__text">{referenceOf(s.lineId)}</span>}
+            {(() => {
+              const d = differenceOf(s.lineId, s.price)
+              const extra = extras.find((x) => x.selectionId === s.id && x.status !== 'withdrawn')
+              if (extra)
+                return (
+                  <p className="card__text sel-diff">
+                    {t('sel.extraStatus', { amount: money(extra.amount), status: t(`project.extras.status.${extra.status}`) })}
+                  </p>
+                )
+              if (d === null) return null
+              if (d <= 0) return <p className="card__text sel-diff">{t('sel.diffWithinShort')}</p>
+              return (
+                <>
+                  <p className="card__text sel-diff">{t('sel.diffMoreShort', { amount: money(d) })}</p>
+                  {canWrite && (author.role === 'cj' || author.role === 'builder') && (
+                    <button
+                      className="btn btn--ghost"
+                      disabled={busy}
+                      onClick={() =>
+                        run(() =>
+                          proposeProjectExtra(projectId, author, {
+                            title: t('sel.extraTitle', { product: s.title }),
+                            description: t('sel.extraText', { store: s.store, price: money(s.price), reference: money(lineTotal(lineById(s.lineId)!)), amount: money(d) }),
+                            amount: d,
+                            selectionId: s.id,
+                          }),
+                        )
+                      }
+                    >
+                      {t('sel.proposeExtra', { amount: money(d) })}
+                    </button>
+                  )}
+                </>
+              )
+            })()}
             {s.note && <p className="request__text">{s.note}</p>}
             <AttachmentList items={s.attachments} />
             <span className="card__text">{t('sel.addedBy', { name: `${s.authorName} (${t(`project.role.${s.authorRole}`)})`, date: shortDate(s.createdAt, locale) })}</span>

@@ -2947,6 +2947,10 @@ button {
   color: var(--text);
 }
 
+.sel-diff {
+  color: var(--text);
+}
+
 .sel-oks {
   list-style: none;
   margin: 4px 0 0;

@@ -303,6 +303,7 @@ export default function ProjectView({ projectId, author, readOnly }: { projectId
           vatRate={p.vatRate ?? 21}
           lines={lines.data}
           selections={selections.data}
+          extras={extras.data}
         />
       )}
 

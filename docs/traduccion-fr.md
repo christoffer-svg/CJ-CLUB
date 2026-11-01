@@ -360,6 +360,15 @@ Vérifiez que chaque texte est naturel et correct en français. Notez vos correc
 | `sel.okPending` | Pendiente | Pending | En attente | |
 | `sel.confirm` | Estoy conforme con esta elección | I agree with this selection | Je suis d'accord avec ce choix | |
 | `sel.budgetReference` | Precio de referencia en el presupuesto: {net} + IVA ({gross} con IVA) | Reference price in the budget: {net} + VAT ({gross} incl. VAT) | Prix de référence dans le devis : {net} HT ({gross} TTC) | |
+| `sel.priceHint` | Si son varias unidades, el precio total de todas. | If there are several units, the total price for all of them. | S'il y a plusieurs unités, le prix total de toutes. | |
+| `sel.diffMore` | Es {amount} + IVA más caro que la referencia. Después de guardar puede proponer un extra por la diferencia. | It is {amount} + VAT more than the reference. After saving you can propose an extra for the difference. | C'est {amount} HT de plus que la référence. Après l'enregistrement, vous pourrez proposer un supplément pour la différence. | |
+| `sel.diffWithin` | Dentro del precio de referencia: no hay diferencia que pagar. | Within the reference price: no difference to pay. | Dans le prix de référence : aucune différence à payer. | |
+| `sel.diffMoreShort` | Diferencia con la referencia: {amount} + IVA. | Difference from the reference: {amount} + VAT. | Différence avec la référence : {amount} HT. | |
+| `sel.diffWithinShort` | Dentro del precio de referencia. | Within the reference price. | Dans le prix de référence. | |
+| `sel.proposeExtra` | Proponer extra por la diferencia ({amount} + IVA) | Propose an extra for the difference ({amount} + VAT) | Proposer un supplément pour la différence ({amount} HT) | |
+| `sel.extraTitle` | Diferencia: {product} | Difference: {product} | Différence : {product} | |
+| `sel.extraText` | Elegido en {store} por {price} con IVA. Referencia en el presupuesto: {reference} + IVA. Diferencia: {amount} + IVA. | Chosen at {store} for {price} incl. VAT. Reference in the budget: {reference} + VAT. Difference: {amount} + VAT. | Choisi chez {store} pour {price} TTC. Référence dans le devis : {reference} HT. Différence : {amount} HT. | |
+| `sel.extraStatus` | Extra por la diferencia: {amount} + IVA · {status} | Extra for the difference: {amount} + VAT · {status} | Supplément pour la différence : {amount} HT · {status} | |
 | `budget.referenceNote` | Productos y precios de referencia incluidos en el precio de la partida. Si elige otro más caro, la diferencia se añade como extra. | Products and reference prices included in the group price. If you choose a more expensive one, the difference is added as an extra. | Produits et prix de référence compris dans le prix du poste. Si vous en choisissez un plus cher, la différence est ajoutée en supplément. | |
 | `budget.reference` | referencia | reference | référence | |
 | `budget.referencePrice` | Precio de referencia sin IVA (€) | Reference price excl. VAT (€) | Prix de référence HT (€) | |
