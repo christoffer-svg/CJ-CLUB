@@ -1,5 +1,5 @@
 /** Presupuesto por líneas de Mi reforma y sus firmas (cliente y constructor) */
-import { collection, deleteDoc, doc, onSnapshot, orderBy, query, serverTimestamp, setDoc } from 'firebase/firestore'
+import { collection, deleteDoc, doc, onSnapshot, orderBy, query, serverTimestamp, setDoc, writeBatch } from 'firebase/firestore'
 import { useEffect, useState } from 'react'
 import { uploadAttachments } from './attachments'
 import { db } from './firebase'
@@ -36,9 +36,11 @@ export function useBudgetSignatures(projectId: string | null) {
 }
 
 export const lineTotal = (l: Pick<BudgetLine, 'quantity' | 'unitPrice'>) => Math.round(l.quantity * l.unitPrice * 100) / 100
-export const linesBase = (lines: Pick<BudgetLine, 'quantity' | 'unitPrice'>[]) => Math.round(lines.reduce((s, l) => s + lineTotal(l), 0) * 100) / 100
+/** Suma sin IVA (las partidas no tienen precio propio: suman lo que incluyen) */
+export const linesBase = (lines: Pick<BudgetLine, 'kind' | 'quantity' | 'unitPrice'>[]) =>
+  Math.round(lines.filter((l) => l.kind !== 'group').reduce((s, l) => s + lineTotal(l), 0) * 100) / 100
 
-export type LineDraft = { title: string; description: string; quantity: number; unit: string; unitPrice: number }
+export type LineDraft = { kind: 'group' | 'item'; parentId?: string; title: string; description: string; quantity: number; unit: string; unitPrice: number }
 
 /** Crea o cambia una línea; sube antes sus fotos nuevas */
 export async function saveBudgetLine(
@@ -56,11 +58,13 @@ export async function saveBudgetLine(
   const added = files.length ? await uploadAttachments(projectId, 'budget', ref.id, files, Math.max(0, ...used) + 1) : []
   const attachments = [...keep, ...added]
   await setDoc(ref, {
+    kind: draft.kind,
+    ...(draft.kind === 'item' && draft.parentId ? { parentId: draft.parentId } : {}),
     title: draft.title.trim().slice(0, 200),
     description: draft.description.trim().slice(0, 2000),
-    quantity: draft.quantity,
+    quantity: draft.kind === 'group' ? 1 : draft.quantity,
     unit: draft.unit.trim().slice(0, 20) || 'ud',
-    unitPrice: Math.round(draft.unitPrice * 100) / 100,
+    unitPrice: draft.kind === 'group' ? 0 : Math.round(draft.unitPrice * 100) / 100,
     order,
     ...(attachments.length ? { attachments } : {}),
     authorUid: a.uid,
@@ -73,10 +77,19 @@ export async function saveBudgetLine(
 
 export const deleteBudgetLine = (projectId: string, lineId: string) => deleteDoc(doc(db, 'projects', projectId, 'budgetLines', lineId))
 
+/** Quita una partida con todo lo que incluye */
+export async function deleteBudgetGroup(projectId: string, groupId: string, itemIds: string[]) {
+  const batch = writeBatch(db)
+  for (const id of [...itemIds, groupId]) batch.delete(doc(db, 'projects', projectId, 'budgetLines', id))
+  await batch.commit()
+}
+
 /** Copia de las líneas tal como se ven ahora (lo que se firma) */
 export const snapshotLines = (lines: WithId<BudgetLine>[]): SignedLine[] =>
   lines.map((l) => ({
     id: l.id,
+    kind: l.kind ?? 'item',
+    parentId: l.parentId ?? '',
     title: l.title,
     description: l.description,
     quantity: l.quantity,
@@ -89,7 +102,7 @@ export const snapshotLines = (lines: WithId<BudgetLine>[]): SignedLine[] =>
 export async function budgetHash(lines: SignedLine[], vatRate: number) {
   const canonical = JSON.stringify({
     vatRate,
-    lines: lines.map((l) => [l.id, l.title, l.description, l.quantity, l.unit, l.unitPrice, l.photos]),
+    lines: lines.map((l) => [l.id, l.kind, l.parentId, l.title, l.description, l.quantity, l.unit, l.unitPrice, l.photos]),
   })
   const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(canonical))
   return [...new Uint8Array(digest)].map((b) => b.toString(16).padStart(2, '0')).join('')

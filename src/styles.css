@@ -2936,6 +2936,41 @@ button {
   gap: 12px;
 }
 
+.budget-group__title {
+  font-size: 19px;
+}
+
+.budget-group__includes {
+  margin-top: 6px;
+}
+
+.budget-group__add {
+  align-self: flex-start;
+}
+
+.budget-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px 0 12px 14px;
+  border-left: 2px solid var(--card-border);
+}
+
+.budget-item__title {
+  font-weight: 500;
+  color: var(--text);
+}
+
+.budget-item__price {
+  white-space: nowrap;
+  color: var(--text);
+}
+
+.budget-item-form {
+  padding: 12px 0 12px 14px;
+  border-left: 2px solid var(--gold);
+}
+
 .budget-line__actions {
   display: flex;
   gap: 16px;

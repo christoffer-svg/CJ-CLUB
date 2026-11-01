@@ -301,8 +301,14 @@ export type Project = {
   createdAt: Timestamp | null
 }
 
-/** projects/{id}/budgetLines: partidas del presupuesto (sin IVA); las escriben el constructor o CJ */
+/**
+ * projects/{id}/budgetLines: el presupuesto (sin IVA); lo escriben el constructor o CJ.
+ * "group": una partida (p. ej. baño completo), sin precio propio: suma lo que incluye.
+ * "item" (o sin kind): un elemento con precio; con parentId va dentro de esa partida.
+ */
 export type BudgetLine = {
+  kind?: 'group' | 'item'
+  parentId?: string
   title: string
   description: string
   quantity: number
@@ -320,7 +326,7 @@ export type BudgetLine = {
 }
 
 /** Copia de una línea tal como se firmó */
-export type SignedLine = { id: string; title: string; description: string; quantity: number; unit: string; unitPrice: number; photos: number }
+export type SignedLine = { id: string; kind: 'group' | 'item'; parentId: string; title: string; description: string; quantity: number; unit: string; unitPrice: number; photos: number }
 
 /** projects/{id}/signatures/{client|builder}: firma del presupuesto */
 export type BudgetSignature = {

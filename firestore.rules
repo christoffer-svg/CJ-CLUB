@@ -679,13 +679,17 @@ service cloud.firestore {
         allow delete: if isAdmin();
       }
 
-      // Líneas del presupuesto (grifo, mampara, plato de ducha…): las escriben el constructor o CJ,
-      // sin IVA, mientras nadie haya firmado
+      // Presupuesto: partidas ("Baño completo") y lo que incluye cada una (grifo, mampara, plato de ducha…)
+      // con su precio sin IVA y fotos. Lo escriben el constructor o CJ mientras nadie haya firmado
       match /budgetLines/{id} {
         allow read: if inProject(pid);
         allow create, update: if projectRole(pid) in ['builder', 'cj']
           && budgetOpen(pid)
-          && request.resource.data.keys().hasOnly(['title', 'description', 'quantity', 'unit', 'unitPrice', 'order', 'attachments', 'authorUid', 'authorRole', 'authorName', 'createdAt', 'updatedAt'])
+          && request.resource.data.keys().hasOnly(['kind', 'parentId', 'title', 'description', 'quantity', 'unit', 'unitPrice', 'order', 'attachments', 'authorUid', 'authorRole', 'authorName', 'createdAt', 'updatedAt'])
+          // Partida ("group": baño completo) sin precio propio, o elemento con precio que puede ir dentro de una partida
+          && request.resource.data.get('kind', 'item') in ['group', 'item']
+          && (request.resource.data.get('kind', 'item') == 'item' || (request.resource.data.unitPrice == 0 && !('parentId' in request.resource.data)))
+          && (!('parentId' in request.resource.data) || (request.resource.data.parentId is string && request.resource.data.parentId.matches('[A-Za-z0-9]{1,40}')))
           && validText(request.resource.data.title, 200)
           && (request.resource.data.description == '' || validText(request.resource.data.description, 2000))
           && number(request.resource.data.quantity, 0.001, 1000000)

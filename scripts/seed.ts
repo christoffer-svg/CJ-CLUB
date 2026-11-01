@@ -450,7 +450,21 @@ async function main() {
       endDate: '2026-12-15',
       createdAt: day('2026-10-01T10:00:00'),
     })
-    // Presupuesto por líneas (sin IVA), aún sin firmar: suma los mismos 18.500 €
+    // Presupuesto (sin IVA), aún sin firmar: la partida "Cocina completa" con lo que incluye; suma los mismos 18.500 €
+    batch.set(pr.collection('budgetLines').doc('g1'), {
+      kind: 'group',
+      title: 'Cocina completa',
+      description: 'Desmontaje de la cocina antigua, montaje y remates',
+      quantity: 1,
+      unit: 'ud',
+      unitPrice: 0,
+      order: 1,
+      authorUid: builder.uid,
+      authorRole: 'builder',
+      authorName: 'Marta Ruiz',
+      createdAt: day('2026-10-02T10:00:00'),
+      updatedAt: day('2026-10-02T10:00:00'),
+    })
     const lines: [string, string, string, number, string, number][] = [
       ['l1', 'Muebles de cocina', 'Lacado blanco mate, con cajones de cierre suave', 1, 'ud', 9800],
       ['l2', 'Encimera de cuarzo', 'Color arena, 2 cm, con frente de la zona de cocción', 6.2, 'm²', 450],
@@ -459,6 +473,8 @@ async function main() {
     ]
     lines.forEach(([id, title, description, quantity, unit, unitPrice], i) =>
       batch.set(pr.collection('budgetLines').doc(id), {
+        kind: 'item',
+        parentId: 'g1',
         title,
         description,
         quantity,

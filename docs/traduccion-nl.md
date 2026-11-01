@@ -303,28 +303,27 @@ Controleer of elke tekst natuurlijk en correct Nederlands is. Noteer correcties 
 | `budget.status.draft` | Borrador · sin firmar | Draft · not signed | Concept · niet ondertekend | |
 | `budget.status.partial` | Falta una firma | One signature missing | Er ontbreekt een handtekening | |
 | `budget.status.signed` | Firmado por los dos | Signed by both | Door beide ondertekend | |
-| `budget.intro` | Añada cada partida con su cantidad y su precio sin IVA; puede adjuntar fotos. Cuando esté listo, el cliente y el constructor lo firman en la app. | Add each item with its quantity and price excluding VAT; you can attach photos. When it is ready, the client and the builder sign it in the app. | Voeg elke post toe met aantal en prijs excl. btw; u kunt foto's toevoegen. Als alles klaar is, ondertekenen de klant en de aannemer in de app. | |
-| `budget.introRead` | Revise cada línea. Si tiene dudas, pregunte en la conversación antes de firmar. | Please review each line. If you have any questions, ask in the conversation before signing. | Controleer elke regel. Heeft u vragen, stel ze dan in het gesprek voordat u ondertekent. | |
+| `budget.intro` | Añada cada partida (por ejemplo, baño completo) y, dentro, lo que incluye: cada cosa con su precio sin IVA y una foto. El precio de la partida es la suma. Cuando esté listo, el cliente y el constructor lo firman en la app. | Add each group (for example, complete bathroom) and, inside it, what it includes: each with its price excluding VAT and a photo. The group price is the sum. When it is ready, the client and the builder sign it in the app. | Voeg elke post toe (bijvoorbeeld complete badkamer) en daarin wat inbegrepen is: elk met prijs excl. btw en een foto. De prijs van de post is de som. Als alles klaar is, ondertekenen de klant en de aannemer in de app. | |
+| `budget.introRead` | Revise cada partida y lo que incluye. Si tiene dudas, pregunte en la conversación antes de firmar. | Please review each group and what it includes. If you have any questions, ask in the conversation before signing. | Controleer elke post en wat erin zit. Heeft u vragen, stel ze dan in het gesprek voordat u ondertekent. | |
 | `budget.notYet` | El constructor aún no ha preparado el presupuesto detallado. | The builder has not prepared the detailed budget yet. | De aannemer heeft de gedetailleerde begroting nog niet opgesteld. | |
-| `budget.frozen` | Ya hay una firma: las líneas no se pueden cambiar. Para cambiarlas, hay que retirar esa firma. | There is already a signature: the lines can no longer be changed. To change them, that signature must be withdrawn. | Er is al een handtekening: de regels kunnen niet meer worden gewijzigd. Om ze te wijzigen, moet die handtekening worden ingetrokken. | |
+| `budget.frozen` | Ya hay una firma: el presupuesto no se puede cambiar. Para cambiarlo, hay que retirar esa firma. | There is already a signature: the budget can no longer be changed. To change it, that signature must be withdrawn. | Er is al een handtekening: de begroting kan niet meer worden gewijzigd. Daarvoor moet die handtekening worden ingetrokken. | |
 | `budget.locked` | Presupuesto firmado por el cliente y el constructor. Está cerrado: cualquier cambio se hace como extra. | Budget signed by the client and the builder. It is now closed: any change is made as an extra. | Begroting ondertekend door de klant en de aannemer. Ze is nu gesloten: elke wijziging gaat als meerwerk. | |
-| `budget.add` | Añadir línea | Add line | Regel toevoegen | |
-| `budget.concept` | Concepto | Item | Omschrijving | |
-| `budget.conceptExample` | Por ejemplo: grifo termostático de ducha | For example: thermostatic shower mixer | Bijvoorbeeld: thermostatische douchekraan | |
+| `budget.concept` | Partida | Group | Post | |
+| `budget.conceptExample` | Por ejemplo: baño completo | For example: complete bathroom | Bijvoorbeeld: complete badkamer | |
 | `budget.description` | Detalles (opcional) | Details (optional) | Details (optioneel) | |
 | `budget.quantity` | Cantidad | Quantity | Aantal | |
 | `budget.unit` | Unidad | Unit | Eenheid | |
-| `budget.unitPrice` | Precio por unidad sin IVA (€) | Unit price excl. VAT (€) | Prijs per eenheid excl. btw (€) | |
-| `budget.saveLine` | Guardar línea | Save line | Regel opslaan | |
+| `budget.unitPrice` | Precio sin IVA (€) | Price excl. VAT (€) | Prijs excl. btw (€) | |
+| `budget.saveLine` | Guardar | Save | Opslaan | |
 | `budget.edit` | Editar | Edit | Wijzigen | |
 | `budget.delete` | Quitar | Remove | Verwijderen | |
-| `budget.deleteConfirm` | ¿Quitar esta línea del presupuesto? | Remove this line from the budget? | Deze regel uit de begroting verwijderen? | |
+| `budget.deleteConfirm` | ¿Quitar este elemento del presupuesto? | Remove this item from the budget? | Dit onderdeel uit de begroting verwijderen? | |
 | `budget.removePhoto` | Quitar foto | Remove photo | Foto verwijderen | |
 | `budget.saveError` | No se pudo guardar. Inténtelo de nuevo. | Could not save. Please try again. | Opslaan is niet gelukt. Probeer het opnieuw. | |
 | `budget.signatures` | Firmas | Signatures | Handtekeningen | |
 | `budget.pending` | Pendiente de firma | Awaiting signature | Wacht op handtekening | |
 | `budget.sign` | Firmar el presupuesto | Sign the budget | Begroting ondertekenen | |
-| `budget.accept` | He leído el presupuesto completo ({n} líneas, {total} con IVA) y lo acepto. | I have read the full budget ({n} lines, {total} incl. VAT) and I accept it. | Ik heb de volledige begroting gelezen ({n} regels, {total} incl. btw) en ga ermee akkoord. | |
+| `budget.accept` | He leído el presupuesto completo ({n} partidas, {total} con IVA) y lo acepto. | I have read the full budget ({n} groups, {total} incl. VAT) and I accept it. | Ik heb de volledige begroting gelezen ({n} posten, {total} incl. btw) en ga ermee akkoord. | |
 | `budget.signName` | Nombre de quien firma | Name of the signatory | Naam van de ondertekenaar | |
 | `budget.signHere` | Firme aquí con el dedo o el ratón | Sign here with your finger or mouse | Onderteken hier met uw vinger of muis | |
 | `budget.clear` | Borrar | Clear | Wissen | |
@@ -332,10 +331,17 @@ Controleer of elke tekst natuurlijk en correct Nederlands is. Noteer correcties 
 | `budget.signError` | No se pudo guardar la firma. Inténtelo de nuevo. | Could not save the signature. Please try again. | De handtekening kon niet worden opgeslagen. Probeer het opnieuw. | |
 | `budget.signedOn` | Firmado el {date} | Signed on {date} | Ondertekend op {date} | |
 | `budget.signatureOf` | Firma de {name} | Signature of {name} | Handtekening van {name} | |
-| `budget.mismatch` | Esta firma no corresponde a las líneas actuales del presupuesto. | This signature does not match the current lines of the budget. | Deze handtekening hoort niet bij de huidige regels van de begroting. | |
+| `budget.mismatch` | Esta firma no corresponde al presupuesto actual. | This signature does not match the current budget. | Deze handtekening hoort niet bij de huidige begroting. | |
 | `budget.withdraw` | Retirar mi firma | Withdraw my signature | Mijn handtekening intrekken | |
 | `budget.signedNote` | Presupuesto firmado por los dos el {date}. | Budget signed by both on {date}. | Begroting door beide ondertekend op {date}. | |
 | `budget.pleaseSign` | Falta su firma en el presupuesto | Your signature is missing on the budget | Uw handtekening op de begroting ontbreekt | |
+| `budget.deleteGroupConfirm` | ¿Quitar esta partida y todo lo que incluye? | Remove this group and everything it includes? | Deze post en alles wat erin zit verwijderen? | |
+| `budget.groupEmpty` | Añada lo que incluye esta partida, cada cosa con su precio y una foto. | Add what this group includes, each with its price and a photo. | Voeg toe wat deze post omvat, elk met prijs en foto. | |
+| `budget.includes` | Incluye | Includes | Inbegrepen | |
+| `budget.itemExample` | Por ejemplo: grifo termostático de ducha | For example: thermostatic shower mixer | Bijvoorbeeld: thermostatische douchekraan | |
+| `budget.item` | Qué incluye | What is included | Wat is inbegrepen | |
+| `budget.addItem` | Añadir lo que incluye | Add what is included | Toevoegen wat inbegrepen is | |
+| `budget.addGroup` | Añadir partida | Add item group | Post toevoegen | |
 | `project.budget` | Presupuesto inicial (sin IVA) | Initial budget (excl. VAT) | Oorspronkelijke begroting (excl. btw) | |
 | `project.extrasApproved` | Extras aprobados (sin IVA) | Approved extras (excl. VAT) | Goedgekeurd meerwerk (excl. btw) | |
 | `project.total` | Total con IVA | Total incl. VAT | Totaal incl. btw | |

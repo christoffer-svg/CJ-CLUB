@@ -5,12 +5,13 @@ export function projectTotals(
   project: Project | null,
   extras: ProjectExtra[],
   payments: ProjectPayment[],
-  lines: Pick<BudgetLine, 'quantity' | 'unitPrice'>[] = [],
+  lines: Pick<BudgetLine, 'kind' | 'quantity' | 'unitPrice'>[] = [],
 ) {
   // Presupuesto y extras van sin IVA; los pagos, con IVA incluido (lo que de verdad se paga)
   const cents = (n: number) => Math.round(n * 100) / 100
   // Con presupuesto por líneas, el presupuesto es la suma de las líneas; si no, la cifra de la obra
-  const budget = lines.length ? cents(lines.reduce((s, l) => s + cents(l.quantity * l.unitPrice), 0)) : (project?.budget ?? 0)
+  const priced = lines.filter((l) => l.kind !== 'group')
+  const budget = lines.length ? cents(priced.reduce((s, l) => s + cents(l.quantity * l.unitPrice), 0)) : (project?.budget ?? 0)
   const vatRate = project?.vatRate ?? 21
   const approvedExtras = extras.filter((e) => e.status === 'approved').reduce((s, e) => s + e.amount, 0)
   const pendingExtras = extras.filter((e) => e.status === 'pending').reduce((s, e) => s + e.amount, 0)

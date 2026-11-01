@@ -303,28 +303,27 @@ Bitte prüfen Sie, ob jeder Text natürlich und korrekt auf Deutsch ist. Korrekt
 | `budget.status.draft` | Borrador · sin firmar | Draft · not signed | Entwurf · nicht unterschrieben | |
 | `budget.status.partial` | Falta una firma | One signature missing | Eine Unterschrift fehlt | |
 | `budget.status.signed` | Firmado por los dos | Signed by both | Von beiden unterschrieben | |
-| `budget.intro` | Añada cada partida con su cantidad y su precio sin IVA; puede adjuntar fotos. Cuando esté listo, el cliente y el constructor lo firman en la app. | Add each item with its quantity and price excluding VAT; you can attach photos. When it is ready, the client and the builder sign it in the app. | Fügen Sie jede Position mit Menge und Nettopreis hinzu; Sie können Fotos anhängen. Wenn alles fertig ist, unterschreiben Kunde und Bauunternehmer in der App. | |
-| `budget.introRead` | Revise cada línea. Si tiene dudas, pregunte en la conversación antes de firmar. | Please review each line. If you have any questions, ask in the conversation before signing. | Bitte prüfen Sie jede Zeile. Wenn Sie Fragen haben, stellen Sie sie vor dem Unterschreiben im Gespräch. | |
+| `budget.intro` | Añada cada partida (por ejemplo, baño completo) y, dentro, lo que incluye: cada cosa con su precio sin IVA y una foto. El precio de la partida es la suma. Cuando esté listo, el cliente y el constructor lo firman en la app. | Add each group (for example, complete bathroom) and, inside it, what it includes: each with its price excluding VAT and a photo. The group price is the sum. When it is ready, the client and the builder sign it in the app. | Fügen Sie jede Position hinzu (zum Beispiel Komplettbad) und darin, was enthalten ist: jeweils mit Nettopreis und Foto. Der Preis der Position ist die Summe. Wenn alles fertig ist, unterschreiben Kunde und Bauunternehmer in der App. | |
+| `budget.introRead` | Revise cada partida y lo que incluye. Si tiene dudas, pregunte en la conversación antes de firmar. | Please review each group and what it includes. If you have any questions, ask in the conversation before signing. | Bitte prüfen Sie jede Position und was sie enthält. Wenn Sie Fragen haben, stellen Sie sie vor dem Unterschreiben im Gespräch. | |
 | `budget.notYet` | El constructor aún no ha preparado el presupuesto detallado. | The builder has not prepared the detailed budget yet. | Der Bauunternehmer hat den detaillierten Kostenvoranschlag noch nicht erstellt. | |
-| `budget.frozen` | Ya hay una firma: las líneas no se pueden cambiar. Para cambiarlas, hay que retirar esa firma. | There is already a signature: the lines can no longer be changed. To change them, that signature must be withdrawn. | Es gibt bereits eine Unterschrift: Die Zeilen können nicht mehr geändert werden. Dazu muss diese Unterschrift zurückgezogen werden. | |
+| `budget.frozen` | Ya hay una firma: el presupuesto no se puede cambiar. Para cambiarlo, hay que retirar esa firma. | There is already a signature: the budget can no longer be changed. To change it, that signature must be withdrawn. | Es gibt bereits eine Unterschrift: Der Kostenvoranschlag kann nicht mehr geändert werden. Dazu muss diese Unterschrift zurückgezogen werden. | |
 | `budget.locked` | Presupuesto firmado por el cliente y el constructor. Está cerrado: cualquier cambio se hace como extra. | Budget signed by the client and the builder. It is now closed: any change is made as an extra. | Kostenvoranschlag von Kunde und Bauunternehmer unterschrieben. Er ist jetzt geschlossen: Änderungen erfolgen als Zusatzarbeiten. | |
-| `budget.add` | Añadir línea | Add line | Zeile hinzufügen | |
-| `budget.concept` | Concepto | Item | Position | |
-| `budget.conceptExample` | Por ejemplo: grifo termostático de ducha | For example: thermostatic shower mixer | Zum Beispiel: Thermostat-Duscharmatur | |
+| `budget.concept` | Partida | Group | Position | |
+| `budget.conceptExample` | Por ejemplo: baño completo | For example: complete bathroom | Zum Beispiel: Komplettbad | |
 | `budget.description` | Detalles (opcional) | Details (optional) | Details (optional) | |
 | `budget.quantity` | Cantidad | Quantity | Menge | |
 | `budget.unit` | Unidad | Unit | Einheit | |
-| `budget.unitPrice` | Precio por unidad sin IVA (€) | Unit price excl. VAT (€) | Einzelpreis netto (€) | |
-| `budget.saveLine` | Guardar línea | Save line | Zeile speichern | |
+| `budget.unitPrice` | Precio sin IVA (€) | Price excl. VAT (€) | Preis netto (€) | |
+| `budget.saveLine` | Guardar | Save | Speichern | |
 | `budget.edit` | Editar | Edit | Bearbeiten | |
 | `budget.delete` | Quitar | Remove | Entfernen | |
-| `budget.deleteConfirm` | ¿Quitar esta línea del presupuesto? | Remove this line from the budget? | Diese Zeile aus dem Kostenvoranschlag entfernen? | |
+| `budget.deleteConfirm` | ¿Quitar este elemento del presupuesto? | Remove this item from the budget? | Dieses Element aus dem Kostenvoranschlag entfernen? | |
 | `budget.removePhoto` | Quitar foto | Remove photo | Foto entfernen | |
 | `budget.saveError` | No se pudo guardar. Inténtelo de nuevo. | Could not save. Please try again. | Speichern nicht möglich. Bitte versuchen Sie es erneut. | |
 | `budget.signatures` | Firmas | Signatures | Unterschriften | |
 | `budget.pending` | Pendiente de firma | Awaiting signature | Unterschrift ausstehend | |
 | `budget.sign` | Firmar el presupuesto | Sign the budget | Kostenvoranschlag unterschreiben | |
-| `budget.accept` | He leído el presupuesto completo ({n} líneas, {total} con IVA) y lo acepto. | I have read the full budget ({n} lines, {total} incl. VAT) and I accept it. | Ich habe den gesamten Kostenvoranschlag gelesen ({n} Zeilen, {total} inkl. MwSt.) und nehme ihn an. | |
+| `budget.accept` | He leído el presupuesto completo ({n} partidas, {total} con IVA) y lo acepto. | I have read the full budget ({n} groups, {total} incl. VAT) and I accept it. | Ich habe den gesamten Kostenvoranschlag gelesen ({n} Positionen, {total} inkl. MwSt.) und nehme ihn an. | |
 | `budget.signName` | Nombre de quien firma | Name of the signatory | Name der unterzeichnenden Person | |
 | `budget.signHere` | Firme aquí con el dedo o el ratón | Sign here with your finger or mouse | Hier mit Finger oder Maus unterschreiben | |
 | `budget.clear` | Borrar | Clear | Löschen | |
@@ -332,10 +331,17 @@ Bitte prüfen Sie, ob jeder Text natürlich und korrekt auf Deutsch ist. Korrekt
 | `budget.signError` | No se pudo guardar la firma. Inténtelo de nuevo. | Could not save the signature. Please try again. | Die Unterschrift konnte nicht gespeichert werden. Bitte versuchen Sie es erneut. | |
 | `budget.signedOn` | Firmado el {date} | Signed on {date} | Unterschrieben am {date} | |
 | `budget.signatureOf` | Firma de {name} | Signature of {name} | Unterschrift von {name} | |
-| `budget.mismatch` | Esta firma no corresponde a las líneas actuales del presupuesto. | This signature does not match the current lines of the budget. | Diese Unterschrift passt nicht zu den aktuellen Zeilen des Kostenvoranschlags. | |
+| `budget.mismatch` | Esta firma no corresponde al presupuesto actual. | This signature does not match the current budget. | Diese Unterschrift passt nicht zum aktuellen Kostenvoranschlag. | |
 | `budget.withdraw` | Retirar mi firma | Withdraw my signature | Meine Unterschrift zurückziehen | |
 | `budget.signedNote` | Presupuesto firmado por los dos el {date}. | Budget signed by both on {date}. | Kostenvoranschlag von beiden unterschrieben am {date}. | |
 | `budget.pleaseSign` | Falta su firma en el presupuesto | Your signature is missing on the budget | Ihre Unterschrift auf dem Kostenvoranschlag fehlt | |
+| `budget.deleteGroupConfirm` | ¿Quitar esta partida y todo lo que incluye? | Remove this group and everything it includes? | Diese Position mit allem, was sie enthält, entfernen? | |
+| `budget.groupEmpty` | Añada lo que incluye esta partida, cada cosa con su precio y una foto. | Add what this group includes, each with its price and a photo. | Fügen Sie hinzu, was diese Position enthält, jeweils mit Preis und Foto. | |
+| `budget.includes` | Incluye | Includes | Enthalten | |
+| `budget.itemExample` | Por ejemplo: grifo termostático de ducha | For example: thermostatic shower mixer | Zum Beispiel: Thermostat-Duscharmatur | |
+| `budget.item` | Qué incluye | What is included | Was enthalten ist | |
+| `budget.addItem` | Añadir lo que incluye | Add what is included | Hinzufügen, was enthalten ist | |
+| `budget.addGroup` | Añadir partida | Add item group | Position hinzufügen | |
 | `project.budget` | Presupuesto inicial (sin IVA) | Initial budget (excl. VAT) | Ursprüngliches Budget (netto) | |
 | `project.extrasApproved` | Extras aprobados (sin IVA) | Approved extras (excl. VAT) | Genehmigte Zusatzarbeiten (netto) | |
 | `project.total` | Total con IVA | Total incl. VAT | Gesamtsumme inkl. MwSt. | |
