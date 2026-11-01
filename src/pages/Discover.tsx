@@ -1,12 +1,12 @@
 import { useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import Header from '../components/Header'
 import { HeartIcon } from '../components/Icons'
 import MapView from '../components/MapView'
 import { useI18n } from '../i18n'
 import { useActivePlaces, useDoc } from '../lib/data'
 import { directionsUrl, distanceKm, formatKm, isGeoPoint } from '../lib/geo'
-import { logReservationClick, markReservePending, reservationHref } from '../lib/reservations'
+import ReserveButton from '../components/ReserveButton'
 import type { Client, GeoPoint, Place } from '../lib/types'
 import { useViewer } from '../lib/viewer'
 
@@ -17,15 +17,22 @@ const filters: Filter[] = ['all', 'restaurants', 'golf', 'beaches', 'plans', 'sa
 const categoryOrder: Place['category'][] = ['restaurants', 'golf', 'beaches', 'plans']
 
 function PlaceCard({ p, home }: { p: PlaceItem; home: GeoPoint | null }) {
-  const { favorites, toggleFavorite, clientId, preview } = useViewer()
+  const { favorites, toggleFavorite, base } = useViewer()
   const { t, pick, locale } = useI18n()
   const saved = favorites.includes(p.id)
   const location = isGeoPoint(p.location) ? p.location : null
-  const reserveHref = reservationHref(p, t('discover.reserveWhatsapp'))
+  const cover = p.photos?.[0]
   return (
     <article className="card place">
+      {cover && (
+        <Link to={`${base}/descubrir/${p.id}`} className="place__cover" tabIndex={-1} aria-hidden="true">
+          <img src={cover.url} alt="" loading="lazy" />
+        </Link>
+      )}
       <div className="place__head">
-        <h2 className="place__name">{p.name}</h2>
+        <h2 className="place__name">
+          <Link to={`${base}/descubrir/${p.id}`}>{p.name}</Link>
+        </h2>
         <button
           className={saved ? 'heart heart--on' : 'heart'}
           aria-pressed={saved}
@@ -50,21 +57,12 @@ function PlaceCard({ p, home }: { p: PlaceItem; home: GeoPoint | null }) {
           </a>
         </div>
       )}
-      {reserveHref && (
-        <a
-          className="btn place__reserve"
-          href={reserveHref}
-          {...(p.reservationChannel === 'phone' ? {} : { target: '_blank', rel: 'noopener noreferrer' })}
-          onClick={() => {
-            // En la vista previa se abre el enlace, pero no se cuenta el pinchazo
-            if (preview || !clientId || !p.reservationChannel) return
-            logReservationClick(p.id, clientId, p.reservationChannel).catch(() => {})
-            markReservePending(p.id, p.name)
-          }}
-        >
-          {t('discover.reserve')}
-        </a>
-      )}
+      <div className="place__actions">
+        <ReserveButton place={p} id={p.id} />
+        <Link className="place__more" to={`${base}/descubrir/${p.id}`}>
+          {t('profile.more')}
+        </Link>
+      </div>
     </article>
   )
 }

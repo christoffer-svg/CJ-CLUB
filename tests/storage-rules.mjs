@@ -99,5 +99,23 @@ ok(await upId(L, {}), 'PERMISSION_DENIED', 'otra familia no sube documentos')
 ok(await upId(J, { projectId: 'p-firmas' }), 'FAILED_PRECONDITION', 'después de firmar ya no se cambia el documento')
 ok(await upId(J, { docType: 'carnet' }), 'INVALID_ARGUMENT', 'solo DNI, NIE o pasaporte')
 
+// Fotos de la presentación de los colaboradores (función uploadProfilePhoto)
+const BZ = await signIn('terraza@prueba.test', 'Negocio1234')
+const PFN = FN.replace('uploadProjectFile', 'uploadProfilePhoto')
+const upPf = async (t, d) => {
+  const r = await fetch(PFN, { method: 'POST', headers: { ...H, ...(t ? { authorization: 'Bearer ' + t } : {}) }, body: JSON.stringify({ data: { collection: 'places', id: 'rest-la-terraza', name: 'local.jpg', contentType: 'image/jpeg', data: b64(2048), ...d } }) })
+  const j = await r.json(); return j.error ? j.error.status : j.result
+}
+const pf = await upPf(BZ, {})
+ok(typeof pf === 'object' && pf.path.startsWith('profiles/places/rest-la-terraza/photos/'), true, 'el negocio sube una foto de su presentación')
+ok(await fetch(pf.url).then(r => r.status), 200, 'la foto se abre con su enlace')
+ok(await upPf(BZ, { id: 'golf-pinar' }), 'PERMISSION_DENIED', 'el negocio no sube fotos a otro negocio')
+ok(await upPf(BZ, { collection: 'partners', id: 'lawyer-ruiz' }), 'PERMISSION_DENIED', 'el negocio no sube fotos a un colaborador de servicios')
+ok(await upPf(J, {}), 'PERMISSION_DENIED', 'el cliente no sube fotos de presentación')
+ok(typeof (await upPf(AD, { collection: 'partners', id: 'lawyer-ruiz' })) === 'object', true, 'CJ sube la foto de un colaborador de servicios')
+ok(await upPf(AD, { id: 'no-existe' }), 'NOT_FOUND', 'no se sube a un lugar que no existe')
+ok(await upPf(BZ, { name: 'carta.pdf', contentType: 'application/pdf' }), 'INVALID_ARGUMENT', 'en la presentación solo fotos')
+ok(await upPf(null, {}), 'UNAUTHENTICATED', 'anónimo no sube fotos')
+
 console.log(`Archivos: ${pass} OK, ${fail} FAIL`)
 if (fail) process.exit(1)

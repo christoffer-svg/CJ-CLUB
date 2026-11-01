@@ -55,6 +55,14 @@ Todo está denegado salvo lo que se permite expresamente.
 - La regla de la firma exige que exista el documento de identidad de esa persona (mismo `uid`) y que el tipo coincida.
 - Son datos personales sensibles: se borran con el contrato al dar de baja al cliente. Conviene indicarlo en la política de privacidad.
 
+### Presentación de los colaboradores (fichas pinchables)
+
+- Los lugares de Descubrir (`places/{id}`) y los colaboradores de servicios (`partners/{id}`) tienen una presentación pública con textos, horario, contacto, web, Instagram, dirección y hasta 10 fotos. Lo que se acepta lo define `profileOk` en las reglas.
+- El negocio solo puede cambiar esos campos de su propio lugar (`affectedKeys().hasOnly(...)`); el nombre, el descuento, la nota de CJ y la reserva siguen siendo cosa de CJ. Los colaboradores de servicios no tienen cuenta: su presentación la escribe CJ.
+- La web tiene que empezar por `https://`. Las fotos tienen que estar en la carpeta de ese colaborador (`profiles/{places|partners}/{id}/photos/`).
+- Las fotos las sube solo la función `uploadProfilePhoto`: el negocio a su propio lugar y CJ a cualquiera. Solo admite imágenes de hasta 10 MB.
+- El formulario de la ficha en el panel (Lugares y Colaboradores) no guarda los campos de la presentación, para no pisar lo que haya escrito el negocio.
+
 ### Varios accesos con un mismo correo
 - Una persona puede tener varios accesos con el mismo correo (por ejemplo, cliente y negocio). En `users/{uid}`, `roles` guarda todos los que le ha dado CJ y `role` el que está usando ahora; las fichas antiguas sin `roles` tienen solo su `role`.
 - Las reglas miran siempre el acceso que está usando: como cliente no gestiona su negocio, y como negocio no ve su casa.

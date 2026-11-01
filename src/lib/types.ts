@@ -61,6 +61,29 @@ export type Client = {
 }
 
 /** partners/{partnerId} */
+/**
+ * Presentación pública de un colaborador (negocio de Descubrir o colaborador de servicios): lo que ve el
+ * cliente al pinchar en él. La escriben el propio negocio (desde su panel) o CJ. Todo opcional.
+ */
+export type PublicProfile = {
+  about_es?: string
+  about_en?: string
+  hours_es?: string
+  hours_en?: string
+  phone?: string
+  email?: string
+  /** https://… */
+  website?: string
+  /** usuario de Instagram, sin @ */
+  instagram?: string
+  address?: string
+  /** fotos (las sube el servidor: función uploadProfilePhoto); la primera es la portada */
+  photos?: Attachment[]
+}
+
+export const PROFILE_FIELDS = ['about_es', 'about_en', 'hours_es', 'hours_en', 'phone', 'email', 'website', 'instagram', 'address', 'photos'] as const
+export const MAX_PROFILE_PHOTOS = 10
+
 export type Partner = {
   name: string
   /**
@@ -75,7 +98,7 @@ export type Partner = {
   description_en: string
   /** false = desactivado por CJ (no se muestra a los clientes) */
   active?: boolean
-}
+} & Omit<PublicProfile, 'phone'>
 
 /** partnerCategories/{id}: oficios que puede ofrecer un colaborador. Los crea CJ, sin cambiar la app. */
 export type PartnerCategory = {
@@ -126,7 +149,7 @@ export type Place = {
   reservationChannel?: ReservationChannel | null
   /** URL https, o teléfono (con o sin prefijo) */
   reservationTarget?: string | null
-}
+} & PublicProfile
 
 /** reservationClicks/{id}: cada vez que un cliente pulsa Reservar */
 export type ReservationClick = {

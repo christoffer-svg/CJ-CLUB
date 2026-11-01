@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom'
+import { withoutProfile } from '../../lib/profiles'
 import { PageTitle } from '../../components/admin/AdminLayout'
 import Dialog from '../../components/admin/Dialog'
 import { Bilingual, Field, FieldGroup, Input, Select, Toggle } from '../../components/admin/Fields'
@@ -101,6 +103,9 @@ export default function Places() {
                         .catch(() => toast('No se pudo guardar.', 'error'))
                     }
                   />
+                  <Link className="a-link" to={`/admin/lugares/${p.id}/presentacion`}>
+                    Presentación
+                  </Link>
                   <button
                     className="a-link"
                     onClick={() =>
@@ -140,13 +145,13 @@ export default function Places() {
               const allowed = reservationChannel === 'link' || reservationChannel === 'phone' || reservationChannel === 'whatsapp'
               const channel = x.category === 'restaurants' && allowed ? reservationChannel : null
               // sin descuento o sin reserva: se guarda null para borrar uno anterior
-              return {
+              return withoutProfile({
                 ...x,
                 name: x.name.trim(),
                 discountPercent: pct > 0 && pct <= 100 ? pct : null,
                 reservationChannel: channel,
                 reservationTarget: channel ? reservationTarget.trim() : null,
-              }
+              })
             }, `Guardado: ${d.name}`)
           }}
         >

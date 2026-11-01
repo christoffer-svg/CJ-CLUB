@@ -682,3 +682,44 @@ export const uploadIdentity = onCall({ memory: '512MiB', timeoutSeconds: 120 }, 
   }
   return { ok: true }
 })
+
+/**
+ * Foto de la presentación de un colaborador: un negocio de Descubrir (places/{id}) o un colaborador de
+ * servicios (partners/{id}). Las del negocio las sube el propio negocio o CJ; las de servicios, solo CJ.
+ * Devuelve la ficha de la foto con su enlace; la app la añade a la lista "photos" del colaborador.
+ */
+export const uploadProfilePhoto = onCall({ memory: '512MiB', timeoutSeconds: 120 }, async (request) => {
+  const uid = request.auth?.uid
+  if (!uid) throw new HttpsError('unauthenticated', 'Inicie sesión de nuevo.')
+  const d = (request.data ?? {}) as Record<string, unknown>
+  const coll = d.collection === 'places' || d.collection === 'partners' ? d.collection : null
+  const id = text(d.id, 'colaborador')
+  const contentType = text(d.contentType, 'tipo')
+  if (!coll || !/^[A-Za-z0-9_-]{1,100}$/.test(id)) throw new HttpsError('invalid-argument', 'Datos de la foto no válidos.')
+  if (!contentType.startsWith('image/')) throw new HttpsError('invalid-argument', 'Solo se admiten fotos.')
+  const buffer = Buffer.from(typeof d.data === 'string' ? d.data : '', 'base64')
+  if (!buffer.length || buffer.length > MAX_FILE_BYTES) throw new HttpsError('invalid-argument', 'La foto pasa de 10 MB.')
+
+  const [me, target] = await Promise.all([db.doc(`users/${uid}`).get(), db.doc(`${coll}/${id}`).get()])
+  if (!target.exists) throw new HttpsError('not-found', 'Ese colaborador no existe.')
+  const role = me.get('role')
+  const allowed = role === 'admin' || (coll === 'places' && role === 'business' && me.get('placeId') === id)
+  if (!allowed) throw new HttpsError('permission-denied', 'No puede añadir fotos aquí.')
+
+  const name =
+    (typeof d.name === 'string' ? d.name : 'foto')
+      .normalize('NFD')
+      .replace(/[̀-ͯ]/g, '')
+      .replace(/[^\w.-]+/g, '_')
+      .slice(-80) || 'foto'
+  const path = `profiles/${coll}/${id}/photos/${Date.now()}-${randomBytes(4).toString('hex')}-${name}`
+  const token = randomUUID()
+  try {
+    await (await projectBucket()).file(path).save(buffer, { contentType, resumable: false, metadata: { metadata: { firebaseStorageDownloadTokens: token, uploadedBy: uid } } })
+  } catch (e) {
+    console.error('uploadProfilePhoto', e)
+    throw new HttpsError('internal', 'No se pudo guardar la foto.')
+  }
+  const host = process.env.FUNCTIONS_EMULATOR === 'true' && process.env.STORAGE_EMULATOR_HOST ? process.env.STORAGE_EMULATOR_HOST : 'https://firebasestorage.googleapis.com'
+  return { path, name, contentType, size: buffer.length, url: `${host}/v0/b/${BUCKET}/o/${encodeURIComponent(path)}?alt=media&token=${token}` }
+})

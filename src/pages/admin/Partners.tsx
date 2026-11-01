@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom'
+import { withoutProfile } from '../../lib/profiles'
 import { PageTitle } from '../../components/admin/AdminLayout'
 import Dialog from '../../components/admin/Dialog'
 import { Bilingual, Field, FieldGroup, Input, Toggle } from '../../components/admin/Fields'
@@ -81,6 +83,9 @@ export default function Partners() {
                           .catch(() => toast('No se pudo guardar.', 'error'))
                       }
                     />
+                    <Link className="a-link" to={`/admin/colaboradores/${partner.id}/presentacion`}>
+                      Presentación
+                    </Link>
                     <button
                       className="a-link"
                       onClick={() =>
@@ -115,13 +120,14 @@ export default function Partners() {
             }
             const services = servicesToSave(d.category, selected, order)
             editor.save(
-              (draft) => ({
-                ...draft,
-                name: draft.name.trim(),
-                phone: draft.phone.trim(),
-                active: draft.active !== false,
-                ...services,
-              }),
+              (draft) =>
+                withoutProfile({
+                  ...draft,
+                  name: draft.name.trim(),
+                  phone: draft.phone.trim(),
+                  active: draft.active !== false,
+                  ...services,
+                }),
               `Guardado: ${d.name}`,
             )
           }}

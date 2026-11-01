@@ -27,6 +27,10 @@ import ClientPreview from './pages/admin/ClientPreview'
 import Partners from './pages/admin/Partners'
 import GeneralContacts from './pages/admin/GeneralContacts'
 import Places from './pages/admin/Places'
+import AdminProfile from './pages/admin/AdminProfile'
+import PlaceDetail from './pages/PlaceDetail'
+import PartnerDetail from './pages/PartnerDetail'
+import BusinessProfile from './pages/business/BusinessProfile'
 import Deals from './pages/admin/Deals'
 import Businesses from './pages/admin/Businesses'
 import BusinessLayout from './pages/business/BusinessLayout'
@@ -60,7 +64,9 @@ export default function App() {
           >
             <Route index element={<Home />} />
             <Route path="guia" element={<Guide />} />
+            <Route path="guia/:partnerId" element={<PartnerDetail />} />
             <Route path="descubrir" element={<Discover />} />
+            <Route path="descubrir/:placeId" element={<PlaceDetail />} />
             <Route path="ventajas" element={<Benefits />} />
             <Route path="mensajes" element={<Messages />} />
             <Route path="peticiones" element={<Requests />} />
@@ -73,7 +79,9 @@ export default function App() {
           <Route path="admin/clientes/:id/vista" element={<ClientPreview />}>
             <Route index element={<Home />} />
             <Route path="guia" element={<Guide />} />
+            <Route path="guia/:partnerId" element={<PartnerDetail />} />
             <Route path="descubrir" element={<Discover />} />
+            <Route path="descubrir/:placeId" element={<PlaceDetail />} />
             <Route path="ventajas" element={<Benefits />} />
             <Route path="mensajes" element={<Messages />} />
             <Route path="peticiones" element={<Requests />} />
@@ -95,8 +103,10 @@ export default function App() {
             <Route path="clientes/nuevo" element={<ClientNew />} />
             <Route path="clientes/:id" element={<ClientDetail />} />
             <Route path="colaboradores" element={<Partners />} />
+            <Route path="colaboradores/:id/presentacion" element={<AdminProfile coll="partners" />} />
             <Route path="contactos" element={<GeneralContacts />} />
             <Route path="lugares" element={<Places />} />
+            <Route path="lugares/:id/presentacion" element={<AdminProfile coll="places" />} />
             <Route path="negocios" element={<Businesses />} />
             <Route path="descuentos" element={<Deals />} />
             <Route path="consejo" element={<Tip />} />
@@ -118,6 +128,7 @@ export default function App() {
           <Route path="negocio" element={<BusinessLayout />}>
             <Route index element={<BusinessDeals />} />
             <Route path="reservas" element={<BusinessReservations />} />
+            <Route path="presentacion" element={<BusinessProfile />} />
           </Route>
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />

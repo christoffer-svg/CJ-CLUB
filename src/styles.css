@@ -3366,3 +3366,232 @@ button {
   gap: 6px;
   margin-top: 6px;
 }
+
+/* Ficha de un colaborador (Descubrir y Guía) */
+.place__name a,
+.contact__link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.place__cover {
+  display: block;
+  margin: -16px -16px 6px;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: var(--radius) var(--radius) 0 0;
+}
+
+.place__cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.place__actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.place__more,
+.contact__more {
+  color: var(--gold-dark);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+.place__actions .place__more {
+  margin-top: 8px;
+}
+
+.contact__more {
+  margin-top: 4px;
+}
+
+.pf-gallery {
+  position: relative;
+  margin-bottom: 12px;
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--card-border);
+}
+
+.pf-gallery__track {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+
+.pf-gallery__track::-webkit-scrollbar {
+  display: none;
+}
+
+.pf-gallery__slide {
+  flex: 0 0 100%;
+  aspect-ratio: 4 / 3;
+  scroll-snap-align: start;
+  border: 0;
+  padding: 0;
+  background: var(--card);
+  cursor: zoom-in;
+}
+
+.pf-gallery__slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.pf-gallery__count {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.55);
+  color: var(--white);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+}
+
+.pf-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.pf-actions .place__reserve {
+  margin-top: 0;
+}
+
+.pf-block {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.pf-text {
+  margin: 0;
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.6;
+  white-space: pre-line;
+}
+
+.pf-contact {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.pf-contact li {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 15px;
+  color: var(--text);
+  overflow-wrap: anywhere;
+}
+
+.pf-contact a {
+  color: var(--text);
+}
+
+.pf-contact__label {
+  font-size: 12px;
+  color: var(--text-2);
+}
+
+.pf-deal {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  padding: 10px 0;
+  border-top: 1px solid var(--card-border);
+  text-decoration: none;
+  color: var(--text);
+}
+
+.pf-deal__label {
+  color: var(--gold-dark);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.pf-distance {
+  margin-top: 12px;
+}
+
+/* Editor de la presentación (panel) */
+.profile-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.profile-editor__photos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 10px;
+  margin: 6px 0;
+}
+
+.profile-editor__photo {
+  position: relative;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.profile-editor__photo img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: var(--radius);
+  border: 1px solid var(--card-border);
+}
+
+.profile-editor__photo figcaption {
+  display: flex;
+  gap: 12px;
+}
+
+.profile-editor__cover {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--espresso);
+  color: var(--white);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.profile-editor__add {
+  align-self: flex-start;
+  margin-top: 6px;
+}
+
+.profile-editor__actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}

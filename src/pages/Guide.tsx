@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import Header from '../components/Header'
 import OwnContacts from '../components/OwnContacts'
 import { useI18n } from '../i18n'
@@ -15,9 +16,11 @@ type RowProps = {
   description: string
   phone: string
   emergency?: boolean
+  /** enlace a la ficha del colaborador */
+  to?: string
 }
 
-function ContactRow({ labels, name, description, phone, emergency }: RowProps) {
+function ContactRow({ labels, name, description, phone, emergency, to }: RowProps) {
   const { t } = useI18n()
   return (
     <div className="contact">
@@ -31,8 +34,19 @@ function ContactRow({ labels, name, description, phone, emergency }: RowProps) {
             ))}
           </span>
         )}
-        <span className="card__title">{name}</span>
+        {to ? (
+          <Link to={to} className="card__title contact__link">
+            {name}
+          </Link>
+        ) : (
+          <span className="card__title">{name}</span>
+        )}
         {description && <span className="card__text">{description}</span>}
+        {to && (
+          <Link to={to} className="contact__more">
+            {t('profile.more')}
+          </Link>
+        )}
       </div>
       <a className={emergency ? 'call-btn call-btn--emergency' : 'call-btn'} href={telLink(phone)}>
         {emergency ? t('guide.callNumber', { phone }) : t('guide.call')}
@@ -42,7 +56,7 @@ function ContactRow({ labels, name, description, phone, emergency }: RowProps) {
 }
 
 export default function Guide() {
-  const { clientId } = useViewer()
+  const { clientId, base } = useViewer()
   const { t, pick, lang } = useI18n()
   const client = useDoc<Client>(clientId ? `clients/${clientId}` : null)
   const partners = useAssignedPartners(client.data)
@@ -74,6 +88,7 @@ export default function Guide() {
                   name={p.name}
                   description={pick(p, 'description')}
                   phone={p.phone}
+                  to={`${base}/guia/${p.id}`}
                 />
               )
             })}

@@ -6,6 +6,7 @@ import { useLiveDoc } from '../../lib/admin'
 import type { Place } from '../../lib/types'
 
 const sections = [
+  { to: '/negocio/presentacion', label: 'Presentación', end: false },
   { to: '/negocio', label: 'Descuentos', end: true },
   { to: '/negocio/reservas', label: 'Reservas', end: false },
 ]
