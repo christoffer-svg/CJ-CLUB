@@ -32,6 +32,9 @@ Todo está denegado salvo lo que se permite expresamente.
 - Con una firma, las líneas quedan congeladas y el IVA de la obra no se puede cambiar. Quien firmó (o CJ) puede retirar su firma solo mientras falte la otra. Con las dos firmas, el presupuesto queda cerrado para siempre; los cambios se hacen como extras.
 - `projects/{id}/selections`: elecciones de productos en tienda (producto, tienda, precio con IVA, referencia, fotos y a qué partida corresponde). Solo se anotan con el presupuesto firmado por los dos, y solo CJ o el constructor. El cliente y el constructor dejan constancia una vez de que están conformes (nadie puede hacerlo por otro). No se editan; solo CJ borra una anotada por error.
 - Si lo elegido es más caro que la referencia, CJ o el constructor pueden proponer con un botón el extra por la diferencia (precio de tienda sin el IVA de la obra, menos la referencia). Ese extra apunta a la elección (`selectionId`, que debe existir) y el cliente lo aprueba o rechaza como cualquier extra.
+- `projects/{id}/plan/main`: plan de pagos (hasta 8 pagos con porcentajes enteros que suman el 90 %; el 10 % final siempre queda retenido). Lo escriben el constructor o CJ mientras nadie haya firmado, y se firma junto con el presupuesto (va en la copia y la huella de la firma).
+- `projects/{id}/plan/release`: solo el cliente, con el presupuesto firmado, da por buenos los repasos y libera el 10 % final; no se cambia (CJ solo puede borrarla). Un pago del 10 % final (`milestoneId: final`) solo se puede anotar después.
+- `projects/{id}/snags`: lista de repasos. El cliente o CJ los apuntan (con fotos); solo el constructor los marca como arreglados (con fotos); solo el cliente o CJ los dan por buenos o los reabren. Nadie cambia lo apuntado; CJ puede borrar un repaso puesto por error.
 - Es una firma electrónica simple: prueba de quién aceptó qué y cuándo, no una firma cualificada.
 
 ### Varios accesos con un mismo correo

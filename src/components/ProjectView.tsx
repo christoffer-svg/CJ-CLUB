@@ -2,6 +2,9 @@ import { useState, type FormEvent, type ReactNode } from 'react'
 import { AttachmentList, FilePicker } from './Attachments'
 import ProjectBudget from './ProjectBudget'
 import ProjectSelections from './ProjectSelections'
+import ProjectSnags from './ProjectSnags'
+import { RETENTION, planRows, planReady, usePlan } from '../lib/plan'
+import { useSnags } from '../lib/snags'
 import { useSelections } from '../lib/selections'
 import { useBudgetLines, useBudgetSignatures } from '../lib/budget'
 import { useI18n } from '../i18n'
@@ -27,8 +30,8 @@ import type { ProjectRole } from '../lib/types'
 import { parseAmount } from '../lib/amount'
 import { messageTime, shortDate } from '../lib/when'
 
-type Tab = 'summary' | 'budget' | 'selections' | 'chat' | 'updates' | 'payments' | 'extras'
-const tabs: Tab[] = ['summary', 'budget', 'selections', 'chat', 'updates', 'payments', 'extras']
+type Tab = 'summary' | 'budget' | 'selections' | 'chat' | 'updates' | 'payments' | 'extras' | 'snags'
+const tabs: Tab[] = ['summary', 'budget', 'selections', 'chat', 'updates', 'payments', 'extras', 'snags']
 
 const today = () => new Date().toISOString().slice(0, 10)
 function Block({ children }: { children: ReactNode }) {
@@ -49,6 +52,8 @@ export default function ProjectView({ projectId, author, readOnly }: { projectId
   const lines = useBudgetLines(projectId)
   const sigs = useBudgetSignatures(projectId)
   const selections = useSelections(projectId)
+  const plan = usePlan(projectId)
+  const snags = useSnags(projectId)
   const [tab, setTab] = useState<Tab>('summary')
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState(false)
@@ -60,6 +65,7 @@ export default function ProjectView({ projectId, author, readOnly }: { projectId
   const needsMySignature = (role === 'client' || role === 'builder') && lines.data.length > 0 && !sigs.loading && !sigs[role]
   const lastPercent = [...updates.data].reverse().find((u) => typeof u.percent === 'number')?.percent
   const pendingForClient = extras.data.filter((e) => e.status === 'pending').length
+  const snagsForMe = role === 'builder' ? snags.data.filter((s) => s.status === 'open').length : role === 'client' || role === 'cj' ? snags.data.filter((s) => s.status === 'fixed').length : 0
   const selectionsToConfirm = role === 'client' || role === 'builder' ? selections.data.filter((s) => !s[`${role}OkUid`]).length : 0
 
   async function run(action: () => Promise<unknown>, after?: () => void) {
@@ -78,7 +84,7 @@ export default function ProjectView({ projectId, author, readOnly }: { projectId
   // Formularios
   const [msg, setMsg] = useState('')
   const [upd, setUpd] = useState<{ title: string; text: string; percent: string; files: File[] } | null>(null)
-  const [pay, setPay] = useState<{ amount: string; date: string; concept: string; files: File[] } | null>(null)
+  const [pay, setPay] = useState<{ amount: string; date: string; concept: string; milestoneId: string; files: File[] } | null>(null)
   const [ext, setExt] = useState<{ title: string; description: string; amount: string } | null>(null)
   const [deciding, setDeciding] = useState<{ id: string; note: string } | null>(null)
 
@@ -87,6 +93,44 @@ export default function ProjectView({ projectId, author, readOnly }: { projectId
   if (!p) return <p className="empty">{t('project.list.empty')}</p>
 
   const canWrite = !readOnly
+  // Plan de pagos firmado: importes sobre el total con IVA del presupuesto (sin extras) y lo pagado de cada pago
+  const budgetSigned = Boolean(sigs.client && sigs.builder)
+  const planTotal = Math.round(totals.budget * (100 + (p.vatRate ?? 21))) / 100
+  const rows = lines.data.length && planReady(plan.milestones) ? planRows(planTotal, plan.milestones, payments.data) : []
+  const rowTitle = (r: { final: boolean; title: string }) => (r.final ? t('plan.final') : r.title)
+  const planBlock =
+    rows.length > 0 ? (
+      <Block>
+        <div className="request__head">
+          <span className="eyebrow">{t('plan.title')}</span>
+          {!budgetSigned && <span className="status status--new">{t('plan.notSigned')}</span>}
+        </div>
+        <dl className="pv-money plan__list">
+          {rows.map((r) => (
+            <div key={r.id} className={r.final ? 'plan__row plan__row--final' : 'plan__row'}>
+              <dt>
+                {rowTitle(r)} <span className="pv-vat">{r.percent} %</span>
+                <span className="plan__state">
+                  {r.paid >= r.amount
+                    ? t('plan.paid')
+                    : r.paid > 0
+                      ? t('plan.partial', { paid: money(r.paid) })
+                      : r.final && !plan.release
+                        ? t('plan.retained')
+                        : t('plan.pending')}
+                </span>
+              </dt>
+              <dd>{money(r.amount)}</dd>
+            </div>
+          ))}
+        </dl>
+        {plan.release ? (
+          <p className="card__text">{t('plan.released', { date: shortDate(plan.release.releasedAt, locale) })}</p>
+        ) : (
+          <p className="card__text">{t('plan.retainedNote', { amount: money(rows[rows.length - 1].amount) })}</p>
+        )}
+      </Block>
+    ) : null
   const status = (key: TranslationKey, cls: string) => <span className={`status status--${cls}`}>{t(key)}</span>
 
   return (
@@ -122,6 +166,7 @@ export default function ProjectView({ projectId, author, readOnly }: { projectId
             {k === 'extras' && role === 'client' && pendingForClient > 0 && <span className="pv-count">{pendingForClient}</span>}
             {k === 'budget' && canWrite && needsMySignature && <span className="pv-count">1</span>}
             {k === 'selections' && canWrite && selectionsToConfirm > 0 && <span className="pv-count">{selectionsToConfirm}</span>}
+            {k === 'snags' && canWrite && snagsForMe > 0 && <span className="pv-count">{snagsForMe}</span>}
           </button>
         ))}
       </div>
@@ -163,6 +208,7 @@ export default function ProjectView({ projectId, author, readOnly }: { projectId
             )}
           </Block>
           )}
+          {accountsReady && planBlock}
           {typeof lastPercent === 'number' && (
             <Block>
               <span className="eyebrow">{t('project.progress')}</span>
@@ -291,7 +337,7 @@ export default function ProjectView({ projectId, author, readOnly }: { projectId
       )}
 
       {tab === 'budget' && (
-        <ProjectBudget projectId={projectId} vatRate={p.vatRate ?? 21} author={author} canWrite={canWrite} lines={lines.data} sigs={sigs} />
+        <ProjectBudget projectId={projectId} vatRate={p.vatRate ?? 21} author={author} canWrite={canWrite} lines={lines.data} sigs={sigs} plan={plan.milestones} />
       )}
 
       {tab === 'selections' && (
@@ -299,7 +345,7 @@ export default function ProjectView({ projectId, author, readOnly }: { projectId
           projectId={projectId}
           author={author}
           canWrite={canWrite}
-          budgetSigned={Boolean(sigs.client && sigs.builder)}
+          budgetSigned={budgetSigned}
           vatRate={p.vatRate ?? 21}
           lines={lines.data}
           selections={selections.data}
@@ -307,10 +353,23 @@ export default function ProjectView({ projectId, author, readOnly }: { projectId
         />
       )}
 
+      {tab === 'snags' && (
+        <ProjectSnags
+          projectId={projectId}
+          author={author}
+          canWrite={canWrite}
+          snags={snags.data}
+          release={plan.release}
+          budgetSigned={budgetSigned}
+          retention={money(Math.round(planTotal * RETENTION) / 100)}
+        />
+      )}
+
       {tab === 'payments' && (
         <>
+          {planBlock}
           {canWrite && !pay && (
-            <button className="btn" onClick={() => setPay({ amount: '', date: today(), concept: '', files: [] })}>
+            <button className="btn" onClick={() => setPay({ amount: '', date: today(), concept: '', milestoneId: '', files: [] })}>
               {t('project.payments.new')}
             </button>
           )}
@@ -321,9 +380,36 @@ export default function ProjectView({ projectId, author, readOnly }: { projectId
                 e.preventDefault()
                 const amount = parseAmount(pay.amount)
                 if (!(amount > 0) || !pay.concept.trim() || !pay.date) return
-                run(() => addProjectPayment(projectId, author, { amount, date: pay.date, concept: pay.concept }, pay.files), () => setPay(null))
+                run(() => addProjectPayment(projectId, author, { amount, date: pay.date, concept: pay.concept, milestoneId: pay.milestoneId || undefined }, pay.files), () => setPay(null))
               }}
             >
+              {rows.length > 0 && (
+                <label className="request-form__field">
+                  <span className="eyebrow">{t('plan.for')}</span>
+                  <select
+                    className="composer__input"
+                    value={pay.milestoneId}
+                    onChange={(e) => {
+                      const r = rows.find((x) => x.id === e.target.value)
+                      const rest = r ? Math.max(0, Math.round((r.amount - r.paid) * 100) / 100) : 0
+                      setPay({
+                        ...pay,
+                        milestoneId: e.target.value,
+                        ...(r && !pay.amount.trim() && rest > 0 ? { amount: String(rest).replace('.', ',') } : {}),
+                        ...(r && !pay.concept.trim() ? { concept: rowTitle(r) } : {}),
+                      })
+                    }}
+                  >
+                    <option value="">{t('plan.forOther')}</option>
+                    {rows.map((r) => (
+                      <option key={r.id} value={r.id} disabled={r.final && !plan.release}>
+                        {rowTitle(r)} ({r.percent} %, {money(r.amount)})
+                      </option>
+                    ))}
+                  </select>
+                  {!plan.release && <span className="card__text">{t('plan.finalLocked')}</span>}
+                </label>
+              )}
               <label className="request-form__field">
                 <span className="eyebrow">{t('project.payments.amount')}</span>
                 <input className="composer__input" required inputMode="decimal" value={pay.amount} onChange={(e) => setPay({ ...pay, amount: e.target.value })} />
@@ -357,6 +443,9 @@ export default function ProjectView({ projectId, author, readOnly }: { projectId
                   <span className="pv-amount">{money(pm.amount)}</span>
                   {status(`project.payments.status.${pm.status}`, pm.status === 'confirmed' ? 'done' : pm.status === 'disputed' ? 'cancelled' : 'new')}
                 </div>
+                {pm.milestoneId && rows.find((r) => r.id === pm.milestoneId) && (
+                  <span className="eyebrow">{t('plan.forLabel', { name: rowTitle(rows.find((r) => r.id === pm.milestoneId)!) })}</span>
+                )}
                 <p className="request__text">{pm.concept}</p>
                 <AttachmentList items={pm.attachments} />
                 <span className="card__text">

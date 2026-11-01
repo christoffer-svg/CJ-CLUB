@@ -1,11 +1,13 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { AttachmentList, FilePicker } from './Attachments'
+import PaymentPlan from './PaymentPlan'
 import SignaturePad from './SignaturePad'
+import { planReady } from '../lib/plan'
 import { useI18n } from '../i18n'
 import { parseAmount } from '../lib/amount'
 import { budgetHash, deleteBudgetGroup, deleteBudgetLine, lineTotal, linesBase, saveBudgetLine, signBudget, snapshotLines, withdrawSignature } from '../lib/budget'
 import { formatMoney, type Author, type WithId } from '../lib/projects'
-import type { Attachment, BudgetLine, BudgetSignature } from '../lib/types'
+import type { Attachment, BudgetLine, BudgetSignature, Milestone } from '../lib/types'
 import { shortDate } from '../lib/when'
 
 type Draft = {
@@ -34,6 +36,7 @@ export default function ProjectBudget({
   canWrite,
   lines,
   sigs,
+  plan,
 }: {
   projectId: string
   vatRate: 10 | 21
@@ -41,6 +44,7 @@ export default function ProjectBudget({
   canWrite: boolean
   lines: WithId<BudgetLine>[]
   sigs: Sigs
+  plan: Milestone[]
 }) {
   const { t, locale } = useI18n()
   const money = (n: number) => formatMoney(n, locale)
@@ -65,10 +69,10 @@ export default function ProjectBudget({
   const isReference = (l: WithId<BudgetLine>) => Boolean(l.parentId && groups.some((g) => g.id === l.parentId))
 
   // Huella de lo que se ve ahora, para comprobar que cada firma corresponde a este presupuesto
-  const key = JSON.stringify(snapshotLines(lines)) + vatRate
+  const key = JSON.stringify(snapshotLines(lines)) + vatRate + JSON.stringify(plan)
   useEffect(() => {
     let alive = true
-    budgetHash(snapshotLines(lines), vatRate).then((h) => alive && setHash(h))
+    budgetHash(snapshotLines(lines), vatRate, plan).then((h) => alive && setHash(h))
     return () => {
       alive = false
     }
@@ -345,9 +349,12 @@ export default function ProjectBudget({
         </section>
       )}
 
+      {base > 0 && <PaymentPlan projectId={projectId} author={author} canEdit={canEdit} milestones={plan} totalWithVat={total} />}
+
       {base > 0 && (
         <section className="card pv-block">
           <span className="eyebrow">{t('budget.signatures')}</span>
+          {!anySigned && !planReady(plan) && <p className="card__text">{t('plan.needed')}</p>}
           {(['client', 'builder'] as const).map((r) => {
             const s = sigs[r]
             return (
@@ -369,7 +376,7 @@ export default function ProjectBudget({
                 ) : (
                   <>
                     <span className="card__text">{t('budget.pending')}</span>
-                    {canWrite && signer === r && !signing && !form && (
+                    {canWrite && signer === r && !signing && !form && planReady(plan) && (
                       <button className="btn" onClick={() => setSigning({ name: author.name, accepted: false, image: null })}>
                         {t('budget.sign')}
                       </button>
@@ -389,7 +396,7 @@ export default function ProjectBudget({
             e.preventDefault()
             if (!signing.accepted || !signing.name.trim() || !signing.image) return
             const image = signing.image
-            run(() => signBudget(projectId, { ...author, role: signer }, signing.name, image, lines, vatRate), () => setSigning(null), t('budget.signError'))
+            run(() => signBudget(projectId, { ...author, role: signer }, signing.name, image, lines, vatRate, plan), () => setSigning(null), t('budget.signError'))
           }}
         >
           <span className="card__title">{t('budget.sign')}</span>

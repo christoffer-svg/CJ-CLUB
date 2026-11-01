@@ -518,7 +518,7 @@ export const uploadProjectFile = onCall({ memory: '512MiB', timeoutSeconds: 120 
   if (!uid) throw new HttpsError('unauthenticated', 'Inicie sesión de nuevo.')
   const d = (request.data ?? {}) as Record<string, unknown>
   const projectId = text(d.projectId, 'obra')
-  const kind = d.kind === 'updates' || d.kind === 'payments' || d.kind === 'budget' || d.kind === 'selections' ? d.kind : null
+  const kind = d.kind === 'updates' || d.kind === 'payments' || d.kind === 'budget' || d.kind === 'selections' || d.kind === 'snags' ? d.kind : null
   const entryId = text(d.entryId, 'entrada')
   const index = Number(d.index)
   const contentType = text(d.contentType, 'tipo')
@@ -532,7 +532,8 @@ export const uploadProjectFile = onCall({ memory: '512MiB', timeoutSeconds: 120 
   if (!buffer.length || buffer.length > MAX_FILE_BYTES) throw new HttpsError('invalid-argument', 'El archivo pasa de 10 MB.')
 
   const role = await projectRoleOf(uid, projectId)
-  if (role === 'none' || (kind !== 'payments' && role === 'client')) {
+  // El cliente sube justificantes de pago y fotos de repasos; el resto lo suben el constructor o CJ
+  if (role === 'none' || (kind !== 'payments' && kind !== 'snags' && role === 'client')) {
     throw new HttpsError('permission-denied', 'No puede añadir archivos aquí.')
   }
   // Fotos del presupuesto: solo mientras nadie lo haya firmado. Elecciones de productos: solo con el

@@ -369,6 +369,64 @@ Controleer of elke tekst natuurlijk en correct Nederlands is. Noteer correcties 
 | `sel.extraTitle` | Diferencia: {product} | Difference: {product} | Verschil: {product} | |
 | `sel.extraText` | Elegido en {store} por {price} con IVA. Referencia en el presupuesto: {reference} + IVA. Diferencia: {amount} + IVA. | Chosen at {store} for {price} incl. VAT. Reference in the budget: {reference} + VAT. Difference: {amount} + VAT. | Gekozen bij {store} voor {price} incl. btw. Richtprijs in de begroting: {reference} + btw. Verschil: {amount} + btw. | |
 | `sel.extraStatus` | Extra por la diferencia: {amount} + IVA · {status} | Extra for the difference: {amount} + VAT · {status} | Meerwerk voor het verschil: {amount} + btw · {status} | |
+| `plan.title` | Plan de pagos | Payment plan | Betalingsschema | |
+| `plan.intro` | Reparta el 90 % del presupuesto en pagos. El 10 % final queda siempre retenido hasta que la lista de repasos esté terminada y el cliente lo confirme. El plan se firma junto con el presupuesto. | Split 90 % of the budget into payments. The final 10 % is always held back until the snag list is complete and the client confirms it. The plan is signed together with the budget. | Verdeel 90 % van de begroting over betalingen. De laatste 10 % wordt altijd ingehouden tot de opleverpuntenlijst is afgerond en de klant dat bevestigt. Het schema wordt samen met de begroting ondertekend. | |
+| `plan.introRead` | Pagos acordados. El 10 % final queda retenido hasta que la lista de repasos esté terminada y el cliente lo confirme. | Agreed payments. The final 10 % is held back until the snag list is complete and the client confirms it. | Afgesproken betalingen. De laatste 10 % wordt ingehouden tot de opleverpuntenlijst is afgerond en de klant dat bevestigt. | |
+| `plan.none` | Aún no hay plan de pagos. | No payment plan yet. | Nog geen betalingsschema. | |
+| `plan.noneRead` | El constructor aún no ha preparado el plan de pagos. | The builder has not prepared the payment plan yet. | De aannemer heeft het betalingsschema nog niet opgesteld. | |
+| `plan.create` | Preparar plan de pagos | Prepare payment plan | Betalingsschema opstellen | |
+| `plan.edit` | Cambiar plan de pagos | Change payment plan | Betalingsschema wijzigen | |
+| `plan.def1` | Al empezar la obra | At the start of the works | Bij de start van de werken | |
+| `plan.def2` | A mitad de obra | Halfway through the works | Halverwege de werken | |
+| `plan.def3` | Al terminar la obra | At the end of the works | Bij het einde van de werken | |
+| `plan.milestone` | Pago | Payment | Betaling | |
+| `plan.milestoneExample` | Por ejemplo: al empezar la obra | For example: at the start of the works | Bijvoorbeeld: bij de start van de werken | |
+| `plan.addMilestone` | Añadir pago | Add payment | Betaling toevoegen | |
+| `plan.final` | Al terminar los repasos | After the snag list | Na de opleverpunten | |
+| `plan.sum` | Los pagos suman {n} %: tienen que sumar 90 %. | The payments add up to {n} %: they must add up to 90 %. | De betalingen komen op {n} %: dat moet 90 % zijn. | |
+| `plan.sumOk` | Correcto: 90 % en pagos + 10 % final retenido. | Correct: 90 % in payments + final 10 % held back. | Juist: 90 % in betalingen + laatste 10 % ingehouden. | |
+| `plan.incomplete` | Incompleto | Incomplete | Onvolledig | |
+| `plan.deleteConfirm` | ¿Quitar el plan de pagos? | Remove the payment plan? | Het betalingsschema verwijderen? | |
+| `plan.needed` | Para poder firmar falta el plan de pagos, que debe repartir el 90 %. | To sign, the payment plan is missing; it must split 90 %. | Om te ondertekenen ontbreekt het betalingsschema; het moet 90 % verdelen. | |
+| `plan.notSigned` | Sin firmar | Not signed | Niet ondertekend | |
+| `plan.paid` | Pagado | Paid | Betaald | |
+| `plan.partial` | Pagado {paid} | Paid {paid} | Betaald {paid} | |
+| `plan.retained` | Retenido | Held back | Ingehouden | |
+| `plan.pending` | Pendiente | Pending | Openstaand | |
+| `plan.released` | El cliente dio por buenos los repasos el {date}: el 10 % final ya se puede pagar. | The client approved the snag list on {date}: the final 10 % can now be paid. | De klant keurde de opleverpunten goed op {date}: de laatste 10 % kan nu worden betaald. | |
+| `plan.retainedNote` | 10 % retenido hasta terminar los repasos: {amount}. | 10 % held back until the snag list is complete: {amount}. | 10 % ingehouden tot de opleverpunten zijn afgerond: {amount}. | |
+| `plan.for` | Corresponde a | Relates to | Hoort bij | |
+| `plan.forOther` | Otro (extra u otro concepto) | Other (extra or other item) | Overig (meerwerk of ander onderdeel) | |
+| `plan.finalLocked` | El 10 % final se puede pagar cuando el cliente confirme que los repasos están terminados. | The final 10 % can be paid once the client confirms that the snag list is complete. | De laatste 10 % kan worden betaald zodra de klant bevestigt dat de opleverpunten zijn afgerond. | |
+| `plan.forLabel` | Pago del plan: {name} | Plan payment: {name} | Betaling uit het schema: {name} | |
+| `project.tab.snags` | Repasos | Snags | Opleverpunten | |
+| `snag.eyebrow` | Lista de repasos | Snag list | Opleverpuntenlijst | |
+| `snag.intro` | Lo que el constructor tiene que mejorar antes del pago final. El cliente o CJ lo apuntan con una foto; el constructor lo marca como arreglado y el cliente o CJ lo revisan. | What the builder needs to fix before the final payment. The client or CJ note it with a photo; the builder marks it as fixed and the client or CJ check it. | Wat de aannemer moet verbeteren vóór de laatste betaling. De klant of CJ noteren het met een foto; de aannemer markeert het als hersteld en de klant of CJ controleren het. | |
+| `snag.progress` | {done} de {total} repasos revisados | {done} of {total} snags checked | {done} van {total} punten gecontroleerd | |
+| `snag.add` | Apuntar repaso | Add snag | Punt toevoegen | |
+| `snag.title` | Qué hay que mejorar | What needs fixing | Wat moet worden verbeterd | |
+| `snag.titleExample` | Por ejemplo: silicona de la ducha mal acabada | For example: badly finished silicone in the shower | Bijvoorbeeld: slecht afgewerkte siliconen in de douche | |
+| `snag.text` | Detalles (opcional) | Details (optional) | Details (optioneel) | |
+| `snag.empty` | No hay repasos apuntados. | No snags noted. | Geen opleverpunten genoteerd. | |
+| `snag.status.open` | Por arreglar | To fix | Te herstellen | |
+| `snag.status.fixed` | Arreglado, por revisar | Fixed, to be checked | Hersteld, te controleren | |
+| `snag.status.ok` | Revisado y correcto | Checked and correct | Gecontroleerd en in orde | |
+| `snag.by` | Apuntado por {name} · {date} | Noted by {name} · {date} | Genoteerd door {name} · {date} | |
+| `snag.reopenedNote` | No estaba bien: «{note}» | Not right: “{note}” | Niet in orde: „{note}” | |
+| `snag.fix` | Arreglo | Fix | Herstel | |
+| `snag.fixedBy` | Arreglado por {name} · {date} | Fixed by {name} · {date} | Hersteld door {name} · {date} | |
+| `snag.okBy` | Revisado por {name} · {date} | Checked by {name} · {date} | Gecontroleerd door {name} · {date} | |
+| `snag.markFixed` | Marcar como arreglado | Mark as fixed | Markeren als hersteld | |
+| `snag.fixNote` | Qué se ha hecho (opcional) | What was done (optional) | Wat is er gedaan (optioneel) | |
+| `snag.fixPhotos` | Fotos del arreglo (opcional) | Photos of the fix (optional) | Foto's van het herstel (optioneel) | |
+| `snag.accept` | Está bien | It is fine | In orde | |
+| `snag.reopen` | No está bien | Not right | Niet in orde | |
+| `snag.reopenNote` | Qué falta (opcional) | What is missing (optional) | Wat ontbreekt er (optioneel) | |
+| `snag.release` | Repasos terminados: liberar el 10 % final ({amount}) | Snags complete: release the final 10 % ({amount}) | Opleverpunten afgerond: laatste 10 % vrijgeven ({amount}) | |
+| `snag.releaseConfirm` | ¿Confirma que todos los repasos están bien y que ya se puede pagar el 10 % final ({amount})? No se puede deshacer. | Do you confirm that all snags are fine and the final 10 % ({amount}) can now be paid? This cannot be undone. | Bevestigt u dat alle opleverpunten in orde zijn en dat de laatste 10 % ({amount}) kan worden betaald? Dit kan niet ongedaan worden gemaakt. | |
+| `snag.releasedNote` | {name} dio por buenos los repasos el {date}. El 10 % final ya se puede pagar. | {name} approved the snag list on {date}. The final 10 % can now be paid. | {name} keurde de opleverpunten goed op {date}. De laatste 10 % kan nu worden betaald. | |
+| `snag.releasePending` | Cuando todos los repasos estén revisados, el cliente podrá liberar el 10 % final ({amount}). | Once all snags have been checked, the client can release the final 10 % ({amount}). | Zodra alle punten gecontroleerd zijn, kan de klant de laatste 10 % ({amount}) vrijgeven. | |
+| `snag.afterSigning` | La lista de repasos y el 10 % final empiezan cuando el presupuesto está firmado. | The snag list and the final 10 % start once the budget has been signed. | De opleverpuntenlijst en de laatste 10 % beginnen zodra de begroting is ondertekend. | |
 | `budget.referenceNote` | Productos y precios de referencia incluidos en el precio de la partida. Si elige otro más caro, la diferencia se añade como extra. | Products and reference prices included in the group price. If you choose a more expensive one, the difference is added as an extra. | Producten en richtprijzen die in de prijs van de post zijn inbegrepen. Kiest u iets duurders, dan wordt het verschil als meerwerk toegevoegd. | |
 | `budget.reference` | referencia | reference | richtprijs | |
 | `budget.referencePrice` | Precio de referencia sin IVA (€) | Reference price excl. VAT (€) | Richtprijs excl. btw (€) | |

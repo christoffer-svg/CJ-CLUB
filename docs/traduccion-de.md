@@ -369,6 +369,64 @@ Bitte prüfen Sie, ob jeder Text natürlich und korrekt auf Deutsch ist. Korrekt
 | `sel.extraTitle` | Diferencia: {product} | Difference: {product} | Differenz: {product} | |
 | `sel.extraText` | Elegido en {store} por {price} con IVA. Referencia en el presupuesto: {reference} + IVA. Diferencia: {amount} + IVA. | Chosen at {store} for {price} incl. VAT. Reference in the budget: {reference} + VAT. Difference: {amount} + VAT. | Ausgewählt bei {store} für {price} inkl. MwSt. Richtpreis im Kostenvoranschlag: {reference} + MwSt. Differenz: {amount} + MwSt. | |
 | `sel.extraStatus` | Extra por la diferencia: {amount} + IVA · {status} | Extra for the difference: {amount} + VAT · {status} | Zusatzarbeit für die Differenz: {amount} + MwSt. · {status} | |
+| `plan.title` | Plan de pagos | Payment plan | Zahlungsplan | |
+| `plan.intro` | Reparta el 90 % del presupuesto en pagos. El 10 % final queda siempre retenido hasta que la lista de repasos esté terminada y el cliente lo confirme. El plan se firma junto con el presupuesto. | Split 90 % of the budget into payments. The final 10 % is always held back until the snag list is complete and the client confirms it. The plan is signed together with the budget. | Teilen Sie 90 % des Kostenvoranschlags auf Zahlungen auf. Die letzten 10 % werden immer einbehalten, bis die Mängelliste erledigt ist und der Kunde dies bestätigt. Der Plan wird zusammen mit dem Kostenvoranschlag unterschrieben. | |
+| `plan.introRead` | Pagos acordados. El 10 % final queda retenido hasta que la lista de repasos esté terminada y el cliente lo confirme. | Agreed payments. The final 10 % is held back until the snag list is complete and the client confirms it. | Vereinbarte Zahlungen. Die letzten 10 % werden einbehalten, bis die Mängelliste erledigt ist und der Kunde dies bestätigt. | |
+| `plan.none` | Aún no hay plan de pagos. | No payment plan yet. | Noch kein Zahlungsplan. | |
+| `plan.noneRead` | El constructor aún no ha preparado el plan de pagos. | The builder has not prepared the payment plan yet. | Der Bauunternehmer hat den Zahlungsplan noch nicht erstellt. | |
+| `plan.create` | Preparar plan de pagos | Prepare payment plan | Zahlungsplan erstellen | |
+| `plan.edit` | Cambiar plan de pagos | Change payment plan | Zahlungsplan ändern | |
+| `plan.def1` | Al empezar la obra | At the start of the works | Zu Beginn der Arbeiten | |
+| `plan.def2` | A mitad de obra | Halfway through the works | Zur Hälfte der Arbeiten | |
+| `plan.def3` | Al terminar la obra | At the end of the works | Am Ende der Arbeiten | |
+| `plan.milestone` | Pago | Payment | Zahlung | |
+| `plan.milestoneExample` | Por ejemplo: al empezar la obra | For example: at the start of the works | Zum Beispiel: zu Beginn der Arbeiten | |
+| `plan.addMilestone` | Añadir pago | Add payment | Zahlung hinzufügen | |
+| `plan.final` | Al terminar los repasos | After the snag list | Nach der Mängelliste | |
+| `plan.sum` | Los pagos suman {n} %: tienen que sumar 90 %. | The payments add up to {n} %: they must add up to 90 %. | Die Zahlungen ergeben {n} %: Sie müssen 90 % ergeben. | |
+| `plan.sumOk` | Correcto: 90 % en pagos + 10 % final retenido. | Correct: 90 % in payments + final 10 % held back. | Richtig: 90 % in Zahlungen + letzte 10 % einbehalten. | |
+| `plan.incomplete` | Incompleto | Incomplete | Unvollständig | |
+| `plan.deleteConfirm` | ¿Quitar el plan de pagos? | Remove the payment plan? | Zahlungsplan entfernen? | |
+| `plan.needed` | Para poder firmar falta el plan de pagos, que debe repartir el 90 %. | To sign, the payment plan is missing; it must split 90 %. | Zum Unterschreiben fehlt der Zahlungsplan; er muss 90 % aufteilen. | |
+| `plan.notSigned` | Sin firmar | Not signed | Nicht unterschrieben | |
+| `plan.paid` | Pagado | Paid | Bezahlt | |
+| `plan.partial` | Pagado {paid} | Paid {paid} | Bezahlt {paid} | |
+| `plan.retained` | Retenido | Held back | Einbehalten | |
+| `plan.pending` | Pendiente | Pending | Offen | |
+| `plan.released` | El cliente dio por buenos los repasos el {date}: el 10 % final ya se puede pagar. | The client approved the snag list on {date}: the final 10 % can now be paid. | Der Kunde hat die Mängelliste am {date} abgenommen: Die letzten 10 % können jetzt bezahlt werden. | |
+| `plan.retainedNote` | 10 % retenido hasta terminar los repasos: {amount}. | 10 % held back until the snag list is complete: {amount}. | 10 % einbehalten bis zur Erledigung der Mängelliste: {amount}. | |
+| `plan.for` | Corresponde a | Relates to | Gehört zu | |
+| `plan.forOther` | Otro (extra u otro concepto) | Other (extra or other item) | Sonstiges (Zusatzarbeit oder anderes) | |
+| `plan.finalLocked` | El 10 % final se puede pagar cuando el cliente confirme que los repasos están terminados. | The final 10 % can be paid once the client confirms that the snag list is complete. | Die letzten 10 % können bezahlt werden, sobald der Kunde bestätigt, dass die Mängelliste erledigt ist. | |
+| `plan.forLabel` | Pago del plan: {name} | Plan payment: {name} | Zahlung laut Plan: {name} | |
+| `project.tab.snags` | Repasos | Snags | Mängel | |
+| `snag.eyebrow` | Lista de repasos | Snag list | Mängelliste | |
+| `snag.intro` | Lo que el constructor tiene que mejorar antes del pago final. El cliente o CJ lo apuntan con una foto; el constructor lo marca como arreglado y el cliente o CJ lo revisan. | What the builder needs to fix before the final payment. The client or CJ note it with a photo; the builder marks it as fixed and the client or CJ check it. | Was der Bauunternehmer vor der Schlusszahlung nachbessern muss. Der Kunde oder CJ notieren es mit Foto; der Bauunternehmer markiert es als behoben und der Kunde oder CJ prüfen es. | |
+| `snag.progress` | {done} de {total} repasos revisados | {done} of {total} snags checked | {done} von {total} Mängeln geprüft | |
+| `snag.add` | Apuntar repaso | Add snag | Mangel notieren | |
+| `snag.title` | Qué hay que mejorar | What needs fixing | Was nachgebessert werden muss | |
+| `snag.titleExample` | Por ejemplo: silicona de la ducha mal acabada | For example: badly finished silicone in the shower | Zum Beispiel: schlecht ausgeführte Silikonfuge in der Dusche | |
+| `snag.text` | Detalles (opcional) | Details (optional) | Details (optional) | |
+| `snag.empty` | No hay repasos apuntados. | No snags noted. | Keine Mängel notiert. | |
+| `snag.status.open` | Por arreglar | To fix | Zu beheben | |
+| `snag.status.fixed` | Arreglado, por revisar | Fixed, to be checked | Behoben, zu prüfen | |
+| `snag.status.ok` | Revisado y correcto | Checked and correct | Geprüft und in Ordnung | |
+| `snag.by` | Apuntado por {name} · {date} | Noted by {name} · {date} | Notiert von {name} · {date} | |
+| `snag.reopenedNote` | No estaba bien: «{note}» | Not right: “{note}” | Nicht in Ordnung: „{note}“ | |
+| `snag.fix` | Arreglo | Fix | Nachbesserung | |
+| `snag.fixedBy` | Arreglado por {name} · {date} | Fixed by {name} · {date} | Behoben von {name} · {date} | |
+| `snag.okBy` | Revisado por {name} · {date} | Checked by {name} · {date} | Geprüft von {name} · {date} | |
+| `snag.markFixed` | Marcar como arreglado | Mark as fixed | Als behoben markieren | |
+| `snag.fixNote` | Qué se ha hecho (opcional) | What was done (optional) | Was gemacht wurde (optional) | |
+| `snag.fixPhotos` | Fotos del arreglo (opcional) | Photos of the fix (optional) | Fotos der Nachbesserung (optional) | |
+| `snag.accept` | Está bien | It is fine | In Ordnung | |
+| `snag.reopen` | No está bien | Not right | Nicht in Ordnung | |
+| `snag.reopenNote` | Qué falta (opcional) | What is missing (optional) | Was fehlt (optional) | |
+| `snag.release` | Repasos terminados: liberar el 10 % final ({amount}) | Snags complete: release the final 10 % ({amount}) | Mängel erledigt: letzte 10 % freigeben ({amount}) | |
+| `snag.releaseConfirm` | ¿Confirma que todos los repasos están bien y que ya se puede pagar el 10 % final ({amount})? No se puede deshacer. | Do you confirm that all snags are fine and the final 10 % ({amount}) can now be paid? This cannot be undone. | Bestätigen Sie, dass alle Mängel behoben sind und die letzten 10 % ({amount}) jetzt bezahlt werden können? Dies kann nicht rückgängig gemacht werden. | |
+| `snag.releasedNote` | {name} dio por buenos los repasos el {date}. El 10 % final ya se puede pagar. | {name} approved the snag list on {date}. The final 10 % can now be paid. | {name} hat die Mängelliste am {date} abgenommen. Die letzten 10 % können jetzt bezahlt werden. | |
+| `snag.releasePending` | Cuando todos los repasos estén revisados, el cliente podrá liberar el 10 % final ({amount}). | Once all snags have been checked, the client can release the final 10 % ({amount}). | Sobald alle Mängel geprüft sind, kann der Kunde die letzten 10 % ({amount}) freigeben. | |
+| `snag.afterSigning` | La lista de repasos y el 10 % final empiezan cuando el presupuesto está firmado. | The snag list and the final 10 % start once the budget has been signed. | Die Mängelliste und die letzten 10 % beginnen, sobald der Kostenvoranschlag unterschrieben ist. | |
 | `budget.referenceNote` | Productos y precios de referencia incluidos en el precio de la partida. Si elige otro más caro, la diferencia se añade como extra. | Products and reference prices included in the group price. If you choose a more expensive one, the difference is added as an extra. | Produkte und Richtpreise, die im Preis der Position enthalten sind. Wählen Sie etwas Teureres, wird die Differenz als Zusatzarbeit hinzugefügt. | |
 | `budget.reference` | referencia | reference | Richtpreis | |
 | `budget.referencePrice` | Precio de referencia sin IVA (€) | Reference price excl. VAT (€) | Richtpreis netto (€) | |

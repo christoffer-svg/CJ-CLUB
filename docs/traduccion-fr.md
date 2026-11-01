@@ -369,6 +369,64 @@ Vérifiez que chaque texte est naturel et correct en français. Notez vos correc
 | `sel.extraTitle` | Diferencia: {product} | Difference: {product} | Différence : {product} | |
 | `sel.extraText` | Elegido en {store} por {price} con IVA. Referencia en el presupuesto: {reference} + IVA. Diferencia: {amount} + IVA. | Chosen at {store} for {price} incl. VAT. Reference in the budget: {reference} + VAT. Difference: {amount} + VAT. | Choisi chez {store} pour {price} TTC. Référence dans le devis : {reference} HT. Différence : {amount} HT. | |
 | `sel.extraStatus` | Extra por la diferencia: {amount} + IVA · {status} | Extra for the difference: {amount} + VAT · {status} | Supplément pour la différence : {amount} HT · {status} | |
+| `plan.title` | Plan de pagos | Payment plan | Échéancier de paiement | |
+| `plan.intro` | Reparta el 90 % del presupuesto en pagos. El 10 % final queda siempre retenido hasta que la lista de repasos esté terminada y el cliente lo confirme. El plan se firma junto con el presupuesto. | Split 90 % of the budget into payments. The final 10 % is always held back until the snag list is complete and the client confirms it. The plan is signed together with the budget. | Répartissez 90 % du devis en paiements. Les 10 % finaux sont toujours retenus jusqu'à ce que la liste des réserves soit levée et que le client le confirme. L'échéancier se signe avec le devis. | |
+| `plan.introRead` | Pagos acordados. El 10 % final queda retenido hasta que la lista de repasos esté terminada y el cliente lo confirme. | Agreed payments. The final 10 % is held back until the snag list is complete and the client confirms it. | Paiements convenus. Les 10 % finaux sont retenus jusqu'à ce que la liste des réserves soit levée et que le client le confirme. | |
+| `plan.none` | Aún no hay plan de pagos. | No payment plan yet. | Pas encore d'échéancier. | |
+| `plan.noneRead` | El constructor aún no ha preparado el plan de pagos. | The builder has not prepared the payment plan yet. | L'entrepreneur n'a pas encore préparé l'échéancier. | |
+| `plan.create` | Preparar plan de pagos | Prepare payment plan | Préparer l'échéancier | |
+| `plan.edit` | Cambiar plan de pagos | Change payment plan | Modifier l'échéancier | |
+| `plan.def1` | Al empezar la obra | At the start of the works | Au début des travaux | |
+| `plan.def2` | A mitad de obra | Halfway through the works | À mi-parcours des travaux | |
+| `plan.def3` | Al terminar la obra | At the end of the works | À la fin des travaux | |
+| `plan.milestone` | Pago | Payment | Paiement | |
+| `plan.milestoneExample` | Por ejemplo: al empezar la obra | For example: at the start of the works | Par exemple : au début des travaux | |
+| `plan.addMilestone` | Añadir pago | Add payment | Ajouter un paiement | |
+| `plan.final` | Al terminar los repasos | After the snag list | Après la levée des réserves | |
+| `plan.sum` | Los pagos suman {n} %: tienen que sumar 90 %. | The payments add up to {n} %: they must add up to 90 %. | Les paiements totalisent {n} % : ils doivent totaliser 90 %. | |
+| `plan.sumOk` | Correcto: 90 % en pagos + 10 % final retenido. | Correct: 90 % in payments + final 10 % held back. | Correct : 90 % en paiements + 10 % finaux retenus. | |
+| `plan.incomplete` | Incompleto | Incomplete | Incomplet | |
+| `plan.deleteConfirm` | ¿Quitar el plan de pagos? | Remove the payment plan? | Retirer l'échéancier ? | |
+| `plan.needed` | Para poder firmar falta el plan de pagos, que debe repartir el 90 %. | To sign, the payment plan is missing; it must split 90 %. | Pour signer, il manque l'échéancier ; il doit répartir 90 %. | |
+| `plan.notSigned` | Sin firmar | Not signed | Non signé | |
+| `plan.paid` | Pagado | Paid | Payé | |
+| `plan.partial` | Pagado {paid} | Paid {paid} | Payé {paid} | |
+| `plan.retained` | Retenido | Held back | Retenu | |
+| `plan.pending` | Pendiente | Pending | En attente | |
+| `plan.released` | El cliente dio por buenos los repasos el {date}: el 10 % final ya se puede pagar. | The client approved the snag list on {date}: the final 10 % can now be paid. | Le client a validé la levée des réserves le {date} : les 10 % finaux peuvent être payés. | |
+| `plan.retainedNote` | 10 % retenido hasta terminar los repasos: {amount}. | 10 % held back until the snag list is complete: {amount}. | 10 % retenus jusqu'à la levée des réserves : {amount}. | |
+| `plan.for` | Corresponde a | Relates to | Correspond à | |
+| `plan.forOther` | Otro (extra u otro concepto) | Other (extra or other item) | Autre (supplément ou autre) | |
+| `plan.finalLocked` | El 10 % final se puede pagar cuando el cliente confirme que los repasos están terminados. | The final 10 % can be paid once the client confirms that the snag list is complete. | Les 10 % finaux peuvent être payés dès que le client confirme la levée des réserves. | |
+| `plan.forLabel` | Pago del plan: {name} | Plan payment: {name} | Paiement de l'échéancier : {name} | |
+| `project.tab.snags` | Repasos | Snags | Réserves | |
+| `snag.eyebrow` | Lista de repasos | Snag list | Liste des réserves | |
+| `snag.intro` | Lo que el constructor tiene que mejorar antes del pago final. El cliente o CJ lo apuntan con una foto; el constructor lo marca como arreglado y el cliente o CJ lo revisan. | What the builder needs to fix before the final payment. The client or CJ note it with a photo; the builder marks it as fixed and the client or CJ check it. | Ce que l'entrepreneur doit reprendre avant le paiement final. Le client ou CJ le notent avec une photo ; l'entrepreneur le marque comme réparé et le client ou CJ le vérifient. | |
+| `snag.progress` | {done} de {total} repasos revisados | {done} of {total} snags checked | {done} réserves vérifiées sur {total} | |
+| `snag.add` | Apuntar repaso | Add snag | Ajouter une réserve | |
+| `snag.title` | Qué hay que mejorar | What needs fixing | Ce qu'il faut reprendre | |
+| `snag.titleExample` | Por ejemplo: silicona de la ducha mal acabada | For example: badly finished silicone in the shower | Par exemple : joint silicone de la douche mal fini | |
+| `snag.text` | Detalles (opcional) | Details (optional) | Détails (facultatif) | |
+| `snag.empty` | No hay repasos apuntados. | No snags noted. | Aucune réserve notée. | |
+| `snag.status.open` | Por arreglar | To fix | À reprendre | |
+| `snag.status.fixed` | Arreglado, por revisar | Fixed, to be checked | Réparé, à vérifier | |
+| `snag.status.ok` | Revisado y correcto | Checked and correct | Vérifié et correct | |
+| `snag.by` | Apuntado por {name} · {date} | Noted by {name} · {date} | Notée par {name} · {date} | |
+| `snag.reopenedNote` | No estaba bien: «{note}» | Not right: “{note}” | Pas correct : « {note} » | |
+| `snag.fix` | Arreglo | Fix | Reprise | |
+| `snag.fixedBy` | Arreglado por {name} · {date} | Fixed by {name} · {date} | Réparé par {name} · {date} | |
+| `snag.okBy` | Revisado por {name} · {date} | Checked by {name} · {date} | Vérifié par {name} · {date} | |
+| `snag.markFixed` | Marcar como arreglado | Mark as fixed | Marquer comme réparé | |
+| `snag.fixNote` | Qué se ha hecho (opcional) | What was done (optional) | Ce qui a été fait (facultatif) | |
+| `snag.fixPhotos` | Fotos del arreglo (opcional) | Photos of the fix (optional) | Photos de la reprise (facultatif) | |
+| `snag.accept` | Está bien | It is fine | C'est correct | |
+| `snag.reopen` | No está bien | Not right | Pas correct | |
+| `snag.reopenNote` | Qué falta (opcional) | What is missing (optional) | Ce qui manque (facultatif) | |
+| `snag.release` | Repasos terminados: liberar el 10 % final ({amount}) | Snags complete: release the final 10 % ({amount}) | Réserves levées : libérer les 10 % finaux ({amount}) | |
+| `snag.releaseConfirm` | ¿Confirma que todos los repasos están bien y que ya se puede pagar el 10 % final ({amount})? No se puede deshacer. | Do you confirm that all snags are fine and the final 10 % ({amount}) can now be paid? This cannot be undone. | Confirmez-vous que toutes les réserves sont levées et que les 10 % finaux ({amount}) peuvent être payés ? Cette action est définitive. | |
+| `snag.releasedNote` | {name} dio por buenos los repasos el {date}. El 10 % final ya se puede pagar. | {name} approved the snag list on {date}. The final 10 % can now be paid. | {name} a validé la levée des réserves le {date}. Les 10 % finaux peuvent être payés. | |
+| `snag.releasePending` | Cuando todos los repasos estén revisados, el cliente podrá liberar el 10 % final ({amount}). | Once all snags have been checked, the client can release the final 10 % ({amount}). | Une fois toutes les réserves vérifiées, le client pourra libérer les 10 % finaux ({amount}). | |
+| `snag.afterSigning` | La lista de repasos y el 10 % final empiezan cuando el presupuesto está firmado. | The snag list and the final 10 % start once the budget has been signed. | La liste des réserves et les 10 % finaux commencent une fois le devis signé. | |
 | `budget.referenceNote` | Productos y precios de referencia incluidos en el precio de la partida. Si elige otro más caro, la diferencia se añade como extra. | Products and reference prices included in the group price. If you choose a more expensive one, the difference is added as an extra. | Produits et prix de référence compris dans le prix du poste. Si vous en choisissez un plus cher, la différence est ajoutée en supplément. | |
 | `budget.reference` | referencia | reference | référence | |
 | `budget.referencePrice` | Precio de referencia sin IVA (€) | Reference price excl. VAT (€) | Prix de référence HT (€) | |

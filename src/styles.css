@@ -2930,6 +2930,74 @@ button {
   letter-spacing: 0.04em;
 }
 
+.plan__list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.plan__row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.plan__row dt,
+.plan__row dd {
+  margin: 0;
+}
+
+.plan__row--final {
+  padding-top: 8px;
+  border-top: 1px solid var(--card-border);
+}
+
+.plan__state {
+  display: block;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: var(--gold-dark);
+}
+
+.plan__edit {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.plan__edit-row {
+  display: grid;
+  grid-template-columns: 1fr 64px auto auto;
+  gap: 8px;
+  align-items: center;
+}
+
+.plan__edit-row--final {
+  grid-template-columns: 1fr 64px auto;
+  color: var(--text-2);
+  font-size: 14px;
+}
+
+.plan__pct {
+  text-align: right;
+}
+
+.plan__add {
+  align-self: flex-start;
+}
+
+.snag-fix {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 0 0 14px;
+  border-left: 2px solid var(--gold);
+}
+
+.snag-release {
+  color: var(--text);
+}
+
 .sel-facts {
   display: grid;
   grid-template-columns: auto 1fr;

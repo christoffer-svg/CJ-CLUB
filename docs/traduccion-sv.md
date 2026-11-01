@@ -369,6 +369,64 @@ Kontrollera att varje text är naturlig och korrekt på svenska. Skriv dina rät
 | `sel.extraTitle` | Diferencia: {product} | Difference: {product} | Mellanskillnad: {product} | |
 | `sel.extraText` | Elegido en {store} por {price} con IVA. Referencia en el presupuesto: {reference} + IVA. Diferencia: {amount} + IVA. | Chosen at {store} for {price} incl. VAT. Reference in the budget: {reference} + VAT. Difference: {amount} + VAT. | Valt hos {store} för {price} inkl. moms. Referens i offerten: {reference} + moms. Mellanskillnad: {amount} + moms. | |
 | `sel.extraStatus` | Extra por la diferencia: {amount} + IVA · {status} | Extra for the difference: {amount} + VAT · {status} | Extraarbete för mellanskillnaden: {amount} + moms · {status} | |
+| `plan.title` | Plan de pagos | Payment plan | Betalningsplan | |
+| `plan.intro` | Reparta el 90 % del presupuesto en pagos. El 10 % final queda siempre retenido hasta que la lista de repasos esté terminada y el cliente lo confirme. El plan se firma junto con el presupuesto. | Split 90 % of the budget into payments. The final 10 % is always held back until the snag list is complete and the client confirms it. The plan is signed together with the budget. | Fördela 90 % av offerten på betalningar. De sista 10 % hålls alltid inne tills åtgärdslistan är klar och kunden bekräftar det. Planen signeras tillsammans med offerten. | |
+| `plan.introRead` | Pagos acordados. El 10 % final queda retenido hasta que la lista de repasos esté terminada y el cliente lo confirme. | Agreed payments. The final 10 % is held back until the snag list is complete and the client confirms it. | Överenskomna betalningar. De sista 10 % hålls inne tills åtgärdslistan är klar och kunden bekräftar det. | |
+| `plan.none` | Aún no hay plan de pagos. | No payment plan yet. | Ingen betalningsplan ännu. | |
+| `plan.noneRead` | El constructor aún no ha preparado el plan de pagos. | The builder has not prepared the payment plan yet. | Byggaren har inte tagit fram betalningsplanen ännu. | |
+| `plan.create` | Preparar plan de pagos | Prepare payment plan | Ta fram betalningsplan | |
+| `plan.edit` | Cambiar plan de pagos | Change payment plan | Ändra betalningsplan | |
+| `plan.def1` | Al empezar la obra | At the start of the works | När arbetet börjar | |
+| `plan.def2` | A mitad de obra | Halfway through the works | Halvvägs genom arbetet | |
+| `plan.def3` | Al terminar la obra | At the end of the works | När arbetet är klart | |
+| `plan.milestone` | Pago | Payment | Betalning | |
+| `plan.milestoneExample` | Por ejemplo: al empezar la obra | For example: at the start of the works | Till exempel: när arbetet börjar | |
+| `plan.addMilestone` | Añadir pago | Add payment | Lägg till betalning | |
+| `plan.final` | Al terminar los repasos | After the snag list | Efter åtgärdslistan | |
+| `plan.sum` | Los pagos suman {n} %: tienen que sumar 90 %. | The payments add up to {n} %: they must add up to 90 %. | Betalningarna blir {n} %: de måste bli 90 %. | |
+| `plan.sumOk` | Correcto: 90 % en pagos + 10 % final retenido. | Correct: 90 % in payments + final 10 % held back. | Rätt: 90 % i betalningar + sista 10 % innehållna. | |
+| `plan.incomplete` | Incompleto | Incomplete | Ofullständig | |
+| `plan.deleteConfirm` | ¿Quitar el plan de pagos? | Remove the payment plan? | Ta bort betalningsplanen? | |
+| `plan.needed` | Para poder firmar falta el plan de pagos, que debe repartir el 90 %. | To sign, the payment plan is missing; it must split 90 %. | För att kunna signera saknas betalningsplanen; den måste fördela 90 %. | |
+| `plan.notSigned` | Sin firmar | Not signed | Inte signerad | |
+| `plan.paid` | Pagado | Paid | Betald | |
+| `plan.partial` | Pagado {paid} | Paid {paid} | Betalt {paid} | |
+| `plan.retained` | Retenido | Held back | Innehållen | |
+| `plan.pending` | Pendiente | Pending | Väntar | |
+| `plan.released` | El cliente dio por buenos los repasos el {date}: el 10 % final ya se puede pagar. | The client approved the snag list on {date}: the final 10 % can now be paid. | Kunden godkände åtgärdslistan den {date}: de sista 10 % kan nu betalas. | |
+| `plan.retainedNote` | 10 % retenido hasta terminar los repasos: {amount}. | 10 % held back until the snag list is complete: {amount}. | 10 % innehållna tills åtgärdslistan är klar: {amount}. | |
+| `plan.for` | Corresponde a | Relates to | Gäller | |
+| `plan.forOther` | Otro (extra u otro concepto) | Other (extra or other item) | Annat (extraarbete eller annat) | |
+| `plan.finalLocked` | El 10 % final se puede pagar cuando el cliente confirme que los repasos están terminados. | The final 10 % can be paid once the client confirms that the snag list is complete. | De sista 10 % kan betalas när kunden bekräftar att åtgärdslistan är klar. | |
+| `plan.forLabel` | Pago del plan: {name} | Plan payment: {name} | Betalning enligt planen: {name} | |
+| `project.tab.snags` | Repasos | Snags | Åtgärder | |
+| `snag.eyebrow` | Lista de repasos | Snag list | Åtgärdslista | |
+| `snag.intro` | Lo que el constructor tiene que mejorar antes del pago final. El cliente o CJ lo apuntan con una foto; el constructor lo marca como arreglado y el cliente o CJ lo revisan. | What the builder needs to fix before the final payment. The client or CJ note it with a photo; the builder marks it as fixed and the client or CJ check it. | Det byggaren behöver åtgärda före slutbetalningen. Kunden eller CJ noterar det med ett foto; byggaren markerar det som åtgärdat och kunden eller CJ kontrollerar det. | |
+| `snag.progress` | {done} de {total} repasos revisados | {done} of {total} snags checked | {done} av {total} åtgärder kontrollerade | |
+| `snag.add` | Apuntar repaso | Add snag | Lägg till åtgärd | |
+| `snag.title` | Qué hay que mejorar | What needs fixing | Vad behöver åtgärdas | |
+| `snag.titleExample` | Por ejemplo: silicona de la ducha mal acabada | For example: badly finished silicone in the shower | Till exempel: dåligt avslutad silikon i duschen | |
+| `snag.text` | Detalles (opcional) | Details (optional) | Detaljer (valfritt) | |
+| `snag.empty` | No hay repasos apuntados. | No snags noted. | Inga åtgärder noterade. | |
+| `snag.status.open` | Por arreglar | To fix | Att åtgärda | |
+| `snag.status.fixed` | Arreglado, por revisar | Fixed, to be checked | Åtgärdad, ska kontrolleras | |
+| `snag.status.ok` | Revisado y correcto | Checked and correct | Kontrollerad och godkänd | |
+| `snag.by` | Apuntado por {name} · {date} | Noted by {name} · {date} | Noterad av {name} · {date} | |
+| `snag.reopenedNote` | No estaba bien: «{note}» | Not right: “{note}” | Inte rätt: ”{note}” | |
+| `snag.fix` | Arreglo | Fix | Åtgärd | |
+| `snag.fixedBy` | Arreglado por {name} · {date} | Fixed by {name} · {date} | Åtgärdad av {name} · {date} | |
+| `snag.okBy` | Revisado por {name} · {date} | Checked by {name} · {date} | Kontrollerad av {name} · {date} | |
+| `snag.markFixed` | Marcar como arreglado | Mark as fixed | Markera som åtgärdad | |
+| `snag.fixNote` | Qué se ha hecho (opcional) | What was done (optional) | Vad som har gjorts (valfritt) | |
+| `snag.fixPhotos` | Fotos del arreglo (opcional) | Photos of the fix (optional) | Foton på åtgärden (valfritt) | |
+| `snag.accept` | Está bien | It is fine | Det är bra | |
+| `snag.reopen` | No está bien | Not right | Inte rätt | |
+| `snag.reopenNote` | Qué falta (opcional) | What is missing (optional) | Vad som saknas (valfritt) | |
+| `snag.release` | Repasos terminados: liberar el 10 % final ({amount}) | Snags complete: release the final 10 % ({amount}) | Åtgärdslistan klar: frigör de sista 10 % ({amount}) | |
+| `snag.releaseConfirm` | ¿Confirma que todos los repasos están bien y que ya se puede pagar el 10 % final ({amount})? No se puede deshacer. | Do you confirm that all snags are fine and the final 10 % ({amount}) can now be paid? This cannot be undone. | Bekräftar du att alla åtgärder är godkända och att de sista 10 % ({amount}) nu kan betalas? Det går inte att ångra. | |
+| `snag.releasedNote` | {name} dio por buenos los repasos el {date}. El 10 % final ya se puede pagar. | {name} approved the snag list on {date}. The final 10 % can now be paid. | {name} godkände åtgärdslistan den {date}. De sista 10 % kan nu betalas. | |
+| `snag.releasePending` | Cuando todos los repasos estén revisados, el cliente podrá liberar el 10 % final ({amount}). | Once all snags have been checked, the client can release the final 10 % ({amount}). | När alla åtgärder är kontrollerade kan kunden frigöra de sista 10 % ({amount}). | |
+| `snag.afterSigning` | La lista de repasos y el 10 % final empiezan cuando el presupuesto está firmado. | The snag list and the final 10 % start once the budget has been signed. | Åtgärdslistan och de sista 10 % börjar när offerten är signerad. | |
 | `budget.referenceNote` | Productos y precios de referencia incluidos en el precio de la partida. Si elige otro más caro, la diferencia se añade como extra. | Products and reference prices included in the group price. If you choose a more expensive one, the difference is added as an extra. | Produkter och referenspriser som ingår i postens pris. Väljer du något dyrare läggs mellanskillnaden till som extraarbete. | |
 | `budget.reference` | referencia | reference | referens | |
 | `budget.referencePrice` | Precio de referencia sin IVA (€) | Reference price excl. VAT (€) | Referenspris exkl. moms (€) | |

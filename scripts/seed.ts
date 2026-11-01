@@ -488,6 +488,18 @@ async function main() {
         updatedAt: day('2026-10-02T10:00:00'),
       }),
     )
+    // Plan de pagos de ejemplo (90 % en tres pagos; el 10 % final queda retenido hasta los repasos)
+    batch.set(pr.collection('plan').doc('main'), {
+      milestones: [
+        { id: 'm1', title: 'Al empezar la obra', percent: 30 },
+        { id: 'm2', title: 'A mitad de obra', percent: 30 },
+        { id: 'm3', title: 'Al terminar la obra', percent: 30 },
+      ],
+      authorUid: builder.uid,
+      authorRole: 'builder',
+      authorName: 'Marta Ruiz',
+      updatedAt: day('2026-10-02T10:00:00'),
+    })
     batch.set(pr.collection('updates').doc('u1'), {
       title: 'Demolición terminada',
       text: 'Retirados los muebles antiguos y el alicatado. Mañana empieza la fontanería.',

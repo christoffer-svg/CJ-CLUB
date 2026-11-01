@@ -329,6 +329,33 @@ export type BudgetLine = {
 /** Copia de una línea tal como se firmó */
 export type SignedLine = { id: string; kind: 'group' | 'item'; parentId: string; title: string; description: string; quantity: number; unit: string; unitPrice: number; photos: number }
 
+/** Un pago del plan (porcentaje del presupuesto firmado, con IVA). El 10 % final queda siempre retenido. */
+export type Milestone = { id: string; title: string; percent: number }
+
+/** projects/{id}/plan/release: el cliente da por buenos los repasos y libera el 10 % final */
+export type RetentionRelease = { uid: string; name: string; releasedAt: Timestamp | null }
+
+/** projects/{id}/snags: lista de repasos (lo que el constructor tiene que mejorar antes del pago final) */
+export type Snag = {
+  title: string
+  text: string
+  attachments?: Attachment[]
+  status: 'open' | 'fixed' | 'ok'
+  authorUid: string
+  authorRole: ProjectRole
+  authorName: string
+  createdAt: Timestamp | null
+  fixedByUid?: string
+  fixedByName?: string
+  fixedAt?: Timestamp | null
+  fixNote?: string
+  fixAttachments?: Attachment[]
+  okByUid?: string
+  okByName?: string
+  okAt?: Timestamp | null
+  reopenNote?: string
+}
+
 /** projects/{id}/signatures/{client|builder}: firma del presupuesto */
 export type BudgetSignature = {
   role: 'client' | 'builder'
@@ -340,6 +367,8 @@ export type BudgetSignature = {
   /** huella SHA-256 de las líneas firmadas y el tipo de IVA */
   hash: string
   lines: SignedLine[]
+  /** plan de pagos firmado (el 10 % final, retenido, no va en la lista) */
+  plan?: Milestone[]
   /** total sin IVA de las líneas firmadas */
   base: number
   vatRate: 10 | 21
@@ -399,6 +428,8 @@ export type ProjectPayment = {
   amount: number
   date: string
   concept: string
+  /** pago del plan al que corresponde ('final': el 10 % retenido) */
+  milestoneId?: string
   recordedByUid: string
   recordedByRole: ProjectRole
   recordedByName: string

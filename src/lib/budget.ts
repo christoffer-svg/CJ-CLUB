@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { uploadAttachments } from './attachments'
 import { db } from './firebase'
 import type { Author, WithId } from './projects'
-import type { Attachment, BudgetLine, BudgetSignature, SignedLine } from './types'
+import type { Attachment, BudgetLine, BudgetSignature, Milestone, SignedLine } from './types'
 
 export function useBudgetLines(projectId: string | null) {
   const [state, setState] = useState<{ loading: boolean; data: WithId<BudgetLine>[] }>({ loading: true, data: [] })
@@ -98,10 +98,11 @@ export const snapshotLines = (lines: WithId<BudgetLine>[]): SignedLine[] =>
     photos: l.attachments?.length ?? 0,
   }))
 
-/** Huella SHA-256 de las líneas y el IVA: si cambia cualquier dato, cambia la huella */
-export async function budgetHash(lines: SignedLine[], vatRate: number) {
+/** Huella SHA-256 de las líneas, el plan de pagos y el IVA: si cambia cualquier dato, cambia la huella */
+export async function budgetHash(lines: SignedLine[], vatRate: number, plan: Milestone[] = []) {
   const canonical = JSON.stringify({
     vatRate,
+    plan: plan.map((m) => [m.id, m.title, m.percent]),
     lines: lines.map((l) => [l.id, l.kind, l.parentId, l.title, l.description, l.quantity, l.unit, l.unitPrice, l.photos]),
   })
   const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(canonical))
@@ -109,7 +110,15 @@ export async function budgetHash(lines: SignedLine[], vatRate: number) {
 }
 
 /** Firma el presupuesto tal como se ve ahora */
-export async function signBudget(projectId: string, a: Author & { role: 'client' | 'builder' }, name: string, image: string, lines: WithId<BudgetLine>[], vatRate: 10 | 21) {
+export async function signBudget(
+  projectId: string,
+  a: Author & { role: 'client' | 'builder' },
+  name: string,
+  image: string,
+  lines: WithId<BudgetLine>[],
+  vatRate: 10 | 21,
+  plan: Milestone[],
+) {
   const snapshot = snapshotLines(lines)
   await setDoc(doc(db, 'projects', projectId, 'signatures', a.role), {
     role: a.role,
@@ -117,8 +126,9 @@ export async function signBudget(projectId: string, a: Author & { role: 'client'
     name: name.trim().slice(0, 120),
     accepted: true,
     image,
-    hash: await budgetHash(snapshot, vatRate),
+    hash: await budgetHash(snapshot, vatRate, plan),
     lines: snapshot,
+    plan: plan.map((m) => ({ id: m.id, title: m.title, percent: m.percent })),
     base: linesBase(lines),
     vatRate,
     signedAt: serverTimestamp(),

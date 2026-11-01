@@ -102,7 +102,7 @@ export async function postProjectUpdate(projectId: string, a: Author, u: { title
 }
 
 /** Anota un pago; los justificantes se suben antes y el pago guarda dónde están */
-export async function addProjectPayment(projectId: string, a: Author, p: { amount: number; date: string; concept: string }, files: File[] = []) {
+export async function addProjectPayment(projectId: string, a: Author, p: { amount: number; date: string; concept: string; milestoneId?: string }, files: File[] = []) {
   const entry = doc(collection(db, 'projects', projectId, 'payments'))
   const attachments = files.length ? await uploadAttachments(projectId, 'payments', entry.id, files) : []
   return setDoc(entry, {
@@ -110,6 +110,7 @@ export async function addProjectPayment(projectId: string, a: Author, p: { amoun
     amount: Math.round(p.amount * 100) / 100,
     date: p.date,
     concept: p.concept.trim().slice(0, 200),
+    ...(p.milestoneId ? { milestoneId: p.milestoneId } : {}),
     recordedByUid: a.uid,
     recordedByRole: a.role,
     recordedByName: a.name,

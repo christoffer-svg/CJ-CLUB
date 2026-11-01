@@ -54,6 +54,8 @@ ok(code(await up(B, { projectId: 'p-firmas', kind: 'budget', entryId: e + 'b4' }
 ok(code(await up(AD, { projectId: 'p-firmas', kind: 'selections', entryId: e + 's1' })), 'ok', 'CJ sube la foto de una elección (presupuesto firmado)')
 ok(code(await up(J, { projectId: 'p-firmas', kind: 'selections', entryId: e + 's2' })), 'PERMISSION_DENIED', 'el cliente no sube fotos de elecciones')
 ok(code(await up(B, { kind: 'selections', entryId: e + 's3' })), 'FAILED_PRECONDITION', 'sin presupuesto firmado no hay fotos de elecciones')
+ok(code(await up(J, { kind: 'snags', entryId: e + 'r1' })), 'ok', 'el cliente sube la foto de un repaso')
+ok(code(await up(B, { kind: 'snags', entryId: e + 'r1', index: 2 })), 'ok', 'el constructor sube la foto del arreglo')
 ok(typeof foto.url === 'string' && foto.url.includes('token='), true, 'la foto tiene enlace privado')
 ok(foto.path?.startsWith(`projects/p-jansen-cocina/updates/${e}u1/1-`), true, 'la foto queda en la carpeta de su avance')
 ok(await fetch(foto.url).then(r => r.status), 200, 'el enlace privado abre la foto')
