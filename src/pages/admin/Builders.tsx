@@ -6,6 +6,7 @@ import { Field, Input, Select } from '../../components/admin/Fields'
 import { useToast } from '../../components/admin/Toast'
 import { createBuilderAccount, invitationNotice, languageOptions, sendInvitation, useLiveCollection, type NewBuilder } from '../../lib/admin'
 import type { Project, UserProfile } from '../../lib/types'
+import { hasRole } from '../../lib/roles'
 
 const empty: NewBuilder = { name: '', companyName: '', email: '', language: 'es' }
 
@@ -17,7 +18,7 @@ export default function Builders() {
   const [form, setForm] = useState<NewBuilder | null>(null)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
-  const builders = users.data.filter((u) => u.role === 'builder').sort((a, b) => (a.companyName ?? '').localeCompare(b.companyName ?? ''))
+  const builders = users.data.filter((u) => hasRole(u, 'builder')).sort((a, b) => (a.companyName ?? '').localeCompare(b.companyName ?? ''))
   const count = (uid: string) => projects.data.filter((p) => p.builderUid === uid).length
 
   async function create() {
@@ -26,7 +27,11 @@ export default function Builders() {
     setError('')
     try {
       const res = await createBuilderAccount({ ...form, name: form.name.trim(), companyName: form.companyName.trim(), email: form.email.trim() })
-      toast(`${form.companyName} creado. ${invitationNotice(form.email.trim(), res.via)}`)
+      toast(
+        res.via
+          ? `${form.companyName} creado. ${invitationNotice(form.email.trim(), res.via)}`
+          : `${form.companyName} creado. ${form.email.trim()} ya tenía cuenta: entra con su contraseña de siempre y cambia a «Panel del constructor» desde la app.`,
+      )
       setForm(null)
     } catch (err) {
       const msg = err instanceof FirebaseError ? err.message.replace(/\s*\[\d+\]$/, '') : ''
@@ -87,7 +92,7 @@ export default function Builders() {
               </Select>
             </Field>
           </div>
-          <Field label="Correo electrónico" hint="Recibirá un correo para elegir su contraseña.">
+          <Field label="Correo electrónico" hint="Si el correo ya tiene cuenta (por ejemplo, de cliente), se le añade este acceso y entra con su contraseña de siempre. Si no, recibirá un correo para elegir su contraseña.">
             <Input required type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
           </Field>
           {error && <p className="a-error">{error}</p>}

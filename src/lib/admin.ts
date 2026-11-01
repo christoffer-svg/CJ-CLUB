@@ -117,7 +117,7 @@ export type NewBusiness = {
 
 /** Crea la cuenta del negocio en el servidor (función createBusiness). El correo de invitación lo envía la pantalla. */
 export async function createBusinessAccount(data: NewBusiness) {
-  const call = httpsCallable<NewBusiness, { uid: string; placeId: string; businessName: string }>(functions, 'createBusiness')
+  const call = httpsCallable<NewBusiness, { uid: string; placeId: string; businessName: string; addedToExisting?: boolean }>(functions, 'createBusiness')
   return (await call(data)).data
 }
 
@@ -125,8 +125,10 @@ export type NewBuilder = { name: string; companyName: string; email: string; lan
 
 /** Crea la cuenta de un constructor en el servidor (función createBuilder) y le envía la invitación */
 export async function createBuilderAccount(data: NewBuilder) {
-  const call = httpsCallable<NewBuilder, { uid: string }>(functions, 'createBuilder')
+  const call = httpsCallable<NewBuilder, { uid: string; addedToExisting?: boolean }>(functions, 'createBuilder')
   const res = await call(data)
+  // Si el correo ya tenía cuenta, se le añade este acceso: entra con su contraseña de siempre
+  if (res.data.addedToExisting) return { ...res.data, via: null }
   const via = await sendInvitation(data.email, data.language)
   return { ...res.data, via }
 }

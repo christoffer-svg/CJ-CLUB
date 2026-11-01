@@ -71,6 +71,21 @@ service cloud.firestore {
         && partnerId in get(/databases/$(database)/documents/clients/$(me().clientId)).data.contacts.values();
     }
 
+    // Accesos de una ficha (cliente, negocio, constructor, equipo de CJ); las antiguas solo tienen "role".
+    // "role" es el acceso que está usando ahora; "roles", todos los que le ha dado CJ.
+    function rolesIn(data) {
+      return data.get('roles', [data.role]);
+    }
+
+    function validRoles() {
+      return request.resource.data.role in ['admin', 'client', 'business', 'builder']
+        && rolesIn(request.resource.data) is list
+        && rolesIn(request.resource.data).size() >= 1
+        && rolesIn(request.resource.data).size() <= 4
+        && rolesIn(request.resource.data).hasOnly(['admin', 'client', 'business', 'builder'])
+        && request.resource.data.role in rolesIn(request.resource.data);
+    }
+
     function changedKeys() {
       return request.resource.data.diff(resource.data).affectedKeys();
     }
@@ -79,6 +94,13 @@ service cloud.firestore {
     match /users/{uid} {
       // Cada persona lee solo su ficha; el equipo de CJ, todas
       allow read: if (signedIn() && request.auth.uid == uid) || isAdmin();
+
+      // Cualquier persona con varios accesos puede pasar de uno a otro, solo entre los que le ha dado CJ
+      allow update: if isMember() && request.auth.uid == uid
+        && changedKeys().hasOnly(['role'])
+        && request.resource.data.role in rolesIn(resource.data)
+        && (request.resource.data.role != 'client' || resource.data.get('clientId', null) is string)
+        && businessLinked();
 
       // Un cliente solo puede cambiar su idioma, sus favoritos y cuál de SUS casas está viendo
       // (clientId debe estar en clientIds, que solo asigna CJ)
@@ -99,13 +121,13 @@ service cloud.firestore {
         && changedKeys().hasOnly(['language'])
         && request.resource.data.language in ['es', 'en', 'nl', 'sv', 'de', 'fr'];
 
-      // El equipo de CJ gestiona las fichas, pero nadie puede cambiarse su propio rol ni borrarse a sí mismo
+      // El equipo de CJ gestiona las fichas, pero nadie puede darse accesos a sí mismo ni borrarse
       allow update: if isAdmin()
-        && request.resource.data.role in ['admin', 'client', 'business', 'builder']
+        && validRoles()
         && businessLinked()
-        && (uid != request.auth.uid || !changedKeys().hasAny(['role']));
+        && (uid != request.auth.uid || !changedKeys().hasAny(['role', 'roles']));
       allow create: if isAdmin() && uid != request.auth.uid
-        && request.resource.data.role in ['admin', 'client', 'business', 'builder']
+        && validRoles()
         && businessLinked();
       allow delete: if isAdmin() && uid != request.auth.uid;
     }

@@ -5,6 +5,7 @@ import { Select } from '../../components/admin/Fields'
 import { useLiveCollection } from '../../lib/admin'
 import { db } from '../../lib/firebase'
 import type { Client, Deal, Place, UserProfile } from '../../lib/types'
+import { hasRole } from '../../lib/roles'
 
 /** Los últimos 12 meses, del actual hacia atrás */
 function lastMonths(now: Date) {
@@ -69,7 +70,7 @@ export default function Summary() {
     const d = c.clientSince?.toDate()
     return d && d >= start && d < end
   }).length
-  const clientUsers = users.data.filter((u) => u.role === 'client')
+  const clientUsers = users.data.filter((u) => hasRole(u, 'client'))
   const dealName = Object.fromEntries(deals.data.map((d) => [d.id, d.title]))
   const placeName = Object.fromEntries(places.data.map((p) => [p.id, p.name]))
 

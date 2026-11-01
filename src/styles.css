@@ -2911,6 +2911,18 @@ button {
   gap: 10px;
 }
 
+.role-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.role-bar .eyebrow {
+  margin-right: 4px;
+}
+
 .a-header__tools {
   display: flex;
   align-items: center;

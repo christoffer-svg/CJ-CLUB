@@ -26,6 +26,13 @@ Todo está denegado salvo lo que se permite expresamente.
 | `projects/{id}` (Mi reforma) | Ve las obras de la casa que está viendo. Escribe en la conversación, anota pagos y confirma o discute los de la otra parte, y es **el único que aprueba o rechaza extras**. No publica avances ni propone extras. El **constructor** asignado ve solo sus obras: escribe, publica avances, propone y retira sus extras, anota pagos y confirma o discute los del cliente; no edita la obra. Otro constructor no ve nada. | Crea y edita obras, escribe, publica avances, propone extras, anota y confirma pagos. No puede aprobar extras en nombre del cliente. Nada de lo escrito se edita después; solo CJ puede borrar. |
 | Cualquier otra | Denegado. Un negocio colaborador no es ni cliente ni admin: no lee contactos ni notas. | Denegado. |
 
+### Varios accesos con un mismo correo
+- Una persona puede tener varios accesos con el mismo correo (por ejemplo, cliente y negocio). En `users/{uid}`, `roles` guarda todos los que le ha dado CJ y `role` el que está usando ahora; las fichas antiguas sin `roles` tienen solo su `role`.
+- Las reglas miran siempre el acceso que está usando: como cliente no gestiona su negocio, y como negocio no ve su casa.
+- La persona solo puede cambiar `role` por otro de sus `roles`, sin tocar nada más. Nadie puede darse accesos a sí mismo; solo CJ los asigna (con las funciones de alta o desde el panel).
+- `createClient`, `createBusiness` y `createBuilder`: si el correo ya tiene cuenta, le añaden el acceso (y la casa, el lugar o la empresa) sin crear otra cuenta ni cambiar el acceso que está usando. Un correo lleva como mucho un negocio.
+- `deleteClient`: si la persona tiene otros accesos, se le quita solo el de cliente y conserva su cuenta.
+
 ### Negocio colaborador (`business`)
 Cuenta invitada por CJ y vinculada a un lugar (`users.placeId`). No es un socio.
 

@@ -1,6 +1,7 @@
 import { NavLink, Outlet } from 'react-router-dom'
 import { useAuth } from '../../auth/AuthProvider'
 import LanguagePills from '../../components/LanguagePills'
+import RoleSwitcher from '../../components/RoleSwitcher'
 import { useI18n } from '../../i18n'
 
 /** Panel del constructor: solo sus obras (Mi reforma) */
@@ -26,6 +27,7 @@ export default function BuilderLayout() {
             </button>
           </div>
         </div>
+        <RoleSwitcher variant="header" />
       </header>
       <main className="a-page builder-page">
         <Outlet />

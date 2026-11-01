@@ -59,11 +59,29 @@ async function nextMemberNumber(date: Date) {
   throw new HttpsError('resource-exhausted', 'No se pudo generar el número de socio.')
 }
 
+type Role = 'admin' | 'client' | 'business' | 'builder'
+
+/** Accesos de una persona. Las fichas antiguas solo tienen "role". */
+function rolesOf(profile: FirebaseFirestore.DocumentSnapshot): Role[] {
+  const roles = profile.get('roles')
+  return Array.isArray(roles) && roles.length ? (roles as Role[]) : profile.get('role') ? [profile.get('role') as Role] : []
+}
+
+/**
+ * Ficha de una cuenta que ya existe, para añadirle otro acceso con el mismo correo
+ * (p. ej. un cliente que también tiene un negocio). Su acceso activo no cambia.
+ */
+async function existingProfile(uid: string) {
+  const profile = await db.doc(`users/${uid}`).get()
+  if (!profile.exists) throw new HttpsError('already-exists', 'Ese correo tiene una cuenta sin ficha en la app. Avise a quien mantiene la app.')
+  return profile
+}
+
 /**
  * Crea un cliente nuevo: su cuenta de acceso (rol "client"), su ficha en clients/
  * y su perfil en users/. La invitación para elegir contraseña la envía después la app.
- * Si el correo ya es de un cliente, la ficha nueva se añade como otra casa de esa cuenta
- * (users/{uid}.clientIds) y no se crea otra cuenta.
+ * Si el correo ya tiene cuenta (de cliente, negocio, constructor o del equipo), la ficha nueva se añade
+ * como otra casa de esa cuenta (users/{uid}.clientIds) y no se crea otra cuenta.
  */
 export const createClient = onCall(async (request) => {
   await requireAdmin(request.auth?.uid)
@@ -84,11 +102,8 @@ export const createClient = onCall(async (request) => {
   const auth = getAuth()
   const existing = await auth.getUserByEmail(email).catch(() => null)
   if (existing) {
-    const profile = await db.doc(`users/${existing.uid}`).get()
-    if (profile.get('role') !== 'client') {
-      throw new HttpsError('already-exists', 'Ya existe una cuenta con ese correo que no es de cliente (equipo o negocio).')
-    }
-    // Otra casa para el mismo cliente
+    const profile = await existingProfile(existing.uid)
+    // Otra casa para la misma persona (y, si aún no era cliente, también el acceso de cliente)
     const memberNumber = await nextMemberNumber(since)
     const clientRef = db.collection('clients').doc()
     const current = profile.get('clientId') as string | undefined
@@ -106,7 +121,11 @@ export const createClient = onCall(async (request) => {
       contacts: {},
       createdAt: FieldValue.serverTimestamp(),
     })
-    batch.update(profile.ref, { clientIds: [...houses], ...(current ? {} : { clientId: clientRef.id }) })
+    batch.update(profile.ref, {
+      clientIds: [...houses],
+      roles: [...new Set<Role>([...rolesOf(profile), 'client'])],
+      ...(current ? {} : { clientId: clientRef.id }),
+    })
     await batch.commit()
     return { clientId: clientRef.id, uid: existing.uid, memberNumber, addedToExisting: true }
   }
@@ -135,6 +154,7 @@ export const createClient = onCall(async (request) => {
     })
     batch.set(db.doc(`users/${user.uid}`), {
       role: 'client',
+      roles: ['client'],
       name: familyName,
       email,
       language,
@@ -163,6 +183,7 @@ function monthKeyMadrid(date: Date) {
 /**
  * Crea el acceso de un negocio vinculado a un lugar: cuenta (rol "business") y ficha en users/.
  * La invitación para elegir contraseña la envía después la app, igual que con los clientes.
+ * Si el correo ya tiene cuenta, se le añade el acceso de negocio (entra con su contraseña de siempre).
  */
 export const createBusiness = onCall(async (request) => {
   await requireAdmin(request.auth?.uid)
@@ -184,7 +205,14 @@ export const createBusiness = onCall(async (request) => {
 
   const auth = getAuth()
   const existing = await auth.getUserByEmail(email).catch(() => null)
-  if (existing) throw new HttpsError('already-exists', 'Ya existe una cuenta con ese correo.')
+  if (existing) {
+    const profile = await existingProfile(existing.uid)
+    if (rolesOf(profile).includes('business')) {
+      throw new HttpsError('already-exists', 'Ese correo ya es el acceso de un negocio. Cada correo puede llevar un solo negocio.')
+    }
+    await profile.ref.update({ roles: [...rolesOf(profile), 'business'], placeId, businessName })
+    return { uid: existing.uid, placeId, businessName, addedToExisting: true }
+  }
 
   const user = await auth.createUser({
     email,
@@ -195,6 +223,7 @@ export const createBusiness = onCall(async (request) => {
   try {
     await db.doc(`users/${user.uid}`).set({
       role: 'business',
+      roles: ['business'],
       name: contactName,
       email,
       language,
@@ -206,12 +235,13 @@ export const createBusiness = onCall(async (request) => {
     throw e
   }
 
-  return { uid: user.uid, placeId, businessName }
+  return { uid: user.uid, placeId, businessName, addedToExisting: false }
 })
 
 /**
  * Crea el acceso de un constructor para "Mi reforma": cuenta (rol "builder") y ficha en users/.
  * Solo ve las obras en las que CJ le asigne. La invitación la envía después la app.
+ * Si el correo ya tiene cuenta, se le añade el acceso de constructor (entra con su contraseña de siempre).
  */
 export const createBuilder = onCall(async (request) => {
   await requireAdmin(request.auth?.uid)
@@ -225,16 +255,21 @@ export const createBuilder = onCall(async (request) => {
 
   const auth = getAuth()
   const existing = await auth.getUserByEmail(email).catch(() => null)
-  if (existing) throw new HttpsError('already-exists', 'Ya existe una cuenta con ese correo.')
+  if (existing) {
+    const profile = await existingProfile(existing.uid)
+    if (rolesOf(profile).includes('builder')) throw new HttpsError('already-exists', 'Ese correo ya es el acceso de un constructor.')
+    await profile.ref.update({ roles: [...rolesOf(profile), 'builder'], companyName })
+    return { uid: existing.uid, addedToExisting: true }
+  }
 
   const user = await auth.createUser({ email, displayName: name, password: randomBytes(24).toString('base64url') })
   try {
-    await db.doc(`users/${user.uid}`).set({ role: 'builder', name, companyName, email, language })
+    await db.doc(`users/${user.uid}`).set({ role: 'builder', roles: ['builder'], name, companyName, email, language })
   } catch (e) {
     await auth.deleteUser(user.uid).catch(() => {})
     throw e
   }
-  return { uid: user.uid }
+  return { uid: user.uid, addedToExisting: false }
 })
 
 /**
@@ -291,11 +326,9 @@ export const deleteClient = onCall(async (request) => {
     db.collection('users').where('clientIds', 'array-contains', clientId).get(),
   ])
   const linked = new Map([...byActive.docs, ...byList.docs].map((d) => [d.id, d]))
-  if ([...linked.values()].some((u) => u.get('role') !== 'client')) {
-    throw new HttpsError('failed-precondition', 'Este cliente tiene una cuenta del equipo de CJ vinculada. Revísela antes de darle de baja.')
-  }
 
-  // Si la persona tiene otras casas, se le quita solo esta; si era la última, se borra su cuenta
+  // Si la persona tiene otras casas, se le quita solo esta. Si era la última pero tiene otros accesos
+  // (negocio, constructor o equipo de CJ), se le quita solo el acceso de cliente. Si no, se borra su cuenta.
   const auth = getAuth()
   const usersToDelete: FirebaseFirestore.QueryDocumentSnapshot[] = []
   let keptAccounts = 0
@@ -306,6 +339,16 @@ export const deleteClient = onCall(async (request) => {
     if (others.length) {
       const active = u.get('clientId') === clientId ? others[0] : u.get('clientId')
       await u.ref.update({ clientIds: others, clientId: active })
+      keptAccounts++
+    } else if (rolesOf(u).some((r) => r !== 'client')) {
+      const rest = rolesOf(u).filter((r) => r !== 'client')
+      await u.ref.update({
+        roles: rest,
+        role: rest.includes(u.get('role')) ? u.get('role') : rest[0],
+        clientId: FieldValue.delete(),
+        clientIds: FieldValue.delete(),
+        favorites: FieldValue.delete(),
+      })
       keptAccounts++
     } else {
       await auth.deleteUser(u.id).catch((e: { code?: string }) => {

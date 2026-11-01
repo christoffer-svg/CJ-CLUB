@@ -6,6 +6,7 @@ import { Field, Input, Select } from '../../components/admin/Fields'
 import { useToast } from '../../components/admin/Toast'
 import { createBusinessAccount, invitationNotice, languageOptions, sendInvitation, useLiveCollection } from '../../lib/admin'
 import type { Language, Place, UserProfile } from '../../lib/types'
+import { hasRole } from '../../lib/roles'
 
 const languages: [Language, string][] = [['es', 'Español'], ...languageOptions.filter(([code]) => code !== 'es')]
 
@@ -28,7 +29,7 @@ export default function Businesses() {
 
   const placeName = Object.fromEntries(places.data.map((p) => [p.id, p.name]))
   const accounts = users.data
-    .filter((u) => u.role === 'business')
+    .filter((u) => hasRole(u, 'business'))
     .sort((a, b) => (placeName[a.placeId ?? ''] ?? '').localeCompare(placeName[b.placeId ?? ''] ?? '', 'es') || a.email.localeCompare(b.email))
   const sortedPlaces = [...places.data].sort((a, b) => a.name.localeCompare(b.name, 'es'))
 
@@ -45,7 +46,12 @@ export default function Businesses() {
     setError('')
     setBusy(true)
     try {
-      await createBusinessAccount({ placeId, contactName: contactName.trim(), email: email.trim(), language })
+      const res = await createBusinessAccount({ placeId, contactName: contactName.trim(), email: email.trim(), language })
+      if (res.addedToExisting) {
+        toast(`Acceso creado. ${email.trim()} ya tenía cuenta: entra con su contraseña de siempre y cambia a «Panel del negocio» desde la app.`)
+        setOpen(false)
+        return
+      }
       try {
         const via = await sendInvitation(email.trim(), language)
         toast(invitationNotice(email.trim(), via))
@@ -111,7 +117,7 @@ export default function Businesses() {
           <Field label="Nombre de la persona">
             <Input required value={contactName} onChange={(e) => setContactName(e.target.value)} />
           </Field>
-          <Field label="Correo electrónico" hint="Recibirá un correo para elegir su contraseña.">
+          <Field label="Correo electrónico" hint="Si el correo ya tiene cuenta (por ejemplo, de cliente), se le añade este acceso y entra con su contraseña de siempre. Si no, recibirá un correo para elegir su contraseña.">
             <Input required type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
           </Field>
           <Field label="Idioma del correo">

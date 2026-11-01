@@ -276,6 +276,12 @@ Kontrollera att varje text är naturlig och korrekt på svenska. Skriv dina rät
 | `weather.notice.hail` | Tormentas con posible granizo | Thunderstorms with possible hail | Åska med möjlig hagel | |
 | `weather.notice.ice` | Posible lluvia helada | Freezing rain possible | Underkylt regn möjligt | |
 | `home.houses` | Sus casas | Your homes | Dina hus | |
+| `role.switch` | Cambiar a | Switch to | Byt till | |
+| `role.client` | Mi CJ Club | My CJ Club | Mitt CJ Club | |
+| `role.business` | Panel del negocio | Business panel | Företagspanel | |
+| `role.builder` | Panel del constructor | Builder panel | Byggarpanel | |
+| `role.admin` | Panel de CJ | CJ panel | CJ-panel | |
+| `role.access` | Sus accesos | Your access | Dina behörigheter | |
 | `home.house` | Casa | Home | Hus | |
 | `team.project` | Mi reforma | My renovation | Min renovering | |
 | `team.projectText` | Avances, pagos y extras de su obra | Progress, payments and extras of your works | Framsteg, betalningar och extraarbeten | |

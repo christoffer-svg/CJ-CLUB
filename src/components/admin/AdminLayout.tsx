@@ -1,5 +1,6 @@
 import { NavLink, Outlet } from 'react-router-dom'
 import { useAuth } from '../../auth/AuthProvider'
+import RoleSwitcher from '../../components/RoleSwitcher'
 import { useLiveCollection } from '../../lib/admin'
 import { isUnread } from '../../lib/messaging'
 import type { ClientRequest, Conversation } from '../../lib/types'
@@ -35,10 +36,13 @@ export default function AdminLayout() {
               {profile?.name}
             </span>
           </NavLink>
-          <button className="link-btn a-header__logout" onClick={logout}>
-            Cerrar sesión
-          </button>
+          <div className="a-header__tools">
+            <button className="link-btn a-header__logout" onClick={logout}>
+              Cerrar sesión
+            </button>
+          </div>
         </div>
+        <RoleSwitcher variant="header" />
         <nav className="a-menu" aria-label="Secciones del panel">
           {adminSections.map((s) => (
             <NavLink key={s.to} to={s.to} className="pill a-menu__item">

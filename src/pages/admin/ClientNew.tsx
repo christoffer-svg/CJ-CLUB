@@ -37,7 +37,7 @@ export default function ClientNew() {
       toast(
         res.via
           ? `${form.familyName} creada. ${invitationNotice(form.email, res.via)}`
-          : `Casa añadida a la cuenta de ${form.email}. Ya puede verla en la app, sin nueva invitación.`,
+          : `Casa añadida a la cuenta de ${form.email}. Ya puede verla en la app (en «Mi CJ Club»), sin nueva invitación.`,
       )
       navigate(`/admin/clientes/${res.clientId}`)
     } catch (err) {
@@ -58,7 +58,7 @@ export default function ClientNew() {
         </Field>
         <Field
           label="Correo electrónico"
-          hint="Si el correo ya es de un cliente, esta casa se añade a su cuenta y no se envía otra invitación. Si no, recibirá un correo para elegir su contraseña."
+          hint="Si el correo ya tiene cuenta (de cliente, negocio, constructor o del equipo), esta casa se añade a esa cuenta y no se envía otra invitación. Si no, recibirá un correo para elegir su contraseña."
         >
           <Input required type="email" value={form.email} onChange={set('email')} />
         </Field>

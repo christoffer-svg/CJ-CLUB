@@ -11,6 +11,7 @@ import { patchDoc, useLiveCollection } from '../../lib/admin'
 import { db } from '../../lib/firebase'
 import { formatMoney, useProject } from '../../lib/projects'
 import type { Client, Project, UserProfile } from '../../lib/types'
+import { hasRole } from '../../lib/roles'
 
 const statusLabel: Record<Project['status'], string> = { planned: 'Prevista', in_progress: 'En obras', finished: 'Terminada' }
 
@@ -24,7 +25,7 @@ function ProjectForm({ initial, onClose, onSaved }: { initial: Draft; onClose: (
   const { id } = useParams()
   const [d, setD] = useState(initial)
   const [busy, setBusy] = useState(false)
-  const builders = users.data.filter((u) => u.role === 'builder')
+  const builders = users.data.filter((u) => hasRole(u, 'builder'))
   const budget = Number(d.budget.replace(/\./g, '').replace(',', '.'))
   const valid = d.clientId && d.builderUid && d.title.trim() && Number.isFinite(budget) && budget >= 0
 

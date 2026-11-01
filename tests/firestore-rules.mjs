@@ -552,6 +552,32 @@ ok(await runQuery(AD, { from: [{ collectionId: 'mailLog' }] }), 200, 'CJ lee el 
 ok(await runQuery(J, { from: [{ collectionId: 'mailLog' }] }), 403, 'cliente lee el registro de correos')
 ok(await req(AD, 'mailLog/x', 'PATCH', { fields: { to: str('a@b.c') } }), 403, 'nadie escribe en el registro de correos desde la app')
 
+// ---------- Una persona con varios accesos (mismo correo) ----------
+const arr = (xs) => ({ arrayValue: { values: xs.map(str) } })
+let mv = await signUp('varios@prueba.test', 'Varios1234')
+if (!mv.localId) mv = await signIn('varios@prueba.test', 'Varios1234')
+await ownerPatch(`users/${mv.localId}`, { role: str('client'), roles: arr(['client', 'business']), name: str('Familia Varios'), email: str('varios@prueba.test'), language: str('es'), clientId: str('lindqvist'), clientIds: arr(['lindqvist']), placeId: str('golf-pinar') })
+const MV = mv.idToken
+ok(await req(MV, 'clients/lindqvist'), 200, 'como cliente ve su casa')
+ok(await patch(MV, `users/${mv.localId}`, { role: str('business') }), 200, 'pasa a su acceso de negocio')
+ok(await req(MV, 'clients/lindqvist'), 403, 'como negocio ya no lee la casa')
+ok(await patch(MV, `users/${mv.localId}`, { role: str('admin') }), 403, 'no puede pasar a un acceso que no tiene (equipo de CJ)')
+ok(await patch(MV, `users/${mv.localId}`, { role: str('builder') }), 403, 'no puede pasar a constructor sin ese acceso')
+ok(await patch(MV, `users/${mv.localId}`, { roles: arr(['client', 'business', 'admin']) }), 403, 'no puede darse accesos')
+ok(await patch(MV, `users/${mv.localId}`, { role: str('admin'), roles: arr(['admin', 'client', 'business']) }), 403, 'no puede darse acceso de equipo y pasar a él')
+ok(await patch(MV, `users/${mv.localId}`, { role: str('client'), clientId: str('jansen') }), 403, 'al cambiar de acceso no cambia otras cosas')
+ok(await patch(MV, `users/${mv.localId}`, { role: str('client') }), 200, 'vuelve a su acceso de cliente')
+ok(await patch(J, `users/${mv.localId}`, { role: str('business') }), 403, 'otra persona no le cambia el acceso')
+ok(await patch(AD, `users/${mv.localId}`, { roles: arr(['client', 'business', 'builder']), companyName: str('Obras Varios') }), 200, 'CJ le añade el acceso de constructor')
+ok(await patch(MV, `users/${mv.localId}`, { role: str('builder') }), 200, 'pasa a su acceso de constructor')
+ok(await patch(AD, `users/${mv.localId}`, { roles: arr(['client', 'business']) }), 403, 'CJ no quita el acceso que está usando sin cambiarlo')
+ok(await patch(AD, `users/${mv.localId}`, { role: str('client'), roles: arr(['client', 'business']) }), 200, 'CJ le quita un acceso')
+ok(await patch(AD, `users/${mv.localId}`, { roles: arr(['client', 'business', 'superadmin']) }), 403, 'CJ pone un acceso que no existe')
+ok(await patch(AD, `users/${mv.localId}`, { roles: arr([]) }), 403, 'CJ deja a alguien sin accesos')
+ok(await patch(AD, `users/${a.localId}`, { roles: arr(['admin', 'client']) }), 403, 'CJ no se da accesos a sí mismo')
+// Sin "roles" (fichas antiguas) cada uno solo tiene su rol
+ok(await patch(J, `users/${j.localId}`, { role: str('business') }), 403, 'cliente con un solo acceso no cambia')
+
 // colecciones no previstas
 ok(await req(B, 'secretos/x'), 403, 'negocio lee colección no prevista')
 ok(await req(AD, 'secretos/x', 'PATCH', { fields: { a: str('1') } }), 403, 'admin escribe en colección no prevista')

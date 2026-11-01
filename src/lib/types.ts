@@ -9,7 +9,10 @@ import type { Language } from '../i18n/translations'
 
 /** users/{uid} */
 export type UserProfile = {
+  /** acceso que está usando ahora */
   role: Role
+  /** todos sus accesos con este correo (solo los asigna CJ); las fichas antiguas no lo tienen */
+  roles?: Role[]
   name: string
   email: string
   language: Language

@@ -2,7 +2,8 @@ import { onAuthStateChanged, signOut, type User } from 'firebase/auth'
 import { arrayRemove, arrayUnion, doc, getDoc, updateDoc } from 'firebase/firestore'
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
 import { auth, db } from '../lib/firebase'
-import type { UserProfile } from '../lib/types'
+import { rolesOf } from '../lib/roles'
+import type { Role, UserProfile } from '../lib/types'
 
 type AuthState = {
   /** true mientras se comprueba si hay una sesión abierta */
@@ -15,12 +16,14 @@ type AuthState = {
   toggleFavorite: (placeId: string) => Promise<void>
   /** Cambia la casa que está viendo el cliente (una de sus clientIds) */
   switchHouse: (clientId: string) => Promise<void>
+  /** Pasa a otro de sus accesos (cliente, negocio, constructor, equipo); true si se ha guardado */
+  switchRole: (role: Role) => Promise<boolean>
 }
 
 const AuthContext = createContext<AuthState | null>(null)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [state, setState] = useState<Omit<AuthState, 'logout' | 'toggleFavorite' | 'switchHouse'>>({ loading: true, user: null, profile: null })
+  const [state, setState] = useState<Omit<AuthState, 'logout' | 'toggleFavorite' | 'switchHouse' | 'switchRole'>>({ loading: true, user: null, profile: null })
 
   useEffect(() => {
     return onAuthStateChanged(auth, async (user) => {
@@ -52,6 +55,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }
 
+  async function switchRole(role: Role) {
+    const { user, profile } = state
+    if (!user || !profile || profile.role === role || !rolesOf(profile).includes(role)) return false
+    try {
+      await updateDoc(doc(db, 'users', user.uid), { role })
+    } catch {
+      return false
+    }
+    setState((s) => ({ ...s, profile: s.profile && { ...s.profile, role } }))
+    return true
+  }
+
   async function toggleFavorite(placeId: string) {
     const { user, profile } = state
     if (!user || !profile) return
@@ -69,7 +84,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ ...state, logout: () => signOut(auth), toggleFavorite, switchHouse }}>{children}</AuthContext.Provider>
+    <AuthContext.Provider value={{ ...state, logout: () => signOut(auth), toggleFavorite, switchHouse, switchRole }}>{children}</AuthContext.Provider>
   )
 }
 

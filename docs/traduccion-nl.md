@@ -276,6 +276,12 @@ Controleer of elke tekst natuurlijk en correct Nederlands is. Noteer correcties 
 | `weather.notice.hail` | Tormentas con posible granizo | Thunderstorms with possible hail | Onweer met mogelijke hagel | |
 | `weather.notice.ice` | Posible lluvia helada | Freezing rain possible | Mogelijk ijzel | |
 | `home.houses` | Sus casas | Your homes | Uw woningen | |
+| `role.switch` | Cambiar a | Switch to | Wisselen naar | |
+| `role.client` | Mi CJ Club | My CJ Club | Mijn CJ Club | |
+| `role.business` | Panel del negocio | Business panel | Bedrijfspaneel | |
+| `role.builder` | Panel del constructor | Builder panel | Aannemerspaneel | |
+| `role.admin` | Panel de CJ | CJ panel | CJ-paneel | |
+| `role.access` | Sus accesos | Your access | Uw toegang | |
 | `home.house` | Casa | Home | Woning | |
 | `team.project` | Mi reforma | My renovation | Mijn verbouwing | |
 | `team.projectText` | Avances, pagos y extras de su obra | Progress, payments and extras of your works | Voortgang, betalingen en meerwerk | |

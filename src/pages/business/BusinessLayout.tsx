@@ -1,5 +1,6 @@
 import { NavLink, Outlet } from 'react-router-dom'
 import { useAuth } from '../../auth/AuthProvider'
+import RoleSwitcher from '../../components/RoleSwitcher'
 import { ToastProvider } from '../../components/admin/Toast'
 import { useLiveDoc } from '../../lib/admin'
 import type { Place } from '../../lib/types'
@@ -26,10 +27,13 @@ export default function BusinessLayout() {
               {profile?.name}
             </span>
           </NavLink>
-          <button className="link-btn a-header__logout" onClick={logout}>
-            Cerrar sesión
-          </button>
+          <div className="a-header__tools">
+            <button className="link-btn a-header__logout" onClick={logout}>
+              Cerrar sesión
+            </button>
+          </div>
         </div>
+        <RoleSwitcher variant="header" />
         <nav className="a-menu" aria-label="Secciones del negocio">
           {sections.map((s) => (
             <NavLink key={s.to} to={s.to} end={s.end} className="pill a-menu__item">

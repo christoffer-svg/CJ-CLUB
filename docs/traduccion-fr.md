@@ -276,6 +276,12 @@ Vérifiez que chaque texte est naturel et correct en français. Notez vos correc
 | `weather.notice.hail` | Tormentas con posible granizo | Thunderstorms with possible hail | Orages avec risque de grêle | |
 | `weather.notice.ice` | Posible lluvia helada | Freezing rain possible | Pluie verglaçante possible | |
 | `home.houses` | Sus casas | Your homes | Vos maisons | |
+| `role.switch` | Cambiar a | Switch to | Passer à | |
+| `role.client` | Mi CJ Club | My CJ Club | Mon CJ Club | |
+| `role.business` | Panel del negocio | Business panel | Espace entreprise | |
+| `role.builder` | Panel del constructor | Builder panel | Espace entrepreneur | |
+| `role.admin` | Panel de CJ | CJ panel | Espace CJ | |
+| `role.access` | Sus accesos | Your access | Vos accès | |
 | `home.house` | Casa | Home | Maison | |
 | `team.project` | Mi reforma | My renovation | Ma rénovation | |
 | `team.projectText` | Avances, pagos y extras de su obra | Progress, payments and extras of your works | Avancement, paiements et travaux supplémentaires | |
