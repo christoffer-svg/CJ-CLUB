@@ -681,3 +681,57 @@ export type FoodOrder = {
   createdAt: Timestamp | null
   updatedAt: Timestamp | null
 }
+
+export const SOCIAL_ACTIVITIES = ['golf', 'padel', 'tennis', 'dinner', 'drinks', 'walk', 'beach', 'other'] as const
+export type SocialActivity = (typeof SOCIAL_ACTIVITIES)[number]
+
+/**
+ * socialPosts/{id}: publicación de un cliente en Social, visible para todos los clientes de CJ con el
+ * nombre de su familia. "plan": propone algo (golf, cena, pádel…) entre unas fechas; los demás se
+ * apuntan y chatean en privado con quien lo publica. "tip": recomienda un sitio que ha descubierto.
+ */
+export type SocialPost = {
+  kind: 'plan' | 'tip'
+  /** solo planes */
+  activity: SocialActivity
+  title: string
+  text: string
+  /** planes: desde y hasta ("2026-11-10"); hasta puede ir vacío (un solo día) */
+  dateFrom: string
+  dateTo: string
+  /** dónde: club de golf, restaurante, playa… (opcional) */
+  place: string
+  /** hasta 4 fotos (función uploadSocialPhoto) */
+  photos: Attachment[]
+  clientId: string
+  uid: string
+  familyName: string
+  /** CJ la ha ocultado */
+  hidden: boolean
+  createdAt: Timestamp | null
+}
+
+/** socialPosts/{id}/joins/{clientId}: una familia se apunta a un plan */
+export type SocialJoin = { clientId: string; uid: string; familyName: string; createdAt: Timestamp | null }
+
+/**
+ * socialChats/{postId}_{clientId}: conversación privada entre quien publica un plan y una familia que
+ * se apunta. Solo la ven esas dos casas (CJ no la lee).
+ */
+export type SocialChat = {
+  postId: string
+  postTitle: string
+  /** [casa que publica, casa que se apunta] */
+  members: string[]
+  names: Record<string, string>
+  lastText: string
+  lastClientId: string
+  lastAt: Timestamp | null
+  /** cuándo leyó cada casa por última vez */
+  readAt: Record<string, Timestamp | null>
+}
+
+export type SocialMessage = { clientId: string; uid: string; familyName: string; text: string; createdAt: Timestamp | null }
+
+/** socialReports/{id}: un cliente avisa a CJ de una publicación inadecuada */
+export type SocialReport = { postId: string; postTitle: string; clientId: string; familyName: string; reason: string; createdAt: Timestamp | null }

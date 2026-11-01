@@ -35,6 +35,11 @@ import BusinessProfile from './pages/business/BusinessProfile'
 import BusinessEvents from './pages/business/BusinessEvents'
 import AdminEvents from './pages/admin/AdminEvents'
 import AdminServices from './pages/admin/AdminServices'
+import AdminSocial from './pages/admin/AdminSocial'
+import Social from './pages/social/Social'
+import SocialEdit from './pages/social/SocialEdit'
+import SocialChatPage from './pages/social/SocialChatPage'
+import SocialPostPage from './pages/social/SocialPostPage'
 import BusinessOrders from './pages/business/BusinessOrders'
 import AdminOrders from './pages/admin/AdminOrders'
 import Deals from './pages/admin/Deals'
@@ -75,6 +80,11 @@ export default function App() {
             <Route path="descubrir/:placeId" element={<PlaceDetail />} />
             <Route path="descubrir/:placeId/pedido" element={<OrderPage />} />
             <Route path="ventajas" element={<Benefits />} />
+            <Route path="social" element={<Social />} />
+            <Route path="social/nuevo" element={<SocialEdit />} />
+            <Route path="social/chat/:chatId" element={<SocialChatPage />} />
+            <Route path="social/:postId" element={<SocialPostPage />} />
+            <Route path="social/:postId/editar" element={<SocialEdit />} />
             <Route path="mensajes" element={<Messages />} />
             <Route path="peticiones" element={<Requests />} />
             <Route path="reformas" element={<Projects />} />
@@ -91,6 +101,11 @@ export default function App() {
             <Route path="descubrir/:placeId" element={<PlaceDetail />} />
             <Route path="descubrir/:placeId/pedido" element={<OrderPage />} />
             <Route path="ventajas" element={<Benefits />} />
+            <Route path="social" element={<Social />} />
+            <Route path="social/nuevo" element={<SocialEdit />} />
+            <Route path="social/chat/:chatId" element={<SocialChatPage />} />
+            <Route path="social/:postId" element={<SocialPostPage />} />
+            <Route path="social/:postId/editar" element={<SocialEdit />} />
             <Route path="mensajes" element={<Messages />} />
             <Route path="peticiones" element={<Requests />} />
             <Route path="reformas" element={<Projects />} />
@@ -105,6 +120,7 @@ export default function App() {
             <Route path="mensajes/:clientId" element={<AdminThread />} />
             <Route path="peticiones" element={<AdminRequests />} />
             <Route path="servicios" element={<AdminServices />} />
+            <Route path="social" element={<AdminSocial />} />
             <Route path="reformas" element={<AdminProjects />} />
             <Route path="reformas/:id" element={<AdminProject />} />
             <Route path="constructores" element={<Builders />} />

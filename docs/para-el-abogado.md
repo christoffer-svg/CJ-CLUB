@@ -32,6 +32,10 @@ Los textos están en la app, en «Política de privacidad» y «Aviso legal», e
 5. **Profesionales de la reforma (constructores, oficios, arquitectos)**
    - Tienen acceso a los datos de la obra en la que trabajan.
    - Hay que valorar los contratos de encargo de tratamiento o de confidencialidad.
-6. **Correos que envía la app:** invitaciones y avisos a los negocios. Se envían con Resend, que actúa como encargado del tratamiento.
+6. **Social (entre clientes)**
+   - Los clientes publican planes y recomendaciones, que ven todos los demás clientes con el nombre de su familia.
+   - Si alguien se apunta a un plan, puede chatear en privado con quien lo publicó. CJ no lee esos chats.
+   - Conviene revisar el consentimiento para mostrar el nombre de la familia, las normas de uso y la responsabilidad por lo que publican.
+7. **Correos que envía la app:** invitaciones y avisos a los negocios. Se envían con Resend, que actúa como encargado del tratamiento.
 
 Cuando el texto esté aprobado, basta con enviarlo y se sustituye en la app, quitando el aviso de borrador.

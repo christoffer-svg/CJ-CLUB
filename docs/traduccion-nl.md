@@ -118,6 +118,73 @@ Controleer of elke tekst natuurlijk en correct Nederlands is. Noteer correcties 
 | `benefits.validUntil` | Válido hasta el {date} | Valid until {date} | Geldig tot {date} | |
 | `benefits.validRange` | Válido del {from} al {until} | Valid from {from} to {until} | Geldig van {from} tot {until} | |
 | `common.back` | Volver | Back | Terug | |
+| `nav.social` | Social | Social | Social | |
+| `social.eyebrow` | Social | Social | Social | |
+| `social.title` | Entre socios | Among members | Onder leden | |
+| `social.subtitle` | Planes y sitios recomendados por otros clientes de CJ | Plans and places recommended by other CJ clients | Plannen en tips van andere klanten van CJ | |
+| `social.tab.all` | Todo | All | Alles | |
+| `social.tab.plan` | Planes | Plans | Plannen | |
+| `social.tab.tip` | Recomendaciones | Tips | Tips | |
+| `social.tab.chats` | Mis chats | My chats | Mijn chats | |
+| `social.noChats` | Cuando se apunte a un plan, o alguien se apunte al suyo, sus conversaciones aparecerán aquí. | When you join a plan, or someone joins yours, your conversations will appear here. | Als u zich aanmeldt voor een plan, of iemand voor het uwe, verschijnen uw gesprekken hier. | |
+| `social.chatEmpty` | Aún sin mensajes | No messages yet | Nog geen berichten | |
+| `social.new` | Publicar | Post | Plaatsen | |
+| `social.empty` | Aún no hay publicaciones. ¡Sea el primero! | No posts yet. Be the first! | Nog geen berichten. Wees de eerste! | |
+| `social.tip` | Recomendación | Recommendation | Tip | |
+| `social.activity` | Actividad | Activity | Activiteit | |
+| `social.activity.golf` | Golf | Golf | Golf | |
+| `social.activity.padel` | Pádel | Padel | Padel | |
+| `social.activity.tennis` | Tenis | Tennis | Tennis | |
+| `social.activity.dinner` | Cena | Dinner | Diner | |
+| `social.activity.drinks` | Tomar algo | Drinks | Iets drinken | |
+| `social.activity.walk` | Paseo | Walk | Wandeling | |
+| `social.activity.beach` | Playa | Beach | Strand | |
+| `social.activity.other` | Otro plan | Other plan | Ander plan | |
+| `social.dateRange` | del {from} al {to} | {from} to {to} | van {from} tot {to} | |
+| `social.joins.one` | 1 familia apuntada | 1 family has joined | 1 familie doet mee | |
+| `social.joins.other` | {n} familias apuntadas | {n} families have joined | {n} families doen mee | |
+| `social.hiddenByCj` | CJ ha ocultado esta publicación: los demás clientes no la ven. | CJ has hidden this post: other clients cannot see it. | CJ heeft dit bericht verborgen: andere klanten zien het niet. | |
+| `social.where` | Dónde | Where | Waar | |
+| `social.placeName` | Sitio | Place | Plek | |
+| `social.joined` | Se han apuntado | Who has joined | Doen mee | |
+| `social.nobodyYet` | Todavía nadie. ¡Anímese! | Nobody yet. Why not join? | Nog niemand. Doe mee! | |
+| `social.join` | Me apunto | Count me in | Ik doe mee | |
+| `social.openChat` | Chatear con {name} | Chat with {name} | Chatten met {name} | |
+| `social.leave` | Ya no me apunto | I am no longer joining | Ik doe toch niet mee | |
+| `social.joinHint` | Al apuntarse se abre un chat privado con quien lo publica. Comparta su teléfono solo si quiere. | Joining opens a private chat with the person who posted. Share your phone only if you want to. | Als u meedoet, opent een privéchat met degene die het plaatste. Deel uw telefoonnummer alleen als u wilt. | |
+| `social.yourChats` | Conversaciones con quien se ha apuntado | Chats with those who joined | Gesprekken met wie meedoet | |
+| `social.noJoinersYet` | Cuando alguien se apunte, podrá chatear con él aquí. | When someone joins, you can chat with them here. | Als iemand meedoet, kunt u hier met hem chatten. | |
+| `social.chat` | Chat | Chat | Chat | |
+| `social.edit` | Corregir | Edit | Wijzigen | |
+| `social.delete` | Borrar | Delete | Verwijderen | |
+| `social.deleteConfirm` | ¿Borrar esta publicación? | Delete this post? | Dit bericht verwijderen? | |
+| `social.report` | Avisar a CJ de esta publicación | Report this post to CJ | Dit bericht aan CJ melden | |
+| `social.reportWhy` | ¿Qué ocurre? (opcional) | What is wrong? (optional) | Wat is er aan de hand? (optioneel) | |
+| `social.reportSend` | Enviar aviso | Send report | Melding versturen | |
+| `social.reported` | Gracias. El equipo de CJ lo revisará. | Thank you. The CJ team will review it. | Dank u. Het team van CJ bekijkt het. | |
+| `social.error` | No se ha podido guardar. Inténtelo de nuevo. | Could not save. Please try again. | Opslaan mislukt. Probeer het opnieuw. | |
+| `social.kind` | Tipo de publicación | Type of post | Soort bericht | |
+| `social.kind.plan` | Proponer un plan | Suggest a plan | Een plan voorstellen | |
+| `social.kind.tip` | Recomendar un sitio | Recommend a place | Een plek aanraden | |
+| `social.planHint` | Por ejemplo: estaré en Jávea del 10 al 20 y busco compañeros de golf. | For example: I will be in Jávea from the 10th to the 20th and am looking for golf partners. | Bijvoorbeeld: ik ben van de 10e tot de 20e in Jávea en zoek golfpartners. | |
+| `social.tipHint` | Cuente qué sitio ha descubierto y por qué le ha gustado. | Tell us about the place you found and why you liked it. | Vertel welke plek u heeft ontdekt en waarom u het mooi vond. | |
+| `social.titleField` | Título | Title | Titel | |
+| `social.titlePlanExample` | Golf en La Sella el jueves por la mañana | Golf at La Sella on Thursday morning | Golf in La Sella op donderdagochtend | |
+| `social.titleTipExample` | Un chiringuito tranquilo en la Granadella | A quiet beach bar at La Granadella | Een rustige strandtent in de Granadella | |
+| `social.from` | Desde | From | Van | |
+| `social.to` | Hasta (opcional) | To (optional) | Tot (optioneel) | |
+| `social.text` | Cuéntelo | Tell us more | Vertel meer | |
+| `social.visibleTo` | Lo verán todos los clientes de CJ Club, con el nombre de su familia. | All CJ Club clients will see it, with your family name. | Alle klanten van CJ Club zien het, met uw familienaam. | |
+| `social.saveChanges` | Guardar cambios | Save changes | Wijzigingen opslaan | |
+| `social.publish` | Publicar | Post | Plaatsen | |
+| `social.chatNote` | conversación privada entre sus dos familias | private chat between your two families | privégesprek tussen uw twee families | |
+| `social.chatStart` | Escriba un mensaje para quedar. | Write a message to make plans. | Schrijf een bericht om af te spreken. | |
+| `requests.services` | Servicios de CJ | CJ services | Diensten van CJ | |
+| `requests.request` | Solicitar | Request | Aanvragen | |
+| `requests.priceOnRequest` | Precio a consultar | Price on request | Prijs op aanvraag | |
+| `requests.detailsOptional` | Detalles (opcional) | Details (optional) | Details (optioneel) | |
+| `requests.other` | Otra petición | Other request | Andere aanvraag | |
+| `requests.mine` | Sus peticiones | Your requests | Uw aanvragen | |
 | `orders.title` | Pedido | Order | Bestelling | |
 | `orders.open` | Hacer un pedido | Place an order | Bestellen | |
 | `orders.seeYours` | Ver sus pedidos en curso ({n}) | See your current orders ({n}) | Uw lopende bestellingen ({n}) | |

@@ -118,6 +118,73 @@ Kontrollera att varje text är naturlig och korrekt på svenska. Skriv dina rät
 | `benefits.validUntil` | Válido hasta el {date} | Valid until {date} | Gäller till {date} | |
 | `benefits.validRange` | Válido del {from} al {until} | Valid from {from} to {until} | Gäller från {from} till {until} | |
 | `common.back` | Volver | Back | Tillbaka | |
+| `nav.social` | Social | Social | Socialt | |
+| `social.eyebrow` | Social | Social | Socialt | |
+| `social.title` | Entre socios | Among members | Bland medlemmar | |
+| `social.subtitle` | Planes y sitios recomendados por otros clientes de CJ | Plans and places recommended by other CJ clients | Planer och tips från andra CJ-kunder | |
+| `social.tab.all` | Todo | All | Allt | |
+| `social.tab.plan` | Planes | Plans | Planer | |
+| `social.tab.tip` | Recomendaciones | Tips | Tips | |
+| `social.tab.chats` | Mis chats | My chats | Mina chattar | |
+| `social.noChats` | Cuando se apunte a un plan, o alguien se apunte al suyo, sus conversaciones aparecerán aquí. | When you join a plan, or someone joins yours, your conversations will appear here. | När ni anmäler er till en plan, eller någon anmäler sig till er, visas era samtal här. | |
+| `social.chatEmpty` | Aún sin mensajes | No messages yet | Inga meddelanden ännu | |
+| `social.new` | Publicar | Post | Publicera | |
+| `social.empty` | Aún no hay publicaciones. ¡Sea el primero! | No posts yet. Be the first! | Inga inlägg ännu. Bli först! | |
+| `social.tip` | Recomendación | Recommendation | Tips | |
+| `social.activity` | Actividad | Activity | Aktivitet | |
+| `social.activity.golf` | Golf | Golf | Golf | |
+| `social.activity.padel` | Pádel | Padel | Padel | |
+| `social.activity.tennis` | Tenis | Tennis | Tennis | |
+| `social.activity.dinner` | Cena | Dinner | Middag | |
+| `social.activity.drinks` | Tomar algo | Drinks | Ta en drink | |
+| `social.activity.walk` | Paseo | Walk | Promenad | |
+| `social.activity.beach` | Playa | Beach | Strand | |
+| `social.activity.other` | Otro plan | Other plan | Annan plan | |
+| `social.dateRange` | del {from} al {to} | {from} to {to} | {from}–{to} | |
+| `social.joins.one` | 1 familia apuntada | 1 family has joined | 1 familj är med | |
+| `social.joins.other` | {n} familias apuntadas | {n} families have joined | {n} familjer är med | |
+| `social.hiddenByCj` | CJ ha ocultado esta publicación: los demás clientes no la ven. | CJ has hidden this post: other clients cannot see it. | CJ har dolt inlägget: andra kunder ser det inte. | |
+| `social.where` | Dónde | Where | Var | |
+| `social.placeName` | Sitio | Place | Plats | |
+| `social.joined` | Se han apuntado | Who has joined | Är med | |
+| `social.nobodyYet` | Todavía nadie. ¡Anímese! | Nobody yet. Why not join? | Ingen ännu. Var med! | |
+| `social.join` | Me apunto | Count me in | Jag är med | |
+| `social.openChat` | Chatear con {name} | Chat with {name} | Chatta med {name} | |
+| `social.leave` | Ya no me apunto | I am no longer joining | Jag är inte med längre | |
+| `social.joinHint` | Al apuntarse se abre un chat privado con quien lo publica. Comparta su teléfono solo si quiere. | Joining opens a private chat with the person who posted. Share your phone only if you want to. | När ni anmäler er öppnas en privat chatt med den som publicerade. Dela ert telefonnummer bara om ni vill. | |
+| `social.yourChats` | Conversaciones con quien se ha apuntado | Chats with those who joined | Samtal med dem som är med | |
+| `social.noJoinersYet` | Cuando alguien se apunte, podrá chatear con él aquí. | When someone joins, you can chat with them here. | När någon anmäler sig kan ni chatta här. | |
+| `social.chat` | Chat | Chat | Chatt | |
+| `social.edit` | Corregir | Edit | Ändra | |
+| `social.delete` | Borrar | Delete | Radera | |
+| `social.deleteConfirm` | ¿Borrar esta publicación? | Delete this post? | Radera inlägget? | |
+| `social.report` | Avisar a CJ de esta publicación | Report this post to CJ | Anmäl inlägget till CJ | |
+| `social.reportWhy` | ¿Qué ocurre? (opcional) | What is wrong? (optional) | Vad är fel? (valfritt) | |
+| `social.reportSend` | Enviar aviso | Send report | Skicka | |
+| `social.reported` | Gracias. El equipo de CJ lo revisará. | Thank you. The CJ team will review it. | Tack. CJ:s team tittar på det. | |
+| `social.error` | No se ha podido guardar. Inténtelo de nuevo. | Could not save. Please try again. | Det gick inte att spara. Försök igen. | |
+| `social.kind` | Tipo de publicación | Type of post | Typ av inlägg | |
+| `social.kind.plan` | Proponer un plan | Suggest a plan | Föreslå en plan | |
+| `social.kind.tip` | Recomendar un sitio | Recommend a place | Tipsa om ett ställe | |
+| `social.planHint` | Por ejemplo: estaré en Jávea del 10 al 20 y busco compañeros de golf. | For example: I will be in Jávea from the 10th to the 20th and am looking for golf partners. | Till exempel: jag är i Jávea den 10–20 och söker golfpartner. | |
+| `social.tipHint` | Cuente qué sitio ha descubierto y por qué le ha gustado. | Tell us about the place you found and why you liked it. | Berätta vilket ställe ni har upptäckt och varför ni gillade det. | |
+| `social.titleField` | Título | Title | Rubrik | |
+| `social.titlePlanExample` | Golf en La Sella el jueves por la mañana | Golf at La Sella on Thursday morning | Golf på La Sella torsdag förmiddag | |
+| `social.titleTipExample` | Un chiringuito tranquilo en la Granadella | A quiet beach bar at La Granadella | En lugn strandbar vid Granadella | |
+| `social.from` | Desde | From | Från | |
+| `social.to` | Hasta (opcional) | To (optional) | Till (valfritt) | |
+| `social.text` | Cuéntelo | Tell us more | Berätta | |
+| `social.visibleTo` | Lo verán todos los clientes de CJ Club, con el nombre de su familia. | All CJ Club clients will see it, with your family name. | Alla kunder i CJ Club ser det, med ert familjenamn. | |
+| `social.saveChanges` | Guardar cambios | Save changes | Spara ändringar | |
+| `social.publish` | Publicar | Post | Publicera | |
+| `social.chatNote` | conversación privada entre sus dos familias | private chat between your two families | privat samtal mellan era två familjer | |
+| `social.chatStart` | Escriba un mensaje para quedar. | Write a message to make plans. | Skriv ett meddelande för att bestämma träff. | |
+| `requests.services` | Servicios de CJ | CJ services | CJ:s tjänster | |
+| `requests.request` | Solicitar | Request | Beställ | |
+| `requests.priceOnRequest` | Precio a consultar | Price on request | Pris på förfrågan | |
+| `requests.detailsOptional` | Detalles (opcional) | Details (optional) | Detaljer (valfritt) | |
+| `requests.other` | Otra petición | Other request | Annan förfrågan | |
+| `requests.mine` | Sus peticiones | Your requests | Era förfrågningar | |
 | `orders.title` | Pedido | Order | Beställning | |
 | `orders.open` | Hacer un pedido | Place an order | Beställ | |
 | `orders.seeYours` | Ver sus pedidos en curso ({n}) | See your current orders ({n}) | Era pågående beställningar ({n}) | |

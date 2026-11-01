@@ -71,6 +71,21 @@ Todo está denegado salvo lo que se permite expresamente.
 - Se usa el mismo Resend que las invitaciones (`RESEND_API_KEY` en Secret Manager). Cada envío queda anotado en `mailLog`: enviado, fallido o sin configurar. Si el correo falla, el pedido o la reserva siguen siendo válidos y se ven en el panel.
 - Logo de cada negocio o colaborador (`logo`): una imagen en la carpeta de fotos de ese colaborador. Lo comprueba `profilePhotoOk`.
 
+### Social (entre clientes)
+
+- **Publicaciones** (`socialPosts/{id}`): planes o recomendaciones.
+  - Las crea un cliente para su casa, con el nombre real de su familia (`familyNameOf`). Los campos y fechas están limitados.
+  - Hasta 4 fotos, en `social/{casa}/{publicación}/`, subidas solo con la función `uploadSocialPhoto`.
+  - Las ven todos los clientes, salvo las ocultas por CJ (`hidden`), que solo ve quien las publicó. Los negocios y los profesionales de obra no ven Social.
+  - Quien publica la corrige o la borra. CJ solo puede ocultarla o borrarla, no cambiar su texto.
+- **Apuntarse** (`socialPosts/{id}/joins/{casa}`): una casa por plan, solo a planes visibles y de otra casa.
+- **Chat privado** (`socialChats/{plan}_{casa que se apunta}`):
+  - Los miembros son exactamente la casa que publica y la que se apunta.
+  - Solo esas dos casas leen y escriben; **CJ no lee los chats**.
+  - Cada mensaje lleva el nombre real de su familia. Cada casa solo marca como leído lo suyo.
+- **Avisos** (`socialReports/{id}`): los crea un cliente; solo CJ los lee y los borra.
+- **Baja de un cliente:** `deleteClient` borra sus publicaciones (con quién se apuntó), sus chats, sus apuntes, sus avisos y sus fotos de Social. Para encontrar los apuntes se usa una búsqueda de tipo *collection group* sobre `joins.clientId`, con su índice en `firestore.indexes.json`.
+
 ### Servicios de CJ y peticiones
 
 - **Servicios de CJ** (`services/{id}`): por ejemplo, key holding, reforma o vigilancia de la casa.

@@ -118,6 +118,73 @@ Vérifiez que chaque texte est naturel et correct en français. Notez vos correc
 | `benefits.validUntil` | Válido hasta el {date} | Valid until {date} | Valable jusqu'au {date} | |
 | `benefits.validRange` | Válido del {from} al {until} | Valid from {from} to {until} | Valable du {from} au {until} | |
 | `common.back` | Volver | Back | Retour | |
+| `nav.social` | Social | Social | Social | |
+| `social.eyebrow` | Social | Social | Social | |
+| `social.title` | Entre socios | Among members | Entre membres | |
+| `social.subtitle` | Planes y sitios recomendados por otros clientes de CJ | Plans and places recommended by other CJ clients | Sorties et bonnes adresses d’autres clients de CJ | |
+| `social.tab.all` | Todo | All | Tout | |
+| `social.tab.plan` | Planes | Plans | Sorties | |
+| `social.tab.tip` | Recomendaciones | Tips | Adresses | |
+| `social.tab.chats` | Mis chats | My chats | Mes chats | |
+| `social.noChats` | Cuando se apunte a un plan, o alguien se apunte al suyo, sus conversaciones aparecerán aquí. | When you join a plan, or someone joins yours, your conversations will appear here. | Quand vous rejoignez une sortie, ou que quelqu’un rejoint la vôtre, vos conversations apparaissent ici. | |
+| `social.chatEmpty` | Aún sin mensajes | No messages yet | Pas encore de messages | |
+| `social.new` | Publicar | Post | Publier | |
+| `social.empty` | Aún no hay publicaciones. ¡Sea el primero! | No posts yet. Be the first! | Pas encore de publications. Soyez le premier ! | |
+| `social.tip` | Recomendación | Recommendation | Bonne adresse | |
+| `social.activity` | Actividad | Activity | Activité | |
+| `social.activity.golf` | Golf | Golf | Golf | |
+| `social.activity.padel` | Pádel | Padel | Padel | |
+| `social.activity.tennis` | Tenis | Tennis | Tennis | |
+| `social.activity.dinner` | Cena | Dinner | Dîner | |
+| `social.activity.drinks` | Tomar algo | Drinks | Prendre un verre | |
+| `social.activity.walk` | Paseo | Walk | Promenade | |
+| `social.activity.beach` | Playa | Beach | Plage | |
+| `social.activity.other` | Otro plan | Other plan | Autre sortie | |
+| `social.dateRange` | del {from} al {to} | {from} to {to} | du {from} au {to} | |
+| `social.joins.one` | 1 familia apuntada | 1 family has joined | 1 famille participe | |
+| `social.joins.other` | {n} familias apuntadas | {n} families have joined | {n} familles participent | |
+| `social.hiddenByCj` | CJ ha ocultado esta publicación: los demás clientes no la ven. | CJ has hidden this post: other clients cannot see it. | CJ a masqué cette publication : les autres clients ne la voient pas. | |
+| `social.where` | Dónde | Where | Où | |
+| `social.placeName` | Sitio | Place | Lieu | |
+| `social.joined` | Se han apuntado | Who has joined | Participent | |
+| `social.nobodyYet` | Todavía nadie. ¡Anímese! | Nobody yet. Why not join? | Personne pour l’instant. Lancez-vous ! | |
+| `social.join` | Me apunto | Count me in | Je participe | |
+| `social.openChat` | Chatear con {name} | Chat with {name} | Discuter avec {name} | |
+| `social.leave` | Ya no me apunto | I am no longer joining | Je ne participe plus | |
+| `social.joinHint` | Al apuntarse se abre un chat privado con quien lo publica. Comparta su teléfono solo si quiere. | Joining opens a private chat with the person who posted. Share your phone only if you want to. | En participant, un chat privé s’ouvre avec la personne qui a publié. Ne partagez votre téléphone que si vous le souhaitez. | |
+| `social.yourChats` | Conversaciones con quien se ha apuntado | Chats with those who joined | Conversations avec les participants | |
+| `social.noJoinersYet` | Cuando alguien se apunte, podrá chatear con él aquí. | When someone joins, you can chat with them here. | Quand quelqu’un participera, vous pourrez discuter ici. | |
+| `social.chat` | Chat | Chat | Chat | |
+| `social.edit` | Corregir | Edit | Modifier | |
+| `social.delete` | Borrar | Delete | Supprimer | |
+| `social.deleteConfirm` | ¿Borrar esta publicación? | Delete this post? | Supprimer cette publication ? | |
+| `social.report` | Avisar a CJ de esta publicación | Report this post to CJ | Signaler cette publication à CJ | |
+| `social.reportWhy` | ¿Qué ocurre? (opcional) | What is wrong? (optional) | Quel est le problème ? (facultatif) | |
+| `social.reportSend` | Enviar aviso | Send report | Envoyer | |
+| `social.reported` | Gracias. El equipo de CJ lo revisará. | Thank you. The CJ team will review it. | Merci. L’équipe de CJ va l’examiner. | |
+| `social.error` | No se ha podido guardar. Inténtelo de nuevo. | Could not save. Please try again. | Enregistrement impossible. Veuillez réessayer. | |
+| `social.kind` | Tipo de publicación | Type of post | Type de publication | |
+| `social.kind.plan` | Proponer un plan | Suggest a plan | Proposer une sortie | |
+| `social.kind.tip` | Recomendar un sitio | Recommend a place | Recommander une adresse | |
+| `social.planHint` | Por ejemplo: estaré en Jávea del 10 al 20 y busco compañeros de golf. | For example: I will be in Jávea from the 10th to the 20th and am looking for golf partners. | Par exemple : je serai à Jávea du 10 au 20 et je cherche des partenaires de golf. | |
+| `social.tipHint` | Cuente qué sitio ha descubierto y por qué le ha gustado. | Tell us about the place you found and why you liked it. | Racontez quelle adresse vous avez découverte et pourquoi elle vous a plu. | |
+| `social.titleField` | Título | Title | Titre | |
+| `social.titlePlanExample` | Golf en La Sella el jueves por la mañana | Golf at La Sella on Thursday morning | Golf à La Sella jeudi matin | |
+| `social.titleTipExample` | Un chiringuito tranquilo en la Granadella | A quiet beach bar at La Granadella | Un chiringuito tranquille à la Granadella | |
+| `social.from` | Desde | From | Du | |
+| `social.to` | Hasta (opcional) | To (optional) | Au (facultatif) | |
+| `social.text` | Cuéntelo | Tell us more | Racontez | |
+| `social.visibleTo` | Lo verán todos los clientes de CJ Club, con el nombre de su familia. | All CJ Club clients will see it, with your family name. | Tous les clients de CJ Club la verront, avec votre nom de famille. | |
+| `social.saveChanges` | Guardar cambios | Save changes | Enregistrer | |
+| `social.publish` | Publicar | Post | Publier | |
+| `social.chatNote` | conversación privada entre sus dos familias | private chat between your two families | conversation privée entre vos deux familles | |
+| `social.chatStart` | Escriba un mensaje para quedar. | Write a message to make plans. | Écrivez un message pour vous retrouver. | |
+| `requests.services` | Servicios de CJ | CJ services | Services de CJ | |
+| `requests.request` | Solicitar | Request | Demander | |
+| `requests.priceOnRequest` | Precio a consultar | Price on request | Prix sur demande | |
+| `requests.detailsOptional` | Detalles (opcional) | Details (optional) | Détails (facultatif) | |
+| `requests.other` | Otra petición | Other request | Autre demande | |
+| `requests.mine` | Sus peticiones | Your requests | Vos demandes | |
 | `orders.title` | Pedido | Order | Commande | |
 | `orders.open` | Hacer un pedido | Place an order | Commander | |
 | `orders.seeYours` | Ver sus pedidos en curso ({n}) | See your current orders ({n}) | Voir vos commandes en cours ({n}) | |

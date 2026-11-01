@@ -44,6 +44,7 @@ const legal: Partial<Record<Language, Record<LegalPageKey, LegalDoc>>> & Record<
             'Mi reforma: presupuestos, plan de pagos, pagos y justificantes, extras, fotos de avances, elecciones de productos, repasos, planos y conversaciones con los profesionales de su obra.',
             'Firma del presupuesto: su firma dibujada, el nombre con el que firma y una foto de su documento de identidad (pasaporte, DNI o NIE), que se pide para identificar a quien firma.',
             'Eventos y pedidos: las solicitudes de reserva de eventos (personas, teléfono y comentario) y los pedidos de comida (platos, importe, teléfono, dirección de entrega si la hay y comentario).',
+            'Social: los planes y recomendaciones que publica (con sus fotos), los planes a los que se apunta y sus mensajes con otras familias.',
             'Datos técnicos de acceso necesarios para iniciar sesión de forma segura (por ejemplo, fecha del último acceso y dirección IP), gestionados por nuestro proveedor tecnológico.',
           ],
         },
@@ -69,6 +70,7 @@ const legal: Partial<Record<Language, Record<LegalPageKey, LegalDoc>>> & Record<
           title: '5. Destinatarios y ubicación de los datos',
           paragraphs: [
             'Los negocios colaboradores solo reciben sus datos cuando usted lo decide: al pedir reserva para un evento o hacer un pedido, el negocio recibe en su panel y por correo el nombre con el que reserva, el teléfono, el número de personas o los platos, la dirección de entrega si la hay y su comentario. El resto de sus datos no se comparte con ellos.',
+            'En Social, lo que publica lo ven todos los clientes de CJ Club junto al nombre de su familia. Los mensajes con otra familia son privados: solo los ven las dos familias, no CJ. Comparta su teléfono u otros datos solo si lo desea.',
             'En Mi reforma, cada profesional (constructor, electricista, arquitecto…) solo ve la obra en la que trabaja. Los arquitectos y diseñadores no ven los importes. La foto de su documento de identidad solo la ven usted y el equipo de CJ, nunca la otra parte del contrato.',
             'Los datos se alojan en Google Firebase (Google Ireland Limited), que actúa como encargado del tratamiento, en servidores de la Unión Europea (Madrid, España).',
             '[A completar: posibles transferencias internacionales por parte del proveedor y garantías aplicables, como las cláusulas contractuales tipo.]',
@@ -166,6 +168,7 @@ const legal: Partial<Record<Language, Record<LegalPageKey, LegalDoc>>> & Record<
             'My renovation: budgets, payment plan, payments and receipts, extras, progress photos, product choices, snags, plans and conversations with the professionals working on your property.',
             'Budget signature: your drawn signature, the name you sign with and a photo of your identity document (passport, DNI or NIE), requested to identify the signer.',
             'Events and orders: event booking requests (number of people, phone and comment) and food orders (dishes, amount, phone, delivery address if any and comment).',
+            'Social: the plans and recommendations you post (with their photos), the plans you join and your messages with other families.',
             'Technical access data needed to sign in securely (for example, date of last sign-in and IP address), handled by our technology provider.',
           ],
         },
@@ -191,6 +194,7 @@ const legal: Partial<Record<Language, Record<LegalPageKey, LegalDoc>>> & Record<
           title: '5. Recipients and data location',
           paragraphs: [
             'Partner businesses only receive your data when you decide so: when you request an event booking or place an order, the business receives in its panel and by email the name you book under, your phone, the number of people or the dishes, the delivery address if any and your comment. The rest of your data is not shared with them.',
+            'In Social, what you post is visible to all CJ Club clients with your family name. Messages with another family are private: only the two families see them, not CJ. Share your phone or other details only if you wish.',
             'In My renovation, each professional (builder, electrician, architect…) only sees the project they work on. Architects and designers do not see amounts. The photo of your identity document is only seen by you and the CJ team, never by the other party to the contract.',
             'Data is hosted on Google Firebase (Google Ireland Limited), acting as data processor, on servers in the European Union (Madrid, Spain).',
             '[To be completed: possible international transfers by the provider and the applicable safeguards, such as standard contractual clauses.]',

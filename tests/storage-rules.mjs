@@ -163,5 +163,17 @@ ok((await notify(J, 'bk1'))?.sent, false, 'el aviso de una reserva se envía una
 const bm = await mailFor('bk1')
 ok(bm.length >= 1 && bm.every(m => m.subject.stringValue.startsWith('Solicitud de reserva')) && bm.some(m => m.to.stringValue === 'terraza@prueba.test'), true, 'correo de la solicitud de reserva en mailLog')
 
+// Fotos de Social (función uploadSocialPhoto)
+const SFN = FN.replace('uploadProjectFile', 'uploadSocialPhoto')
+const upSocial = async (t, d) => {
+  const r = await fetch(SFN, { method: 'POST', headers: { ...H, ...(t ? { authorization: 'Bearer ' + t } : {}) }, body: JSON.stringify({ data: { postId: 'nuevoPost1234567', name: 'playa.jpg', contentType: 'image/jpeg', data: b64(2048), ...d } }) })
+  const j = await r.json(); return j.error ? j.error.status : j.result
+}
+const sp = await upSocial(J, {})
+ok(typeof sp === 'object' && sp.path.startsWith('social/jansen/nuevoPost1234567/'), true, 'el cliente sube la foto de una publicación a la carpeta de su casa')
+ok(await upSocial(J, { postId: '../../otra' }), 'INVALID_ARGUMENT', 'nombre de publicación no válido')
+ok(await upSocial(BZ, {}), 'PERMISSION_DENIED', 'un negocio no sube fotos a Social')
+ok(await upSocial(J, { contentType: 'application/pdf' }), 'INVALID_ARGUMENT', 'en Social solo fotos')
+
 console.log(`Archivos: ${pass} OK, ${fail} FAIL`)
 if (fail) process.exit(1)

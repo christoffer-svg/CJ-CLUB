@@ -553,6 +553,127 @@ service cloud.firestore {
 
     // ---------- requests/{id} ----------
     // Peticiones a CJ. El cliente crea y ve las suyas, y solo puede cancelarlas mientras son nuevas.
+    // ---------- Social: socialPosts, joins, socialChats, socialReports ----------
+    // Todos los clientes ven las publicaciones (con el nombre de su familia), salvo las que oculte CJ.
+    function socialPhotoOk(a, cid, pid) {
+      return a is map
+        && a.path is string && a.path.matches('social/' + cid + '/' + pid + '/.+')
+        && a.url is string
+        && (a.url.matches('https://firebasestorage[.]googleapis[.]com/.+') || a.url.matches('http://127[.]0[.]0[.]1:9199/.+'));
+    }
+
+    function socialPostOk(pid) {
+      let d = request.resource.data;
+      return d.kind in ['plan', 'tip']
+        && d.activity in ['golf', 'padel', 'tennis', 'dinner', 'drinks', 'walk', 'beach', 'other']
+        && validText(d.title, 120)
+        && d.text is string && d.text.size() <= 2000
+        && d.place is string && d.place.size() <= 120
+        && d.dateFrom is string && d.dateTo is string
+        && (d.kind == 'tip' || d.dateFrom.matches('20[0-9]{2}-[01][0-9]-[0-3][0-9]'))
+        && (d.dateTo == '' || (d.dateTo.matches('20[0-9]{2}-[01][0-9]-[0-3][0-9]') && d.dateTo >= d.dateFrom))
+        && d.photos is list && d.photos.size() <= 4
+        && (d.photos.size() < 1 || socialPhotoOk(d.photos[0], d.clientId, pid))
+        && (d.photos.size() < 2 || socialPhotoOk(d.photos[1], d.clientId, pid))
+        && (d.photos.size() < 3 || socialPhotoOk(d.photos[2], d.clientId, pid))
+        && (d.photos.size() < 4 || socialPhotoOk(d.photos[3], d.clientId, pid));
+    }
+
+    function socialPost(pid) {
+      return get(/databases/$(database)/documents/socialPosts/$(pid)).data;
+    }
+
+    match /socialPosts/{pid} {
+      allow read: if isAdmin() || (isClient() && (resource.data.hidden == false || resource.data.clientId == me().clientId));
+      allow create: if isClient()
+        && request.resource.data.keys().hasOnly(['kind', 'activity', 'title', 'text', 'dateFrom', 'dateTo', 'place', 'photos', 'clientId', 'uid', 'familyName', 'hidden', 'createdAt'])
+        && request.resource.data.clientId == me().clientId
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.familyName == familyNameOf(me().clientId)
+        && request.resource.data.hidden == false
+        && request.resource.data.createdAt == request.time
+        && socialPostOk(pid);
+      // Quien la publica la corrige; CJ solo la oculta o la vuelve a mostrar
+      allow update: if (isClient() && resource.data.clientId == me().clientId
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['activity', 'title', 'text', 'dateFrom', 'dateTo', 'place', 'photos'])
+          && socialPostOk(pid))
+        || (isAdmin() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['hidden']) && request.resource.data.hidden is bool);
+      allow delete: if isAdmin() || (isClient() && resource.data.clientId == me().clientId);
+
+      // Familias que se apuntan a un plan (una por casa)
+      match /joins/{cid} {
+        allow read: if isAdmin() || isClient();
+        allow create: if isClient() && cid == me().clientId
+          && request.resource.data.keys().hasOnly(['clientId', 'uid', 'familyName', 'createdAt'])
+          && request.resource.data.clientId == cid
+          && request.resource.data.uid == request.auth.uid
+          && request.resource.data.familyName == familyNameOf(cid)
+          && request.resource.data.createdAt == request.time
+          && socialPost(pid).kind == 'plan'
+          && socialPost(pid).hidden == false
+          && socialPost(pid).clientId != cid;
+        allow delete: if isAdmin() || (isClient() && cid == me().clientId);
+      }
+    }
+
+    // Conversación privada entre quien publica un plan y una familia que se apunta: id "{post}_{casa que se apunta}"
+    function inSocialChat(chatId) {
+      return isClient() && me().clientId in get(/databases/$(database)/documents/socialChats/$(chatId)).data.members;
+    }
+
+    match /socialChats/{chatId} {
+      // Privada: solo las dos casas (tampoco CJ)
+      allow read: if isClient() && me().clientId in resource.data.members;
+      allow create: if isClient()
+        && request.resource.data.keys().hasOnly(['postId', 'postTitle', 'members', 'names', 'lastText', 'lastClientId', 'lastAt', 'readAt'])
+        && chatId == request.resource.data.postId + '_' + me().clientId
+        && exists(/databases/$(database)/documents/socialPosts/$(request.resource.data.postId))
+        && socialPost(request.resource.data.postId).hidden == false
+        && socialPost(request.resource.data.postId).clientId != me().clientId
+        && request.resource.data.members == [socialPost(request.resource.data.postId).clientId, me().clientId]
+        && request.resource.data.postTitle == socialPost(request.resource.data.postId).title
+        && request.resource.data.names is map && request.resource.data.names.size() == 2
+        && request.resource.data.names[me().clientId] == familyNameOf(me().clientId)
+        && request.resource.data.names[socialPost(request.resource.data.postId).clientId] == socialPost(request.resource.data.postId).familyName
+        && request.resource.data.lastText == '' && request.resource.data.lastClientId == ''
+        && request.resource.data.lastAt == request.time
+        && request.resource.data.readAt is map;
+      allow update: if isClient() && me().clientId in resource.data.members
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['lastText', 'lastClientId', 'lastAt', 'readAt'])
+        && request.resource.data.lastText is string && request.resource.data.lastText.size() <= 300
+        && (request.resource.data.lastClientId == resource.data.lastClientId || request.resource.data.lastClientId == me().clientId)
+        && request.resource.data.readAt is map
+        && request.resource.data.readAt.diff(resource.data.readAt).affectedKeys().hasOnly([me().clientId]);
+      allow delete: if isAdmin();
+
+      match /messages/{mid} {
+        allow read: if inSocialChat(chatId);
+        allow create: if inSocialChat(chatId)
+          && request.resource.data.keys().hasOnly(['clientId', 'uid', 'familyName', 'text', 'createdAt'])
+          && request.resource.data.clientId == me().clientId
+          && request.resource.data.uid == request.auth.uid
+          && request.resource.data.familyName == familyNameOf(me().clientId)
+          && validText(request.resource.data.text, 2000)
+          && request.resource.data.createdAt == request.time;
+        allow update, delete: if false;
+      }
+    }
+
+    // Aviso de una publicación inadecuada: lo crea un cliente, lo lee y lo borra CJ
+    match /socialReports/{id} {
+      allow read, delete: if isAdmin();
+      allow create: if isClient()
+        && request.resource.data.keys().hasOnly(['postId', 'postTitle', 'clientId', 'familyName', 'reason', 'createdAt'])
+        && request.resource.data.clientId == me().clientId
+        && request.resource.data.familyName == familyNameOf(me().clientId)
+        && request.resource.data.postId is string
+        && exists(/databases/$(database)/documents/socialPosts/$(request.resource.data.postId))
+        && request.resource.data.postTitle is string && request.resource.data.postTitle.size() <= 120
+        && request.resource.data.reason is string && request.resource.data.reason.size() <= 500
+        && request.resource.data.createdAt == request.time;
+      allow update: if false;
+    }
+
     // ---------- services/{id} ----------
     // Servicios que CJ ofrece (key holding, reforma…). Los crea CJ; los clientes los leen y los piden.
     match /services/{id} {

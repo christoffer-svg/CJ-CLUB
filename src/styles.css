@@ -269,7 +269,7 @@ button {
   background: var(--black);
   border-top: 1px solid rgba(183, 154, 104, 0.35);
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   z-index: 10;
 }
 
@@ -281,10 +281,11 @@ button {
   gap: 5px;
   color: var(--stone);
   text-decoration: none;
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 500;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
+  min-width: 0;
 }
 
 .bottom-nav__item.active {
@@ -4074,4 +4075,115 @@ button {
   display: flex;
   flex-direction: column;
   gap: 4px;
+}
+
+/* Social */
+.bottom-nav__icon {
+  position: relative;
+  display: inline-flex;
+}
+
+.bottom-nav__dot {
+  position: absolute;
+  top: -2px;
+  right: -6px;
+  box-shadow: 0 0 0 2px var(--black);
+}
+
+.pill__badge {
+  display: inline-grid;
+  place-items: center;
+  min-width: 18px;
+  height: 18px;
+  margin-left: 6px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: var(--gold);
+  color: var(--black);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.sp-new {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  margin-bottom: 14px;
+}
+
+.chat__note a {
+  color: var(--gold-dark);
+}
+
+.sp-list {
+  margin-top: 0;
+}
+
+.sp-card {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  text-decoration: none;
+  color: var(--text);
+}
+
+.sp-card__photo {
+  margin: -16px -16px 6px;
+  width: calc(100% + 32px);
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: var(--radius) var(--radius) 0 0;
+}
+
+.sp-card__title {
+  font-family: var(--font-title);
+  font-size: 20px;
+  line-height: 1.25;
+}
+
+.sp-card__text {
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.sp-card__joins {
+  color: var(--gold-dark);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.sp-place {
+  margin: 0;
+  color: var(--text);
+  font-size: 15px;
+}
+
+.sp-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.sp-actions .btn {
+  text-decoration: none;
+}
+
+.sp-report {
+  margin-top: 18px;
+}
+
+.sp-chats {
+  display: flex;
+  flex-direction: column;
+}
+
+.sp-chat-row .eyebrow {
+  font-size: 10px;
 }

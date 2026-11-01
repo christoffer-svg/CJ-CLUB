@@ -11,6 +11,7 @@ export const adminSections = [
   { to: '/admin/reservas', label: 'Reservas', text: 'Pinchazos y reservas de los restaurantes' },
   { to: '/admin/mensajes', label: 'Mensajes', text: 'Conversaciones con los clientes' },
   { to: '/admin/peticiones', label: 'Peticiones', text: 'Presupuestos, llaves, reparaciones y más' },
+  { to: '/admin/social', label: 'Social', text: 'Planes y recomendaciones de los clientes; avisos' },
   { to: '/admin/servicios', label: 'Servicios de CJ', text: 'Key holding, reformas, vigilancia… con o sin precio' },
   { to: '/admin/reformas', label: 'Reformas', text: 'Obras: avances, pagos y extras con el constructor' },
   { to: '/admin/clientes', label: 'Clientes', text: 'Fichas, contactos asignados e invitaciones' },
@@ -67,9 +68,11 @@ export default function AdminLayout() {
 export function useBadges(): Record<string, number> {
   const convs = useLiveCollection<Conversation>('conversations')
   const requests = useLiveCollection<ClientRequest>('requests')
+  const reports = useLiveCollection<{ postId: string }>('socialReports')
   return {
     '/admin/mensajes': convs.data.filter((c) => isUnread(c, 'cj')).length,
     '/admin/peticiones': requests.data.filter((r) => r.status === 'new').length,
+    '/admin/social': reports.data.length,
   }
 }
 

@@ -372,6 +372,15 @@ async function main() {
   put('generalContacts', generalContacts)
   put('places', places)
   put('deals', deals)
+  const inDays = (n: number) => {
+    const d = new Date(Date.now() + n * 86_400_000)
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+  }
+  // Social: un plan y una recomendación de la familia Lindqvist
+  put('socialPosts', {
+    'sp-golf': { kind: 'plan', activity: 'golf', title: 'Golf en La Sella', text: 'Estaremos en Jávea esas semanas. Buscamos una pareja para jugar 18 hoyos por la mañana.', dateFrom: inDays(6), dateTo: inDays(12), place: 'La Sella Golf', photos: [], clientId: 'lindqvist', uid: 'seed', familyName: 'Familia Lindqvist', hidden: false, createdAt: Timestamp.now() },
+    'sp-tip': { kind: 'tip', activity: 'other', title: 'Chiringuito tranquilo en la Granadella', text: 'Pescado a la brasa y vistas a la cala. Mejor ir pronto, sobre las 13:00.', dateFrom: '', dateTo: '', place: 'Cala de la Granadella', photos: [], clientId: 'lindqvist', uid: 'seed', familyName: 'Familia Lindqvist', hidden: false, createdAt: Timestamp.now() },
+  })
   // Servicios de CJ que los clientes piden desde Peticiones
   put('services', {
     'svc-keys': { name_es: 'Key holding', name_en: 'Key holding', description_es: 'Guardamos sus llaves y abrimos a quien usted nos diga: limpieza, técnicos, invitados.', description_en: 'We keep your keys and let in whoever you tell us: cleaners, technicians, guests.', price: 25, priceNote_es: 'al mes', priceNote_en: 'per month', active: true, order: 10 },
@@ -379,10 +388,7 @@ async function main() {
     'svc-reform': { name_es: 'Reforma', name_en: 'Renovation', description_es: 'Cocinas, baños o la casa entera, con profesionales de confianza y seguimiento en Mi reforma.', description_en: 'Kitchens, bathrooms or the whole house, with trusted professionals and tracking in My renovation.', price: null, priceNote_es: '', priceNote_en: '', active: true, order: 30 },
   })
   // Eventos de ejemplo de La Terraza: dentro de unos días (las fechas se calculan al cargar los datos)
-  const inDays = (n: number) => {
-    const d = new Date(Date.now() + n * 86_400_000)
-    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
-  }
+
   const event = (extra: object) => ({
     placeId: 'rest-la-terraza',
     businessName: 'La Terraza del Puerto',

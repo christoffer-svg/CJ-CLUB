@@ -163,3 +163,12 @@ export const HeartIcon = ({ size = 22, filled }: IconProps & { filled?: boolean 
     <path d="M12 19.5s-7.5-4.4-7.5-9.7A4.3 4.3 0 0 1 12 7.3a4.3 4.3 0 0 1 7.5 2.5c0 5.3-7.5 9.7-7.5 9.7z" />
   </svg>
 )
+
+export const PeopleIcon = (p: IconProps) => (
+  <Svg {...p}>
+    <circle cx="9" cy="8.5" r="3" />
+    <path d="M3.5 19.5c.5-3.2 2.7-5 5.5-5s5 1.8 5.5 5" />
+    <circle cx="16.5" cy="9.5" r="2.4" />
+    <path d="M15.2 14.6c2.6-.3 4.8 1.2 5.3 4.4" />
+  </Svg>
+)

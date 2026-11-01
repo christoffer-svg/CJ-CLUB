@@ -427,7 +427,17 @@ export const deleteClient = onCall(async (request) => {
     await db.recursiveDelete(r.ref)
     await (await projectBucket()).deleteFiles({ prefix: `reforms/${r.id}/` }).catch(() => {})
   }
+  // Social: sus publicaciones (con quién se apuntó), sus conversaciones, sus apuntes y avisos, y sus fotos
+  const socialPosts = await db.collection('socialPosts').where('clientId', '==', clientId).get()
+  for (const sp of socialPosts.docs) await db.recursiveDelete(sp.ref)
+  const socialChats = await db.collection('socialChats').where('members', 'array-contains', clientId).get()
+  for (const sc of socialChats.docs) await db.recursiveDelete(sc.ref)
+  const socialJoins = await db.collectionGroup('joins').where('clientId', '==', clientId).get()
+  const socialReports = await db.collection('socialReports').where('clientId', '==', clientId).get()
+  await (await projectBucket()).deleteFiles({ prefix: `social/${clientId}/` }).catch(() => {})
   const refs = [
+    ...socialJoins.docs.map((d) => d.ref),
+    ...socialReports.docs.map((d) => d.ref),
     ...users.docs.map((d) => d.ref),
     ...uses.docs.map((d) => d.ref),
     ...requests.docs.map((d) => d.ref),
@@ -457,6 +467,7 @@ export const deleteClient = onCall(async (request) => {
     reservationConfirms: reservationConfirms.size,
     eventBookings: eventBookings.size,
     orders: orders.size,
+    socialPosts: socialPosts.size,
     ownContacts: ownContacts.size + sharedContacts.size,
     houseNotes: houseNotes.size + sharedHouseNotes.size,
   }
@@ -910,4 +921,41 @@ export const notifyBooking = onCall({ secrets: resendApiKey ? [resendApiKey] : [
     path: '/negocio/eventos',
   })
   return { sent: true }
+})
+
+/**
+ * Foto de una publicación de Social. Solo clientes, en la carpeta de su casa y de esa publicación
+ * (la app crea el id de la publicación antes de subir las fotos).
+ */
+export const uploadSocialPhoto = onCall({ memory: '512MiB', timeoutSeconds: 120 }, async (request) => {
+  const uid = request.auth?.uid
+  if (!uid) throw new HttpsError('unauthenticated', 'Inicie sesión de nuevo.')
+  const d = (request.data ?? {}) as Record<string, unknown>
+  const me = await db.doc(`users/${uid}`).get()
+  const clientId = me.get('clientId')
+  if (me.get('role') !== 'client' || typeof clientId !== 'string' || !clientId) throw new HttpsError('permission-denied', 'Solo los clientes publican en Social.')
+  const postId = text(d.postId, 'publicación')
+  const contentType = text(d.contentType, 'tipo')
+  if (!/^[A-Za-z0-9]{10,40}$/.test(postId)) throw new HttpsError('invalid-argument', 'Publicación no válida.')
+  if (!contentType.startsWith('image/')) throw new HttpsError('invalid-argument', 'Solo se admiten fotos.')
+  const existing = await db.doc(`socialPosts/${postId}`).get()
+  if (existing.exists && existing.get('clientId') !== clientId) throw new HttpsError('permission-denied', 'No es su publicación.')
+  const buffer = Buffer.from(typeof d.data === 'string' ? d.data : '', 'base64')
+  if (!buffer.length || buffer.length > MAX_FILE_BYTES) throw new HttpsError('invalid-argument', 'La foto pasa de 10 MB.')
+  const name =
+    (typeof d.name === 'string' ? d.name : 'foto')
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^\w.-]+/g, '_')
+      .slice(-80) || 'foto'
+  const path = `social/${clientId}/${postId}/${Date.now()}-${randomBytes(4).toString('hex')}-${name}`
+  const token = randomUUID()
+  try {
+    await (await projectBucket()).file(path).save(buffer, { contentType, resumable: false, metadata: { metadata: { firebaseStorageDownloadTokens: token, uploadedBy: uid } } })
+  } catch (e) {
+    console.error('uploadSocialPhoto', e)
+    throw new HttpsError('internal', 'No se pudo guardar la foto.')
+  }
+  const host = process.env.FUNCTIONS_EMULATOR === 'true' && process.env.STORAGE_EMULATOR_HOST ? process.env.STORAGE_EMULATOR_HOST : 'https://firebasestorage.googleapis.com'
+  return { path, name, contentType, size: buffer.length, url: `${host}/v0/b/${BUCKET}/o/${encodeURIComponent(path)}?alt=media&token=${token}` }
 })
