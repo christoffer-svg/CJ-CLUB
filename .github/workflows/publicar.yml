@@ -100,5 +100,9 @@ jobs:
         if: vars.DEPLOY_FUNCTIONS == 'true'
         run: npx firebase deploy --project cj-club --only functions --non-interactive --force
 
+      # Va al final: si Storage aún no está creado en Firebase, la web y las funciones ya se han publicado
+      - name: Publicar las reglas de los archivos (Storage)
+        run: npx firebase deploy --project cj-club --only storage --non-interactive
+
       - name: Listo
         run: echo "Publicado en https://cjclub.eu (y en https://cj-club.web.app)"

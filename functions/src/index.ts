@@ -4,15 +4,33 @@
  * quién llama y qué puede hacer.
  */
 import { initializeApp } from 'firebase-admin/app'
+import { getStorage } from 'firebase-admin/storage'
 import { getAuth } from 'firebase-admin/auth'
 import { FieldValue, getFirestore, Timestamp } from 'firebase-admin/firestore'
 import { defineSecret } from 'firebase-functions/params'
 import { setGlobalOptions } from 'firebase-functions/v2'
 import { HttpsError, onCall } from 'firebase-functions/v2/https'
-import { randomBytes } from 'node:crypto'
+import { randomBytes, randomUUID } from 'node:crypto'
 import { invitationEmail, isMailLanguage, sendWithResend, type MailRole } from './email.js'
 
 initializeApp()
+
+// Almacén de archivos (fotos y PDF de Mi reforma)
+const BUCKET = 'cj-club.firebasestorage.app'
+
+/**
+ * El almacén. En Firebase real el servidor tiene acceso de administrador; en el Firebase de pruebas
+ * local hay que identificarse como "owner" para que las reglas (todo cerrado) no le apliquen.
+ */
+type Bucket = ReturnType<ReturnType<typeof getStorage>['bucket']>
+async function projectBucket(): Promise<Bucket> {
+  if (process.env.FUNCTIONS_EMULATOR !== 'true' || !process.env.STORAGE_EMULATOR_HOST) return getStorage().bucket(BUCKET)
+  const { Storage } = await import('@google-cloud/storage')
+  const { OAuth2Client } = await import('google-auth-library')
+  const authClient = new OAuth2Client()
+  authClient.setCredentials({ access_token: 'owner', expiry_date: Date.now() + 3600_000 })
+  return new Storage({ apiEndpoint: process.env.STORAGE_EMULATOR_HOST, projectId: 'cj-club', authClient, useAuthWithCustomEndpoint: true }).bucket(BUCKET) as unknown as Bucket
+}
 setGlobalOptions({ region: 'europe-southwest1', maxInstances: 5 })
 
 const db = getFirestore()
@@ -314,7 +332,11 @@ export const deleteClient = onCall(async (request) => {
   await db.recursiveDelete(db.doc(`conversations/${clientId}`))
   // Las obras de esta casa (Mi reforma), con su conversación, avances, pagos y extras
   const projects = await db.collection('projects').where('clientId', '==', clientId).get()
-  for (const pr of projects.docs) await db.recursiveDelete(pr.ref)
+  for (const pr of projects.docs) {
+    await db.recursiveDelete(pr.ref)
+    // Fotos y justificantes de la obra (si el almacén aún no está creado, no hay nada que borrar)
+    await (await projectBucket()).deleteFiles({ prefix: `projects/${pr.id}/` }).catch(() => {})
+  }
   const refs = [
     ...users.docs.map((d) => d.ref),
     ...uses.docs.map((d) => d.ref),
@@ -425,4 +447,71 @@ export const sendInvitationEmail = onCall({ secrets: resendApiKey ? [resendApiKe
     await log.set({ ...entry, status: 'failed', error: reason })
     return { sent: false, reason: 'failed' }
   }
+})
+
+// ---------- Archivos de Mi reforma ----------
+
+const MAX_FILE_BYTES = 10 * 1024 * 1024
+
+/** Papel de una persona en una obra, con las mismas normas que firestore.rules */
+async function projectRoleOf(uid: string, projectId: string): Promise<'cj' | 'builder' | 'client' | 'none'> {
+  const [me, project] = await Promise.all([db.doc(`users/${uid}`).get(), db.doc(`projects/${projectId}`).get()])
+  if (!me.exists || !project.exists) return 'none'
+  const role = me.get('role')
+  if (role === 'admin') return 'cj'
+  if (role === 'builder' && project.get('builderUid') === uid) return 'builder'
+  if (role === 'client' && project.get('clientId') === me.get('clientId')) return 'client'
+  return 'none'
+}
+
+/**
+ * Sube una foto o un PDF de un avance (constructor o CJ) o de un pago (cualquiera de los tres).
+ * Devuelve la ficha del archivo con un enlace privado (código imposible de adivinar) para guardarla
+ * dentro del avance o pago. Los archivos no se pueden reemplazar.
+ */
+export const uploadProjectFile = onCall({ memory: '512MiB', timeoutSeconds: 120 }, async (request) => {
+  const uid = request.auth?.uid
+  if (!uid) throw new HttpsError('unauthenticated', 'Inicie sesión de nuevo.')
+  const d = (request.data ?? {}) as Record<string, unknown>
+  const projectId = text(d.projectId, 'obra')
+  const kind = d.kind === 'updates' || d.kind === 'payments' ? d.kind : null
+  const entryId = text(d.entryId, 'entrada')
+  const index = Number(d.index)
+  const contentType = text(d.contentType, 'tipo')
+  if (!kind || !/^[A-Za-z0-9_-]{6,60}$/.test(projectId) || !/^[A-Za-z0-9]{10,40}$/.test(entryId) || !(index >= 1 && index <= 6)) {
+    throw new HttpsError('invalid-argument', 'Datos del archivo no válidos.')
+  }
+  if (!(contentType.startsWith('image/') || contentType === 'application/pdf')) {
+    throw new HttpsError('invalid-argument', 'Solo se admiten fotos y PDF.')
+  }
+  const buffer = Buffer.from(typeof d.data === 'string' ? d.data : '', 'base64')
+  if (!buffer.length || buffer.length > MAX_FILE_BYTES) throw new HttpsError('invalid-argument', 'El archivo pasa de 10 MB.')
+
+  const role = await projectRoleOf(uid, projectId)
+  if (role === 'none' || (kind === 'updates' && role === 'client')) {
+    throw new HttpsError('permission-denied', 'No puede añadir archivos aquí.')
+  }
+
+  const name =
+    (typeof d.name === 'string' ? d.name : 'archivo')
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^\w.-]+/g, '_')
+      .slice(-80) || 'archivo'
+  const path = `projects/${projectId}/${kind}/${entryId}/${index}-${name}`
+  const file = (await projectBucket()).file(path)
+  const token = randomUUID()
+  try {
+    const [exists] = await file.exists()
+    if (exists) throw new HttpsError('already-exists', 'Ese archivo ya existe.')
+    await file.save(buffer, { contentType, resumable: false, metadata: { metadata: { firebaseStorageDownloadTokens: token, uploadedBy: uid, role } } })
+  } catch (e) {
+    if (e instanceof HttpsError) throw e
+    console.error('uploadProjectFile', e)
+    throw new HttpsError('internal', 'No se pudo guardar el archivo.')
+  }
+  // Enlace privado: solo funciona con el código (token) que acabamos de crear
+  const host = process.env.FUNCTIONS_EMULATOR === 'true' && process.env.STORAGE_EMULATOR_HOST ? process.env.STORAGE_EMULATOR_HOST : 'https://firebasestorage.googleapis.com'
+  const url = `${host}/v0/b/${BUCKET}/o/${encodeURIComponent(path)}?alt=media&token=${token}`
+  return { path, name, contentType, size: buffer.length, url }
 })

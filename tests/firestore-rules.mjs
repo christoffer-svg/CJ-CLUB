@@ -536,6 +536,16 @@ ok(await serverTime(BU, `${PR}/extras/e2`, extra('builder', bu.localId), ['creat
 ok(await patch(BU, `${PR}/extras/e2`, { status: str('withdrawn') }), 200, 'constructor retira su extra pendiente')
 ok(await serverTime(J, `${PR}/extras/e2`, decide('approved'), ['decidedAt'], true, decideMask), 403, 'no se aprueba un extra retirado')
 ok(await req(AD, `${PR}/payments/pb`, 'DELETE'), 200, 'CJ puede borrar un pago')
+// archivos de avances y pagos: la lista solo puede apuntar a la carpeta de esa misma entrada
+const att = (path, url = 'https://firebasestorage.googleapis.com/v0/b/x/o/a?alt=media&token=t') => ({ mapValue: { fields: { path: str(path), name: str('a.jpg'), contentType: str('image/jpeg'), size: { integerValue: '100' }, url: str(url) } } })
+const atts = (paths) => ({ arrayValue: { values: paths.map((p) => att(p)) } })
+ok(await serverTime(BU, `${PR}/updates/va`, upd('builder', bu.localId, { attachments: atts([`projects/p-jansen-cocina/updates/va/1-a.jpg`]) }), ['createdAt']), 200, 'avance con fotos de su carpeta')
+ok(await serverTime(BU, `${PR}/updates/vb`, upd('builder', bu.localId, { attachments: atts([`projects/p-jansen-cocina/updates/OTRO/1-a.jpg`]) }), ['createdAt']), 403, 'avance que apunta a fotos de otra entrada')
+ok(await serverTime(BU, `${PR}/updates/vc`, upd('builder', bu.localId, { attachments: atts(Array.from({ length: 7 }, (_, i) => `projects/p-jansen-cocina/updates/vc/${i}.jpg`)) }), ['createdAt']), 403, 'más de 6 archivos')
+ok(await serverTime(J, `${PR}/payments/pk`, pay('client', j.localId, { attachments: atts([`projects/p-jansen-cocina/payments/pk/1-r.pdf`]) }), ['createdAt'], false), 200, 'pago con justificante de su carpeta')
+ok(await serverTime(J, `${PR}/payments/pl`, pay('client', j.localId, { attachments: atts([`projects/otra-obra/payments/pl/1-r.pdf`]) }), ['createdAt'], false), 403, 'pago que apunta a archivos de otra obra')
+ok(await serverTime(J, `${PR}/payments/pm`, pay('client', j.localId, { attachments: { arrayValue: { values: [att(`projects/p-jansen-cocina/payments/pm/1-r.pdf`, 'https://sitio-falso.example/recibo.pdf')] } } }), ['createdAt'], false), 403, 'enlace de archivo que no es de Firebase')
+
 
 // mailLog: registro de correos del servidor
 ok(await runQuery(AD, { from: [{ collectionId: 'mailLog' }] }), 200, 'CJ lee el registro de correos')

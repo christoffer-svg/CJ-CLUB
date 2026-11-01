@@ -543,6 +543,28 @@ service cloud.firestore {
         && request.resource.data.createdAt == request.time;
     }
 
+    // Archivo de un avance o pago: dentro de la carpeta de esa misma entrada y con enlace del almacén de Firebase
+    function attOk(a, pid, kind, id) {
+      return a is map
+        && a.path is string && a.path.matches('projects/' + pid + '/' + kind + '/' + id + '/.+')
+        && a.url is string
+        && (a.url.matches('https://firebasestorage[.]googleapis[.]com/.+') || a.url.matches('http://127[.]0[.]0[.]1:9199/.+'));
+    }
+
+    // Lista de archivos (fotos o PDF) de un avance o pago: de 1 a 6. Los sube el servidor (uploadProjectFile).
+    function validAttachments(pid, kind, id) {
+      return !('attachments' in request.resource.data)
+        || (request.resource.data.attachments is list
+            && request.resource.data.attachments.size() >= 1
+            && request.resource.data.attachments.size() <= 6
+            && attOk(request.resource.data.attachments[0], pid, kind, id)
+            && (request.resource.data.attachments.size() < 2 || attOk(request.resource.data.attachments[1], pid, kind, id))
+            && (request.resource.data.attachments.size() < 3 || attOk(request.resource.data.attachments[2], pid, kind, id))
+            && (request.resource.data.attachments.size() < 4 || attOk(request.resource.data.attachments[3], pid, kind, id))
+            && (request.resource.data.attachments.size() < 5 || attOk(request.resource.data.attachments[4], pid, kind, id))
+            && (request.resource.data.attachments.size() < 6 || attOk(request.resource.data.attachments[5], pid, kind, id)));
+    }
+
     function money(n) {
       return (n is int || n is float) && n > 0 && n < 100000000;
     }
@@ -580,7 +602,8 @@ service cloud.firestore {
       match /updates/{id} {
         allow read: if inProject(pid);
         allow create: if projectRole(pid) in ['builder', 'cj']
-          && request.resource.data.keys().hasOnly(['title', 'text', 'percent', 'authorUid', 'authorRole', 'authorName', 'createdAt'])
+          && request.resource.data.keys().hasOnly(['title', 'text', 'percent', 'attachments', 'authorUid', 'authorRole', 'authorName', 'createdAt'])
+          && validAttachments(pid, 'updates', id)
           && validText(request.resource.data.title, 200)
           && (request.resource.data.text == '' || validText(request.resource.data.text, 4000))
           && (!('percent' in request.resource.data)
@@ -595,7 +618,8 @@ service cloud.firestore {
       match /payments/{id} {
         allow read: if inProject(pid);
         allow create: if inProject(pid)
-          && request.resource.data.keys().hasOnly(['amount', 'date', 'concept', 'recordedByUid', 'recordedByRole', 'recordedByName', 'status', 'createdAt'])
+          && request.resource.data.keys().hasOnly(['amount', 'date', 'concept', 'attachments', 'recordedByUid', 'recordedByRole', 'recordedByName', 'status', 'createdAt'])
+          && validAttachments(pid, 'payments', id)
           && money(request.resource.data.amount)
           && request.resource.data.date is string && request.resource.data.date.matches('[0-9]{4}-[0-9]{2}-[0-9]{2}')
           && validText(request.resource.data.concept, 200)

@@ -342,3 +342,14 @@ Kontrollera att varje text är naturlig och korrekt på svenska. Skriv dina rät
 | `project.waitingClient` | {n} extra esperando su respuesta | {n} extra awaiting your answer | {n} extraarbete väntar på ditt svar | |
 | `builder.panel` | Panel del constructor | Builder panel | Byggarpanel | |
 | `builder.empty` | CJ aún no le ha asignado ninguna obra. | CJ has not assigned you any works yet. | CJ har inte tilldelat dig något projekt än. | |
+| `project.files.add` | Añadir fotos o PDF | Add photos or PDF | Lägg till foton eller pdf | |
+| `project.files.hint` | Fotos o PDF, hasta {n} archivos de 10 MB. | Photos or PDF, up to {n} files of 10 MB. | Foton eller pdf, upp till {n} filer på 10 MB. | |
+| `project.files.photos` | Fotos (opcional) | Photos (optional) | Foton (valfritt) | |
+| `project.files.receipt` | Justificante (opcional) | Receipt (optional) | Kvitto (valfritt) | |
+| `project.files.uploading` | Subiendo… | Uploading… | Laddar upp… | |
+| `project.files.open` | Ver | View | Visa | |
+| `project.files.photo` | Foto | Photo | Foto | |
+| `project.files.remove` | Quitar | Remove | Ta bort | |
+| `project.files.type` | «{name}» no es una foto ni un PDF. | “{name}” is not a photo or a PDF. | ”{name}” är inte ett foto eller en pdf. | |
+| `project.files.size` | «{name}» pasa de 10 MB. | “{name}” is larger than 10 MB. | ”{name}” är större än 10 MB. | |
+| `project.files.count` | Como mucho {n} archivos. | At most {n} files. | Högst {n} filer. | |

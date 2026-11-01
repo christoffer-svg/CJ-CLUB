@@ -8,13 +8,13 @@
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview",
-    "emulators": "npm --prefix functions run build && firebase emulators:start --only auth,firestore,functions --project cj-club",
+    "emulators": "npm --prefix functions run build && firebase emulators:start --only auth,firestore,functions,storage --project cj-club",
     "seed": "tsx scripts/seed.ts",
     "seed:emulator": "FIRESTORE_EMULATOR_HOST=127.0.0.1:8080 FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099 tsx scripts/seed.ts",
     "deploy:rules": "tsx scripts/deploy-rules.ts",
     "build:emulator": "tsc -b && vite build --mode emulator",
     "dev:emulator": "vite --mode emulator",
-    "test:rules": "node tests/firestore-rules.mjs",
+    "test:rules": "node tests/firestore-rules.mjs && node tests/storage-rules.mjs",
     "test:unit": "tsx tests/services.test.ts && tsx tests/amounts.test.ts"
   },
   "dependencies": {

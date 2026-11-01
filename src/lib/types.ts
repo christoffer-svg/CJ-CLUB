@@ -274,6 +274,9 @@ export type HouseNote = {
 
 // ---------- Mi reforma ----------
 
+/** Archivo subido (foto o PDF) en Firebase Storage */
+export type Attachment = { path: string; name: string; contentType: string; size: number; url: string }
+
 /** Quién actúa en una obra: el cliente, el constructor o el equipo de CJ */
 export type ProjectRole = 'client' | 'builder' | 'cj'
 
@@ -311,6 +314,8 @@ export type ProjectUpdate = {
   authorUid: string
   authorRole: ProjectRole
   authorName: string
+  /** fotos del avance */
+  attachments?: Attachment[]
   createdAt: Timestamp | null
 }
 
@@ -327,6 +332,8 @@ export type ProjectPayment = {
   confirmedByRole?: ProjectRole
   confirmedByName?: string
   confirmedAt?: Timestamp | null
+  /** justificantes del pago */
+  attachments?: Attachment[]
   createdAt: Timestamp | null
 }
 

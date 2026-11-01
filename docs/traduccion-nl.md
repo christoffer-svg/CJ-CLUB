@@ -342,3 +342,14 @@ Controleer of elke tekst natuurlijk en correct Nederlands is. Noteer correcties 
 | `project.waitingClient` | {n} extra esperando su respuesta | {n} extra awaiting your answer | {n} meerwerk wacht op uw antwoord | |
 | `builder.panel` | Panel del constructor | Builder panel | Aannemerspaneel | |
 | `builder.empty` | CJ aún no le ha asignado ninguna obra. | CJ has not assigned you any works yet. | CJ heeft u nog geen werk toegewezen. | |
+| `project.files.add` | Añadir fotos o PDF | Add photos or PDF | Foto’s of pdf toevoegen | |
+| `project.files.hint` | Fotos o PDF, hasta {n} archivos de 10 MB. | Photos or PDF, up to {n} files of 10 MB. | Foto’s of pdf, tot {n} bestanden van 10 MB. | |
+| `project.files.photos` | Fotos (opcional) | Photos (optional) | Foto’s (optioneel) | |
+| `project.files.receipt` | Justificante (opcional) | Receipt (optional) | Betaalbewijs (optioneel) | |
+| `project.files.uploading` | Subiendo… | Uploading… | Uploaden… | |
+| `project.files.open` | Ver | View | Bekijken | |
+| `project.files.photo` | Foto | Photo | Foto | |
+| `project.files.remove` | Quitar | Remove | Verwijderen | |
+| `project.files.type` | «{name}» no es una foto ni un PDF. | “{name}” is not a photo or a PDF. | “{name}” is geen foto of pdf. | |
+| `project.files.size` | «{name}» pasa de 10 MB. | “{name}” is larger than 10 MB. | “{name}” is groter dan 10 MB. | |
+| `project.files.count` | Como mucho {n} archivos. | At most {n} files. | Maximaal {n} bestanden. | |

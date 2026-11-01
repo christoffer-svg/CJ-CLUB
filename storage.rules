@@ -1,0 +1,14 @@
+rules_version = '2';
+
+// Reglas de los archivos de CJ Club (Firebase Storage).
+// Las fotos y PDF de "Mi reforma" los sube y los guarda el servidor (función uploadProjectFile),
+// después de comprobar que la persona pertenece a la obra. Cada archivo tiene un enlace privado con
+// un código imposible de adivinar, que solo se guarda dentro del avance o pago correspondiente
+// (protegido por firestore.rules). Por eso desde la app no se permite ninguna lectura ni escritura directa.
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /{path=**} {
+      allow read, write: if false;
+    }
+  }
+}

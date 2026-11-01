@@ -7,10 +7,12 @@ import {
   orderBy,
   query,
   serverTimestamp,
+  setDoc,
   updateDoc,
   where,
 } from 'firebase/firestore'
 import { useEffect, useState } from 'react'
+import { uploadAttachments } from './attachments'
 import { db } from './firebase'
 import type { Project, ProjectExtra, ProjectMessage, ProjectPayment, ProjectRole, ProjectUpdate } from './types'
 
@@ -83,8 +85,12 @@ export function postProjectMessage(projectId: string, a: Author, text: string) {
   })
 }
 
-export function postProjectUpdate(projectId: string, a: Author, u: { title: string; text: string; percent?: number }) {
-  return addDoc(collection(db, 'projects', projectId, 'updates'), {
+/** Publica un avance; las fotos se suben antes y el avance guarda dónde están */
+export async function postProjectUpdate(projectId: string, a: Author, u: { title: string; text: string; percent?: number }, files: File[] = []) {
+  const entry = doc(collection(db, 'projects', projectId, 'updates'))
+  const attachments = files.length ? await uploadAttachments(projectId, 'updates', entry.id, files) : []
+  return setDoc(entry, {
+    ...(attachments.length ? { attachments } : {}),
     title: u.title.trim().slice(0, 200),
     text: u.text.trim().slice(0, 4000),
     ...(u.percent !== undefined ? { percent: Math.max(0, Math.min(100, Math.round(u.percent))) } : {}),
@@ -95,8 +101,12 @@ export function postProjectUpdate(projectId: string, a: Author, u: { title: stri
   })
 }
 
-export function addProjectPayment(projectId: string, a: Author, p: { amount: number; date: string; concept: string }) {
-  return addDoc(collection(db, 'projects', projectId, 'payments'), {
+/** Anota un pago; los justificantes se suben antes y el pago guarda dónde están */
+export async function addProjectPayment(projectId: string, a: Author, p: { amount: number; date: string; concept: string }, files: File[] = []) {
+  const entry = doc(collection(db, 'projects', projectId, 'payments'))
+  const attachments = files.length ? await uploadAttachments(projectId, 'payments', entry.id, files) : []
+  return setDoc(entry, {
+    ...(attachments.length ? { attachments } : {}),
     amount: Math.round(p.amount * 100) / 100,
     date: p.date,
     concept: p.concept.trim().slice(0, 200),

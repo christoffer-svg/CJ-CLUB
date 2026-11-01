@@ -1,4 +1,5 @@
 import { useState, type FormEvent, type ReactNode } from 'react'
+import { AttachmentList, FilePicker } from './Attachments'
 import { useI18n } from '../i18n'
 import type { TranslationKey } from '../i18n/translations'
 import {
@@ -67,8 +68,8 @@ export default function ProjectView({ projectId, author, readOnly }: { projectId
 
   // Formularios
   const [msg, setMsg] = useState('')
-  const [upd, setUpd] = useState<{ title: string; text: string; percent: string } | null>(null)
-  const [pay, setPay] = useState<{ amount: string; date: string; concept: string } | null>(null)
+  const [upd, setUpd] = useState<{ title: string; text: string; percent: string; files: File[] } | null>(null)
+  const [pay, setPay] = useState<{ amount: string; date: string; concept: string; files: File[] } | null>(null)
   const [ext, setExt] = useState<{ title: string; description: string; amount: string } | null>(null)
   const [deciding, setDeciding] = useState<{ id: string; note: string } | null>(null)
 
@@ -214,7 +215,7 @@ export default function ProjectView({ projectId, author, readOnly }: { projectId
       {tab === 'updates' && (
         <>
           {canWrite && role !== 'client' && !upd && (
-            <button className="btn" onClick={() => setUpd({ title: '', text: '', percent: '' })}>
+            <button className="btn" onClick={() => setUpd({ title: '', text: '', percent: '', files: [] })}>
               {t('project.updates.new')}
             </button>
           )}
@@ -225,7 +226,7 @@ export default function ProjectView({ projectId, author, readOnly }: { projectId
                 e.preventDefault()
                 const percent = upd.percent.trim() === '' ? undefined : Number(upd.percent)
                 if (!upd.title.trim() || (percent !== undefined && !(percent >= 0 && percent <= 100))) return
-                run(() => postProjectUpdate(projectId, author, { title: upd.title, text: upd.text, percent }), () => setUpd(null))
+                run(() => postProjectUpdate(projectId, author, { title: upd.title, text: upd.text, percent }, upd.files), () => setUpd(null))
               }}
             >
               <label className="request-form__field">
@@ -240,12 +241,13 @@ export default function ProjectView({ projectId, author, readOnly }: { projectId
                 <span className="eyebrow">{t('project.updates.percentField')}</span>
                 <input className="composer__input" type="number" min={0} max={100} inputMode="numeric" value={upd.percent} onChange={(e) => setUpd({ ...upd, percent: e.target.value })} />
               </label>
+              <FilePicker label={t('project.files.photos')} files={upd.files} onChange={(files) => setUpd({ ...upd, files })} />
               <div className="request-form__actions">
                 <button type="button" className="btn btn--ghost" onClick={() => setUpd(null)}>
                   {t('requests.cancelForm')}
                 </button>
                 <button type="submit" className="btn" disabled={busy || !upd.title.trim()}>
-                  {t('project.save')}
+                  {busy && upd.files.length ? t('project.files.uploading') : t('project.save')}
                 </button>
               </div>
             </form>
@@ -258,6 +260,7 @@ export default function ProjectView({ projectId, author, readOnly }: { projectId
                 {typeof u.percent === 'number' && <span className="status">{u.percent} %</span>}
               </div>
               {u.text && <p className="request__text">{u.text}</p>}
+              <AttachmentList items={u.attachments} />
               <span className="card__text">
                 {u.authorName} ({roleName(u.authorRole)}) · {shortDate(u.createdAt, locale)}
               </span>
@@ -269,7 +272,7 @@ export default function ProjectView({ projectId, author, readOnly }: { projectId
       {tab === 'payments' && (
         <>
           {canWrite && !pay && (
-            <button className="btn" onClick={() => setPay({ amount: '', date: today(), concept: '' })}>
+            <button className="btn" onClick={() => setPay({ amount: '', date: today(), concept: '', files: [] })}>
               {t('project.payments.new')}
             </button>
           )}
@@ -280,7 +283,7 @@ export default function ProjectView({ projectId, author, readOnly }: { projectId
                 e.preventDefault()
                 const amount = parseAmount(pay.amount)
                 if (!(amount > 0) || !pay.concept.trim() || !pay.date) return
-                run(() => addProjectPayment(projectId, author, { amount, date: pay.date, concept: pay.concept }), () => setPay(null))
+                run(() => addProjectPayment(projectId, author, { amount, date: pay.date, concept: pay.concept }, pay.files), () => setPay(null))
               }}
             >
               <label className="request-form__field">
@@ -296,12 +299,13 @@ export default function ProjectView({ projectId, author, readOnly }: { projectId
                 <span className="eyebrow">{t('project.payments.concept')}</span>
                 <input className="composer__input" required maxLength={200} value={pay.concept} onChange={(e) => setPay({ ...pay, concept: e.target.value })} />
               </label>
+              <FilePicker label={t('project.files.receipt')} files={pay.files} onChange={(files) => setPay({ ...pay, files })} />
               <div className="request-form__actions">
                 <button type="button" className="btn btn--ghost" onClick={() => setPay(null)}>
                   {t('requests.cancelForm')}
                 </button>
                 <button type="submit" className="btn" disabled={busy || !(parseAmount(pay.amount) > 0) || !pay.concept.trim()}>
-                  {t('project.save')}
+                  {busy && pay.files.length ? t('project.files.uploading') : t('project.save')}
                 </button>
               </div>
             </form>
@@ -316,6 +320,7 @@ export default function ProjectView({ projectId, author, readOnly }: { projectId
                   {status(`project.payments.status.${pm.status}`, pm.status === 'confirmed' ? 'done' : pm.status === 'disputed' ? 'cancelled' : 'new')}
                 </div>
                 <p className="request__text">{pm.concept}</p>
+                <AttachmentList items={pm.attachments} />
                 <span className="card__text">
                   {shortDate(pm.date, locale)} · {t('project.payments.recordedBy', { name: pm.recordedByName, role: roleName(pm.recordedByRole) })}
                 </span>

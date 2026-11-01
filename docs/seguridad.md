@@ -41,11 +41,17 @@ Cuenta invitada por CJ y vinculada a un lugar (`users.placeId`). No es un socio.
 
 Pruebas: `tests/firestore-rules.mjs` (406 comprobaciones; ver instrucciones en el archivo). Ejecutar antes de cada cambio de reglas.
 
+### Archivos (Firebase Storage, `storage.rules`)
+- Todo cerrado: nadie lee ni escribe el almacén directamente desde el navegador. Los archivos los sube la función `uploadProjectFile` y se ven con su enlace privado, que solo conocen quienes pueden leer esa obra en Firestore.
+- Pruebas: `tests/storage-rules.mjs` (subidas permitidas y prohibidas, tamaño, tipo, reemplazo, enlaces inventados y acceso directo).
+
 ### Funciones de servidor (`functions/`)
 - `createClient` (Madrid, `europe-southwest1`): comprueba que quien llama es `admin`, valida los datos, crea la cuenta con contraseña aleatoria, la ficha y el perfil; si algo falla, no deja cuentas sueltas. Límite de 5 instancias.
 - `createBusiness`: igual, para el acceso de un negocio vinculado a un lugar que ya existe. Si falla al guardar la ficha, no deja la cuenta suelta.
 - `businessReservationSummary`: solo el propio negocio. Cuenta las pulsaciones en Reservar de su lugar y devuelve el número, sin nombres de clientes.
 - `deleteClient`: baja de un cliente (derecho de supresión). Solo `admin`; borra sus cuentas de acceso, perfiles, ficha, conversación con mensajes, peticiones, registros de uso, pinchazos y confirmaciones de reserva, contactos propios y notas de la casa (privados y compartidos). Se niega si hay una cuenta del equipo vinculada. No es una función nueva: es la misma baja de siempre.
+- `uploadProjectFile`: sube las fotos y PDF de Mi reforma (hasta 6 por avance o pago, 10 MB cada uno, solo fotos y PDF). Comprueba con las mismas normas que `firestore.rules` quién es la persona en esa obra: los avances solo los ilustran el constructor asignado y CJ; los justificantes de pago, cualquiera de los tres. Guarda cada archivo en la carpeta de su avance o pago, no deja reemplazarlo y devuelve un enlace privado con un código imposible de adivinar (token). Firestore solo acepta fichas de archivo de la carpeta de esa misma entrada y con enlace del almacén de Firebase.
+- `deleteClient` también borra las fotos y justificantes de las obras de la casa.
 - El alta de clientes y de negocios no se puede hacer desde el navegador sin ser del equipo de CJ: no hay registro público en la app.
 
 ### Código que descarga el navegador

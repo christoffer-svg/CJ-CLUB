@@ -342,3 +342,14 @@ Bitte prüfen Sie, ob jeder Text natürlich und korrekt auf Deutsch ist. Korrekt
 | `project.waitingClient` | {n} extra esperando su respuesta | {n} extra awaiting your answer | {n} Zusatzarbeit wartet auf Ihre Antwort | |
 | `builder.panel` | Panel del constructor | Builder panel | Bereich für Bauunternehmen | |
 | `builder.empty` | CJ aún no le ha asignado ninguna obra. | CJ has not assigned you any works yet. | CJ hat Ihnen noch kein Bauprojekt zugewiesen. | |
+| `project.files.add` | Añadir fotos o PDF | Add photos or PDF | Fotos oder PDF hinzufügen | |
+| `project.files.hint` | Fotos o PDF, hasta {n} archivos de 10 MB. | Photos or PDF, up to {n} files of 10 MB. | Fotos oder PDF, bis zu {n} Dateien à 10 MB. | |
+| `project.files.photos` | Fotos (opcional) | Photos (optional) | Fotos (optional) | |
+| `project.files.receipt` | Justificante (opcional) | Receipt (optional) | Beleg (optional) | |
+| `project.files.uploading` | Subiendo… | Uploading… | Wird hochgeladen… | |
+| `project.files.open` | Ver | View | Ansehen | |
+| `project.files.photo` | Foto | Photo | Foto | |
+| `project.files.remove` | Quitar | Remove | Entfernen | |
+| `project.files.type` | «{name}» no es una foto ni un PDF. | “{name}” is not a photo or a PDF. | „{name}“ ist kein Foto und kein PDF. | |
+| `project.files.size` | «{name}» pasa de 10 MB. | “{name}” is larger than 10 MB. | „{name}“ ist größer als 10 MB. | |
+| `project.files.count` | Como mucho {n} archivos. | At most {n} files. | Höchstens {n} Dateien. | |

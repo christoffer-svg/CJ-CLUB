@@ -387,6 +387,17 @@ const es = {
   'project.waitingClient': "{n} extra esperando su respuesta",
   'builder.panel': "Panel del constructor",
   'builder.empty': "CJ aún no le ha asignado ninguna obra.",
+  'project.files.add': "Añadir fotos o PDF",
+  'project.files.hint': "Fotos o PDF, hasta {n} archivos de 10 MB.",
+  'project.files.photos': "Fotos (opcional)",
+  'project.files.receipt': "Justificante (opcional)",
+  'project.files.uploading': "Subiendo…",
+  'project.files.open': "Ver",
+  'project.files.photo': "Foto",
+  'project.files.remove': "Quitar",
+  'project.files.type': "«{name}» no es una foto ni un PDF.",
+  'project.files.size': "«{name}» pasa de 10 MB.",
+  'project.files.count': "Como mucho {n} archivos.",
 }
 
 export type TranslationKey = keyof typeof es
@@ -738,6 +749,17 @@ const en: Record<TranslationKey, string> = {
   'project.waitingClient': "{n} extra awaiting your answer",
   'builder.panel': "Builder panel",
   'builder.empty': "CJ has not assigned you any works yet.",
+  'project.files.add': "Add photos or PDF",
+  'project.files.hint': "Photos or PDF, up to {n} files of 10 MB.",
+  'project.files.photos': "Photos (optional)",
+  'project.files.receipt': "Receipt (optional)",
+  'project.files.uploading': "Uploading…",
+  'project.files.open': "View",
+  'project.files.photo': "Photo",
+  'project.files.remove': "Remove",
+  'project.files.type': "“{name}” is not a photo or a PDF.",
+  'project.files.size': "“{name}” is larger than 10 MB.",
+  'project.files.count': "At most {n} files.",
 }
 
 // Neerlandés (trato formal: "u"). Pendiente de revisión por un hablante nativo.
@@ -1082,6 +1104,17 @@ const nl: Record<TranslationKey, string> = {
   'project.waitingClient': "{n} meerwerk wacht op uw antwoord",
   'builder.panel': "Aannemerspaneel",
   'builder.empty': "CJ heeft u nog geen werk toegewezen.",
+  'project.files.add': "Foto’s of pdf toevoegen",
+  'project.files.hint': "Foto’s of pdf, tot {n} bestanden van 10 MB.",
+  'project.files.photos': "Foto’s (optioneel)",
+  'project.files.receipt': "Betaalbewijs (optioneel)",
+  'project.files.uploading': "Uploaden…",
+  'project.files.open': "Bekijken",
+  'project.files.photo': "Foto",
+  'project.files.remove': "Verwijderen",
+  'project.files.type': "“{name}” is geen foto of pdf.",
+  'project.files.size': "“{name}” is groter dan 10 MB.",
+  'project.files.count': "Maximaal {n} bestanden.",
 }
 
 // Sueco (trato con "du", que es lo natural y cortés en sueco actual). Pendiente de revisión por un hablante nativo.
@@ -1426,6 +1459,17 @@ const sv: Record<TranslationKey, string> = {
   'project.waitingClient': "{n} extraarbete väntar på ditt svar",
   'builder.panel': "Byggarpanel",
   'builder.empty': "CJ har inte tilldelat dig något projekt än.",
+  'project.files.add': "Lägg till foton eller pdf",
+  'project.files.hint': "Foton eller pdf, upp till {n} filer på 10 MB.",
+  'project.files.photos': "Foton (valfritt)",
+  'project.files.receipt': "Kvitto (valfritt)",
+  'project.files.uploading': "Laddar upp…",
+  'project.files.open': "Visa",
+  'project.files.photo': "Foto",
+  'project.files.remove': "Ta bort",
+  'project.files.type': "”{name}” är inte ett foto eller en pdf.",
+  'project.files.size': "”{name}” är större än 10 MB.",
+  'project.files.count': "Högst {n} filer.",
 }
 
 // Alemán (trato formal: "Sie"). Pendiente de revisión por un hablante nativo.
@@ -1770,6 +1814,17 @@ const de: Record<TranslationKey, string> = {
   'project.waitingClient': "{n} Zusatzarbeit wartet auf Ihre Antwort",
   'builder.panel': "Bereich für Bauunternehmen",
   'builder.empty': "CJ hat Ihnen noch kein Bauprojekt zugewiesen.",
+  'project.files.add': "Fotos oder PDF hinzufügen",
+  'project.files.hint': "Fotos oder PDF, bis zu {n} Dateien à 10 MB.",
+  'project.files.photos': "Fotos (optional)",
+  'project.files.receipt': "Beleg (optional)",
+  'project.files.uploading': "Wird hochgeladen…",
+  'project.files.open': "Ansehen",
+  'project.files.photo': "Foto",
+  'project.files.remove': "Entfernen",
+  'project.files.type': "„{name}“ ist kein Foto und kein PDF.",
+  'project.files.size': "„{name}“ ist größer als 10 MB.",
+  'project.files.count': "Höchstens {n} Dateien.",
 }
 
 // Francés (trato formal: "vous"). Pendiente de revisión por un hablante nativo.
@@ -2114,6 +2169,17 @@ const fr: Record<TranslationKey, string> = {
   'project.waitingClient': "{n} supplément attend votre réponse",
   'builder.panel': "Espace entreprise",
   'builder.empty': "CJ ne vous a encore attribué aucun chantier.",
+  'project.files.add': "Ajouter des photos ou un PDF",
+  'project.files.hint': "Photos ou PDF, jusqu’à {n} fichiers de 10 Mo.",
+  'project.files.photos': "Photos (facultatif)",
+  'project.files.receipt': "Justificatif (facultatif)",
+  'project.files.uploading': "Envoi…",
+  'project.files.open': "Voir",
+  'project.files.photo': "Photo",
+  'project.files.remove': "Retirer",
+  'project.files.type': "« {name} » n’est ni une photo ni un PDF.",
+  'project.files.size': "« {name} » dépasse 10 Mo.",
+  'project.files.count': "{n} fichiers au maximum.",
 }
 
 export const translations: Record<Language, Record<TranslationKey, string>> = { es, en, nl, sv, de, fr }
