@@ -73,6 +73,7 @@ export async function saveBudgetLine(
     createdAt: existing ? existing.createdAt : serverTimestamp(),
     updatedAt: serverTimestamp(),
   })
+  return ref.id
 }
 
 export const deleteBudgetLine = (projectId: string, lineId: string) => deleteDoc(doc(db, 'projects', projectId, 'budgetLines', lineId))

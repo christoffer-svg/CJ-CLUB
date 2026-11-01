@@ -22,7 +22,11 @@ type Draft = {
   unitPrice: string
   keep: Attachment[]
   files: File[]
+  /** Solo al crear una partida: lo que incluye su precio, en el mismo formulario */
+  included: Row[]
 }
+type Row = { title: string; price: string; files: File[] }
+const emptyRow = (): Row => ({ title: '', price: '', files: [] })
 type Sigs = { client?: BudgetSignature; builder?: BudgetSignature }
 
 /**
@@ -105,6 +109,7 @@ export default function ProjectBudget({
     unitPrice: '',
     keep: [],
     files: [],
+    included: kind === 'group' ? [emptyRow()] : [],
   })
   const draftOf = (l: WithId<BudgetLine>): Draft => ({
     id: l.id,
@@ -117,11 +122,16 @@ export default function ProjectBudget({
     unitPrice: String(l.unitPrice).replace('.', ','),
     keep: l.attachments ?? [],
     files: [],
+    included: [],
   })
 
   const quantity = form ? parseAmount(form.quantity) : NaN
   const unitPrice = form ? (form.unitPrice.trim() === '0' ? 0 : parseAmount(form.unitPrice)) : NaN
-  const formValid = Boolean(form && form.title.trim() && (form.kind === 'group' ? unitPrice >= 0 : quantity > 0 && unitPrice >= 0))
+  const rowPrice = (r: Row) => (r.price.trim() === '0' ? 0 : parseAmount(r.price))
+  // Filas de "qué incluye" rellenadas (las vacías no cuentan); cada una necesita nombre y precio
+  const rows = form ? form.included.filter((r) => r.title.trim() || r.price.trim() || r.files.length) : []
+  const rowsValid = rows.every((r) => r.title.trim() && rowPrice(r) >= 0)
+  const formValid = Boolean(form && form.title.trim() && rowsValid && (form.kind === 'group' ? unitPrice >= 0 : quantity > 0 && unitPrice >= 0))
 
   function save(e: FormEvent) {
     e.preventDefault()
@@ -139,8 +149,14 @@ export default function ProjectBudget({
       unitPrice,
     }
     const saving = form
+    const included = rows.map((r) => ({ title: r.title, price: rowPrice(r), files: r.files }))
     run(
-      () => saveBudgetLine(projectId, author, existing, draft, form.kind === 'group' ? [] : form.keep, form.kind === 'group' ? [] : form.files, order),
+      async () => {
+        const id = await saveBudgetLine(projectId, author, existing, draft, form.kind === 'group' ? [] : form.keep, form.kind === 'group' ? [] : form.files, order)
+        // Partida nueva: después, lo que incluye, en el orden escrito
+        for (const [i, r] of included.entries())
+          await saveBudgetLine(projectId, author, null, { kind: 'item', parentId: id, title: r.title, description: '', quantity: 1, unit: 'ud', unitPrice: r.price }, [], r.files, i + 1)
+      },
       // Cierra solo este formulario: si mientras tanto se ha abierto otro, se queda abierto
       () => setForm((f) => (f === saving ? null : f)),
     )
@@ -163,10 +179,6 @@ export default function ProjectBudget({
             onChange={(e) => setForm({ ...form, title: e.target.value })}
           />
         </label>
-        <label className="request-form__field">
-          <span className="eyebrow">{t('budget.description')}</span>
-          <textarea className="composer__input" rows={2} maxLength={2000} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
-        </label>
         {isGroup && (
           <label className="request-form__field">
             <span className="eyebrow">{t('budget.groupPrice')}</span>
@@ -174,10 +186,17 @@ export default function ProjectBudget({
             {form.unitPrice.trim() && <span className="pv-parsed">{unitPrice >= 0 ? `= ${money(unitPrice)} ${t('project.plusVat')}` : '?'}</span>}
           </label>
         )}
-        {!isGroup && (
+        {!isGroup && form.parentId && (
+          <label className="request-form__field">
+            <span className="eyebrow">{t('budget.referencePrice')}</span>
+            <input className="composer__input" required inputMode="decimal" value={form.unitPrice} onChange={(e) => setForm({ ...form, unitPrice: e.target.value })} />
+            {form.unitPrice.trim() && <span className="pv-parsed">{unitPrice >= 0 ? `${money(unitPrice)} · ${t('budget.reference')}` : '?'}</span>}
+          </label>
+        )}
+        {!isGroup && !form.parentId && (
           <>
             <label className="request-form__field">
-              <span className="eyebrow">{form.parentId ? t('budget.referencePrice') : t('budget.unitPrice')}</span>
+              <span className="eyebrow">{t('budget.unitPrice')}</span>
               <input className="composer__input" required inputMode="decimal" value={form.unitPrice} onChange={(e) => setForm({ ...form, unitPrice: e.target.value })} />
             </label>
             <div className="budget-form__row">
@@ -193,10 +212,18 @@ export default function ProjectBudget({
             {form.unitPrice.trim() && (
               <span className="pv-parsed">
                 {quantity > 0 && unitPrice >= 0
-                  ? `${quantity === 1 ? '' : `${form.quantity} × ${money(unitPrice)} = `}${money(lineTotal({ quantity, unitPrice }))}${form.parentId ? ` · ${t('budget.reference')}` : ` ${t('project.plusVat')}`}`
+                  ? `${quantity === 1 ? '' : `${form.quantity} × ${money(unitPrice)} = `}${money(lineTotal({ quantity, unitPrice }))} ${t('project.plusVat')}`
                   : '?'}
               </span>
             )}
+          </>
+        )}
+        <label className="request-form__field">
+          <span className="eyebrow">{t('budget.description')}</span>
+          <textarea className="composer__input" rows={2} maxLength={2000} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
+        </label>
+        {!isGroup && (
+          <>
             {form.keep.length > 0 && (
               <ul className="att-chosen">
                 {form.keep.map((a) => (
@@ -212,13 +239,58 @@ export default function ProjectBudget({
             {form.keep.length < 6 && <FilePicker label={t('project.files.photos')} files={form.files} max={6 - form.keep.length} onChange={(files) => setForm({ ...form, files })} />}
           </>
         )}
+        {isGroup && !form.id && (
+          <div className="budget-rows">
+            <span className="eyebrow">{t('budget.includedTitle')}</span>
+            <p className="card__text budget-group__note">{t('budget.includedHint')}</p>
+            {form.included.map((r, i) => {
+              const set = (patch: Partial<Row>) => setForm({ ...form, included: form.included.map((x, j) => (j === i ? { ...x, ...patch } : x)) })
+              return (
+                <div key={i} className="budget-item-form budget-row">
+                  <div className="budget-row__fields">
+                    <input
+                      className="composer__input"
+                      maxLength={200}
+                      aria-label={t('budget.item')}
+                      placeholder={t('budget.itemExample')}
+                      value={r.title}
+                      onChange={(e) => set({ title: e.target.value })}
+                    />
+                    <input
+                      className="composer__input budget-row__price"
+                      inputMode="decimal"
+                      aria-label={t('budget.referencePrice')}
+                      placeholder="€"
+                      value={r.price}
+                      onChange={(e) => set({ price: e.target.value })}
+                    />
+                  </div>
+                  {r.price.trim() && <span className="pv-parsed">{rowPrice(r) >= 0 ? `${money(rowPrice(r))} · ${t('budget.reference')}` : '?'}</span>}
+                  <div className="budget-row__foot">
+                    <FilePicker label={t('project.files.photos')} files={r.files} max={6} onChange={(files) => set({ files })} />
+                    {form.included.length > 1 && (
+                      <button type="button" className="link-btn link-btn--dark" onClick={() => setForm({ ...form, included: form.included.filter((_, j) => j !== i) })}>
+                        {t('budget.removeRow')}
+                      </button>
+                    )}
+                  </div>
+                </div>
+              )
+            })}
+            {form.included.length < 30 && (
+              <button type="button" className="btn btn--ghost budget-group__add" onClick={() => setForm({ ...form, included: [...form.included, emptyRow()] })}>
+                + {t('budget.addAnother')}
+              </button>
+            )}
+          </div>
+        )}
         {error && <p className="composer__error">{error}</p>}
         <div className="request-form__actions">
           <button type="button" className="btn btn--ghost" onClick={() => setForm(null)}>
             {t('requests.cancelForm')}
           </button>
           <button type="submit" className="btn" disabled={busy || !formValid}>
-            {busy && form.files.length ? t('project.files.uploading') : t('budget.saveLine')}
+            {busy && (form.files.length || form.included.some((r) => r.files.length)) ? t('project.files.uploading') : t('budget.saveLine')}
           </button>
         </div>
       </form>
