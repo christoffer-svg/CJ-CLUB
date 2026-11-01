@@ -12,6 +12,7 @@ import { useI18n } from '../i18n'
 import { useActiveDeals, useDoc } from '../lib/data'
 import { directionsUrl, distanceKm, formatKm, isGeoPoint } from '../lib/geo'
 import { profileOf } from '../lib/profiles'
+import { categoryLabel, usePlaceCategories } from '../lib/placeCategories'
 import type { Client, Place } from '../lib/types'
 import { useViewer } from '../lib/viewer'
 
@@ -21,6 +22,7 @@ export default function PlaceDetail() {
   const { base, favorites, toggleFavorite, clientId } = useViewer()
   const { t, pick, locale } = useI18n()
   const place = useDoc<Place>(`places/${placeId}`)
+  const cats = usePlaceCategories(true)
   const client = useDoc<Client>(clientId ? `clients/${clientId}` : null)
   const deals = useActiveDeals()
   const p = place.data && place.data.active !== false ? place.data : null
@@ -34,7 +36,7 @@ export default function PlaceDetail() {
 
   return (
     <>
-      <Header back={`${base}/descubrir`} eyebrow={p ? t(`discover.filter.${p.category}`) : t('discover.eyebrow')} title={p?.name ?? (place.loading ? '' : t('profile.notFound'))} subtitle={p ? pick(p, 'meta') : undefined} />
+      <Header back={`${base}/descubrir`} eyebrow={p ? categoryLabel(p.category, cats, t, pick) || t('discover.eyebrow') : t('discover.eyebrow')} title={p?.name ?? (place.loading ? '' : t('profile.notFound'))} subtitle={p ? pick(p, 'meta') : undefined} />
       <main className="page">
         {p && (
           <>

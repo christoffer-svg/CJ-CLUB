@@ -376,6 +376,11 @@ async function main() {
     const d = new Date(Date.now() + n * 86_400_000)
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
   }
+  // Una categoría de Descubrir creada por CJ, con un lugar
+  put('placeCategories', { bodegas: { name_es: 'Bodegas', name_en: 'Wineries', order: 50, active: true } })
+  put('places', {
+    'bodega-xalo': { category: 'bodegas', name: 'Bodega Xaló', meta_es: 'Vinos de la Marina Alta', meta_en: 'Marina Alta wines', cjNote_es: 'Visita guiada con cata los sábados.', cjNote_en: 'Guided tour and tasting on Saturdays.', active: true, location: { lat: 38.7406, lng: -0.0094 } },
+  })
   // Social: un plan y una recomendación de la familia Lindqvist
   put('socialPosts', {
     'sp-golf': { kind: 'plan', activity: 'golf', title: 'Golf en La Sella', text: 'Estaremos en Jávea esas semanas. Buscamos una pareja para jugar 18 hoyos por la mañana.', dateFrom: inDays(6), dateTo: inDays(12), place: 'La Sella Golf', photos: [], clientId: 'lindqvist', uid: 'seed', familyName: 'Familia Lindqvist', hidden: false, createdAt: Timestamp.now() },

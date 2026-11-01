@@ -92,6 +92,12 @@ Todo está denegado salvo lo que se permite expresamente.
   - Los archivos van en `clients/{id}/photo/` y se borran al dar de baja al cliente.
 - **Baja de un cliente:** `deleteClient` borra sus publicaciones (con quién se apuntó), sus chats, sus apuntes, sus avisos y sus fotos de Social. Para encontrar los apuntes se usa una búsqueda de tipo *collection group* sobre `joins.clientId`, con su índice en `firestore.indexes.json`.
 
+### Categorías de Descubrir
+
+- `placeCategories/{id}`: las crea solo CJ, con nombre en español e inglés, posición y si está visible, sin campos de más. No pueden usar los ids de las cuatro de siempre (restaurants, golf, beaches, plans) ni los de los filtros especiales (all, events, saved).
+- Las leen los clientes y los negocios.
+- Solo «restaurants» tiene reserva, carta y pedidos. Las reglas siguen comprobándolo para los pedidos y los platos.
+
 ### Servicios de CJ y peticiones
 
 - **Servicios de CJ** (`services/{id}`): por ejemplo, key holding, reforma o vigilancia de la casa.

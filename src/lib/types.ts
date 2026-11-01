@@ -153,7 +153,8 @@ export type ReservationChannel = (typeof reservationChannels)[number]
 
 /** places/{placeId} */
 export type Place = {
-  category: 'restaurants' | 'golf' | 'beaches' | 'plans'
+  /** una de las cuatro de siempre (restaurants, golf, beaches, plans) o una creada por CJ (placeCategories) */
+  category: string
   name: string
   meta_es: string
   meta_en: string
@@ -744,3 +745,15 @@ export type SocialReport = { postId: string; postTitle: string; clientId: string
 
 /** socialProfiles/{clientId}: lo que los demás clientes ven de una casa en Social (lo escribe el servidor) */
 export type SocialProfile = { familyName: string; photo: Attachment | null }
+
+/** Categorías de siempre de Descubrir. "restaurants" tiene reserva, carta y pedidos. */
+export const BUILTIN_PLACE_CATEGORIES = ['restaurants', 'golf', 'beaches', 'plans'] as const
+
+/** placeCategories/{id}: categoría de Descubrir creada por CJ (bodegas, spa, tiendas…) */
+export type PlaceCategory = {
+  name_es: string
+  name_en: string
+  order: number
+  /** false = oculta: ni la categoría ni sus lugares se ven en la app */
+  active: boolean
+}

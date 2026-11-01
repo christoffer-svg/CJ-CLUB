@@ -366,6 +366,15 @@ await ownerPatch('socialProfiles/lindqvist', { familyName: str('Familia Lindqvis
 ok(await req(J, 'socialProfiles/lindqvist'), 200, 'los clientes ven la foto de las demás casas en Social')
 ok(await req(B, 'socialProfiles/lindqvist'), 403, 'un negocio no ve los perfiles de Social')
 
+// Categorías de Descubrir creadas por CJ
+const pcat = (extra = {}) => ({ name_es: str('Bodegas'), name_en: str('Wineries'), order: num(50), active: bool(true), ...extra })
+ok(await req(AD, 'placeCategories/bodegas', 'PATCH', { fields: pcat() }), 200, 'CJ crea una categoría de Descubrir')
+ok(await req(AD, 'placeCategories/restaurants', 'PATCH', { fields: pcat() }), 403, 'no se pisa una categoría de siempre')
+ok(await req(AD, 'placeCategories/x', 'PATCH', { fields: pcat({ extra: str('x') }) }), 403, 'categoría con campos de más')
+ok(await req(J, 'placeCategories/spa', 'PATCH', { fields: pcat() }), 403, 'el cliente no crea categorías')
+ok(await req(J, 'placeCategories/bodegas'), 200, 'el cliente ve las categorías')
+ok(await req(B, 'placeCategories/bodegas'), 200, 'el negocio ve las categorías')
+
 // Servicios de CJ y peticiones de un servicio
 const svc = (extra = {}) => ({ name_es: str('Key holding'), name_en: str('Key holding'), description_es: str(''), description_en: str(''), price: num(25), priceNote_es: str('al mes'), priceNote_en: str('per month'), active: bool(true), order: num(10), ...extra })
 ok(await req(AD, 'services/s-t1', 'PATCH', { fields: svc() }), 200, 'CJ crea un servicio')

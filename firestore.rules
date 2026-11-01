@@ -241,6 +241,19 @@ service cloud.firestore {
         && (request.resource.data.get('logo', null) == null || profilePhotoOk(request.resource.data.logo, coll, id));
     }
 
+    // ---------- placeCategories/{id} ----------
+    // Categorías de Descubrir que añade CJ (además de las cuatro de siempre)
+    match /placeCategories/{id} {
+      allow read: if isAdmin() || isClient() || isBusiness();
+      allow write: if isAdmin() && (request.resource == null || (
+        request.resource.data.keys().hasOnly(['name_es', 'name_en', 'order', 'active'])
+        && validText(request.resource.data.name_es, 40)
+        && request.resource.data.name_en is string && request.resource.data.name_en.size() <= 40
+        && request.resource.data.order is int && request.resource.data.order >= 0 && request.resource.data.order <= 100000
+        && request.resource.data.active is bool
+        && !(id in ['restaurants', 'golf', 'beaches', 'plans', 'all', 'events', 'saved'])));
+    }
+
     match /places/{id} {
       allow get: if isAdmin() || isClient() || (isBusiness() && id == myPlaceId());
       allow list: if isAdmin() || isClient();

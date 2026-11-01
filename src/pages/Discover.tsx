@@ -9,14 +9,13 @@ import { directionsUrl, distanceKm, formatKm, isGeoPoint } from '../lib/geo'
 import ReserveButton from '../components/ReserveButton'
 import EventCard from '../components/EventCard'
 import { useBookings, useUpcomingEvents } from '../lib/events'
+import { categoryLabel, usePlaceCategories } from '../lib/placeCategories'
 import type { Client, GeoPoint, Place } from '../lib/types'
 import { useViewer } from '../lib/viewer'
 
-type Filter = 'all' | Place['category'] | 'events' | 'saved'
+type Filter = string
 type PlaceItem = Place & { id: string }
 
-const filters: Filter[] = ['all', 'restaurants', 'golf', 'beaches', 'plans', 'events', 'saved']
-const categoryOrder: Place['category'][] = ['restaurants', 'golf', 'beaches', 'plans']
 
 function PlaceCard({ p, home }: { p: PlaceItem; home: GeoPoint | null }) {
   const { favorites, toggleFavorite, base } = useViewer()
@@ -88,7 +87,10 @@ export default function Discover() {
   // ?categoria=restaurants abre el filtro indicado (p. ej. desde "Dónde comer" en Inicio); ?vista=mapa abre el mapa
   const [params, setParams] = useSearchParams()
   const param = params.get('categoria') as Filter | null
-  const active: Filter = filters.includes(param as Filter) ? param! : 'all'
+  const cats = usePlaceCategories()
+  const filters: Filter[] = ['all', ...cats.map((c) => c.id), 'events', 'saved']
+  const active: Filter = param && filters.includes(param) ? param : 'all'
+  const categoryOrder = cats.map((c) => c.id)
   const view = params.get('vista') === 'mapa' ? 'map' : 'list'
   const setParam = (key: string, value: string | null) => {
     const next = new URLSearchParams(params)
@@ -98,7 +100,7 @@ export default function Discover() {
   }
 
   const { favorites, clientId } = useViewer()
-  const { t } = useI18n()
+  const { t, pick } = useI18n()
   const places = useActivePlaces()
   const client = useDoc<Client>(clientId ? `clients/${clientId}` : null)
   const home = isGeoPoint(client.data?.location) ? client.data!.location! : null
@@ -107,6 +109,8 @@ export default function Discover() {
   const bookings = useBookings({ clientId })
 
   const shown = places.data
+    // Solo lugares de categorías visibles
+    .filter((p) => categoryOrder.includes(p.category))
     .filter((p) => (active === 'all' ? true : active === 'saved' ? favorites.includes(p.id) : p.category === active))
     .sort((a, b) => categoryOrder.indexOf(a.category) - categoryOrder.indexOf(b.category) || a.name.localeCompare(b.name))
   const onMap = shown.filter((p) => isGeoPoint(p.location))
@@ -128,7 +132,7 @@ export default function Discover() {
                 setParam('categoria', key === 'all' ? null : key)
               }}
             >
-              {t(`discover.filter.${key}`)}
+              {key === 'all' || key === 'events' || key === 'saved' ? t(`discover.filter.${key}`) : categoryLabel(key, cats, t, pick)}
             </button>
           ))}
         </div>
