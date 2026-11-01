@@ -133,6 +133,17 @@ export async function createBuilderAccount(data: NewBuilder) {
   return { ...res.data, via }
 }
 
+export type NewDesigner = { name: string; companyName: string; profession: 'architect' | 'designer'; email: string; language: Language }
+
+/** Crea la cuenta de un arquitecto o diseñador (función createDesigner) y le envía la invitación */
+export async function createDesignerAccount(data: NewDesigner) {
+  const call = httpsCallable<NewDesigner, { uid: string; addedToExisting?: boolean }>(functions, 'createDesigner')
+  const res = await call(data)
+  if (res.data.addedToExisting) return { ...res.data, via: null }
+  const via = await sendInvitation(data.email, data.language)
+  return { ...res.data, via }
+}
+
 /** Da de baja a un cliente en el servidor (función deleteClient): borra cuenta, ficha y registros */
 export async function deleteClient(clientId: string) {
   const call = httpsCallable<

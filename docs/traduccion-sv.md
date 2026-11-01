@@ -293,6 +293,27 @@ Kontrollera att varje text är naturlig och korrekt på svenska. Skriv dina rät
 | `project.status.planned` | Prevista | Planned | Planerad | |
 | `project.status.in_progress` | En obras | In progress | Pågår | |
 | `project.status.finished` | Terminada | Finished | Klar | |
+| `role.designer` | Panel de arquitectura y diseño | Architecture and design panel | Panel för arkitektur och design | |
+| `project.role.designer` | Arquitecto / diseñador | Architect / designer | Arkitekt / formgivare | |
+| `designer.panel` | Panel de arquitectura y diseño | Architecture and design panel | Panel för arkitektur och design | |
+| `designer.empty` | CJ aún no le ha añadido a ninguna reforma. | CJ has not added you to any renovation yet. | CJ har ännu inte lagt till dig i någon renovering. | |
+| `project.tab.plans` | Planos | Plans | Ritningar | |
+| `plans.eyebrow` | Planos y diseños | Plans and designs | Ritningar och designförslag | |
+| `plans.intro` | Planos, diseños y renders de toda la reforma, compartidos con el cliente, los profesionales de la obra y CJ. Los suben CJ y el arquitecto o diseñador. | Plans, designs and renders for the whole renovation, shared with the client, the professionals on the works and CJ. CJ and the architect or designer upload them. | Ritningar, designförslag och renderingar för hela renoveringen, delade med kunden, hantverkarna och CJ. CJ och arkitekten eller formgivaren laddar upp dem. | |
+| `plans.notReady` | Los planos estarán disponibles en cuanto CJ termine de preparar la reforma. | The plans will be available as soon as CJ has finished setting up the renovation. | Ritningarna blir tillgängliga så snart CJ har förberett renoveringen. | |
+| `plans.add` | Subir plano o diseño | Upload plan or design | Ladda upp ritning eller designförslag | |
+| `plans.title` | Título | Title | Titel | |
+| `plans.titleExample` | Por ejemplo: planta de la cocina, versión 2 | For example: kitchen floor plan, version 2 | Till exempel: planritning kök, version 2 | |
+| `plans.kind` | Tipo | Type | Typ | |
+| `plans.kind.plan` | Plano | Plan | Ritning | |
+| `plans.kind.design` | Diseño | Design | Designförslag | |
+| `plans.kind.render` | Render | Render | Rendering | |
+| `plans.kind.other` | Otro | Other | Annat | |
+| `plans.note` | Notas (opcional) | Notes (optional) | Anteckningar (valfritt) | |
+| `plans.files` | Archivos (PDF o imágenes) | Files (PDF or images) | Filer (pdf eller bilder) | |
+| `plans.all` | Todo | All | Allt | |
+| `plans.empty` | Aún no hay planos ni diseños. | No plans or designs yet. | Inga ritningar eller designförslag ännu. | |
+| `plans.by` | Subido por {name} · {date} | Uploaded by {name} · {date} | Uppladdad av {name} · {date} | |
 | `trade.construction` | Constructor | Builder | Byggare | |
 | `trade.electrician` | Electricista | Electrician | Elektriker | |
 | `trade.plumber` | Fontanero | Plumber | Rörmokare | |

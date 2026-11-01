@@ -1,6 +1,6 @@
 import type { Timestamp } from 'firebase/firestore'
 
-export type Role = 'admin' | 'client' | 'business' | 'builder'
+export type Role = 'admin' | 'client' | 'business' | 'builder' | 'designer'
 
 /** Coordenadas de un punto en el mapa */
 export type GeoPoint = { lat: number; lng: number }
@@ -28,6 +28,8 @@ export type UserProfile = {
   companyName?: string
   /** oficio del profesional (sin él: constructor) */
   trade?: Trade
+  /** arquitecto o diseñador */
+  profession?: 'architect' | 'designer'
   /** lugar vinculado; solo el rol "business" */
   placeId?: string
   /** nombre del lugar en el momento del alta */
@@ -287,7 +289,7 @@ export type HouseNote = {
 export type Attachment = { path: string; name: string; contentType: string; size: number; url: string }
 
 /** Quién actúa en una obra: el cliente, el constructor o el equipo de CJ */
-export type ProjectRole = 'client' | 'builder' | 'cj'
+export type ProjectRole = 'client' | 'builder' | 'cj' | 'designer'
 
 /** projects/{id}: una obra o reforma de una casa (clients/{clientId}) con un constructor */
 export type Project = {
@@ -300,6 +302,10 @@ export type Project = {
   builderName: string
   /** oficio de este contrato (sin él: constructor) */
   trade?: Trade
+  /** reforma a la que pertenece (reforms/{id}: planos compartidos) */
+  reformId?: string
+  /** arquitectos o diseñadores de la reforma: ven conversación, avances y planos, no el dinero */
+  designerUids?: string[]
   status: 'planned' | 'in_progress' | 'finished'
   /** presupuesto inicial acordado, en euros, sin IVA */
   budget: number
@@ -467,5 +473,20 @@ export type ProjectExtra = {
   decidedByName?: string
   decidedAt?: Timestamp | null
   decisionNote?: string
+  createdAt: Timestamp | null
+}
+
+/** reforms/{id}: una reforma (varios contratos de la misma casa con el mismo título); la mantiene CJ */
+export type Reform = { clientId: string; title: string; builderUids: string[]; designerUids: string[]; updatedAt: Timestamp | null }
+
+/** reforms/{id}/plans: planos y diseños de la reforma (CJ y arquitectos o diseñadores) */
+export type ReformPlan = {
+  title: string
+  kind: 'plan' | 'design' | 'render' | 'other'
+  note: string
+  attachments: Attachment[]
+  authorUid: string
+  authorRole: 'cj' | 'designer'
+  authorName: string
   createdAt: Timestamp | null
 }

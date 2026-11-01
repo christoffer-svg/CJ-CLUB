@@ -59,7 +59,7 @@ async function nextMemberNumber(date: Date) {
   throw new HttpsError('resource-exhausted', 'No se pudo generar el número de socio.')
 }
 
-type Role = 'admin' | 'client' | 'business' | 'builder'
+type Role = 'admin' | 'client' | 'business' | 'builder' | 'designer'
 
 /** Accesos de una persona. Las fichas antiguas solo tienen "role". */
 function rolesOf(profile: FirebaseFirestore.DocumentSnapshot): Role[] {
@@ -276,6 +276,42 @@ export const createBuilder = onCall(async (request) => {
 })
 
 /**
+ * Crea el acceso de un arquitecto o diseñador para "Mi reforma": cuenta (rol "designer", con su profesión) y
+ * ficha en users/. CJ lo asigna después a una o varias reformas.
+ * Solo ve las obras en las que CJ le asigne. La invitación la envía después la app.
+ * Si el correo ya tiene cuenta, se le añade el acceso de constructor (entra con su contraseña de siempre).
+ */
+export const createDesigner = onCall(async (request) => {
+  await requireAdmin(request.auth?.uid)
+  const data = (request.data ?? {}) as Record<string, unknown>
+  const name = text(data.name, 'nombre de la persona')
+  const companyName = text(data.companyName, 'estudio', false)
+  const profession = data.profession === 'designer' ? 'designer' : 'architect'
+  const email = text(data.email, 'correo').toLowerCase()
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new HttpsError('invalid-argument', 'El correo no es válido.')
+  const languages = ['es', 'en', 'nl', 'sv', 'de', 'fr']
+  const language = typeof data.language === 'string' && languages.includes(data.language) ? data.language : 'es'
+
+  const auth = getAuth()
+  const existing = await auth.getUserByEmail(email).catch(() => null)
+  if (existing) {
+    const profile = await existingProfile(existing.uid)
+    if (rolesOf(profile).includes('designer')) throw new HttpsError('already-exists', 'Ese correo ya es el acceso de un arquitecto o diseñador.')
+    await profile.ref.update({ roles: [...rolesOf(profile), 'designer'], companyName, profession })
+    return { uid: existing.uid, addedToExisting: true }
+  }
+
+  const user = await auth.createUser({ email, displayName: name, password: randomBytes(24).toString('base64url') })
+  try {
+    await db.doc(`users/${user.uid}`).set({ role: 'designer', roles: ['designer'], name, companyName, profession, email, language })
+  } catch (e) {
+    await auth.deleteUser(user.uid).catch(() => {})
+    throw e
+  }
+  return { uid: user.uid, addedToExisting: false }
+})
+
+/**
  * Resumen de reservas del propio negocio: solo el número de veces que han pulsado Reservar.
  * No devuelve nombres ni fichas de clientes. El negocio no puede leer esos registros.
  */
@@ -383,6 +419,12 @@ export const deleteClient = onCall(async (request) => {
     // Fotos y justificantes de la obra (si el almacén aún no está creado, no hay nada que borrar)
     await (await projectBucket()).deleteFiles({ prefix: `projects/${pr.id}/` }).catch(() => {})
   }
+  // Las reformas de esta casa, con sus planos y diseños
+  const reforms = await db.collection('reforms').where('clientId', '==', clientId).get()
+  for (const r of reforms.docs) {
+    await db.recursiveDelete(r.ref)
+    await (await projectBucket()).deleteFiles({ prefix: `reforms/${r.id}/` }).catch(() => {})
+  }
   const refs = [
     ...users.docs.map((d) => d.ref),
     ...uses.docs.map((d) => d.ref),
@@ -441,7 +483,7 @@ export const sendInvitationEmail = onCall({ secrets: resendApiKey ? [resendApiKe
   const user = await getAuth().getUserByEmail(email).catch(() => null)
   if (!user) throw new HttpsError('not-found', 'No hay ninguna cuenta con ese correo.')
   const profile = await db.doc(`users/${user.uid}`).get()
-  const role = (['client', 'business', 'admin', 'builder'].includes(profile.get('role')) ? profile.get('role') : 'client') as MailRole
+  const role = (['client', 'business', 'admin', 'builder', 'designer'].includes(profile.get('role')) ? profile.get('role') : 'client') as MailRole
   const language = isMailLanguage(profile.get('language')) ? profile.get('language') : 'en'
   const name = (profile.get('name') as string | undefined) || user.displayName || ''
 
@@ -500,13 +542,23 @@ export const sendInvitationEmail = onCall({ secrets: resendApiKey ? [resendApiKe
 const MAX_FILE_BYTES = 10 * 1024 * 1024
 
 /** Papel de una persona en una obra, con las mismas normas que firestore.rules */
-async function projectRoleOf(uid: string, projectId: string): Promise<'cj' | 'builder' | 'client' | 'none'> {
+/** Quién puede subir planos a una reforma: CJ o un arquitecto o diseñador de esa reforma */
+async function reformUploaderRole(uid: string, reformId: string): Promise<'cj' | 'designer' | 'none'> {
+  const [me, reform] = await Promise.all([db.doc(`users/${uid}`).get(), db.doc(`reforms/${reformId}`).get()])
+  if (!me.exists || !reform.exists) return 'none'
+  if (me.get('role') === 'admin') return 'cj'
+  if (me.get('role') === 'designer' && ((reform.get('designerUids') as string[] | undefined) ?? []).includes(uid)) return 'designer'
+  return 'none'
+}
+
+async function projectRoleOf(uid: string, projectId: string): Promise<'cj' | 'builder' | 'client' | 'designer' | 'none'> {
   const [me, project] = await Promise.all([db.doc(`users/${uid}`).get(), db.doc(`projects/${projectId}`).get()])
   if (!me.exists || !project.exists) return 'none'
   const role = me.get('role')
   if (role === 'admin') return 'cj'
   if (role === 'builder' && project.get('builderUid') === uid) return 'builder'
   if (role === 'client' && project.get('clientId') === me.get('clientId')) return 'client'
+  if (role === 'designer' && ((project.get('designerUids') as string[] | undefined) ?? []).includes(uid)) return 'designer'
   return 'none'
 }
 
@@ -520,8 +572,11 @@ export const uploadProjectFile = onCall({ memory: '512MiB', timeoutSeconds: 120 
   const uid = request.auth?.uid
   if (!uid) throw new HttpsError('unauthenticated', 'Inicie sesión de nuevo.')
   const d = (request.data ?? {}) as Record<string, unknown>
-  const projectId = text(d.projectId, 'obra')
-  const kind = d.kind === 'updates' || d.kind === 'payments' || d.kind === 'budget' || d.kind === 'selections' || d.kind === 'snags' ? d.kind : null
+  // Planos y diseños van en la reforma (reforms/{id}); lo demás, en el contrato (projects/{id})
+  const isPlan = d.kind === 'plans'
+  const projectId = text(isPlan ? d.reformId : d.projectId, isPlan ? 'reforma' : 'obra')
+  const kind =
+    d.kind === 'updates' || d.kind === 'payments' || d.kind === 'budget' || d.kind === 'selections' || d.kind === 'snags' || d.kind === 'plans' ? d.kind : null
   const entryId = text(d.entryId, 'entrada')
   const index = Number(d.index)
   const contentType = text(d.contentType, 'tipo')
@@ -534,9 +589,10 @@ export const uploadProjectFile = onCall({ memory: '512MiB', timeoutSeconds: 120 
   const buffer = Buffer.from(typeof d.data === 'string' ? d.data : '', 'base64')
   if (!buffer.length || buffer.length > MAX_FILE_BYTES) throw new HttpsError('invalid-argument', 'El archivo pasa de 10 MB.')
 
-  const role = await projectRoleOf(uid, projectId)
-  // El cliente sube justificantes de pago y fotos de repasos; el resto lo suben el constructor o CJ
-  if (role === 'none' || (kind !== 'payments' && kind !== 'snags' && role === 'client')) {
+  const role = isPlan ? await reformUploaderRole(uid, projectId) : await projectRoleOf(uid, projectId)
+  // El cliente sube justificantes de pago y fotos de repasos; el resto lo suben el profesional o CJ.
+  // Los planos, CJ y los arquitectos o diseñadores de la reforma.
+  if (role === 'none' || (kind !== 'payments' && kind !== 'snags' && role === 'client') || (!isPlan && role === 'designer')) {
     throw new HttpsError('permission-denied', 'No puede añadir archivos aquí.')
   }
   // Fotos del presupuesto: solo mientras nadie lo haya firmado. Elecciones de productos: solo con el
@@ -553,7 +609,7 @@ export const uploadProjectFile = onCall({ memory: '512MiB', timeoutSeconds: 120 
       .replace(/[\u0300-\u036f]/g, '')
       .replace(/[^\w.-]+/g, '_')
       .slice(-80) || 'archivo'
-  const path = `projects/${projectId}/${kind}/${entryId}/${index}-${name}`
+  const path = `${isPlan ? 'reforms' : 'projects'}/${projectId}/${kind}/${entryId}/${index}-${name}`
   const file = (await projectBucket()).file(path)
   const token = randomUUID()
   try {

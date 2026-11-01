@@ -293,6 +293,27 @@ Vérifiez que chaque texte est naturel et correct en français. Notez vos correc
 | `project.status.planned` | Prevista | Planned | Prévu | |
 | `project.status.in_progress` | En obras | In progress | En cours | |
 | `project.status.finished` | Terminada | Finished | Terminé | |
+| `role.designer` | Panel de arquitectura y diseño | Architecture and design panel | Espace architecture et design | |
+| `project.role.designer` | Arquitecto / diseñador | Architect / designer | Architecte / designer | |
+| `designer.panel` | Panel de arquitectura y diseño | Architecture and design panel | Espace architecture et design | |
+| `designer.empty` | CJ aún no le ha añadido a ninguna reforma. | CJ has not added you to any renovation yet. | CJ ne vous a encore ajouté à aucune rénovation. | |
+| `project.tab.plans` | Planos | Plans | Plans | |
+| `plans.eyebrow` | Planos y diseños | Plans and designs | Plans et designs | |
+| `plans.intro` | Planos, diseños y renders de toda la reforma, compartidos con el cliente, los profesionales de la obra y CJ. Los suben CJ y el arquitecto o diseñador. | Plans, designs and renders for the whole renovation, shared with the client, the professionals on the works and CJ. CJ and the architect or designer upload them. | Plans, designs et rendus de toute la rénovation, partagés avec le client, les professionnels du chantier et CJ. CJ et l'architecte ou le designer les déposent. | |
+| `plans.notReady` | Los planos estarán disponibles en cuanto CJ termine de preparar la reforma. | The plans will be available as soon as CJ has finished setting up the renovation. | Les plans seront disponibles dès que CJ aura préparé la rénovation. | |
+| `plans.add` | Subir plano o diseño | Upload plan or design | Déposer un plan ou un design | |
+| `plans.title` | Título | Title | Titre | |
+| `plans.titleExample` | Por ejemplo: planta de la cocina, versión 2 | For example: kitchen floor plan, version 2 | Par exemple : plan de la cuisine, version 2 | |
+| `plans.kind` | Tipo | Type | Type | |
+| `plans.kind.plan` | Plano | Plan | Plan | |
+| `plans.kind.design` | Diseño | Design | Design | |
+| `plans.kind.render` | Render | Render | Rendu | |
+| `plans.kind.other` | Otro | Other | Autre | |
+| `plans.note` | Notas (opcional) | Notes (optional) | Notes (facultatif) | |
+| `plans.files` | Archivos (PDF o imágenes) | Files (PDF or images) | Fichiers (PDF ou images) | |
+| `plans.all` | Todo | All | Tout | |
+| `plans.empty` | Aún no hay planos ni diseños. | No plans or designs yet. | Aucun plan ni design pour l'instant. | |
+| `plans.by` | Subido por {name} · {date} | Uploaded by {name} · {date} | Déposé par {name} · {date} | |
 | `trade.construction` | Constructor | Builder | Entrepreneur | |
 | `trade.electrician` | Electricista | Electrician | Électricien | |
 | `trade.plumber` | Fontanero | Plumber | Plombier | |

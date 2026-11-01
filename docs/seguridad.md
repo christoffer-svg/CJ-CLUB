@@ -30,6 +30,12 @@ Todo está denegado salvo lo que se permite expresamente.
 - Cada obra (`projects/{id}`) es un contrato con un profesional (`builderUid`) y su oficio (`trade`: constructor, electricista, fontanero, carpintero, pintor, cristalero u otro). Los contratos de la misma casa con el mismo título forman una reforma y el cliente los ve juntos.
 - Cada profesional entra con el papel `builder` y solo ve los contratos donde es `builderUid`: el electricista no ve el contrato del constructor ni al revés. Solo CJ cambia el oficio de un contrato.
 
+### Arquitectos y diseñadores (Mi reforma)
+- Papel `designer` (arquitecto o diseñador), con alta por la función `createDesigner` (solo CJ; si el correo ya tiene cuenta, se le añade el acceso).
+- `reforms/{id}`: la reforma (contratos de la misma casa con el mismo título), con sus profesionales (`builderUids`) y arquitectos o diseñadores (`designerUids`). Solo la escribe CJ; la leen CJ, el cliente de la casa y sus participantes.
+- `reforms/{id}/plans`: planos, diseños y renders (PDF o imágenes). Los suben CJ y los arquitectos o diseñadores de esa reforma (también los archivos, por `uploadProjectFile`); los ven todos los de la reforma. No se editan; solo CJ los borra.
+- En cada contrato, `designerUids` les da acceso a la conversación (escriben como «Arquitecto / diseñador») y a los avances. No ven ni tocan el dinero: presupuesto, firmas, plan de pagos, pagos, extras, elecciones ni repasos (`inDeal` en las reglas).
+
 ### Presupuesto por líneas y firmas (Mi reforma)
 - `projects/{id}/budgetLines`: partidas (`kind: group`, p. ej. «Baño completo», con su precio cerrado sin IVA, que es el que cuenta) y lo que incluye cada una (`kind: item` con `parentId`: grifo, plato de ducha…, con precio de referencia y fotos; es orientativo y no se suma: si el cliente elige algo más caro, la diferencia va como extra). Solo las escriben el constructor de la obra y CJ, y solo mientras nadie haya firmado. El cliente las ve.
 - `projects/{id}/signatures/{client|builder}`: cada parte firma solo como sí misma (el cliente de la casa y el constructor asignado; CJ no firma por nadie). La firma guarda el nombre, el dibujo de la firma (PNG), la aceptación, la fecha y hora del servidor, una copia de las líneas firmadas y su huella SHA-256 con el tipo de IVA. Una firma no se edita.

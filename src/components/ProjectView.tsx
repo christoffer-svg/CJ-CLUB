@@ -2,6 +2,7 @@ import { useState, type FormEvent, type ReactNode } from 'react'
 import { AttachmentList, FilePicker } from './Attachments'
 import ProjectBudget from './ProjectBudget'
 import ProjectSelections from './ProjectSelections'
+import ProjectPlans from './ProjectPlans'
 import ProjectSnags from './ProjectSnags'
 import { TradeContext } from './projectRoles'
 import { RETENTION, planRows, planReady, usePlan } from '../lib/plan'
@@ -31,8 +32,10 @@ import type { ProjectRole } from '../lib/types'
 import { parseAmount } from '../lib/amount'
 import { messageTime, shortDate } from '../lib/when'
 
-type Tab = 'summary' | 'budget' | 'selections' | 'chat' | 'updates' | 'payments' | 'extras' | 'snags'
-const tabs: Tab[] = ['summary', 'budget', 'selections', 'chat', 'updates', 'payments', 'extras', 'snags']
+type Tab = 'summary' | 'plans' | 'budget' | 'selections' | 'chat' | 'updates' | 'payments' | 'extras' | 'snags'
+const allTabs: Tab[] = ['summary', 'plans', 'budget', 'selections', 'chat', 'updates', 'payments', 'extras', 'snags']
+// El arquitecto o diseñador no ve el dinero: solo planos, conversación y avances
+const designerTabs: Tab[] = ['plans', 'chat', 'updates']
 
 const today = () => new Date().toISOString().slice(0, 10)
 function Block({ children }: { children: ReactNode }) {
@@ -48,14 +51,17 @@ export default function ProjectView({ projectId, author, readOnly }: { projectId
   const project = useProject(projectId)
   const messages = useProjectMessages(projectId)
   const updates = useProjectUpdates(projectId)
-  const payments = useProjectPayments(projectId)
-  const extras = useProjectExtras(projectId)
-  const lines = useBudgetLines(projectId)
-  const sigs = useBudgetSignatures(projectId)
-  const selections = useSelections(projectId)
-  const plan = usePlan(projectId)
-  const snags = useSnags(projectId)
-  const [tab, setTab] = useState<Tab>('summary')
+  // Lo que tiene dinero solo lo cargan las partes del contrato (no el arquitecto o diseñador)
+  const deal = author.role === 'designer' ? null : projectId
+  const payments = useProjectPayments(deal)
+  const extras = useProjectExtras(deal)
+  const lines = useBudgetLines(deal)
+  const sigs = useBudgetSignatures(deal)
+  const selections = useSelections(deal)
+  const plan = usePlan(deal)
+  const snags = useSnags(deal)
+  const tabs = author.role === 'designer' ? designerTabs : allTabs
+  const [tab, setTab] = useState<Tab>(tabs[0])
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState(false)
   const role: ProjectRole = author.role
@@ -337,6 +343,8 @@ export default function ProjectView({ projectId, author, readOnly }: { projectId
           ))}
         </>
       )}
+
+      {tab === 'plans' && <ProjectPlans reformId={p.reformId} author={author} canWrite={canWrite} />}
 
       {tab === 'budget' && (
         <ProjectBudget projectId={projectId} vatRate={p.vatRate ?? 21} author={author} canWrite={canWrite} lines={lines.data} sigs={sigs} plan={plan.milestones} />

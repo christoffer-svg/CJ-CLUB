@@ -66,3 +66,16 @@ export async function uploadAttachments(projectId: string, kind: FileKind, entry
   }
   return out
 }
+
+/** Sube los planos o diseños de una reforma (reforms/{id}/plans/{entrada}) */
+export async function uploadReformFiles(reformId: string, entryId: string, files: File[]): Promise<Attachment[]> {
+  const call = httpsCallable<Omit<UploadRequest, 'projectId' | 'kind'> & { reformId: string; kind: 'plans' }, Attachment>(functions, 'uploadProjectFile', { timeout: 120_000 })
+  const out: Attachment[] = []
+  for (const [i, file] of files.entries()) {
+    const { blob, name, type } = await prepare(file)
+    if (blob.size > MAX_BYTES) throw new Error('too-big')
+    const res = await call({ reformId, kind: 'plans', entryId, index: i + 1, name, contentType: type, data: await toBase64(blob) })
+    out.push(res.data)
+  }
+  return out
+}

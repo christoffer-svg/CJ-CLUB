@@ -12,6 +12,8 @@ import Benefits from './pages/Benefits'
 import Projects from './pages/Projects'
 import BuilderLayout from './pages/builder/BuilderLayout'
 import BuilderProjects from './pages/builder/BuilderProjects'
+import DesignerLayout from './pages/designer/DesignerLayout'
+import DesignerProjects from './pages/designer/DesignerProjects'
 import Builders from './pages/admin/Builders'
 import { AdminProject, AdminProjects } from './pages/admin/AdminProjects'
 import Messages from './pages/Messages'
@@ -40,7 +42,7 @@ import AdminRequests from './pages/admin/AdminRequests'
 export default function App() {
   const { pathname } = useLocation()
   // El panel usa más ancho en ordenador; la vista previa del cliente mantiene el ancho de móvil
-  const wide = (pathname.startsWith('/admin') && !pathname.includes('/vista')) || pathname.startsWith('/negocio') || pathname.startsWith('/obra')
+  const wide = (pathname.startsWith('/admin') && !pathname.includes('/vista')) || pathname.startsWith('/negocio') || pathname.startsWith('/obra') || pathname.startsWith('/estudio')
 
   return (
     <div className={wide ? 'app-frame app-frame--wide' : 'app-frame'}>
@@ -104,6 +106,12 @@ export default function App() {
           <Route path="obra" element={<BuilderLayout />}>
             <Route index element={<BuilderProjects />} />
             <Route path=":id" element={<BuilderProjects />} />
+          </Route>
+        </Route>
+        <Route element={<RequireRole role="designer" />}>
+          <Route path="estudio" element={<DesignerLayout />}>
+            <Route index element={<DesignerProjects />} />
+            <Route path=":id" element={<DesignerProjects />} />
           </Route>
         </Route>
         <Route element={<RequireRole role="business" />}>

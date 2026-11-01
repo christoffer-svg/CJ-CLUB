@@ -20,13 +20,28 @@ export type WithId<T> = T & { id: string }
 export type Author = { uid: string; name: string; role: ProjectRole }
 
 /** Obras visibles para quien mira: las de su casa (cliente), las suyas (constructor) o todas (CJ) */
-export function useProjects(filter: { clientId?: string | null; builderUid?: string | null; all?: boolean }) {
-  const key = filter.all ? 'all' : filter.builderUid ? `b:${filter.builderUid}` : filter.clientId ? `c:${filter.clientId}` : ''
+export function useProjects(filter: { clientId?: string | null; builderUid?: string | null; designerUid?: string | null; all?: boolean }) {
+  const key = filter.all
+    ? 'all'
+    : filter.builderUid
+      ? `b:${filter.builderUid}`
+      : filter.designerUid
+        ? `d:${filter.designerUid}`
+        : filter.clientId
+          ? `c:${filter.clientId}`
+          : ''
   const [state, setState] = useState<{ key: string; loading: boolean; data: WithId<Project>[] }>({ key: '', loading: true, data: [] })
   useEffect(() => {
     if (!key) return
     const col = collection(db, 'projects')
-    const q = key === 'all' ? col : key.startsWith('b:') ? query(col, where('builderUid', '==', key.slice(2))) : query(col, where('clientId', '==', key.slice(2)))
+    const q =
+      key === 'all'
+        ? col
+        : key.startsWith('b:')
+          ? query(col, where('builderUid', '==', key.slice(2)))
+          : key.startsWith('d:')
+            ? query(col, where('designerUids', 'array-contains', key.slice(2)))
+            : query(col, where('clientId', '==', key.slice(2)))
     return onSnapshot(
       q,
       (snap) =>

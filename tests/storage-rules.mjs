@@ -56,6 +56,16 @@ ok(code(await up(J, { projectId: 'p-firmas', kind: 'selections', entryId: e + 's
 ok(code(await up(B, { kind: 'selections', entryId: e + 's3' })), 'FAILED_PRECONDITION', 'sin presupuesto firmado no hay fotos de elecciones')
 ok(code(await up(J, { kind: 'snags', entryId: e + 'r1' })), 'ok', 'el cliente sube la foto de un repaso')
 ok(code(await up(B, { kind: 'snags', entryId: e + 'r1', index: 2 })), 'ok', 'el constructor sube la foto del arreglo')
+const DS = await signIn('disenador@prueba.test', 'Diseno1234')
+const upPlan = async (t, d) => {
+  const r = await fetch(FN, { method: 'POST', headers: { ...H, ...(t ? { authorization: 'Bearer ' + t } : {}) }, body: JSON.stringify({ data: { reformId: 'r-firmas', kind: 'plans', index: 1, name: 'planta.pdf', contentType: 'application/pdf', data: b64(2048), ...d } }) })
+  const j = await r.json(); return j.error ? j.error.status : 'ok'
+}
+ok(await upPlan(DS, { entryId: e + 'p1' }), 'ok', 'la arquitecta sube un plano (requiere haber pasado firestore-rules.mjs)')
+ok(await upPlan(AD, { entryId: e + 'p2' }), 'ok', 'CJ sube un plano')
+ok(await upPlan(J, { entryId: e + 'p3' }), 'PERMISSION_DENIED', 'el cliente no sube planos')
+ok(await upPlan(B, { entryId: e + 'p4' }), 'PERMISSION_DENIED', 'el constructor no sube planos')
+ok(code(await up(DS, { kind: 'payments', entryId: e + 'p5' })), 'PERMISSION_DENIED', 'la arquitecta no sube justificantes de pago')
 ok(typeof foto.url === 'string' && foto.url.includes('token='), true, 'la foto tiene enlace privado')
 ok(foto.path?.startsWith(`projects/p-jansen-cocina/updates/${e}u1/1-`), true, 'la foto queda en la carpeta de su avance')
 ok(await fetch(foto.url).then(r => r.status), 200, 'el enlace privado abre la foto')

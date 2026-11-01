@@ -444,11 +444,21 @@ async function main() {
       title: 'Reforma de la cocina',
       builderUid: builder.uid,
       builderName: 'Reformas Costa Azul',
+      reformId: 'r-jansen-cocina',
+      designerUids: [],
       status: 'in_progress',
       budget: 18500,
       startDate: '2026-10-05',
       endDate: '2026-12-15',
       createdAt: day('2026-10-01T10:00:00'),
+    })
+    // La reforma de la cocina (comparte planos entre los contratos de la misma casa y título)
+    batch.set(db.doc('reforms/r-jansen-cocina'), {
+      clientId: 'jansen',
+      title: 'Reforma de la cocina',
+      builderUids: [builder.uid],
+      designerUids: [],
+      updatedAt: day('2026-10-01T10:00:00'),
     })
     // Presupuesto (sin IVA), aún sin firmar: la partida "Cocina completa" a precio cerrado (18.500 €) con lo que incluye, a título orientativo
     batch.set(pr.collection('budgetLines').doc('g1'), {

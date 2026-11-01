@@ -1,5 +1,5 @@
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useAuth } from '../../auth/AuthProvider'
 import { PageTitle } from '../../components/admin/AdminLayout'
@@ -14,11 +14,12 @@ import { TRADES, type Trade } from '../../lib/types'
 import type { Client, Project, UserProfile } from '../../lib/types'
 import { hasRole } from '../../lib/roles'
 import { parseAmount } from '../../lib/amount'
-import { tradeLabel } from '../../lib/trades'
+import { professionLabel, tradeLabel } from '../../lib/trades'
+import { syncReform } from '../../lib/reforms'
 
 const statusLabel: Record<Project['status'], string> = { planned: 'Prevista', in_progress: 'En obras', finished: 'Terminada' }
 
-type Draft = { clientId: string; builderUid: string; trade: Trade; title: string; budget: string; vatRate: 10 | 21; status: Project['status']; startDate: string; endDate: string }
+type Draft = { clientId: string; builderUid: string; trade: Trade; designerUids: string[]; title: string; budget: string; vatRate: 10 | 21; status: Project['status']; startDate: string; endDate: string }
 
 /** Formulario de obra (nueva o editar) */
 function ProjectForm({ initial, onClose, onSaved }: { initial: Draft; onClose: () => void; onSaved: (id: string) => void }) {
@@ -31,6 +32,10 @@ function ProjectForm({ initial, onClose, onSaved }: { initial: Draft; onClose: (
   const builders = users.data.filter((u) => hasRole(u, 'builder'))
   const allProjects = useLiveCollection<Project>('projects')
   const reformTitles = [...new Set(allProjects.data.filter((x) => x.clientId === d.clientId).map((x) => x.title))]
+  const designers = users.data.filter((u) => hasRole(u, 'designer'))
+  // Al elegir una reforma que ya existe, se proponen sus arquitectos o diseñadores
+  const siblingDesigners = (clientId: string, title: string) =>
+    allProjects.data.find((x) => x.id !== id && x.clientId === clientId && x.title === title.trim())?.designerUids
   // Cifra global solo para contratos sin presupuesto detallado (vacío = 0)
   const budget = d.budget.trim() ? parseAmount(d.budget) : 0
   const valid = d.clientId && d.builderUid && d.title.trim() && Number.isFinite(budget) && budget >= 0
@@ -56,12 +61,16 @@ function ProjectForm({ initial, onClose, onSaved }: { initial: Draft; onClose: (
       ...(d.endDate ? { endDate: d.endDate } : {}),
     }
     try {
+      // La reforma (contratos de la misma casa con el mismo título) comparte planos y arquitectos o diseñadores
+      const current = id ? allProjects.data.find((x) => x.id === id) : undefined
       if (id) {
         await patchDoc(`projects/${id}`, data)
+        await syncReform(id, { ...data, reformId: current?.title === data.title && current?.clientId === data.clientId ? current?.reformId : undefined }, allProjects.data, d.designerUids)
         toast(`Guardado para ${house.familyName}`)
         onSaved(id)
       } else {
         const ref = await addDoc(collection(db, 'projects'), { ...data, createdAt: serverTimestamp() })
+        await syncReform(ref.id, data, allProjects.data, d.designerUids)
         toast(`Contrato creado para ${house.familyName}`)
         onSaved(ref.id)
       }
@@ -86,7 +95,13 @@ function ProjectForm({ initial, onClose, onSaved }: { initial: Draft; onClose: (
         </Select>
       </Field>
       <Field label="Reforma" hint="Para añadir otro oficio a una reforma que ya existe, use el mismo nombre: sus contratos se verán juntos.">
-        <Input required list="reform-titles" placeholder="Reforma de la cocina" value={d.title} onChange={(e) => setD({ ...d, title: e.target.value })} />
+        <Input
+          required
+          list="reform-titles"
+          placeholder="Reforma de la cocina"
+          value={d.title}
+          onChange={(e) => setD({ ...d, title: e.target.value, designerUids: siblingDesigners(d.clientId, e.target.value) ?? d.designerUids })}
+        />
         <datalist id="reform-titles">
           {reformTitles.map((x) => (
             <option key={x} value={x} />
@@ -110,6 +125,22 @@ function ProjectForm({ initial, onClose, onSaved }: { initial: Draft; onClose: (
           ))}
         </Select>
       </Field>
+      {designers.length > 0 && (
+        <Field label="Arquitectos y diseñadores de la reforma" hint="Ven los planos, la conversación y los avances de todos los contratos de esta reforma; no ven el dinero.">
+          <div className="a-checks">
+            {designers.map((u) => (
+              <label key={u.id} className="a-check">
+                <input
+                  type="checkbox"
+                  checked={d.designerUids.includes(u.id)}
+                  onChange={(e) => setD({ ...d, designerUids: e.target.checked ? [...d.designerUids, u.id] : d.designerUids.filter((x) => x !== u.id) })}
+                />
+                {u.companyName || u.name} · {professionLabel[u.profession ?? 'architect']}
+              </label>
+            ))}
+          </div>
+        </Field>
+      )}
       <Field label="Oficio en este contrato">
         <Select value={d.trade} onChange={(e) => setD({ ...d, trade: e.target.value as Trade })}>
           {TRADES.map((tr) => (
@@ -152,7 +183,7 @@ function ProjectForm({ initial, onClose, onSaved }: { initial: Draft; onClose: (
   )
 }
 
-const emptyDraft: Draft = { clientId: '', builderUid: '', trade: 'construction', title: '', budget: '', vatRate: 21, status: 'planned', startDate: '', endDate: '' }
+const emptyDraft: Draft = { clientId: '', builderUid: '', trade: 'construction', designerUids: [], title: '', budget: '', vatRate: 21, status: 'planned', startDate: '', endDate: '' }
 
 /** Panel: lista de obras */
 export function AdminProjects() {
@@ -202,7 +233,14 @@ export function AdminProject() {
   const { user, profile } = useAuth()
   const project = useProject(id)
   const [editing, setEditing] = useState(false)
+  const all = useLiveCollection<Project>('projects')
   const p = project.data
+  // Contratos de antes de los planos: se les asigna su reforma al abrirlos
+  const needsReform = Boolean(p && !p.reformId && !all.loading)
+  useEffect(() => {
+    if (needsReform && p) syncReform(id, p, all.data, p.designerUids ?? []).catch(() => undefined)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [needsReform, id])
   if (project.loading) return null
   if (!p) return <p className="a-empty">Esta obra no existe.</p>
   return (
@@ -212,7 +250,7 @@ export function AdminProject() {
           Ficha del cliente
         </Link>
         <button className="btn a-btn" onClick={() => setEditing(true)}>
-          Editar obra
+          Editar contrato
         </button>
       </PageTitle>
       <div className="a-project">
@@ -224,6 +262,7 @@ export function AdminProject() {
             clientId: p.clientId,
             builderUid: p.builderUid,
             trade: p.trade ?? 'construction',
+            designerUids: p.designerUids ?? [],
             title: p.title,
             budget: p.budget ? String(p.budget).replace('.', ',') : '',
             vatRate: p.vatRate ?? 21,

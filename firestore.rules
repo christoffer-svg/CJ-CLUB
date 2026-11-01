@@ -40,6 +40,11 @@ service cloud.firestore {
       return isMember() && me().role == 'builder';
     }
 
+    // Arquitecto o diseñador invitado por CJ a una o varias reformas
+    function isDesigner() {
+      return isMember() && me().role == 'designer';
+    }
+
     function isBusiness() {
       return isMember()
         && me().role == 'business'
@@ -78,11 +83,11 @@ service cloud.firestore {
     }
 
     function validRoles() {
-      return request.resource.data.role in ['admin', 'client', 'business', 'builder']
+      return request.resource.data.role in ['admin', 'client', 'business', 'builder', 'designer']
         && rolesIn(request.resource.data) is list
         && rolesIn(request.resource.data).size() >= 1
         && rolesIn(request.resource.data).size() <= 4
-        && rolesIn(request.resource.data).hasOnly(['admin', 'client', 'business', 'builder'])
+        && rolesIn(request.resource.data).hasOnly(['admin', 'client', 'business', 'builder', 'designer'])
         && request.resource.data.role in rolesIn(request.resource.data);
     }
 
@@ -110,6 +115,11 @@ service cloud.firestore {
         && request.resource.data.language in ['es', 'en', 'nl', 'sv', 'de', 'fr']
         && (!('favorites' in request.resource.data)
             || (request.resource.data.favorites is list && request.resource.data.favorites.size() <= 200));
+
+      // Un arquitecto o diseñador solo puede cambiar su idioma
+      allow update: if isDesigner() && request.auth.uid == uid
+        && changedKeys().hasOnly(['language'])
+        && request.resource.data.language in ['es', 'en', 'nl', 'sv', 'de', 'fr'];
 
       // Un constructor solo puede cambiar su idioma
       allow update: if isBuilder() && request.auth.uid == uid
@@ -551,11 +561,18 @@ service cloud.firestore {
       return isAdmin() ? 'cj'
         : (isBuilder() && project(pid).builderUid == request.auth.uid) ? 'builder'
         : (isClient() && project(pid).clientId == me().clientId) ? 'client'
+        : (isDesigner() && request.auth.uid in project(pid).get('designerUids', [])) ? 'designer'
         : 'none';
     }
 
     function inProject(pid) {
       return signedIn() && projectRole(pid) != 'none';
+    }
+
+    // Partes del contrato (cliente, profesional y CJ): ven el dinero (presupuesto, pagos, extras…).
+    // El arquitecto o diseñador ve la conversación, los avances y los planos, pero no el dinero.
+    function inDeal(pid) {
+      return signedIn() && projectRole(pid) in ['cj', 'builder', 'client'];
     }
 
     function signedBy(role) {
@@ -633,11 +650,13 @@ service cloud.firestore {
     match /projects/{pid} {
       allow get: if isAdmin()
         || (isBuilder() && resource.data.builderUid == request.auth.uid)
-        || (isClient() && resource.data.clientId == me().clientId);
-      // Listas: el constructor filtra por builderUid y el cliente por clientId
+        || (isClient() && resource.data.clientId == me().clientId)
+        || (isDesigner() && request.auth.uid in resource.data.get('designerUids', []));
+      // Listas: el profesional filtra por builderUid, el cliente por clientId y el arquitecto por designerUids
       allow list: if isAdmin()
         || (isBuilder() && resource.data.builderUid == request.auth.uid)
-        || (isClient() && resource.data.clientId == me().clientId);
+        || (isClient() && resource.data.clientId == me().clientId)
+        || (isDesigner() && request.auth.uid in resource.data.get('designerUids', []));
       allow create, update: if isAdmin()
         && request.resource.data.clientId is string
         && request.resource.data.builderUid is string
@@ -645,6 +664,8 @@ service cloud.firestore {
         && (request.resource.data.budget is int || request.resource.data.budget is float)
         && request.resource.data.budget >= 0
         && request.resource.data.get('vatRate', 21) in [10, 21]
+        && (!('designerUids' in request.resource.data) || (request.resource.data.designerUids is list && request.resource.data.designerUids.size() <= 10))
+        && (!('reformId' in request.resource.data) || (request.resource.data.reformId is string && request.resource.data.reformId.matches('[A-Za-z0-9_-]{1,40}')))
         && request.resource.data.get('trade', 'construction') in ['construction', 'electrician', 'plumber', 'carpenter', 'painter', 'glazier', 'other']
         // Con el presupuesto ya firmado (aunque sea por uno), el IVA no cambia
         && (resource == null || budgetOpen(pid) || request.resource.data.get('vatRate', 21) == resource.data.get('vatRate', 21));
@@ -681,8 +702,8 @@ service cloud.firestore {
       // Pagos: cualquiera de los tres los anota como "pending"; la OTRA parte (cliente o constructor) los
       // confirma o los discute una sola vez. CJ también puede confirmar.
       match /payments/{id} {
-        allow read: if inProject(pid);
-        allow create: if inProject(pid)
+        allow read: if inDeal(pid);
+        allow create: if inDeal(pid)
           && request.resource.data.keys().hasOnly(['amount', 'date', 'concept', 'milestoneId', 'attachments', 'recordedByUid', 'recordedByRole', 'recordedByName', 'status', 'createdAt'])
           && (!('milestoneId' in request.resource.data)
               || (request.resource.data.milestoneId is string
@@ -699,7 +720,7 @@ service cloud.firestore {
           && request.resource.data.recordedByName is string
           && request.resource.data.status == 'pending'
           && request.resource.data.createdAt == request.time;
-        allow update: if inProject(pid)
+        allow update: if inDeal(pid)
           && resource.data.status == 'pending'
           && (projectRole(pid) == 'cj' || (projectRole(pid) != resource.data.recordedByRole))
           && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'confirmedByUid', 'confirmedByRole', 'confirmedByName', 'confirmedAt'])
@@ -714,7 +735,7 @@ service cloud.firestore {
       // Presupuesto: partidas ("Baño completo") y lo que incluye cada una (grifo, mampara, plato de ducha…)
       // con su precio sin IVA y fotos. Lo escriben el constructor o CJ mientras nadie haya firmado
       match /budgetLines/{id} {
-        allow read: if inProject(pid);
+        allow read: if inDeal(pid);
         allow create, update: if projectRole(pid) in ['builder', 'cj']
           && budgetOpen(pid)
           && request.resource.data.keys().hasOnly(['kind', 'parentId', 'title', 'description', 'quantity', 'unit', 'unitPrice', 'order', 'attachments', 'authorUid', 'authorRole', 'authorName', 'createdAt', 'updatedAt'])
@@ -744,7 +765,7 @@ service cloud.firestore {
       // Guardan copia de las líneas firmadas y su huella. No se editan; quien firmó (o CJ) puede
       // retirar su firma solo mientras falte la otra.
       match /signatures/{r} {
-        allow read: if inProject(pid);
+        allow read: if inDeal(pid);
         allow create: if r in ['client', 'builder']
           && projectRole(pid) == r
           && request.resource.data.keys().hasOnly(['role', 'uid', 'name', 'accepted', 'image', 'hash', 'lines', 'plan', 'base', 'vatRate', 'signedAt'])
@@ -770,7 +791,7 @@ service cloud.firestore {
 
       // Plan de pagos: lo escriben el constructor o CJ junto con el presupuesto, y se firma con él
       match /plan/main {
-        allow read: if inProject(pid);
+        allow read: if inDeal(pid);
         allow create, update: if projectRole(pid) in ['builder', 'cj']
           && budgetOpen(pid)
           && request.resource.data.keys().hasOnly(['milestones', 'authorUid', 'authorRole', 'authorName', 'updatedAt'])
@@ -784,7 +805,7 @@ service cloud.firestore {
 
       // Liberación del 10 % final: solo el cliente, con el presupuesto firmado, cuando da por buenos los repasos
       match /plan/release {
-        allow read: if inProject(pid);
+        allow read: if inDeal(pid);
         allow create: if projectRole(pid) == 'client'
           && exists(signaturePath(pid, 'client')) && exists(signaturePath(pid, 'builder'))
           && request.resource.data.keys().hasOnly(['uid', 'name', 'releasedAt'])
@@ -798,7 +819,7 @@ service cloud.firestore {
       // Lista de repasos: el cliente o CJ apuntan lo que hay que mejorar (con fotos); el constructor lo marca
       // como arreglado (con fotos); el cliente o CJ lo dan por bueno o lo reabren
       match /snags/{id} {
-        allow read: if inProject(pid);
+        allow read: if inDeal(pid);
         allow create: if projectRole(pid) in ['client', 'cj']
           && request.resource.data.keys().hasOnly(['title', 'text', 'attachments', 'status', 'authorUid', 'authorRole', 'authorName', 'createdAt'])
           && validText(request.resource.data.title, 200)
@@ -832,7 +853,7 @@ service cloud.firestore {
       // las anotan CJ o el constructor con foto, precio, tienda y referencia. El cliente y el constructor confirman una vez que están conformes. No se editan;
       // solo CJ puede borrar una anotada por error.
       match /selections/{id} {
-        allow read: if inProject(pid);
+        allow read: if inDeal(pid);
         allow create: if projectRole(pid) in ['builder', 'cj']
           && exists(signaturePath(pid, 'client')) && exists(signaturePath(pid, 'builder'))
           && request.resource.data.keys().hasOnly(['title', 'store', 'price', 'reference', 'note', 'lineId', 'attachments', 'authorUid', 'authorRole', 'authorName', 'createdAt', 'builderOkUid', 'builderOkName', 'builderOkAt'])
@@ -868,7 +889,7 @@ service cloud.firestore {
       // Extras: los propone el constructor o CJ con precio; solo el cliente los aprueba o rechaza.
       // Quien lo propuso puede retirarlo mientras no se haya decidido.
       match /extras/{id} {
-        allow read: if inProject(pid);
+        allow read: if inDeal(pid);
         allow create: if projectRole(pid) in ['builder', 'cj']
           && request.resource.data.keys().hasOnly(['title', 'description', 'amount', 'selectionId', 'proposedByUid', 'proposedByRole', 'proposedByName', 'status', 'createdAt'])
           // Extra por la diferencia de un producto elegido: apunta a esa elección
@@ -898,6 +919,61 @@ service cloud.firestore {
           );
         allow delete: if isAdmin();
       }
+    }
+
+    // ---------- reforms/{rid}: una reforma (varios contratos de la misma casa) con sus planos ----------
+    // La mantiene CJ: quién participa (profesionales y arquitectos o diseñadores) para compartir los planos.
+    function reform(rid) {
+      return get(/databases/$(database)/documents/reforms/$(rid)).data;
+    }
+
+    function inReform(rid) {
+      return isAdmin()
+        || (isClient() && reform(rid).clientId == me().clientId)
+        || (isBuilder() && request.auth.uid in reform(rid).builderUids)
+        || (isDesigner() && request.auth.uid in reform(rid).designerUids);
+    }
+
+    match /reforms/{rid} {
+      allow read: if inReform(rid);
+      allow create, update: if isAdmin()
+        && request.resource.data.keys().hasOnly(['clientId', 'title', 'builderUids', 'designerUids', 'updatedAt'])
+        && request.resource.data.clientId is string
+        && validText(request.resource.data.title, 200)
+        && request.resource.data.builderUids is list && request.resource.data.builderUids.size() <= 20
+        && request.resource.data.designerUids is list && request.resource.data.designerUids.size() <= 10;
+      allow delete: if isAdmin();
+
+      // Planos y diseños: los suben CJ y los arquitectos o diseñadores de la reforma; no se editan
+      match /plans/{id} {
+        allow read: if inReform(rid);
+        allow create: if (isAdmin() || (isDesigner() && request.auth.uid in reform(rid).designerUids))
+          && request.resource.data.keys().hasOnly(['title', 'kind', 'note', 'attachments', 'authorUid', 'authorRole', 'authorName', 'createdAt'])
+          && validText(request.resource.data.title, 200)
+          && request.resource.data.kind in ['plan', 'design', 'render', 'other']
+          && (request.resource.data.note == '' || validText(request.resource.data.note, 2000))
+          && request.resource.data.attachments is list
+          && request.resource.data.attachments.size() >= 1 && request.resource.data.attachments.size() <= 6
+          && reformFileOk(request.resource.data.attachments[0], rid, id)
+          && (request.resource.data.attachments.size() < 2 || reformFileOk(request.resource.data.attachments[1], rid, id))
+          && (request.resource.data.attachments.size() < 3 || reformFileOk(request.resource.data.attachments[2], rid, id))
+          && (request.resource.data.attachments.size() < 4 || reformFileOk(request.resource.data.attachments[3], rid, id))
+          && (request.resource.data.attachments.size() < 5 || reformFileOk(request.resource.data.attachments[4], rid, id))
+          && (request.resource.data.attachments.size() < 6 || reformFileOk(request.resource.data.attachments[5], rid, id))
+          && request.resource.data.authorUid == request.auth.uid
+          && request.resource.data.authorRole == (isAdmin() ? 'cj' : 'designer')
+          && request.resource.data.authorName is string
+          && request.resource.data.createdAt == request.time;
+        allow update: if false;
+        allow delete: if isAdmin();
+      }
+    }
+
+    function reformFileOk(a, rid, id) {
+      return a is map
+        && a.path is string && a.path.matches('reforms/' + rid + '/plans/' + id + '/.+')
+        && a.url is string
+        && (a.url.matches('https://firebasestorage[.]googleapis[.]com/.+') || a.url.matches('http://127[.]0[.]0[.]1:9199/.+'));
     }
 
     // ---------- Todo lo demás: denegado ----------

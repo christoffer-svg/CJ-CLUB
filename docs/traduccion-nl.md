@@ -293,6 +293,27 @@ Controleer of elke tekst natuurlijk en correct Nederlands is. Noteer correcties 
 | `project.status.planned` | Prevista | Planned | Gepland | |
 | `project.status.in_progress` | En obras | In progress | In uitvoering | |
 | `project.status.finished` | Terminada | Finished | Afgerond | |
+| `role.designer` | Panel de arquitectura y diseño | Architecture and design panel | Paneel architectuur en ontwerp | |
+| `project.role.designer` | Arquitecto / diseñador | Architect / designer | Architect / ontwerper | |
+| `designer.panel` | Panel de arquitectura y diseño | Architecture and design panel | Paneel architectuur en ontwerp | |
+| `designer.empty` | CJ aún no le ha añadido a ninguna reforma. | CJ has not added you to any renovation yet. | CJ heeft u nog aan geen enkele verbouwing toegevoegd. | |
+| `project.tab.plans` | Planos | Plans | Plannen | |
+| `plans.eyebrow` | Planos y diseños | Plans and designs | Plannen en ontwerpen | |
+| `plans.intro` | Planos, diseños y renders de toda la reforma, compartidos con el cliente, los profesionales de la obra y CJ. Los suben CJ y el arquitecto o diseñador. | Plans, designs and renders for the whole renovation, shared with the client, the professionals on the works and CJ. CJ and the architect or designer upload them. | Plannen, ontwerpen en renders van de hele verbouwing, gedeeld met de klant, de vakmensen en CJ. CJ en de architect of ontwerper uploaden ze. | |
+| `plans.notReady` | Los planos estarán disponibles en cuanto CJ termine de preparar la reforma. | The plans will be available as soon as CJ has finished setting up the renovation. | De plannen zijn beschikbaar zodra CJ de verbouwing heeft voorbereid. | |
+| `plans.add` | Subir plano o diseño | Upload plan or design | Plan of ontwerp uploaden | |
+| `plans.title` | Título | Title | Titel | |
+| `plans.titleExample` | Por ejemplo: planta de la cocina, versión 2 | For example: kitchen floor plan, version 2 | Bijvoorbeeld: plattegrond keuken, versie 2 | |
+| `plans.kind` | Tipo | Type | Soort | |
+| `plans.kind.plan` | Plano | Plan | Plan | |
+| `plans.kind.design` | Diseño | Design | Ontwerp | |
+| `plans.kind.render` | Render | Render | Render | |
+| `plans.kind.other` | Otro | Other | Overig | |
+| `plans.note` | Notas (opcional) | Notes (optional) | Opmerkingen (optioneel) | |
+| `plans.files` | Archivos (PDF o imágenes) | Files (PDF or images) | Bestanden (pdf of afbeeldingen) | |
+| `plans.all` | Todo | All | Alles | |
+| `plans.empty` | Aún no hay planos ni diseños. | No plans or designs yet. | Nog geen plannen of ontwerpen. | |
+| `plans.by` | Subido por {name} · {date} | Uploaded by {name} · {date} | Geüpload door {name} · {date} | |
 | `trade.construction` | Constructor | Builder | Aannemer | |
 | `trade.electrician` | Electricista | Electrician | Elektricien | |
 | `trade.plumber` | Fontanero | Plumber | Loodgieter | |

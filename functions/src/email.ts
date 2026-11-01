@@ -4,7 +4,7 @@
  */
 
 export type MailLanguage = 'es' | 'en' | 'nl' | 'sv' | 'de' | 'fr'
-export type MailRole = 'client' | 'business' | 'admin' | 'builder'
+export type MailRole = 'client' | 'business' | 'admin' | 'builder' | 'designer'
 
 type Texts = {
   subject: string
@@ -15,6 +15,7 @@ type Texts = {
   introBusiness: string
   introAdmin: string
   introBuilder: string
+  introDesigner: string
   button: string
   linkHint: string
   expiry: string
@@ -35,6 +36,7 @@ const texts: Record<MailLanguage, Texts> = {
     introClient: 'Le damos la bienvenida a CJ Club, la app privada de CJ Real Estate & Services para nuestros clientes en la Costa Blanca: sus contactos de confianza, nuestras recomendaciones y ventajas exclusivas.',
     introBusiness: 'Le damos acceso a CJ Club para negocios colaboradores. Desde ahí podrá publicar las ventajas que ofrece a los clientes de CJ.',
     introAdmin: 'Le damos acceso al panel del equipo de CJ Club.',
+    introDesigner: 'Le damos acceso a CJ Club para arquitectos y diseñadores. Desde ahí compartirá planos y diseños con el cliente, los profesionales de la obra y CJ, y seguirá la conversación y los avances.',
     introBuilder: 'Le damos acceso a CJ Club para los profesionales de la obra. Desde ahí compartirá con el cliente y con CJ el presupuesto, los avances, los pagos y los trabajos extra.',
     button: 'Elegir mi contraseña',
     linkHint: 'Si el botón no funciona, copie este enlace en el navegador:',
@@ -53,6 +55,7 @@ const texts: Record<MailLanguage, Texts> = {
     introClient: 'Welcome to CJ Club, the private app of CJ Real Estate & Services for our clients on the Costa Blanca: your trusted contacts, our recommendations and exclusive benefits.',
     introBusiness: 'We are giving you access to CJ Club for partner businesses, where you can publish the benefits you offer to CJ clients.',
     introAdmin: 'We are giving you access to the CJ Club team panel.',
+    introDesigner: 'We are giving you access to CJ Club for architects and designers. There you will share plans and designs with the client, the professionals on the works and CJ, and follow the conversation and progress.',
     introBuilder: 'We are giving you access to CJ Club for the professionals on the works. There you will share the budget, progress, payments and extra work with the client and with CJ.',
     button: 'Choose my password',
     linkHint: 'If the button does not work, copy this link into your browser:',
@@ -71,6 +74,7 @@ const texts: Record<MailLanguage, Texts> = {
     introClient: 'Welkom bij CJ Club, de privé-app van CJ Real Estate & Services voor onze klanten aan de Costa Blanca: uw vertrouwde contacten, onze aanbevelingen en exclusieve voordelen.',
     introBusiness: 'U krijgt toegang tot CJ Club voor partnerbedrijven. Daar kunt u de voordelen publiceren die u aan klanten van CJ biedt.',
     introAdmin: 'U krijgt toegang tot het teampaneel van CJ Club.',
+    introDesigner: 'U krijgt toegang tot CJ Club voor architecten en ontwerpers. Daar deelt u plannen en ontwerpen met de klant, de vakmensen en CJ, en volgt u het gesprek en de voortgang.',
     introBuilder: 'U krijgt toegang tot CJ Club voor de vakmensen van de verbouwing. Daar deelt u de begroting, de voortgang, betalingen en meerwerk met de klant en met CJ.',
     button: 'Mijn wachtwoord kiezen',
     linkHint: 'Werkt de knop niet? Kopieer dan deze link in uw browser:',
@@ -89,6 +93,7 @@ const texts: Record<MailLanguage, Texts> = {
     introClient: 'Välkommen till CJ Club, CJ Real Estate & Services privata app för våra kunder på Costa Blanca: dina pålitliga kontakter, våra rekommendationer och exklusiva förmåner.',
     introBusiness: 'Du får tillgång till CJ Club för samarbetspartner. Där kan du publicera de förmåner du erbjuder CJ:s kunder.',
     introAdmin: 'Du får tillgång till CJ Clubs teampanel.',
+    introDesigner: 'Du får tillgång till CJ Club för arkitekter och formgivare. Där delar du ritningar och designförslag med kunden, hantverkarna och CJ och följer konversationen och arbetets framsteg.',
     introBuilder: 'Du får tillgång till CJ Club för hantverkarna i renoveringen. Där delar du offert, arbetets framsteg, betalningar och extraarbeten med kunden och med CJ.',
     button: 'Välj mitt lösenord',
     linkHint: 'Om knappen inte fungerar, kopiera den här länken till webbläsaren:',
@@ -107,6 +112,7 @@ const texts: Record<MailLanguage, Texts> = {
     introClient: 'Willkommen bei CJ Club, der privaten App von CJ Real Estate & Services für unsere Kunden an der Costa Blanca: Ihre vertrauenswürdigen Kontakte, unsere Empfehlungen und exklusive Vorteile.',
     introBusiness: 'Sie erhalten Zugang zu CJ Club für Partnerbetriebe. Dort können Sie die Vorteile veröffentlichen, die Sie Kunden von CJ anbieten.',
     introAdmin: 'Sie erhalten Zugang zum Team-Bereich von CJ Club.',
+    introDesigner: 'Sie erhalten Zugang zu CJ Club für Architekten und Designer. Dort teilen Sie Pläne und Entwürfe mit dem Kunden, den Handwerkern und CJ und verfolgen das Gespräch und den Baufortschritt.',
     introBuilder: 'Sie erhalten Zugang zu CJ Club für die Handwerker der Baustelle. Dort teilen Sie Kostenvoranschlag, Baufortschritt, Zahlungen und Zusatzarbeiten mit dem Kunden und mit CJ.',
     button: 'Mein Passwort wählen',
     linkHint: 'Falls die Schaltfläche nicht funktioniert, kopieren Sie diesen Link in Ihren Browser:',
@@ -125,6 +131,7 @@ const texts: Record<MailLanguage, Texts> = {
     introClient: 'Bienvenue dans CJ Club, l’application privée de CJ Real Estate & Services pour nos clients sur la Costa Blanca : vos contacts de confiance, nos recommandations et des avantages exclusifs.',
     introBusiness: 'Nous vous donnons accès à CJ Club pour les établissements partenaires. Vous pourrez y publier les avantages que vous offrez aux clients de CJ.',
     introAdmin: 'Nous vous donnons accès au panneau de l’équipe CJ Club.',
+    introDesigner: 'Nous vous donnons accès à CJ Club pour les architectes et designers. Vous y partagerez plans et designs avec le client, les professionnels du chantier et CJ, et suivrez la conversation et l’avancement.',
     introBuilder: 'Nous vous donnons accès à CJ Club pour les professionnels du chantier. Vous y partagerez avec le client et avec CJ le devis, l’avancement du chantier, les paiements et les travaux supplémentaires.',
     button: 'Choisir mon mot de passe',
     linkHint: 'Si le bouton ne fonctionne pas, copiez ce lien dans votre navigateur :',
@@ -158,7 +165,9 @@ export function invitationEmail(opts: { language: MailLanguage; role: MailRole; 
       ? t.introBusiness
       : opts.role === 'admin'
         ? t.introAdmin
-        : opts.role === 'builder'
+        : opts.role === 'designer'
+          ? t.introDesigner
+          : opts.role === 'builder'
           ? t.introBuilder
           : t.introClient
   const hello = greeting(t, opts.name)
