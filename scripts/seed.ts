@@ -245,6 +245,13 @@ const places = {
     website: 'https://example.com/la-terraza',
     instagram: 'laterrazadelpuerto',
     address: 'Explanada del Puerto 5, 03730 Jávea',
+    takeaway: true,
+    delivery: true,
+    orderInfo_es: 'Pedidos de 12:30 a 15:30 y de 19:30 a 22:30. Reparto en Jávea.',
+    orderInfo_en: 'Orders 12.30–3.30 pm and 7.30–10.30 pm. Delivery in Jávea.',
+    ordersOpen: true,
+    deliveryFee: 3,
+    minOrder: 20,
   },
   'rest-casa-olivo': {
     category: 'restaurants',
@@ -384,6 +391,19 @@ async function main() {
     updatedAt: Timestamp.now(),
     ...extra,
   })
+  // Platos que se pueden pedir en La Terraza
+  if (!only || only.includes('places')) {
+    const dishes: [string, string, string, string, number][] = [
+      ['d1', 'Entrantes', 'Croquetas de jamón (8 uds.)', 'Caseras, con jamón ibérico.', 8.5],
+      ['d2', 'Entrantes', 'Ensalada de la casa', 'Tomate, ventresca y cebolla tierna.', 11],
+      ['d3', 'Arroces', 'Paella de marisco (2 pers.)', 'Gamba roja, sepia y mejillón.', 38],
+      ['d4', 'Arroces', 'Arroz negro (2 pers.)', 'Con alioli.', 34],
+      ['d5', 'Postres', 'Tarta de queso', '', 6.5],
+    ]
+    dishes.forEach(([id, section, name, description, price], i) =>
+      batch.set(db.doc(`places/rest-la-terraza/orderItems/${id}`), { section, name, description, price, available: id !== 'd4', order: (i + 1) * 10 }),
+    )
+  }
   put('events', {
     'ev-cata': event({
       kind: 'tasting',

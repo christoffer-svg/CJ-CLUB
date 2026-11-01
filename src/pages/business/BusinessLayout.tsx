@@ -5,10 +5,12 @@ import { ToastProvider } from '../../components/admin/Toast'
 import { useLiveDoc } from '../../lib/admin'
 import type { Place } from '../../lib/types'
 import { useBookings } from '../../lib/events'
+import { useOrders } from '../../lib/orders'
 
 const sections = [
   { to: '/negocio/presentacion', label: 'Presentación', end: false },
   { to: '/negocio', label: 'Descuentos', end: true },
+  { to: '/negocio/pedidos', label: 'Pedidos', end: false },
   { to: '/negocio/eventos', label: 'Eventos', end: false },
   { to: '/negocio/reservas', label: 'Reservas', end: false },
 ]
@@ -18,6 +20,7 @@ export default function BusinessLayout() {
   const place = useLiveDoc<Place>(profile?.placeId ? `places/${profile.placeId}` : null)
   const placeName = place.data?.name || profile?.businessName || 'Su negocio'
   // Solicitudes de reserva de eventos sin responder
+  const newOrders = useOrders({ placeId: profile?.placeId ?? null }).data.filter((o) => o.status === 'new').length
   const pending = useBookings({ placeId: profile?.placeId ?? null }).data.filter((b) => b.status === 'pending').length
 
   return (
@@ -40,10 +43,11 @@ export default function BusinessLayout() {
         </div>
         <RoleSwitcher variant="header" />
         <nav className="a-menu" aria-label="Secciones del negocio">
-          {sections.map((s) => (
+          {sections.filter((s) => s.to !== '/negocio/pedidos' || place.data?.category === 'restaurants').map((s) => (
             <NavLink key={s.to} to={s.to} end={s.end} className="pill a-menu__item">
               {s.label}
               {s.to === '/negocio/eventos' && pending > 0 && <span className="a-badge-count">{pending}</span>}
+              {s.to === '/negocio/pedidos' && newOrders > 0 && <span className="a-badge-count">{newOrders}</span>}
             </NavLink>
           ))}
         </nav>

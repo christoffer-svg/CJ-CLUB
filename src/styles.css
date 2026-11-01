@@ -3825,3 +3825,164 @@ button {
   margin-top: 4px;
   text-decoration: none;
 }
+
+/* Pedidos de comida */
+.order__lines {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+  color: var(--text);
+}
+
+.order__lines li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.order__fee {
+  color: var(--text-2);
+}
+
+.order__total {
+  padding-top: 6px;
+  border-top: 1px solid var(--card-border);
+  font-weight: 600;
+}
+
+.order--new {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 1px var(--gold);
+}
+
+.order--done,
+.order--declined,
+.order--cancelled {
+  opacity: 0.75;
+}
+
+.ord-page--cart {
+  padding-bottom: calc(var(--nav-height) + 88px);
+}
+
+.ord-section {
+  margin-top: 18px;
+}
+
+.ord-list {
+  display: flex;
+  flex-direction: column;
+  padding: 4px 16px;
+}
+
+.ord-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 0;
+}
+
+.ord-item + .ord-item {
+  border-top: 1px solid var(--card-border);
+}
+
+.ord-item__body {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.ord-item__price {
+  color: var(--gold-dark);
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.ord-item--off .ord-item__price,
+.ord-item--off .card__title {
+  color: var(--text-2);
+}
+
+.ord-qty {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: none;
+}
+
+.ord-qty__btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--card-border);
+  background: var(--card);
+  color: var(--text);
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.ord-qty__btn--add {
+  border-color: var(--gold);
+  color: var(--gold-dark);
+}
+
+.ord-qty__n {
+  min-width: 16px;
+  text-align: center;
+  font-weight: 600;
+}
+
+.ord-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: calc(var(--nav-height) + env(safe-area-inset-bottom, 0px));
+  padding: 12px 16px;
+  background: linear-gradient(to top, var(--sand) 70%, transparent);
+  z-index: 5;
+}
+
+.ord-bar__btn {
+  display: block;
+  width: 100%;
+  max-width: var(--max-width);
+  margin: 0 auto;
+}
+
+.ord-form {
+  gap: 14px;
+}
+
+.ord-mine {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.ord-mine--past {
+  margin-top: 24px;
+}
+
+.ord-status {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.ord-status--accepted,
+.ord-status--ready,
+.ord-status--out {
+  border-color: var(--gold);
+}
+
+.ord-items__title {
+  margin-top: 24px;
+}

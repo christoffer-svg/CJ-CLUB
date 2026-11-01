@@ -6,6 +6,7 @@ import ReserveButton from '../components/ReserveButton'
 import EventCard from '../components/EventCard'
 import { AttachmentList } from '../components/Attachments'
 import { telLink } from '../lib/format'
+import { isOrderOpen, useOrders } from '../lib/orders'
 import { useBookings, useUpcomingEvents } from '../lib/events'
 import { useI18n } from '../i18n'
 import { useActiveDeals, useDoc } from '../lib/data'
@@ -29,6 +30,7 @@ export default function PlaceDetail() {
   const myDeals = deals.data.filter((d) => d.placeId === placeId)
   const events = useUpcomingEvents(placeId)
   const bookings = useBookings({ clientId })
+  const myOrders = useOrders({ clientId }).data.filter((o) => o.placeId === placeId && isOrderOpen(o)).length
 
   return (
     <>
@@ -68,6 +70,16 @@ export default function PlaceDetail() {
                     {p.delivery && <span className="tag">{t('profile.delivery')}</span>}
                   </div>
                   {pick(p, 'orderInfo') && <p className="pf-text">{pick(p, 'orderInfo')}</p>}
+                  {p.ordersOpen && (
+                    <Link className="btn pf-order" to={`${base}/descubrir/${placeId}/pedido`}>
+                      {t('orders.open')}
+                    </Link>
+                  )}
+                  {myOrders > 0 && (
+                    <Link className="place__more" to={`${base}/descubrir/${placeId}/pedido`}>
+                      {t('orders.seeYours', { n: myOrders })}
+                    </Link>
+                  )}
                   {p.phone && (
                     <a className="btn btn--ghost pf-order" href={telLink(p.phone)}>
                       {t('profile.orderCall')}

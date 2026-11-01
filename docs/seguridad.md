@@ -79,6 +79,24 @@ Todo está denegado salvo lo que se permite expresamente.
   - No se borran, salvo al dar de baja al cliente: `deleteClient` borra sus reservas.
 - El pago se hace en el local. La app no maneja dinero.
 
+### Pedidos de comida (para llevar y a domicilio)
+
+- **Platos** (`places/{id}/orderItems/{itemId}`): los escribe el restaurante de ese lugar o CJ, y los clientes los leen. Cada plato tiene apartado, nombre, descripción, precio de 0 a 10.000 €, si está disponible y su posición, sin campos de más.
+- **Ajustes del restaurante**, dentro de la presentación del lugar:
+  - `ordersOpen`: si acepta pedidos.
+  - `deliveryFee`: gastos de envío, de 0 a 100 €.
+  - `minOrder`: pedido mínimo a domicilio, de 0 a 1.000 €.
+- **Pedidos** (`orders/{id}`): **solo los crea el servidor**, con la función `placeOrder`. Así un cliente no puede poner sus propios precios.
+  - La función comprueba que quien pide es un cliente y que el restaurante tiene los pedidos abiertos y ofrece esa forma de entrega.
+  - También comprueba el teléfono, la dirección (a domicilio), la hora y los platos: entre 1 y 30, que existan y estén disponibles, de 1 a 50 unidades cada uno.
+  - Toma los precios de la lista de platos, calcula el total, aplica el pedido mínimo y los gastos de envío, y guarda el pedido como «new».
+- **Quién ve un pedido:** la casa que pide, el restaurante y CJ.
+- **Cambios de estado** (`orderStep`):
+  - El restaurante, o CJ, solo puede seguir este orden: nuevo → aceptado o rechazado; aceptado → listo o en camino (o anulado); listo o en camino → entregado. Solo puede cambiar el estado y dejar un mensaje.
+  - El cliente solo puede cancelar mientras el pedido siga sin aceptar.
+  - Los pedidos no se borran, salvo al dar de baja al cliente (`deleteClient`).
+- **Pago:** se paga al recoger o al repartidor. La app no cobra.
+
 ### Varios accesos con un mismo correo
 - Una persona puede tener varios accesos con el mismo correo (por ejemplo, cliente y negocio). En `users/{uid}`, `roles` guarda todos los que le ha dado CJ y `role` el que está usando ahora; las fichas antiguas sin `roles` tienen solo su `role`.
 - Las reglas miran siempre el acceso que está usando: como cliente no gestiona su negocio, y como negocio no ve su casa.

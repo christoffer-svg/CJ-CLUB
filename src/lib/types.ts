@@ -88,9 +88,15 @@ export type PublicProfile = {
   /** cómo pedir: horario de pedidos, zona de reparto, pedido mínimo… */
   orderInfo_es?: string
   orderInfo_en?: string
+  /** acepta pedidos dentro de la app (con su lista de platos: places/{id}/orderItems) */
+  ordersOpen?: boolean
+  /** gastos de envío a domicilio, con IVA (0 = gratis) */
+  deliveryFee?: number
+  /** pedido mínimo para envío a domicilio, con IVA (0 = sin mínimo) */
+  minOrder?: number
 }
 
-export const PROFILE_FIELDS = ['about_es', 'about_en', 'hours_es', 'hours_en', 'phone', 'email', 'website', 'instagram', 'address', 'photos', 'menu', 'takeaway', 'delivery', 'orderInfo_es', 'orderInfo_en'] as const
+export const PROFILE_FIELDS = ['about_es', 'about_en', 'hours_es', 'hours_en', 'phone', 'email', 'website', 'instagram', 'address', 'photos', 'menu', 'takeaway', 'delivery', 'orderInfo_es', 'orderInfo_en', 'ordersOpen', 'deliveryFee', 'minOrder'] as const
 export const MAX_MENU_FILES = 10
 export const MAX_PROFILE_PHOTOS = 10
 
@@ -600,4 +606,53 @@ export type EventBooking = {
   createdAt: Timestamp | null
   answeredAt: Timestamp | null
   cancelledAt: Timestamp | null
+}
+
+/** places/{id}/orderItems/{itemId}: plato que se puede pedir en la app. Lo escribe el restaurante (o CJ). */
+export type OrderItem = {
+  /** apartado: "Entrantes", "Arroces"… */
+  section: string
+  name: string
+  description: string
+  /** precio con IVA, en euros */
+  price: number
+  /** false = agotado hoy (se ve, pero no se puede pedir) */
+  available: boolean
+  order: number
+}
+
+export type OrderMode = 'pickup' | 'delivery'
+export type OrderStatus = 'new' | 'accepted' | 'ready' | 'out' | 'done' | 'declined' | 'cancelled'
+
+/** Línea de un pedido, con el precio que tenía el plato al pedir */
+export type OrderLine = { itemId: string; name: string; price: number; qty: number }
+
+/**
+ * orders/{id}: pedido de un cliente a un restaurante. Lo crea el servidor (función placeOrder), que
+ * toma los precios de la lista de platos del restaurante. Se paga al recoger o al repartidor.
+ */
+export type FoodOrder = {
+  placeId: string
+  placeName: string
+  clientId: string
+  uid: string
+  name: string
+  phone: string
+  mode: OrderMode
+  /** solo a domicilio */
+  address: string
+  /** "asap" (lo antes posible) o "20:30" (hoy) */
+  wanted: string
+  /** día del pedido, "2026-11-01" */
+  day: string
+  note: string
+  lines: OrderLine[]
+  subtotal: number
+  deliveryFee: number
+  total: number
+  status: OrderStatus
+  /** mensaje del restaurante (p. ej. "Listo en 30 minutos") */
+  reply: string
+  createdAt: Timestamp | null
+  updatedAt: Timestamp | null
 }

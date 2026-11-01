@@ -227,6 +227,9 @@ service cloud.firestore {
       return profileText('about_es', 4000) && profileText('about_en', 4000)
         && profileText('orderInfo_es', 600) && profileText('orderInfo_en', 600)
         && request.resource.data.get('takeaway', false) is bool
+        && request.resource.data.get('ordersOpen', false) is bool
+        && number(request.resource.data.get('deliveryFee', 0), 0, 100)
+        && number(request.resource.data.get('minOrder', 0), 0, 1000)
         && request.resource.data.get('delivery', false) is bool
         && menuOk(coll, id)
         && profileText('hours_es', 600) && profileText('hours_en', 600)
@@ -245,7 +248,7 @@ service cloud.firestore {
       allow update: if isBusiness() && id == myPlaceId()
         && request.resource.data.diff(resource.data).affectedKeys()
              .hasOnly(['about_es', 'about_en', 'hours_es', 'hours_en', 'phone', 'email', 'website', 'instagram', 'address', 'photos',
-                       'menu', 'takeaway', 'delivery', 'orderInfo_es', 'orderInfo_en'])
+                       'menu', 'takeaway', 'delivery', 'orderInfo_es', 'orderInfo_en', 'ordersOpen', 'deliveryFee', 'minOrder'])
         && profileOk('places', id);
     }
 
@@ -285,6 +288,48 @@ service cloud.firestore {
             && request.resource.data.hiddenByAdmin == resource.data.hiddenByAdmin
             && request.resource.data.createdByUid == resource.data.createdByUid);
       allow delete: if isAdmin() || (isBusiness() && resource.data.placeId == myPlaceId());
+    }
+
+    // ---------- places/{id}/orderItems y orders/{id} ----------
+    // Platos que se pueden pedir en la app. Los escribe el restaurante (o CJ); los clientes los leen.
+    match /places/{pid}/orderItems/{itemId} {
+      allow read: if isAdmin() || isClient() || (isBusiness() && pid == myPlaceId());
+      allow delete: if isAdmin() || (isBusiness() && pid == myPlaceId());
+      allow create, update: if (isAdmin() || (isBusiness() && pid == myPlaceId()))
+        && request.resource.data.keys().hasOnly(['section', 'name', 'description', 'price', 'available', 'order'])
+        && request.resource.data.section is string && request.resource.data.section.size() <= 60
+        && validText(request.resource.data.name, 120)
+        && request.resource.data.description is string && request.resource.data.description.size() <= 500
+        && number(request.resource.data.price, 0, 10000)
+        && request.resource.data.available is bool
+        && request.resource.data.order is int && request.resource.data.order >= 0 && request.resource.data.order <= 100000;
+    }
+
+    // Cambios de estado de un pedido que puede hacer el restaurante (o CJ)
+    function orderStep(from, to) {
+      return (from == 'new' && to in ['accepted', 'declined'])
+        || (from == 'accepted' && to in ['accepted', 'ready', 'out', 'declined'])
+        || (from in ['ready', 'out'] && to in [from, 'done']);
+    }
+
+    // Pedidos: los crea solo el servidor (función placeOrder, con los precios de los platos).
+    match /orders/{id} {
+      allow read: if isAdmin()
+        || (isClient() && resource.data.clientId == me().clientId)
+        || (isBusiness() && resource.data.placeId == myPlaceId());
+      allow create, delete: if false;
+      allow update: if
+        // el cliente lo cancela mientras el restaurante no lo haya aceptado
+        (isClient() && resource.data.clientId == me().clientId
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'updatedAt'])
+          && resource.data.status == 'new' && request.resource.data.status == 'cancelled'
+          && request.resource.data.updatedAt == request.time)
+        // el restaurante (o CJ) lo acepta, lo prepara, lo entrega o lo rechaza
+        || ((isAdmin() || (isBusiness() && resource.data.placeId == myPlaceId()))
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'reply', 'updatedAt'])
+          && orderStep(resource.data.status, request.resource.data.status)
+          && request.resource.data.reply is string && request.resource.data.reply.size() <= 500
+          && request.resource.data.updatedAt == request.time);
     }
 
     function eventOf(id) {

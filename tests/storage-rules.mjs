@@ -120,5 +120,29 @@ ok(typeof carta === 'object' && carta.path.startsWith('profiles/places/rest-la-t
 ok(await upPf(BZ, { kind: 'menu', name: 'virus.exe', contentType: 'application/octet-stream' }), 'INVALID_ARGUMENT', 'la carta solo en fotos o PDF')
 ok(await upPf(null, {}), 'UNAUTHENTICATED', 'anónimo no sube fotos')
 
+// Pedidos de comida (función placeOrder): los precios los pone el servidor
+const OFN = FN.replace('uploadProjectFile', 'placeOrder')
+const order = async (t, d) => {
+  const r = await fetch(OFN, { method: 'POST', headers: { ...H, ...(t ? { authorization: 'Bearer ' + t } : {}) }, body: JSON.stringify({ data: { placeId: 'rest-la-terraza', name: 'Familia Jansen', phone: '600 111 222', mode: 'pickup', address: '', wanted: 'asap', note: '', lines: [{ itemId: 'd1', qty: 2 }, { itemId: 'd5', qty: 1 }], ...d } }) })
+  const j = await r.json(); return j.error ? j.error.status : j.result
+}
+const fsGet = (path) => fetch(`http://127.0.0.1:8080/v1/projects/cj-club/databases/(default)/documents/${path}`, { headers: { authorization: 'Bearer owner' } }).then(r => r.json())
+const o1 = await order(J, { lines: [{ itemId: 'd1', qty: 2, price: 0.01 }, { itemId: 'd5', qty: 1 }] })
+ok(typeof o1 === 'object' && o1.total === 23.5, true, 'pedido para recoger: 2 × 8,50 + 6,50 = 23,50 (el precio enviado por la app no cuenta): ' + JSON.stringify(o1))
+const saved = await fsGet(`orders/${o1.id}`)
+ok(saved.fields?.status?.stringValue === 'new' && saved.fields?.clientId?.stringValue === 'jansen', true, 'el pedido queda nuevo y a nombre de la casa')
+ok((await order(J, { mode: 'delivery', address: 'Calle Mayor 1' }))?.total, 26.5, 'a domicilio suma el envío (3 €)')
+ok(await order(J, { mode: 'delivery', address: 'Calle Mayor 1', lines: [{ itemId: 'd5', qty: 1 }] }), 'FAILED_PRECONDITION', 'por debajo del pedido mínimo a domicilio')
+ok(await order(J, { mode: 'delivery', address: '' }), 'INVALID_ARGUMENT', 'a domicilio sin dirección')
+ok(await order(J, { lines: [{ itemId: 'd4', qty: 1 }] }), 'FAILED_PRECONDITION', 'un plato agotado no se puede pedir')
+ok(await order(J, { lines: [{ itemId: 'no-existe', qty: 1 }] }), 'FAILED_PRECONDITION', 'un plato que no existe')
+ok(await order(J, { lines: [] }), 'INVALID_ARGUMENT', 'pedido vacío')
+ok(await order(J, { lines: [{ itemId: 'd1', qty: 0 }] }), 'INVALID_ARGUMENT', 'cantidad cero')
+ok(await order(J, { phone: '12' }), 'INVALID_ARGUMENT', 'sin teléfono válido')
+ok(await order(J, { wanted: '25:99' }), 'INVALID_ARGUMENT', 'hora no válida')
+ok(await order(J, { placeId: 'golf-pinar' }), 'FAILED_PRECONDITION', 'un golf no recibe pedidos')
+ok(await order(BZ, {}), 'PERMISSION_DENIED', 'un negocio no hace pedidos')
+ok(await order(null, {}), 'UNAUTHENTICATED', 'anónimo no hace pedidos')
+
 console.log(`Archivos: ${pass} OK, ${fail} FAIL`)
 if (fail) process.exit(1)

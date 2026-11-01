@@ -404,6 +404,7 @@ export const deleteClient = onCall(async (request) => {
   const reservationClicks = await db.collection('reservationClicks').where('clientId', '==', clientId).get()
   const reservationConfirms = await db.collection('reservationConfirms').where('clientId', '==', clientId).get()
   const eventBookings = await db.collection('eventBookings').where('clientId', '==', clientId).get()
+  const orders = await db.collection('orders').where('clientId', '==', clientId).get()
   // Contactos propios y notas de la casa: privados y compartidos con CJ
   const [ownContacts, sharedContacts, houseNotes, sharedHouseNotes] = await Promise.all([
     db.collection(`clients/${clientId}/ownContacts`).get(),
@@ -433,6 +434,7 @@ export const deleteClient = onCall(async (request) => {
     ...reservationClicks.docs.map((d) => d.ref),
     ...reservationConfirms.docs.map((d) => d.ref),
     ...eventBookings.docs.map((d) => d.ref),
+    ...orders.docs.map((d) => d.ref),
     ...ownContacts.docs.map((d) => d.ref),
     ...sharedContacts.docs.map((d) => d.ref),
     ...houseNotes.docs.map((d) => d.ref),
@@ -454,6 +456,7 @@ export const deleteClient = onCall(async (request) => {
     reservationClicks: reservationClicks.size,
     reservationConfirms: reservationConfirms.size,
     eventBookings: eventBookings.size,
+    orders: orders.size,
     ownContacts: ownContacts.size + sharedContacts.size,
     houseNotes: houseNotes.size + sharedHouseNotes.size,
   }
@@ -729,4 +732,86 @@ export const uploadProfilePhoto = onCall({ memory: '512MiB', timeoutSeconds: 120
   }
   const host = process.env.FUNCTIONS_EMULATOR === 'true' && process.env.STORAGE_EMULATOR_HOST ? process.env.STORAGE_EMULATOR_HOST : 'https://firebasestorage.googleapis.com'
   return { path, name, contentType, size: buffer.length, url: `${host}/v0/b/${BUCKET}/o/${encodeURIComponent(path)}?alt=media&token=${token}` }
+})
+
+/**
+ * Pedido de comida (para llevar o a domicilio) de un cliente a un restaurante.
+ * Los precios se toman aquí, de la lista de platos del restaurante (places/{id}/orderItems), nunca de
+ * lo que envía la app. Se paga al recoger o al repartidor; aquí no se cobra nada.
+ */
+export const placeOrder = onCall(async (request) => {
+  const uid = request.auth?.uid
+  if (!uid) throw new HttpsError('unauthenticated', 'Inicie sesión de nuevo.')
+  const d = (request.data ?? {}) as Record<string, unknown>
+  const me = await db.doc(`users/${uid}`).get()
+  const clientId = me.get('clientId')
+  if (me.get('role') !== 'client' || typeof clientId !== 'string' || !clientId) throw new HttpsError('permission-denied', 'Solo los clientes pueden hacer pedidos.')
+
+  const placeId = text(d.placeId, 'restaurante')
+  if (!/^[A-Za-z0-9_-]{1,100}$/.test(placeId)) throw new HttpsError('invalid-argument', 'Restaurante no válido.')
+  const place = await db.doc(`places/${placeId}`).get()
+  if (!place.exists || place.get('active') === false || place.get('category') !== 'restaurants' || place.get('ordersOpen') !== true) {
+    throw new HttpsError('failed-precondition', 'Este restaurante no acepta pedidos en la app ahora mismo.')
+  }
+  const mode = d.mode === 'delivery' ? 'delivery' : d.mode === 'pickup' ? 'pickup' : null
+  if (!mode || (mode === 'pickup' && place.get('takeaway') !== true) || (mode === 'delivery' && place.get('delivery') !== true)) {
+    throw new HttpsError('invalid-argument', 'Forma de entrega no disponible.')
+  }
+  const name = text(d.name, 'nombre').slice(0, 120)
+  const phone = text(d.phone, 'teléfono').slice(0, 40)
+  if ((phone.match(/\d/g) ?? []).length < 6) throw new HttpsError('invalid-argument', 'Indique un teléfono válido.')
+  const address = mode === 'delivery' ? text(d.address, 'dirección').slice(0, 300) : ''
+  const wanted = typeof d.wanted === 'string' && (d.wanted === 'asap' || /^([01]\d|2[0-3]):[0-5]\d$/.test(d.wanted)) ? d.wanted : null
+  if (!wanted) throw new HttpsError('invalid-argument', 'Hora no válida.')
+  const note = (typeof d.note === 'string' ? d.note.trim() : '').slice(0, 500)
+
+  const raw = Array.isArray(d.lines) ? d.lines : []
+  if (raw.length < 1 || raw.length > 30) throw new HttpsError('invalid-argument', 'El pedido está vacío o es demasiado largo.')
+  const wantedLines = raw.map((l) => {
+    const r = (l ?? {}) as Record<string, unknown>
+    const itemId = typeof r.itemId === 'string' && /^[A-Za-z0-9_-]{1,60}$/.test(r.itemId) ? r.itemId : null
+    const qty = Number(r.qty)
+    if (!itemId || !Number.isInteger(qty) || qty < 1 || qty > 50) throw new HttpsError('invalid-argument', 'Línea del pedido no válida.')
+    return { itemId, qty }
+  })
+  if (new Set(wantedLines.map((l) => l.itemId)).size !== wantedLines.length) throw new HttpsError('invalid-argument', 'Plato repetido en el pedido.')
+  const items = await db.getAll(...wantedLines.map((l) => db.doc(`places/${placeId}/orderItems/${l.itemId}`)))
+  const lines = wantedLines.map((l, i) => {
+    const it = items[i]
+    if (!it.exists) throw new HttpsError('failed-precondition', 'Un plato del pedido ya no existe. Revise el pedido.')
+    if (it.get('available') === false) throw new HttpsError('failed-precondition', `«${it.get('name')}» está agotado. Quítelo del pedido.`)
+    const price = Number(it.get('price'))
+    if (!Number.isFinite(price) || price < 0) throw new HttpsError('failed-precondition', 'Precio no válido.')
+    return { itemId: l.itemId, name: String(it.get('name')).slice(0, 120), price, qty: l.qty }
+  })
+  const cents = (n: number) => Math.round(n * 100)
+  const subtotal = lines.reduce((sum, l) => sum + cents(l.price) * l.qty, 0) / 100
+  const minOrder = Number(place.get('minOrder') ?? 0) || 0
+  if (mode === 'delivery' && subtotal < minOrder) throw new HttpsError('failed-precondition', `El pedido mínimo a domicilio es de ${minOrder.toFixed(2).replace('.', ',')} €.`)
+  const deliveryFee = mode === 'delivery' ? Number(place.get('deliveryFee') ?? 0) || 0 : 0
+  const total = (cents(subtotal) + cents(deliveryFee)) / 100
+  const day = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Madrid', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date())
+
+  const ref = await db.collection('orders').add({
+    placeId,
+    placeName: String(place.get('name') ?? ''),
+    clientId,
+    uid,
+    name,
+    phone,
+    mode,
+    address,
+    wanted,
+    day,
+    note,
+    lines,
+    subtotal,
+    deliveryFee,
+    total,
+    status: 'new',
+    reply: '',
+    createdAt: FieldValue.serverTimestamp(),
+    updatedAt: FieldValue.serverTimestamp(),
+  })
+  return { id: ref.id, total }
 })

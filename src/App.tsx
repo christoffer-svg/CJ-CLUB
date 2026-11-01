@@ -29,10 +29,13 @@ import GeneralContacts from './pages/admin/GeneralContacts'
 import Places from './pages/admin/Places'
 import AdminProfile from './pages/admin/AdminProfile'
 import PlaceDetail from './pages/PlaceDetail'
+import OrderPage from './pages/OrderPage'
 import PartnerDetail from './pages/PartnerDetail'
 import BusinessProfile from './pages/business/BusinessProfile'
 import BusinessEvents from './pages/business/BusinessEvents'
 import AdminEvents from './pages/admin/AdminEvents'
+import BusinessOrders from './pages/business/BusinessOrders'
+import AdminOrders from './pages/admin/AdminOrders'
 import Deals from './pages/admin/Deals'
 import Businesses from './pages/admin/Businesses'
 import BusinessLayout from './pages/business/BusinessLayout'
@@ -69,6 +72,7 @@ export default function App() {
             <Route path="guia/:partnerId" element={<PartnerDetail />} />
             <Route path="descubrir" element={<Discover />} />
             <Route path="descubrir/:placeId" element={<PlaceDetail />} />
+            <Route path="descubrir/:placeId/pedido" element={<OrderPage />} />
             <Route path="ventajas" element={<Benefits />} />
             <Route path="mensajes" element={<Messages />} />
             <Route path="peticiones" element={<Requests />} />
@@ -84,6 +88,7 @@ export default function App() {
             <Route path="guia/:partnerId" element={<PartnerDetail />} />
             <Route path="descubrir" element={<Discover />} />
             <Route path="descubrir/:placeId" element={<PlaceDetail />} />
+            <Route path="descubrir/:placeId/pedido" element={<OrderPage />} />
             <Route path="ventajas" element={<Benefits />} />
             <Route path="mensajes" element={<Messages />} />
             <Route path="peticiones" element={<Requests />} />
@@ -112,6 +117,7 @@ export default function App() {
             <Route path="negocios" element={<Businesses />} />
             <Route path="descuentos" element={<Deals />} />
             <Route path="eventos" element={<AdminEvents />} />
+            <Route path="pedidos" element={<AdminOrders />} />
             <Route path="consejo" element={<Tip />} />
           </Route>
         </Route>
@@ -133,6 +139,7 @@ export default function App() {
             <Route path="reservas" element={<BusinessReservations />} />
             <Route path="presentacion" element={<BusinessProfile />} />
             <Route path="eventos" element={<BusinessEvents />} />
+            <Route path="pedidos" element={<BusinessOrders />} />
           </Route>
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
