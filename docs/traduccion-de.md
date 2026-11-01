@@ -118,6 +118,83 @@ Bitte prüfen Sie, ob jeder Text natürlich und korrekt auf Deutsch ist. Korrekt
 | `benefits.validUntil` | Válido hasta el {date} | Valid until {date} | Gültig bis zum {date} | |
 | `benefits.validRange` | Válido del {from} al {until} | Valid from {from} to {until} | Gültig vom {from} bis zum {until} | |
 | `common.back` | Volver | Back | Zurück | |
+| `orders.title` | Pedido | Order | Bestellung | |
+| `orders.open` | Hacer un pedido | Place an order | Bestellen | |
+| `orders.seeYours` | Ver sus pedidos en curso ({n}) | See your current orders ({n}) | Ihre laufenden Bestellungen ({n}) | |
+| `orders.closed` | Ahora mismo {name} no acepta pedidos en la app. Puede llamar para pedir. | {name} is not taking orders in the app right now. You can call to order. | {name} nimmt derzeit keine Bestellungen in der App an. Sie können telefonisch bestellen. | |
+| `orders.empty` | Aún no hay platos para pedir. | No dishes to order yet. | Noch keine Gerichte zum Bestellen. | |
+| `orders.soldOut` | Agotado | Sold out | Ausverkauft | |
+| `orders.more` | Añadir {name} | Add {name} | {name} hinzufügen | |
+| `orders.less` | Quitar uno de {name} | Remove one {name} | Ein {name} entfernen | |
+| `orders.continue` | Continuar · {total} | Continue · {total} | Weiter · {total} | |
+| `orders.back` | Seguir eligiendo | Keep choosing | Weiter auswählen | |
+| `orders.mode` | Entrega | Delivery method | Lieferart | |
+| `orders.pickup` | Recoger en el local | Pick up at the restaurant | Im Restaurant abholen | |
+| `orders.delivery` | A domicilio | Home delivery | Lieferung nach Hause | |
+| `orders.when` | ¿Para cuándo? | When? | Wann? | |
+| `orders.asap` | Lo antes posible | As soon as possible | So bald wie möglich | |
+| `orders.forTime` | Para las {time} | For {time} | Um {time} | |
+| `orders.name` | Nombre | Name | Name | |
+| `orders.phone` | Teléfono | Phone | Telefon | |
+| `orders.address` | Dirección de entrega | Delivery address | Lieferadresse | |
+| `orders.note` | Comentario (opcional) | Comment (optional) | Kommentar (optional) | |
+| `orders.fee` | Envío | Delivery | Lieferkosten | |
+| `orders.total` | Total | Total | Gesamt | |
+| `orders.minOrder` | El pedido mínimo a domicilio es de {amount}. | The minimum order for delivery is {amount}. | Der Mindestbestellwert für Lieferungen beträgt {amount}. | |
+| `orders.payPickup` | Se paga al recoger. | Payment on pick-up. | Bezahlung bei Abholung. | |
+| `orders.payDelivery` | Se paga al repartidor. | Payment to the delivery driver. | Bezahlung beim Lieferanten. | |
+| `orders.send` | Enviar pedido · {total} | Send order · {total} | Bestellung senden · {total} | |
+| `orders.error` | No se pudo enviar el pedido. Inténtelo de nuevo. | The order could not be sent. Please try again. | Die Bestellung konnte nicht gesendet werden. Bitte erneut versuchen. | |
+| `orders.changed` | Algún plato ha cambiado o se ha agotado. Revise el pedido. | A dish has changed or sold out. Please check your order. | Ein Gericht wurde geändert oder ist ausverkauft. Bitte prüfen Sie die Bestellung. | |
+| `orders.yours` | Sus pedidos | Your orders | Ihre Bestellungen | |
+| `orders.past` | Pedidos anteriores | Previous orders | Frühere Bestellungen | |
+| `orders.status.new` | Enviado · esperando al restaurante | Sent · waiting for the restaurant | Gesendet · wartet auf das Restaurant | |
+| `orders.status.accepted` | Aceptado · en preparación | Accepted · being prepared | Angenommen · wird zubereitet | |
+| `orders.status.ready` | Listo para recoger | Ready for pick-up | Abholbereit | |
+| `orders.status.out` | En camino | On its way | Unterwegs | |
+| `orders.status.done` | Entregado | Delivered | Geliefert | |
+| `orders.status.declined` | El restaurante no puede atender este pedido | The restaurant cannot take this order | Das Restaurant kann diese Bestellung nicht annehmen | |
+| `orders.status.cancelled` | Cancelado | Cancelled | Storniert | |
+| `orders.cancel` | Cancelar pedido | Cancel order | Bestellung stornieren | |
+| `orders.cancelConfirm` | ¿Desea cancelar este pedido? | Do you want to cancel this order? | Möchten Sie diese Bestellung stornieren? | |
+| `profile.menu` | Carta | Menu | Speisekarte | |
+| `profile.takeaway` | Para llevar | Takeaway | Zum Mitnehmen | |
+| `profile.delivery` | A domicilio | Delivery | Lieferservice | |
+| `profile.ordering` | Pedidos para llevar y a domicilio | Takeaway and delivery | Zum Mitnehmen und Lieferung | |
+| `profile.orderCall` | Llamar para pedir | Call to order | Zum Bestellen anrufen | |
+| `discover.filter.events` | Eventos | Events | Events | |
+| `events.kind.tasting` | Cata | Tasting | Verkostung | |
+| `events.kind.music` | Música en vivo | Live music | Livemusik | |
+| `events.kind.dinner` | Cena especial | Special dinner | Besonderes Abendessen | |
+| `events.kind.other` | Evento | Event | Veranstaltung | |
+| `events.price` | {price} por persona | {price} per person | {price} pro Person | |
+| `events.free` | Entrada libre | Free entry | Eintritt frei | |
+| `events.book` | Pedir reserva | Request a booking | Reservierung anfragen | |
+| `events.people` | Personas | People | Personen | |
+| `events.phone` | Teléfono de contacto (opcional) | Contact phone (optional) | Telefon (optional) | |
+| `events.note` | Comentario (opcional) | Comment (optional) | Kommentar (optional) | |
+| `events.howItWorks` | El local confirmará su reserva aquí, en la app. Se paga en el local. | The venue will confirm your booking here in the app. Payment is made at the venue. | Das Lokal bestätigt Ihre Reservierung hier in der App. Bezahlt wird vor Ort. | |
+| `events.send` | Enviar solicitud | Send request | Anfrage senden | |
+| `events.status.pending` | Solicitud enviada · {n} pers. · pendiente de confirmar | Request sent · {n} ppl · awaiting confirmation | Anfrage gesendet · {n} Pers. · wartet auf Bestätigung | |
+| `events.status.confirmed` | Reserva confirmada · {n} pers. | Booking confirmed · {n} ppl | Reservierung bestätigt · {n} Pers. | |
+| `events.status.declined` | El local no ha podido confirmar su reserva | The venue could not confirm your booking | Das Lokal konnte Ihre Reservierung nicht bestätigen | |
+| `events.status.cancelled` | Reserva cancelada | Booking cancelled | Reservierung storniert | |
+| `events.cancel` | Cancelar reserva | Cancel booking | Reservierung stornieren | |
+| `events.cancelConfirm` | ¿Desea cancelar su reserva? | Do you want to cancel your booking? | Möchten Sie Ihre Reservierung stornieren? | |
+| `events.error` | No se pudo enviar. Inténtelo de nuevo. | Could not send. Please try again. | Senden fehlgeschlagen. Bitte erneut versuchen. | |
+| `events.upcoming` | Próximos eventos | Upcoming events | Kommende Veranstaltungen | |
+| `events.none` | Por ahora no hay eventos próximos. | No upcoming events for now. | Derzeit keine kommenden Veranstaltungen. | |
+| `profile.more` | Ver ficha | View profile | Profil ansehen | |
+| `profile.about` | Presentación | About | Über uns | |
+| `profile.hours` | Horario | Opening hours | Öffnungszeiten | |
+| `profile.contact` | Contacto | Contact | Kontakt | |
+| `profile.phone` | Teléfono | Phone | Telefon | |
+| `profile.email` | Correo | Email | E-Mail | |
+| `profile.website` | Web | Website | Website | |
+| `profile.address` | Dirección | Address | Adresse | |
+| `profile.photo` | Foto {n} de {total} | Photo {n} of {total} | Foto {n} von {total} | |
+| `profile.deals` | Ventajas para socios | Member benefits | Vorteile für Mitglieder | |
+| `profile.notFound` | No se ha encontrado | Not found | Nicht gefunden | |
 | `team.eyebrow` | Su equipo CJ | Your CJ team | Ihr CJ-Team | |
 | `team.messages` | Mensajes | Messages | Nachrichten | |
 | `team.messagesText` | Escriba a su equipo de CJ | Write to your CJ team | Schreiben Sie Ihrem CJ-Team | |
@@ -466,6 +543,20 @@ Bitte prüfen Sie, ob jeder Text natürlich und korrekt auf Deutsch ist. Korrekt
 | `budget.itemExample` | Por ejemplo: grifo termostático de ducha | For example: thermostatic shower mixer | Zum Beispiel: Thermostat-Duscharmatur | |
 | `budget.item` | Qué incluye | What is included | Was enthalten ist | |
 | `budget.addItem` | Añadir lo que incluye | Add what is included | Hinzufügen, was enthalten ist | |
+| `budget.includedTitle` | Qué incluye este precio | What this price includes | Was dieser Preis enthält | |
+| `budget.includedHint` | Añada cada cosa incluida con su precio de referencia y una foto. Puede añadir más después. | Add each included item with its reference price and a photo. You can add more later. | Fügen Sie jeden enthaltenen Artikel mit Richtpreis und Foto hinzu. Sie können später weitere hinzufügen. | |
+| `budget.addAnother` | Añadir otra cosa | Add another item | Weiteren Artikel hinzufügen | |
+| `budget.removeRow` | Quitar | Remove | Entfernen | |
+| `budget.idTitle` | Identificación | Identification | Identifizierung | |
+| `budget.idHint` | Para firmar, suba una foto de la página con foto de su pasaporte, o de su DNI o NIE por delante y por detrás. Solo la verá el equipo de CJ. | To sign, upload a photo of the photo page of your passport, or of the front and back of your Spanish ID card (DNI or NIE). Only the CJ team will see it. | Laden Sie zum Unterschreiben ein Foto der Bildseite Ihres Reisepasses hoch oder der Vorder- und Rückseite Ihres spanischen DNI oder NIE. Nur das CJ-Team sieht es. | |
+| `budget.idType` | Documento | Document | Dokument | |
+| `budget.id.dni` | DNI | DNI (Spanish ID card) | DNI (spanischer Ausweis) | |
+| `budget.id.nie` | NIE | NIE (foreigner ID card) | NIE (Ausländerausweis) | |
+| `budget.id.passport` | Pasaporte | Passport | Reisepass | |
+| `budget.idPhotos` | Fotos del documento | Photos of the document | Fotos des Dokuments | |
+| `budget.idOnFile` | Ya ha subido su {doc}. Si quiere cambiarlo, elija otras fotos. | You have already uploaded your {doc}. To change it, choose other photos. | Sie haben Ihren {doc} bereits hochgeladen. Wählen Sie andere Fotos, um ihn zu ersetzen. | |
+| `budget.identified` | Identificado con {doc} | Identified with {doc} | Identifiziert mit {doc} | |
+| `budget.idPrivate` | Documento de identidad (solo lo ven CJ y el firmante) | Identity document (only seen by CJ and the signer) | Ausweisdokument (nur für CJ und den Unterzeichner sichtbar) | |
 | `budget.addGroup` | Añadir partida | Add item group | Position hinzufügen | |
 | `project.budget` | Presupuesto inicial (sin IVA) | Initial budget (excl. VAT) | Ursprüngliches Budget (netto) | |
 | `project.extrasApproved` | Extras aprobados (sin IVA) | Approved extras (excl. VAT) | Genehmigte Zusatzarbeiten (netto) | |

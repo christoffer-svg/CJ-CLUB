@@ -118,6 +118,83 @@ Controleer of elke tekst natuurlijk en correct Nederlands is. Noteer correcties 
 | `benefits.validUntil` | Válido hasta el {date} | Valid until {date} | Geldig tot {date} | |
 | `benefits.validRange` | Válido del {from} al {until} | Valid from {from} to {until} | Geldig van {from} tot {until} | |
 | `common.back` | Volver | Back | Terug | |
+| `orders.title` | Pedido | Order | Bestelling | |
+| `orders.open` | Hacer un pedido | Place an order | Bestellen | |
+| `orders.seeYours` | Ver sus pedidos en curso ({n}) | See your current orders ({n}) | Uw lopende bestellingen ({n}) | |
+| `orders.closed` | Ahora mismo {name} no acepta pedidos en la app. Puede llamar para pedir. | {name} is not taking orders in the app right now. You can call to order. | {name} neemt op dit moment geen bestellingen aan in de app. U kunt bellen om te bestellen. | |
+| `orders.empty` | Aún no hay platos para pedir. | No dishes to order yet. | Nog geen gerechten om te bestellen. | |
+| `orders.soldOut` | Agotado | Sold out | Uitverkocht | |
+| `orders.more` | Añadir {name} | Add {name} | {name} toevoegen | |
+| `orders.less` | Quitar uno de {name} | Remove one {name} | Eén {name} verwijderen | |
+| `orders.continue` | Continuar · {total} | Continue · {total} | Verder · {total} | |
+| `orders.back` | Seguir eligiendo | Keep choosing | Verder kiezen | |
+| `orders.mode` | Entrega | Delivery method | Levering | |
+| `orders.pickup` | Recoger en el local | Pick up at the restaurant | Afhalen in het restaurant | |
+| `orders.delivery` | A domicilio | Home delivery | Thuisbezorgd | |
+| `orders.when` | ¿Para cuándo? | When? | Wanneer? | |
+| `orders.asap` | Lo antes posible | As soon as possible | Zo snel mogelijk | |
+| `orders.forTime` | Para las {time} | For {time} | Om {time} | |
+| `orders.name` | Nombre | Name | Naam | |
+| `orders.phone` | Teléfono | Phone | Telefoon | |
+| `orders.address` | Dirección de entrega | Delivery address | Afleveradres | |
+| `orders.note` | Comentario (opcional) | Comment (optional) | Opmerking (optioneel) | |
+| `orders.fee` | Envío | Delivery | Bezorgkosten | |
+| `orders.total` | Total | Total | Totaal | |
+| `orders.minOrder` | El pedido mínimo a domicilio es de {amount}. | The minimum order for delivery is {amount}. | De minimale bestelling voor bezorging is {amount}. | |
+| `orders.payPickup` | Se paga al recoger. | Payment on pick-up. | U betaalt bij het afhalen. | |
+| `orders.payDelivery` | Se paga al repartidor. | Payment to the delivery driver. | U betaalt aan de bezorger. | |
+| `orders.send` | Enviar pedido · {total} | Send order · {total} | Bestelling versturen · {total} | |
+| `orders.error` | No se pudo enviar el pedido. Inténtelo de nuevo. | The order could not be sent. Please try again. | De bestelling kon niet worden verstuurd. Probeer het opnieuw. | |
+| `orders.changed` | Algún plato ha cambiado o se ha agotado. Revise el pedido. | A dish has changed or sold out. Please check your order. | Een gerecht is gewijzigd of uitverkocht. Controleer uw bestelling. | |
+| `orders.yours` | Sus pedidos | Your orders | Uw bestellingen | |
+| `orders.past` | Pedidos anteriores | Previous orders | Eerdere bestellingen | |
+| `orders.status.new` | Enviado · esperando al restaurante | Sent · waiting for the restaurant | Verstuurd · wacht op het restaurant | |
+| `orders.status.accepted` | Aceptado · en preparación | Accepted · being prepared | Geaccepteerd · wordt bereid | |
+| `orders.status.ready` | Listo para recoger | Ready for pick-up | Klaar om af te halen | |
+| `orders.status.out` | En camino | On its way | Onderweg | |
+| `orders.status.done` | Entregado | Delivered | Bezorgd | |
+| `orders.status.declined` | El restaurante no puede atender este pedido | The restaurant cannot take this order | Het restaurant kan deze bestelling niet aannemen | |
+| `orders.status.cancelled` | Cancelado | Cancelled | Geannuleerd | |
+| `orders.cancel` | Cancelar pedido | Cancel order | Bestelling annuleren | |
+| `orders.cancelConfirm` | ¿Desea cancelar este pedido? | Do you want to cancel this order? | Wilt u deze bestelling annuleren? | |
+| `profile.menu` | Carta | Menu | Menukaart | |
+| `profile.takeaway` | Para llevar | Takeaway | Afhalen | |
+| `profile.delivery` | A domicilio | Delivery | Bezorging | |
+| `profile.ordering` | Pedidos para llevar y a domicilio | Takeaway and delivery | Afhalen en bezorgen | |
+| `profile.orderCall` | Llamar para pedir | Call to order | Bellen om te bestellen | |
+| `discover.filter.events` | Eventos | Events | Evenementen | |
+| `events.kind.tasting` | Cata | Tasting | Proeverij | |
+| `events.kind.music` | Música en vivo | Live music | Livemuziek | |
+| `events.kind.dinner` | Cena especial | Special dinner | Speciaal diner | |
+| `events.kind.other` | Evento | Event | Evenement | |
+| `events.price` | {price} por persona | {price} per person | {price} per persoon | |
+| `events.free` | Entrada libre | Free entry | Gratis toegang | |
+| `events.book` | Pedir reserva | Request a booking | Reservering aanvragen | |
+| `events.people` | Personas | People | Personen | |
+| `events.phone` | Teléfono de contacto (opcional) | Contact phone (optional) | Telefoonnummer (optioneel) | |
+| `events.note` | Comentario (opcional) | Comment (optional) | Opmerking (optioneel) | |
+| `events.howItWorks` | El local confirmará su reserva aquí, en la app. Se paga en el local. | The venue will confirm your booking here in the app. Payment is made at the venue. | De zaak bevestigt uw reservering hier in de app. U betaalt ter plaatse. | |
+| `events.send` | Enviar solicitud | Send request | Aanvraag versturen | |
+| `events.status.pending` | Solicitud enviada · {n} pers. · pendiente de confirmar | Request sent · {n} ppl · awaiting confirmation | Aanvraag verstuurd · {n} pers. · wacht op bevestiging | |
+| `events.status.confirmed` | Reserva confirmada · {n} pers. | Booking confirmed · {n} ppl | Reservering bevestigd · {n} pers. | |
+| `events.status.declined` | El local no ha podido confirmar su reserva | The venue could not confirm your booking | De zaak kon uw reservering niet bevestigen | |
+| `events.status.cancelled` | Reserva cancelada | Booking cancelled | Reservering geannuleerd | |
+| `events.cancel` | Cancelar reserva | Cancel booking | Reservering annuleren | |
+| `events.cancelConfirm` | ¿Desea cancelar su reserva? | Do you want to cancel your booking? | Wilt u uw reservering annuleren? | |
+| `events.error` | No se pudo enviar. Inténtelo de nuevo. | Could not send. Please try again. | Versturen mislukt. Probeer het opnieuw. | |
+| `events.upcoming` | Próximos eventos | Upcoming events | Komende evenementen | |
+| `events.none` | Por ahora no hay eventos próximos. | No upcoming events for now. | Op dit moment geen komende evenementen. | |
+| `profile.more` | Ver ficha | View profile | Bekijk profiel | |
+| `profile.about` | Presentación | About | Over ons | |
+| `profile.hours` | Horario | Opening hours | Openingstijden | |
+| `profile.contact` | Contacto | Contact | Contact | |
+| `profile.phone` | Teléfono | Phone | Telefoon | |
+| `profile.email` | Correo | Email | E-mail | |
+| `profile.website` | Web | Website | Website | |
+| `profile.address` | Dirección | Address | Adres | |
+| `profile.photo` | Foto {n} de {total} | Photo {n} of {total} | Foto {n} van {total} | |
+| `profile.deals` | Ventajas para socios | Member benefits | Voordelen voor leden | |
+| `profile.notFound` | No se ha encontrado | Not found | Niet gevonden | |
 | `team.eyebrow` | Su equipo CJ | Your CJ team | Uw CJ-team | |
 | `team.messages` | Mensajes | Messages | Berichten | |
 | `team.messagesText` | Escriba a su equipo de CJ | Write to your CJ team | Schrijf uw CJ-team | |
@@ -466,6 +543,20 @@ Controleer of elke tekst natuurlijk en correct Nederlands is. Noteer correcties 
 | `budget.itemExample` | Por ejemplo: grifo termostático de ducha | For example: thermostatic shower mixer | Bijvoorbeeld: thermostatische douchekraan | |
 | `budget.item` | Qué incluye | What is included | Wat is inbegrepen | |
 | `budget.addItem` | Añadir lo que incluye | Add what is included | Toevoegen wat inbegrepen is | |
+| `budget.includedTitle` | Qué incluye este precio | What this price includes | Wat deze prijs omvat | |
+| `budget.includedHint` | Añada cada cosa incluida con su precio de referencia y una foto. Puede añadir más después. | Add each included item with its reference price and a photo. You can add more later. | Voeg elk inbegrepen onderdeel toe met de richtprijs en een foto. U kunt later meer toevoegen. | |
+| `budget.addAnother` | Añadir otra cosa | Add another item | Nog iets toevoegen | |
+| `budget.removeRow` | Quitar | Remove | Verwijderen | |
+| `budget.idTitle` | Identificación | Identification | Identificatie | |
+| `budget.idHint` | Para firmar, suba una foto de la página con foto de su pasaporte, o de su DNI o NIE por delante y por detrás. Solo la verá el equipo de CJ. | To sign, upload a photo of the photo page of your passport, or of the front and back of your Spanish ID card (DNI or NIE). Only the CJ team will see it. | Upload om te ondertekenen een foto van de fotopagina van uw paspoort, of van de voor- en achterkant van uw Spaanse DNI of NIE. Alleen het team van CJ ziet deze. | |
+| `budget.idType` | Documento | Document | Document | |
+| `budget.id.dni` | DNI | DNI (Spanish ID card) | DNI (Spaanse identiteitskaart) | |
+| `budget.id.nie` | NIE | NIE (foreigner ID card) | NIE (identiteitskaart buitenlander) | |
+| `budget.id.passport` | Pasaporte | Passport | Paspoort | |
+| `budget.idPhotos` | Fotos del documento | Photos of the document | Foto's van het document | |
+| `budget.idOnFile` | Ya ha subido su {doc}. Si quiere cambiarlo, elija otras fotos. | You have already uploaded your {doc}. To change it, choose other photos. | U heeft uw {doc} al geüpload. Kies andere foto's om het te wijzigen. | |
+| `budget.identified` | Identificado con {doc} | Identified with {doc} | Geïdentificeerd met {doc} | |
+| `budget.idPrivate` | Documento de identidad (solo lo ven CJ y el firmante) | Identity document (only seen by CJ and the signer) | Identiteitsbewijs (alleen zichtbaar voor CJ en de ondertekenaar) | |
 | `budget.addGroup` | Añadir partida | Add item group | Post toevoegen | |
 | `project.budget` | Presupuesto inicial (sin IVA) | Initial budget (excl. VAT) | Oorspronkelijke begroting (excl. btw) | |
 | `project.extrasApproved` | Extras aprobados (sin IVA) | Approved extras (excl. VAT) | Goedgekeurd meerwerk (excl. btw) | |

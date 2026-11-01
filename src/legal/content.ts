@@ -40,6 +40,10 @@ const legal: Partial<Record<Language, Record<LegalPageKey, LegalDoc>>> & Record<
             'Preferencias en la app: idioma y lugares guardados como favoritos.',
             'Uso de descuentos: qué descuento se ha mostrado en la app y en qué fecha.',
             'Reservas en restaurantes: qué restaurante ha abierto con el botón Reservar, en qué fecha, y si ha indicado que consiguió mesa. A los restaurantes solo se les enseñan cifras del mes, nunca nombres.',
+            'Mensajes y peticiones que envía a CJ desde la app, y las notas y contactos propios que guarde en ella.',
+            'Mi reforma: presupuestos, plan de pagos, pagos y justificantes, extras, fotos de avances, elecciones de productos, repasos, planos y conversaciones con los profesionales de su obra.',
+            'Firma del presupuesto: su firma dibujada, el nombre con el que firma y una foto de su documento de identidad (pasaporte, DNI o NIE), que se pide para identificar a quien firma.',
+            'Eventos y pedidos: las solicitudes de reserva de eventos (personas, teléfono y comentario) y los pedidos de comida (platos, importe, teléfono, dirección de entrega si la hay y comentario).',
             'Datos técnicos de acceso necesarios para iniciar sesión de forma segura (por ejemplo, fecha del último acceso y dirección IP), gestionados por nuestro proveedor tecnológico.',
           ],
         },
@@ -50,6 +54,8 @@ const legal: Partial<Record<Language, Record<LegalPageKey, LegalDoc>>> & Record<
             'Facilitar el contacto con profesionales de confianza y con su agente de CJ.',
             'Gestionar las ventajas y descuentos de negocios colaboradores y conocer cuántas veces se utilizan, para mejorar estos acuerdos.',
             'Conocer cuántos clientes usan el botón de reserva de cada restaurante, para mostrar a esos restaurantes el interés que generan, sin comunicar nombres.',
+            'Gestionar su reforma con los profesionales que la realizan y dejar constancia del presupuesto firmado y de la identidad de quien lo firma.',
+            'Tramitar sus reservas de eventos y pedidos de comida con el negocio que ha elegido.',
             'No utilizamos sus datos para publicidad ni elaboramos perfiles con fines comerciales. [Revisar.]',
           ],
         },
@@ -62,7 +68,8 @@ const legal: Partial<Record<Language, Record<LegalPageKey, LegalDoc>>> & Record<
         {
           title: '5. Destinatarios y ubicación de los datos',
           paragraphs: [
-            'No cedemos sus datos a los negocios colaboradores: es usted quien decide contactarlos o mostrar su código.',
+            'Los negocios colaboradores solo reciben sus datos cuando usted lo decide: al pedir reserva para un evento o hacer un pedido, el negocio recibe en su panel y por correo el nombre con el que reserva, el teléfono, el número de personas o los platos, la dirección de entrega si la hay y su comentario. El resto de sus datos no se comparte con ellos.',
+            'En Mi reforma, cada profesional (constructor, electricista, arquitecto…) solo ve la obra en la que trabaja. Los arquitectos y diseñadores no ven los importes. La foto de su documento de identidad solo la ven usted y el equipo de CJ, nunca la otra parte del contrato.',
             'Los datos se alojan en Google Firebase (Google Ireland Limited), que actúa como encargado del tratamiento, en servidores de la Unión Europea (Madrid, España).',
             '[A completar: posibles transferencias internacionales por parte del proveedor y garantías aplicables, como las cláusulas contractuales tipo.]',
           ],
@@ -71,6 +78,7 @@ const legal: Partial<Record<Language, Record<LegalPageKey, LegalDoc>>> & Record<
           title: '6. Cuánto tiempo los conservamos',
           paragraphs: [
             'Mientras sea cliente de CJ Club y, después, durante [plazo] o el tiempo necesario para cumplir obligaciones legales.',
+            'La foto del documento de identidad se conserva junto al presupuesto firmado mientras pueda ser necesaria como prueba de la firma: [plazo a fijar por el abogado]. Al dar de baja a un cliente se borran sus reformas, con sus archivos, firmas y documentos.',
           ],
         },
         {
@@ -109,7 +117,7 @@ const legal: Partial<Record<Language, Record<LegalPageKey, LegalDoc>>> & Record<
         {
           title: '2. Objeto y acceso',
           paragraphs: [
-            'CJ Club es un servicio privado para clientes de CJ: guía de contactos de confianza, recomendaciones y descuentos en negocios colaboradores.',
+            'CJ Club es un servicio privado para clientes de CJ: guía de contactos de confianza, recomendaciones, descuentos, eventos y pedidos en negocios colaboradores, y seguimiento de reformas.',
             'El acceso es solo por invitación. Las credenciales son personales y el usuario se compromete a no compartirlas.',
           ],
         },
@@ -117,6 +125,7 @@ const legal: Partial<Record<Language, Record<LegalPageKey, LegalDoc>>> & Record<
           title: '3. Recomendaciones y descuentos de terceros',
           paragraphs: [
             'Los profesionales, lugares y descuentos que aparecen en la app los ofrecen terceros independientes. CJ los recomienda de buena fe, pero no es responsable de los servicios que presten. Los descuentos dependen de las condiciones de cada negocio y pueden cambiar o retirarse.',
+            'Los eventos, las cartas, los platos y sus precios los publica cada negocio, que es el responsable de su contenido. Las reservas y los pedidos se confirman y se pagan directamente al negocio; CJ no cobra ni interviene en el pago.',
             '[Revisar por el abogado.]',
           ],
         },
@@ -153,6 +162,10 @@ const legal: Partial<Record<Language, Record<LegalPageKey, LegalDoc>>> & Record<
             'App preferences: language and places saved as favourites.',
             'Use of discounts: which discount was shown in the app and on what date.',
             'Restaurant reservations: which restaurant you opened with the Book button, on what date, and whether you said you got a table. Restaurants are only shown monthly totals, never names.',
+            'Messages and requests you send to CJ from the app, and the notes and personal contacts you save in it.',
+            'My renovation: budgets, payment plan, payments and receipts, extras, progress photos, product choices, snags, plans and conversations with the professionals working on your property.',
+            'Budget signature: your drawn signature, the name you sign with and a photo of your identity document (passport, DNI or NIE), requested to identify the signer.',
+            'Events and orders: event booking requests (number of people, phone and comment) and food orders (dishes, amount, phone, delivery address if any and comment).',
             'Technical access data needed to sign in securely (for example, date of last sign-in and IP address), handled by our technology provider.',
           ],
         },
@@ -163,6 +176,8 @@ const legal: Partial<Record<Language, Record<LegalPageKey, LegalDoc>>> & Record<
             'To make it easy to contact trusted professionals and your CJ agent.',
             'To manage benefits and discounts from partner businesses and know how often they are used, in order to improve these agreements.',
             'To know how many clients use each restaurant’s booking button, so those restaurants can see the interest they generate, without sharing names.',
+            'To manage your renovation with the professionals carrying it out and keep a record of the signed budget and of who signed it.',
+            'To process your event bookings and food orders with the business you choose.',
             'We do not use your data for advertising or build commercial profiles. [To be reviewed.]',
           ],
         },
@@ -175,14 +190,18 @@ const legal: Partial<Record<Language, Record<LegalPageKey, LegalDoc>>> & Record<
         {
           title: '5. Recipients and data location',
           paragraphs: [
-            'We do not share your data with partner businesses: you decide whether to contact them or show your code.',
+            'Partner businesses only receive your data when you decide so: when you request an event booking or place an order, the business receives in its panel and by email the name you book under, your phone, the number of people or the dishes, the delivery address if any and your comment. The rest of your data is not shared with them.',
+            'In My renovation, each professional (builder, electrician, architect…) only sees the project they work on. Architects and designers do not see amounts. The photo of your identity document is only seen by you and the CJ team, never by the other party to the contract.',
             'Data is hosted on Google Firebase (Google Ireland Limited), acting as data processor, on servers in the European Union (Madrid, Spain).',
             '[To be completed: possible international transfers by the provider and the applicable safeguards, such as standard contractual clauses.]',
           ],
         },
         {
           title: '6. How long we keep it',
-          paragraphs: ['While you are a CJ Club client and afterwards for [period] or as long as required by law.'],
+          paragraphs: [
+            'While you are a CJ Club client and afterwards for [period] or as long as required by law.',
+            'The photo of your identity document is kept with the signed budget while it may be needed as proof of the signature: [period to be set by the lawyer]. When a client is removed, their renovations are deleted together with their files, signatures and documents.',
+          ],
         },
         {
           title: '7. Your rights',
@@ -220,7 +239,7 @@ const legal: Partial<Record<Language, Record<LegalPageKey, LegalDoc>>> & Record<
         {
           title: '2. Purpose and access',
           paragraphs: [
-            'CJ Club is a private service for CJ clients: a guide to trusted contacts, recommendations and discounts at partner businesses.',
+            'CJ Club is a private service for CJ clients: a guide to trusted contacts, recommendations, discounts, events and orders at partner businesses, and renovation tracking.',
             'Access is by invitation only. Login details are personal and must not be shared.',
           ],
         },
@@ -228,6 +247,7 @@ const legal: Partial<Record<Language, Record<LegalPageKey, LegalDoc>>> & Record<
           title: '3. Third-party recommendations and discounts',
           paragraphs: [
             'The professionals, places and discounts shown in the app are offered by independent third parties. CJ recommends them in good faith but is not responsible for the services they provide. Discounts depend on each business’s conditions and may change or be withdrawn.',
+            'Events, menus, dishes and prices are published by each business, which is responsible for their content. Bookings and orders are confirmed by and paid directly to the business; CJ does not charge or take part in the payment.',
             '[To be reviewed by the lawyer.]',
           ],
         },

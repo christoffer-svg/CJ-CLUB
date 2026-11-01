@@ -118,6 +118,83 @@ Kontrollera att varje text är naturlig och korrekt på svenska. Skriv dina rät
 | `benefits.validUntil` | Válido hasta el {date} | Valid until {date} | Gäller till {date} | |
 | `benefits.validRange` | Válido del {from} al {until} | Valid from {from} to {until} | Gäller från {from} till {until} | |
 | `common.back` | Volver | Back | Tillbaka | |
+| `orders.title` | Pedido | Order | Beställning | |
+| `orders.open` | Hacer un pedido | Place an order | Beställ | |
+| `orders.seeYours` | Ver sus pedidos en curso ({n}) | See your current orders ({n}) | Era pågående beställningar ({n}) | |
+| `orders.closed` | Ahora mismo {name} no acepta pedidos en la app. Puede llamar para pedir. | {name} is not taking orders in the app right now. You can call to order. | {name} tar inte emot beställningar i appen just nu. Ni kan ringa och beställa. | |
+| `orders.empty` | Aún no hay platos para pedir. | No dishes to order yet. | Inga rätter att beställa ännu. | |
+| `orders.soldOut` | Agotado | Sold out | Slut | |
+| `orders.more` | Añadir {name} | Add {name} | Lägg till {name} | |
+| `orders.less` | Quitar uno de {name} | Remove one {name} | Ta bort en {name} | |
+| `orders.continue` | Continuar · {total} | Continue · {total} | Fortsätt · {total} | |
+| `orders.back` | Seguir eligiendo | Keep choosing | Fortsätt välja | |
+| `orders.mode` | Entrega | Delivery method | Leverans | |
+| `orders.pickup` | Recoger en el local | Pick up at the restaurant | Hämta på restaurangen | |
+| `orders.delivery` | A domicilio | Home delivery | Hemleverans | |
+| `orders.when` | ¿Para cuándo? | When? | När? | |
+| `orders.asap` | Lo antes posible | As soon as possible | Så snart som möjligt | |
+| `orders.forTime` | Para las {time} | For {time} | Klockan {time} | |
+| `orders.name` | Nombre | Name | Namn | |
+| `orders.phone` | Teléfono | Phone | Telefon | |
+| `orders.address` | Dirección de entrega | Delivery address | Leveransadress | |
+| `orders.note` | Comentario (opcional) | Comment (optional) | Kommentar (valfritt) | |
+| `orders.fee` | Envío | Delivery | Leveransavgift | |
+| `orders.total` | Total | Total | Totalt | |
+| `orders.minOrder` | El pedido mínimo a domicilio es de {amount}. | The minimum order for delivery is {amount}. | Minsta beställning för hemleverans är {amount}. | |
+| `orders.payPickup` | Se paga al recoger. | Payment on pick-up. | Betalning vid avhämtning. | |
+| `orders.payDelivery` | Se paga al repartidor. | Payment to the delivery driver. | Betalning till budet. | |
+| `orders.send` | Enviar pedido · {total} | Send order · {total} | Skicka beställning · {total} | |
+| `orders.error` | No se pudo enviar el pedido. Inténtelo de nuevo. | The order could not be sent. Please try again. | Beställningen kunde inte skickas. Försök igen. | |
+| `orders.changed` | Algún plato ha cambiado o se ha agotado. Revise el pedido. | A dish has changed or sold out. Please check your order. | En rätt har ändrats eller tagit slut. Kontrollera beställningen. | |
+| `orders.yours` | Sus pedidos | Your orders | Era beställningar | |
+| `orders.past` | Pedidos anteriores | Previous orders | Tidigare beställningar | |
+| `orders.status.new` | Enviado · esperando al restaurante | Sent · waiting for the restaurant | Skickad · väntar på restaurangen | |
+| `orders.status.accepted` | Aceptado · en preparación | Accepted · being prepared | Accepterad · tillagas | |
+| `orders.status.ready` | Listo para recoger | Ready for pick-up | Klar att hämta | |
+| `orders.status.out` | En camino | On its way | På väg | |
+| `orders.status.done` | Entregado | Delivered | Levererad | |
+| `orders.status.declined` | El restaurante no puede atender este pedido | The restaurant cannot take this order | Restaurangen kan inte ta emot beställningen | |
+| `orders.status.cancelled` | Cancelado | Cancelled | Avbeställd | |
+| `orders.cancel` | Cancelar pedido | Cancel order | Avbeställ | |
+| `orders.cancelConfirm` | ¿Desea cancelar este pedido? | Do you want to cancel this order? | Vill ni avbeställa? | |
+| `profile.menu` | Carta | Menu | Meny | |
+| `profile.takeaway` | Para llevar | Takeaway | Avhämtning | |
+| `profile.delivery` | A domicilio | Delivery | Hemleverans | |
+| `profile.ordering` | Pedidos para llevar y a domicilio | Takeaway and delivery | Avhämtning och hemleverans | |
+| `profile.orderCall` | Llamar para pedir | Call to order | Ring för att beställa | |
+| `discover.filter.events` | Eventos | Events | Evenemang | |
+| `events.kind.tasting` | Cata | Tasting | Provning | |
+| `events.kind.music` | Música en vivo | Live music | Livemusik | |
+| `events.kind.dinner` | Cena especial | Special dinner | Specialmiddag | |
+| `events.kind.other` | Evento | Event | Evenemang | |
+| `events.price` | {price} por persona | {price} per person | {price} per person | |
+| `events.free` | Entrada libre | Free entry | Fri entré | |
+| `events.book` | Pedir reserva | Request a booking | Begär bokning | |
+| `events.people` | Personas | People | Antal personer | |
+| `events.phone` | Teléfono de contacto (opcional) | Contact phone (optional) | Telefon (valfritt) | |
+| `events.note` | Comentario (opcional) | Comment (optional) | Kommentar (valfritt) | |
+| `events.howItWorks` | El local confirmará su reserva aquí, en la app. Se paga en el local. | The venue will confirm your booking here in the app. Payment is made at the venue. | Stället bekräftar er bokning här i appen. Betalning sker på plats. | |
+| `events.send` | Enviar solicitud | Send request | Skicka förfrågan | |
+| `events.status.pending` | Solicitud enviada · {n} pers. · pendiente de confirmar | Request sent · {n} ppl · awaiting confirmation | Förfrågan skickad · {n} pers. · väntar på bekräftelse | |
+| `events.status.confirmed` | Reserva confirmada · {n} pers. | Booking confirmed · {n} ppl | Bokning bekräftad · {n} pers. | |
+| `events.status.declined` | El local no ha podido confirmar su reserva | The venue could not confirm your booking | Stället kunde inte bekräfta er bokning | |
+| `events.status.cancelled` | Reserva cancelada | Booking cancelled | Bokningen avbokad | |
+| `events.cancel` | Cancelar reserva | Cancel booking | Avboka | |
+| `events.cancelConfirm` | ¿Desea cancelar su reserva? | Do you want to cancel your booking? | Vill ni avboka? | |
+| `events.error` | No se pudo enviar. Inténtelo de nuevo. | Could not send. Please try again. | Det gick inte att skicka. Försök igen. | |
+| `events.upcoming` | Próximos eventos | Upcoming events | Kommande evenemang | |
+| `events.none` | Por ahora no hay eventos próximos. | No upcoming events for now. | Inga kommande evenemang just nu. | |
+| `profile.more` | Ver ficha | View profile | Visa profil | |
+| `profile.about` | Presentación | About | Om oss | |
+| `profile.hours` | Horario | Opening hours | Öppettider | |
+| `profile.contact` | Contacto | Contact | Kontakt | |
+| `profile.phone` | Teléfono | Phone | Telefon | |
+| `profile.email` | Correo | Email | E-post | |
+| `profile.website` | Web | Website | Webbplats | |
+| `profile.address` | Dirección | Address | Adress | |
+| `profile.photo` | Foto {n} de {total} | Photo {n} of {total} | Foto {n} av {total} | |
+| `profile.deals` | Ventajas para socios | Member benefits | Förmåner för medlemmar | |
+| `profile.notFound` | No se ha encontrado | Not found | Hittades inte | |
 | `team.eyebrow` | Su equipo CJ | Your CJ team | Ditt CJ-team | |
 | `team.messages` | Mensajes | Messages | Meddelanden | |
 | `team.messagesText` | Escriba a su equipo de CJ | Write to your CJ team | Skriv till ditt CJ-team | |
@@ -466,6 +543,20 @@ Kontrollera att varje text är naturlig och korrekt på svenska. Skriv dina rät
 | `budget.itemExample` | Por ejemplo: grifo termostático de ducha | For example: thermostatic shower mixer | Till exempel: termostatblandare för dusch | |
 | `budget.item` | Qué incluye | What is included | Vad som ingår | |
 | `budget.addItem` | Añadir lo que incluye | Add what is included | Lägg till vad som ingår | |
+| `budget.includedTitle` | Qué incluye este precio | What this price includes | Vad som ingår i priset | |
+| `budget.includedHint` | Añada cada cosa incluida con su precio de referencia y una foto. Puede añadir más después. | Add each included item with its reference price and a photo. You can add more later. | Lägg till varje sak som ingår med referenspris och ett foto. Ni kan lägga till fler senare. | |
+| `budget.addAnother` | Añadir otra cosa | Add another item | Lägg till en sak till | |
+| `budget.removeRow` | Quitar | Remove | Ta bort | |
+| `budget.idTitle` | Identificación | Identification | Identifiering | |
+| `budget.idHint` | Para firmar, suba una foto de la página con foto de su pasaporte, o de su DNI o NIE por delante y por detrás. Solo la verá el equipo de CJ. | To sign, upload a photo of the photo page of your passport, or of the front and back of your Spanish ID card (DNI or NIE). Only the CJ team will see it. | För att skriva under, ladda upp ett foto av passets fotosida, eller av fram- och baksidan på ert spanska DNI- eller NIE-kort. Endast CJ:s team ser det. | |
+| `budget.idType` | Documento | Document | Dokument | |
+| `budget.id.dni` | DNI | DNI (Spanish ID card) | DNI (spanskt id-kort) | |
+| `budget.id.nie` | NIE | NIE (foreigner ID card) | NIE (id-kort för utlänningar) | |
+| `budget.id.passport` | Pasaporte | Passport | Pass | |
+| `budget.idPhotos` | Fotos del documento | Photos of the document | Foton av dokumentet | |
+| `budget.idOnFile` | Ya ha subido su {doc}. Si quiere cambiarlo, elija otras fotos. | You have already uploaded your {doc}. To change it, choose other photos. | Ni har redan laddat upp ert {doc}. Välj andra foton för att byta. | |
+| `budget.identified` | Identificado con {doc} | Identified with {doc} | Identifierad med {doc} | |
+| `budget.idPrivate` | Documento de identidad (solo lo ven CJ y el firmante) | Identity document (only seen by CJ and the signer) | Id-handling (syns bara för CJ och den som skriver under) | |
 | `budget.addGroup` | Añadir partida | Add item group | Lägg till post | |
 | `project.budget` | Presupuesto inicial (sin IVA) | Initial budget (excl. VAT) | Ursprunglig budget (exkl. moms) | |
 | `project.extrasApproved` | Extras aprobados (sin IVA) | Approved extras (excl. VAT) | Godkända extraarbeten (exkl. moms) | |
