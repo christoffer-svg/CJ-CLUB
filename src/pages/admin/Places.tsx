@@ -83,6 +83,9 @@ export default function Places() {
             <div className="card a-list">
               {items.map((p) => (
                 <div key={p.id} className={p.active ? 'a-row' : 'a-row a-row--off'}>
+                  <Link to={`/admin/lugares/${p.id}/presentacion`} className="place-thumb" aria-label={`Fotos de ${p.name}`}>
+                    {p.photos?.[0] ? <img src={p.photos[0].url} alt="" onError={(e) => (e.currentTarget.style.visibility = 'hidden')} /> : <span>Sin fotos</span>}
+                  </Link>
                   <div className="a-row__body">
                     <span className="card__title">
                       {p.name}
@@ -91,6 +94,7 @@ export default function Places() {
                     <span className="card__text">
                       {[
                         p.meta_es,
+                        p.photos?.length ? `${p.photos.length} ${p.photos.length === 1 ? 'foto' : 'fotos'}` : 'sin fotos',
                         p.location ? null : 'sin ubicación en el mapa',
                         p.category === 'restaurants' ? (p.reservationChannel ? `reserva por ${reservationLabel[p.reservationChannel]}` : 'sin botón de reserva') : null,
                       ]
@@ -108,7 +112,7 @@ export default function Places() {
                     }
                   />
                   <Link className="a-link" to={`/admin/lugares/${p.id}/presentacion`}>
-                    Presentación
+                    Fotos y presentación
                   </Link>
                   <button
                     className="a-link"
@@ -159,6 +163,15 @@ export default function Places() {
             }, `Guardado: ${d.name}`)
           }}
         >
+          {editor.editing?.id && (
+            <p className="card__text">
+              Las fotos, el logo, la carta y el texto de presentación se cambian en{' '}
+              <Link className="a-link" to={`/admin/lugares/${editor.editing.id}/presentacion`} onClick={editor.close}>
+                Fotos y presentación
+              </Link>
+              .
+            </p>
+          )}
           <div className="a-grid-2">
             <Field label="Nombre">
               <Input required value={d.name} onChange={(e) => editor.set('name', e.target.value)} />
