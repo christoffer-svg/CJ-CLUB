@@ -33,7 +33,10 @@ function PlaceCard({ p, home }: { p: PlaceItem; home: GeoPoint | null }) {
       )}
       <div className="place__head">
         <h2 className="place__name">
-          <Link to={`${base}/descubrir/${p.id}`}>{p.name}</Link>
+          <Link to={`${base}/descubrir/${p.id}`} className="place__brand">
+            {p.logo && <img className="brand-logo" src={p.logo.url} alt="" />}
+            {p.name}
+          </Link>
         </h2>
         <button
           className={saved ? 'heart heart--on' : 'heart'}

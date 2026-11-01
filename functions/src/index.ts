@@ -11,7 +11,7 @@ import { defineSecret } from 'firebase-functions/params'
 import { setGlobalOptions } from 'firebase-functions/v2'
 import { HttpsError, onCall } from 'firebase-functions/v2/https'
 import { randomBytes, randomUUID } from 'node:crypto'
-import { invitationEmail, isMailLanguage, sendWithResend, type MailRole } from './email.js'
+import { invitationEmail, isMailLanguage, noticeEmail, sendWithResend, type MailRole } from './email.js'
 
 initializeApp()
 
@@ -739,7 +739,7 @@ export const uploadProfilePhoto = onCall({ memory: '512MiB', timeoutSeconds: 120
  * Los precios se toman aquí, de la lista de platos del restaurante (places/{id}/orderItems), nunca de
  * lo que envía la app. Se paga al recoger o al repartidor; aquí no se cobra nada.
  */
-export const placeOrder = onCall(async (request) => {
+export const placeOrder = onCall({ secrets: resendApiKey ? [resendApiKey] : [] }, async (request) => {
   const uid = request.auth?.uid
   if (!uid) throw new HttpsError('unauthenticated', 'Inicie sesión de nuevo.')
   const d = (request.data ?? {}) as Record<string, unknown>
@@ -813,5 +813,101 @@ export const placeOrder = onCall(async (request) => {
     createdAt: FieldValue.serverTimestamp(),
     updatedAt: FieldValue.serverTimestamp(),
   })
+
+  // Aviso por correo al restaurante (si falla, el pedido sigue siendo válido: lo ve en su panel)
+  const euros = (n: number) => `${n.toFixed(2).replace('.', ',').replace(/,00$/, '')} €`
+  await notifyBusiness(placeId, 'order', ref.id, {
+    title: `Pedido nuevo · ${euros(total)}`,
+    intro: `${name} ha hecho un pedido en CJ Club. Acéptelo o recházelo en su panel; el cliente verá la respuesta al momento.`,
+    rows: [
+      ['Entrega', mode === 'delivery' ? 'A domicilio' : 'Recoger en el local'],
+      ['Para', wanted === 'asap' ? 'Lo antes posible' : `Hoy a las ${wanted}`],
+      ['Teléfono', phone],
+      ['Dirección', address],
+      ['Comentario', note],
+      ['Total', `${euros(total)}${deliveryFee ? ` (envío ${euros(deliveryFee)} incluido)` : ''} · se paga ${mode === 'delivery' ? 'al repartidor' : 'al recoger'}`],
+    ],
+    lines: lines.map((l) => `${l.qty} × ${l.name} · ${euros(l.price * l.qty)}`),
+    button: 'Abrir pedidos',
+    path: '/negocio/pedidos',
+  })
   return { id: ref.id, total }
+})
+
+/**
+ * Avisa por correo a las cuentas de negocio de un lugar. Nunca falla: si el correo no está configurado
+ * o Resend da error, lo anota en mailLog y sigue.
+ */
+async function notifyBusiness(
+  placeId: string,
+  kind: 'order' | 'booking',
+  refId: string,
+  notice: { title: string; intro: string; rows: [string, string][]; lines?: string[]; button: string; path: string },
+) {
+  try {
+    const users = await db.collection('users').where('placeId', '==', placeId).get()
+    const to = users.docs
+      .filter((u) => rolesOf(u).includes('business') && typeof u.get('email') === 'string' && u.get('email'))
+      .map((u) => ({ uid: u.id, email: String(u.get('email')).toLowerCase() }))
+    if (!to.length) return
+    const base = appUrl().replace(/\/$/, '')
+    const mail = noticeEmail({ ...notice, link: `${base}${notice.path}`, appUrl: base })
+    const key = resendApiKey?.value() ?? ''
+    const simulated = emailEnabled && process.env.FUNCTIONS_EMULATOR === 'true' && (!key || key === 'test')
+    for (const r of to) {
+      const log = db.collection('mailLog').doc()
+      const entry = { kind, to: r.email, uid: r.uid, placeId, refId, subject: mail.subject, createdAt: FieldValue.serverTimestamp() }
+      if (!emailEnabled || (!key && !simulated)) {
+        await log.set({ ...entry, status: 'not_configured' })
+        continue
+      }
+      if (simulated) {
+        await log.set({ ...entry, status: 'sent', provider: 'simulated', html: mail.html })
+        continue
+      }
+      try {
+        const id = await sendWithResend({ apiKey: key, from: emailFrom(), replyTo: emailReplyTo() || undefined, to: r.email, subject: mail.subject, html: mail.html, text: mail.text })
+        await log.set({ ...entry, status: 'sent', provider: 'resend', providerId: id })
+      } catch (e) {
+        await log.set({ ...entry, status: 'failed', error: e instanceof Error ? e.message.slice(0, 300) : 'error' })
+      }
+    }
+  } catch (e) {
+    console.error('notifyBusiness', e)
+  }
+}
+
+/**
+ * Tras pedir reserva para un evento, la app llama aquí para que el negocio reciba un correo.
+ * Solo quien hizo la solicitud, y una sola vez por solicitud.
+ */
+export const notifyBooking = onCall({ secrets: resendApiKey ? [resendApiKey] : [] }, async (request) => {
+  const uid = request.auth?.uid
+  if (!uid) throw new HttpsError('unauthenticated', 'Inicie sesión de nuevo.')
+  const id = text((request.data ?? {}).bookingId, 'reserva')
+  if (!/^[A-Za-z0-9_-]{1,60}$/.test(id)) throw new HttpsError('invalid-argument', 'Reserva no válida.')
+  const ref = db.doc(`eventBookings/${id}`)
+  const first = await db.runTransaction(async (tx) => {
+    const b = await tx.get(ref)
+    if (!b.exists || b.get('uid') !== uid) throw new HttpsError('permission-denied', 'No es su reserva.')
+    if (b.get('notifiedAt')) return null
+    tx.update(ref, { notifiedAt: FieldValue.serverTimestamp() })
+    return b.data()!
+  })
+  if (!first) return { sent: false }
+  const [y, m, d] = String(first.eventDate).split('-').map(Number)
+  const day = new Date(Date.UTC(y, m - 1, d, 12)).toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'UTC' })
+  await notifyBusiness(String(first.placeId), 'booking', id, {
+    title: `Solicitud de reserva · ${first.eventTitle}`,
+    intro: `${first.name} quiere reservar para su evento. Confírmela o recházela en su panel; el cliente verá la respuesta al momento.`,
+    rows: [
+      ['Evento', `${first.eventTitle} · ${day}, ${first.eventTime}`],
+      ['Personas', String(first.people)],
+      ['Teléfono', String(first.phone ?? '')],
+      ['Comentario', String(first.note ?? '')],
+    ],
+    button: 'Abrir eventos',
+    path: '/negocio/eventos',
+  })
+  return { sent: true }
 })

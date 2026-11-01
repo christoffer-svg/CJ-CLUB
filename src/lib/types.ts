@@ -77,6 +77,8 @@ export type PublicProfile = {
   /** usuario de Instagram, sin @ */
   instagram?: string
   address?: string
+  /** logo del negocio (imagen; se sube como las fotos) */
+  logo?: Attachment | null
   /** fotos (las sube el servidor: función uploadProfilePhoto); la primera es la portada */
   photos?: Attachment[]
   /** carta del restaurante: fotos o PDF, tal como la tienen */
@@ -96,7 +98,7 @@ export type PublicProfile = {
   minOrder?: number
 }
 
-export const PROFILE_FIELDS = ['about_es', 'about_en', 'hours_es', 'hours_en', 'phone', 'email', 'website', 'instagram', 'address', 'photos', 'menu', 'takeaway', 'delivery', 'orderInfo_es', 'orderInfo_en', 'ordersOpen', 'deliveryFee', 'minOrder'] as const
+export const PROFILE_FIELDS = ['about_es', 'about_en', 'hours_es', 'hours_en', 'phone', 'email', 'website', 'instagram', 'address', 'photos', 'menu', 'takeaway', 'delivery', 'orderInfo_es', 'orderInfo_en', 'ordersOpen', 'deliveryFee', 'minOrder', 'logo'] as const
 export const MAX_MENU_FILES = 10
 export const MAX_PROFILE_PHOTOS = 10
 

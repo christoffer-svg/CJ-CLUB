@@ -144,5 +144,24 @@ ok(await order(J, { placeId: 'golf-pinar' }), 'FAILED_PRECONDITION', 'un golf no
 ok(await order(BZ, {}), 'PERMISSION_DENIED', 'un negocio no hace pedidos')
 ok(await order(null, {}), 'UNAUTHENTICATED', 'anónimo no hace pedidos')
 
+// Avisos por correo al negocio (en pruebas se simulan y quedan en mailLog)
+const mailFor = async (refId) => {
+  const r = await fetch('http://127.0.0.1:8080/v1/projects/cj-club/databases/(default)/documents:runQuery', { method: 'POST', headers: { ...H, authorization: 'Bearer owner' }, body: JSON.stringify({ structuredQuery: { from: [{ collectionId: 'mailLog' }], where: { fieldFilter: { field: { fieldPath: 'refId' }, op: 'EQUAL', value: { stringValue: refId } } } } }) }).then(r => r.json())
+  return r.filter(x => x.document).map(x => x.document.fields)
+}
+const om = await mailFor(o1.id)
+ok(om.some(m => m.to.stringValue === 'terraza@prueba.test' && m.status.stringValue === 'sent' && m.subject.stringValue.includes('23,50 €')), true, 'el restaurante recibe un correo con el pedido: ' + JSON.stringify(om.map(m => [m.to?.stringValue, m.status?.stringValue, m.subject?.stringValue])))
+ok(om[0]?.html?.stringValue.includes('2 × Croquetas'), true, 'el correo lleva los platos')
+const NFN = FN.replace('uploadProjectFile', 'notifyBooking')
+const notify = async (t, id) => {
+  const r = await fetch(NFN, { method: 'POST', headers: { ...H, ...(t ? { authorization: 'Bearer ' + t } : {}) }, body: JSON.stringify({ data: { bookingId: id } }) })
+  const j = await r.json(); return j.error ? j.error.status : j.result
+}
+ok(await notify(L, 'bk1'), 'PERMISSION_DENIED', 'otra familia no provoca avisos de una reserva ajena')
+ok((await notify(J, 'bk1'))?.sent, true, 'al pedir reserva, el negocio recibe un correo')
+ok((await notify(J, 'bk1'))?.sent, false, 'el aviso de una reserva se envía una sola vez')
+const bm = await mailFor('bk1')
+ok(bm.length >= 1 && bm.every(m => m.subject.stringValue.startsWith('Solicitud de reserva')) && bm.some(m => m.to.stringValue === 'terraza@prueba.test'), true, 'correo de la solicitud de reserva en mailLog')
+
 console.log(`Archivos: ${pass} OK, ${fail} FAIL`)
 if (fail) process.exit(1)

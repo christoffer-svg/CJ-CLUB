@@ -64,6 +64,13 @@ Todo está denegado salvo lo que se permite expresamente.
 - Carta (`menu`): hasta 10 fotos o PDF en `profiles/{places|partners}/{id}/menu/`. Los sube la función `uploadProfilePhoto` con `kind: 'menu'`, la única vía que admite PDF. También forman parte de la presentación: «para llevar» y «a domicilio» (sí o no) y «cómo pedir» (`orderInfo_es/en`, hasta 600 caracteres).
 - El formulario de la ficha en el panel (Lugares y Colaboradores) no guarda los campos de la presentación, para no pisar lo que haya escrito el negocio.
 
+### Avisos por correo a los negocios
+
+- Cada pedido nuevo envía un correo a todas las cuentas de negocio de ese restaurante. Lo envía `placeOrder` justo después de guardar el pedido.
+- Cada solicitud de reserva de un evento también avisa al negocio. Tras crear la solicitud, la app llama a `notifyBooking`. Esta función comprueba que la solicitud es de quien llama y la marca con `notifiedAt` dentro de una transacción, así que el correo sale una sola vez.
+- Se usa el mismo Resend que las invitaciones (`RESEND_API_KEY` en Secret Manager). Cada envío queda anotado en `mailLog`: enviado, fallido o sin configurar. Si el correo falla, el pedido o la reserva siguen siendo válidos y se ven en el panel.
+- Logo de cada negocio o colaborador (`logo`): una imagen en la carpeta de fotos de ese colaborador. Lo comprueba `profilePhotoOk`.
+
 ### Eventos y reservas de eventos
 
 - **Eventos (`events/{id}`)**

@@ -1,8 +1,9 @@
 /** Eventos de los negocios (catas, música en vivo…) y sus solicitudes de reserva */
+import { httpsCallable } from 'firebase/functions'
 import { addDoc, collection, deleteDoc, doc, onSnapshot, query, serverTimestamp, setDoc, updateDoc, where } from 'firebase/firestore'
 import { useEffect, useState } from 'react'
 import { todayKey } from './data'
-import { db } from './firebase'
+import { db, functions } from './firebase'
 import type { BookingStatus, EventBooking, PlaceEvent } from './types'
 
 export type WithId<T> = T & { id: string }
@@ -106,13 +107,13 @@ export function useBookings(filter: { clientId?: string | null; placeId?: string
   return key ? state : { loading: false, data: [] }
 }
 
-/** El cliente pide reserva para un evento */
-export function requestBooking(
+/** El cliente pide reserva para un evento; después, el servidor avisa al negocio por correo */
+export async function requestBooking(
   e: WithId<PlaceEvent>,
   who: { clientId: string; uid: string; name: string },
   d: { people: number; phone: string; note: string },
 ) {
-  return addDoc(collection(db, 'eventBookings'), {
+  const ref = await addDoc(collection(db, 'eventBookings'), {
     eventId: e.id,
     placeId: e.placeId,
     eventTitle: e.title,
@@ -130,6 +131,9 @@ export function requestBooking(
     answeredAt: null,
     cancelledAt: null,
   })
+  // El correo es un extra: si falla, la solicitud ya está guardada y el negocio la ve en su panel
+  httpsCallable(functions, 'notifyBooking')({ bookingId: ref.id }).catch(() => {})
+  return ref
 }
 
 export const cancelBooking = (id: string) => updateDoc(doc(db, 'eventBookings', id), { status: 'cancelled', cancelledAt: serverTimestamp() })

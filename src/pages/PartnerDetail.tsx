@@ -31,6 +31,11 @@ export default function PartnerDetail() {
       <main className="page">
         {p && (
           <>
+            {p.logo && (
+              <div className="pf-logo">
+                <img className="brand-logo brand-logo--lg" src={p.logo.url} alt={p.name} />
+              </div>
+            )}
             <ProfileGallery photos={p.photos} name={p.name} />
             {p.phone && (
               <div className="pf-actions">

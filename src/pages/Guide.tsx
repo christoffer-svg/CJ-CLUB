@@ -18,9 +18,10 @@ type RowProps = {
   emergency?: boolean
   /** enlace a la ficha del colaborador */
   to?: string
+  logo?: string
 }
 
-function ContactRow({ labels, name, description, phone, emergency, to }: RowProps) {
+function ContactRow({ labels, name, description, phone, emergency, to, logo }: RowProps) {
   const { t } = useI18n()
   return (
     <div className="contact">
@@ -35,7 +36,8 @@ function ContactRow({ labels, name, description, phone, emergency, to }: RowProp
           </span>
         )}
         {to ? (
-          <Link to={to} className="card__title contact__link">
+          <Link to={to} className="card__title contact__link place__brand">
+            {logo && <img className="brand-logo" src={logo} alt="" />}
             {name}
           </Link>
         ) : (
@@ -89,6 +91,7 @@ export default function Guide() {
                   description={pick(p, 'description')}
                   phone={p.phone}
                   to={`${base}/guia/${p.id}`}
+                  logo={p.logo?.url}
                 />
               )
             })}

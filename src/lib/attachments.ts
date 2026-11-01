@@ -22,8 +22,10 @@ export function checkFiles(files: File[], max = MAX_FILES): FileProblem | null {
 }
 
 /** Reduce una foto a 1600 px como mucho y la guarda como JPEG; los PDF se suben tal cual */
-export async function prepare(file: File): Promise<{ blob: Blob; name: string; type: string }> {
+export async function prepare(file: File, keepPng = false): Promise<{ blob: Blob; name: string; type: string }> {
   if (!file.type.startsWith('image/') || file.type === 'image/gif') return { blob: file, name: file.name, type: file.type }
+  // Logos: PNG con fondo transparente se queda en PNG (en JPEG el fondo saldría negro)
+  const png = keepPng && file.type === 'image/png'
   try {
     const bitmap = await createImageBitmap(file)
     const scale = Math.min(1, 1600 / Math.max(bitmap.width, bitmap.height))
@@ -31,9 +33,9 @@ export async function prepare(file: File): Promise<{ blob: Blob; name: string; t
     canvas.width = Math.round(bitmap.width * scale)
     canvas.height = Math.round(bitmap.height * scale)
     canvas.getContext('2d')!.drawImage(bitmap, 0, 0, canvas.width, canvas.height)
-    const blob = await new Promise<Blob | null>((r) => canvas.toBlob(r, 'image/jpeg', 0.82))
+    const blob = await new Promise<Blob | null>((r) => canvas.toBlob(r, png ? 'image/png' : 'image/jpeg', 0.82))
     if (!blob || blob.size >= file.size) return { blob: file, name: file.name, type: file.type }
-    return { blob, name: file.name.replace(/\.[^.]+$/, '') + '.jpg', type: 'image/jpeg' }
+    return png ? { blob, name: file.name, type: 'image/png' } : { blob, name: file.name.replace(/\.[^.]+$/, '') + '.jpg', type: 'image/jpeg' }
   } catch {
     return { blob: file, name: file.name, type: file.type }
   }

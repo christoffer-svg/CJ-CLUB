@@ -237,7 +237,8 @@ service cloud.firestore {
         && profileText('instagram', 100) && profileText('address', 300)
         && profileText('website', 300)
         && (request.resource.data.get('website', '') == '' || request.resource.data.website.matches('https://[^ ]+'))
-        && profilePhotosOk(coll, id);
+        && profilePhotosOk(coll, id)
+        && (request.resource.data.get('logo', null) == null || profilePhotoOk(request.resource.data.logo, coll, id));
     }
 
     match /places/{id} {
@@ -248,7 +249,7 @@ service cloud.firestore {
       allow update: if isBusiness() && id == myPlaceId()
         && request.resource.data.diff(resource.data).affectedKeys()
              .hasOnly(['about_es', 'about_en', 'hours_es', 'hours_en', 'phone', 'email', 'website', 'instagram', 'address', 'photos',
-                       'menu', 'takeaway', 'delivery', 'orderInfo_es', 'orderInfo_en', 'ordersOpen', 'deliveryFee', 'minOrder'])
+                       'menu', 'takeaway', 'delivery', 'orderInfo_es', 'orderInfo_en', 'ordersOpen', 'deliveryFee', 'minOrder', 'logo'])
         && profileOk('places', id);
     }
 

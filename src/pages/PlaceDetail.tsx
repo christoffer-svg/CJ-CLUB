@@ -38,6 +38,11 @@ export default function PlaceDetail() {
       <main className="page">
         {p && (
           <>
+            {p.logo && (
+              <div className="pf-logo">
+                <img className="brand-logo brand-logo--lg" src={p.logo.url} alt={p.name} />
+              </div>
+            )}
             <ProfileGallery photos={p.photos} name={p.name} />
             <div className="pf-actions">
               <ReserveButton place={p} id={placeId} />

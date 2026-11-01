@@ -251,3 +251,55 @@ export async function sendWithResend(opts: {
   if (!res.ok) throw new Error(`Resend ${res.status}: ${body.message ?? 'error'}`)
   return body.id ?? ''
 }
+
+/**
+ * Aviso al negocio (pedido nuevo, solicitud de reserva…), en español, con la marca de CJ.
+ * rows: pares etiqueta / valor; lines: lista (p. ej. los platos del pedido).
+ */
+export function noticeEmail(opts: { title: string; intro: string; rows: [string, string][]; lines?: string[]; button: string; link: string; appUrl: string }) {
+  const appHost = opts.appUrl.replace(/^https?:\/\//, '').replace(/\/$/, '')
+  const rowsHtml = opts.rows
+    .filter(([, v]) => v)
+    .map(
+      ([k, v]) =>
+        `<tr><td style="padding:4px 12px 4px 0;font-size:12px;color:#6F665B;white-space:nowrap;vertical-align:top;">${escapeHtml(k)}</td><td style="padding:4px 0;font-size:14px;color:#1A1512;">${escapeHtml(v)}</td></tr>`,
+    )
+    .join('')
+  const linesHtml = opts.lines?.length
+    ? `<ul style="margin:0 0 20px;padding-left:18px;font-size:14px;">${opts.lines.map((l) => `<li style="margin:2px 0;">${escapeHtml(l)}</li>`).join('')}</ul>`
+    : ''
+  const html = `<!doctype html>
+<html lang="es">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${escapeHtml(opts.title)}</title></head>
+<body style="margin:0;padding:0;background:#E8DDCB;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#E8DDCB;">
+<tr><td align="center" style="padding:24px 12px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;">
+<tr><td style="background:#000000;background-image:linear-gradient(160deg,#493B34,#000000);padding:24px 32px;border-radius:8px 8px 0 0;">
+  <div style="font-family:Montserrat,Helvetica,Arial,sans-serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#B79A68;">CJ Club</div>
+  <div style="font-family:'Playfair Display',Georgia,'Times New Roman',serif;font-size:24px;color:#FFFFFF;margin-top:10px;">${escapeHtml(opts.title)}</div>
+</td></tr>
+<tr><td style="background:#FBF8F3;border:1px solid #D3C4AA;border-top:0;padding:28px 32px;border-radius:0 0 8px 8px;font-family:Montserrat,Helvetica,Arial,sans-serif;color:#1A1512;font-size:15px;line-height:1.6;">
+  <p style="margin:0 0 18px;">${escapeHtml(opts.intro)}</p>
+  <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 0 18px;">${rowsHtml}</table>
+  ${linesHtml}
+  <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 0 8px;"><tr><td style="background:#000000;border:1px solid #B79A68;border-radius:6px;">
+    <a href="${escapeHtml(opts.link)}" style="display:inline-block;padding:13px 24px;font-size:12px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:#FFFFFF;text-decoration:none;">${escapeHtml(opts.button)}</a>
+  </td></tr></table>
+</td></tr>
+<tr><td align="center" style="padding:16px;font-family:Montserrat,Helvetica,Arial,sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#887F73;">CJ Real Estate &amp; Services · <a href="${escapeHtml(opts.appUrl)}" style="color:#887F73;">${escapeHtml(appHost)}</a></td></tr>
+</table>
+</td></tr></table>
+</body></html>`
+  const text = [
+    opts.title,
+    '',
+    opts.intro,
+    '',
+    ...opts.rows.filter(([, v]) => v).map(([k, v]) => `${k}: ${v}`),
+    ...(opts.lines?.length ? ['', ...opts.lines.map((l) => `- ${l}`)] : []),
+    '',
+    `${opts.button}: ${opts.link}`,
+  ].join('\n')
+  return { subject: opts.title, html, text }
+}

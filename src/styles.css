@@ -3986,3 +3986,48 @@ button {
 .ord-items__title {
   margin-top: 24px;
 }
+
+/* Logo de cada negocio o colaborador */
+.place__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand-logo {
+  width: 36px;
+  height: 36px;
+  flex: none;
+  object-fit: contain;
+  border-radius: 8px;
+  border: 1px solid var(--card-border);
+  background: var(--white);
+}
+
+.brand-logo--lg {
+  width: 84px;
+  height: 84px;
+  border-radius: 12px;
+  padding: 6px;
+}
+
+.brand-logo--empty {
+  display: grid;
+  place-items: center;
+  font-size: 11px;
+  color: var(--text-2);
+  background: var(--card);
+}
+
+.pf-logo {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+.profile-editor__logo-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 6px;
+}

@@ -42,6 +42,21 @@ export default function ProfileEditor({
   const photos = draft.photos ?? []
   const menu = draft.menu ?? []
   const [uploadingMenu, setUploadingMenu] = useState(false)
+  const [uploadingLogo, setUploadingLogo] = useState(false)
+
+  async function setLogo(file: File | undefined) {
+    if (!file || !file.type.startsWith('image/')) return
+    setUploadingLogo(true)
+    try {
+      const [logo] = await uploadProfilePhotos(coll, id, [file], 'logo')
+      setDraft((d) => ({ ...d, logo }))
+      toast('Logo añadido. Pulse «Guardar presentación» para publicarlo.')
+    } catch {
+      toast('No se pudo subir el logo. Use una imagen de hasta 10 MB.', 'error')
+    } finally {
+      setUploadingLogo(false)
+    }
+  }
 
   async function addMenu(files: File[]) {
     const room = MAX_MENU_FILES - menu.length
@@ -91,7 +106,33 @@ export default function ProfileEditor({
     <div className="card a-form profile-editor">
       <p className="card__text">{audience}</p>
 
-      <div className="a-field">
+      <div className="a-field profile-editor__logo">
+        <span className="a-field__label">Logo</span>
+        <span className="a-field__hint">Se ve junto al nombre en la app. Mejor una imagen cuadrada; si es PNG con fondo transparente, se respeta.</span>
+        <div className="profile-editor__logo-row">
+          {draft.logo ? <img className="brand-logo brand-logo--lg" src={draft.logo.url} alt="Logo" /> : <span className="brand-logo brand-logo--lg brand-logo--empty">Sin logo</span>}
+          <label className="btn btn--ghost a-btn">
+            {uploadingLogo ? 'Subiendo…' : draft.logo ? 'Cambiar logo' : 'Subir logo'}
+            <input
+              type="file"
+              accept="image/*"
+              hidden
+              disabled={uploadingLogo}
+              onChange={(e) => {
+                setLogo(e.target.files?.[0])
+                e.target.value = ''
+              }}
+            />
+          </label>
+          {draft.logo && (
+            <button type="button" className="a-link" onClick={() => set({ logo: null })}>
+              Quitar
+            </button>
+          )}
+        </div>
+      </div>
+
+      <div className="a-field profile-editor__section">
         <span className="a-field__label">Fotos ({photos.length} de {MAX_PROFILE_PHOTOS})</span>
         <span className="a-field__hint">La primera es la portada. Fotos del local, platos, instalaciones o del equipo.</span>
         {photos.length > 0 && (
@@ -231,7 +272,7 @@ export default function ProfileEditor({
       </Field>
 
       <div className="profile-editor__actions">
-        <button type="button" className="btn a-btn" disabled={busy || uploading || uploadingMenu || !dirty} onClick={save}>
+        <button type="button" className="btn a-btn" disabled={busy || uploading || uploadingMenu || uploadingLogo || !dirty} onClick={save}>
           {busy ? 'Guardando…' : 'Guardar presentación'}
         </button>
         {dirty && <span className="a-field__hint">Hay cambios sin guardar.</span>}
