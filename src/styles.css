@@ -4282,3 +4282,8 @@ button {
 .sp-chat-row {
   gap: 12px;
 }
+
+.sp-card--cj {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 1px var(--gold);
+}

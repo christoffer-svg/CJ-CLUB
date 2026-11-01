@@ -593,11 +593,24 @@ service cloud.firestore {
         && request.resource.data.hidden == false
         && request.resource.data.createdAt == request.time
         && socialPostOk(pid);
-      // Quien la publica la corrige; CJ solo la oculta o la vuelve a mostrar
+      // CJ publica recomendaciones propias, como "CJ Club" (casa "cj")
+      allow create: if isAdmin()
+        && request.resource.data.keys().hasOnly(['kind', 'activity', 'title', 'text', 'dateFrom', 'dateTo', 'place', 'photos', 'clientId', 'uid', 'familyName', 'hidden', 'createdAt'])
+        && request.resource.data.kind == 'tip'
+        && request.resource.data.clientId == 'cj'
+        && request.resource.data.familyName == 'CJ Club'
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.hidden == false
+        && request.resource.data.createdAt == request.time
+        && socialPostOk(pid);
+      // Quien la publica la corrige; CJ solo la oculta o la vuelve a mostrar (y corrige las suyas)
       allow update: if (isClient() && resource.data.clientId == me().clientId
           && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['activity', 'title', 'text', 'dateFrom', 'dateTo', 'place', 'photos'])
           && socialPostOk(pid))
-        || (isAdmin() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['hidden']) && request.resource.data.hidden is bool);
+        || (isAdmin() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['hidden']) && request.resource.data.hidden is bool)
+        || (isAdmin() && resource.data.clientId == 'cj'
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['title', 'text', 'place', 'photos'])
+            && socialPostOk(pid));
       allow delete: if isAdmin() || (isClient() && resource.data.clientId == me().clientId);
 
       // Familias que se apuntan a un plan (una por casa)

@@ -346,6 +346,15 @@ ok(await req(L, 'socialPosts/sp1'), 200, 'quien la publicó sí la ve')
 ok(await serverTime(P, 'socialPosts/sp1/joins/jansen', joinF('jansen', pareja.localId, 'Familia Jansen'), ['createdAt'], false), 403, 'no se apunta a una publicación oculta')
 ok(await patch(AD, 'socialPosts/sp1', { title: str('Otro') }), 403, 'CJ no cambia el texto de los clientes')
 ok(await req(J, 'socialPosts/tip1', 'DELETE'), 200, 'quien publica la borra')
+// Recomendaciones de CJ
+const cjTip = (extra = {}) => spost('cj', a.localId, 'CJ Club', { kind: str('tip'), activity: str('other'), title: str('El mejor arroz a banda'), dateFrom: str(''), dateTo: str(''), photos: sph('cj', 'cj1'), ...extra })
+ok(await serverTime(AD, 'socialPosts/cj1', cjTip(), ['createdAt'], false), 200, 'CJ publica una recomendación como CJ Club')
+ok(await serverTime(AD, 'socialPosts/cj2', cjTip({ kind: str('plan'), activity: str('golf'), dateFrom: str('2030-05-10'), dateTo: str('') }), ['createdAt'], false), 403, 'CJ no publica planes')
+ok(await serverTime(AD, 'socialPosts/cj3', cjTip({ clientId: str('jansen'), familyName: str('Familia Jansen') }), ['createdAt'], false), 403, 'CJ no publica en nombre de un cliente')
+ok(await serverTime(J, 'socialPosts/cj4', cjTip({ uid: str(j.localId) }), ['createdAt'], false), 403, 'un cliente no publica como CJ Club')
+ok(await patch(AD, 'socialPosts/cj1', { text: str('Pidan el del señoret') }), 200, 'CJ corrige su recomendación')
+ok(await req(J, 'socialPosts/cj1'), 200, 'los clientes ven la recomendación de CJ')
+ok(await serverTime(J, 'socialPosts/cj1/joins/jansen', joinF('jansen', j.localId, 'Familia Jansen'), ['createdAt'], false), 403, 'a una recomendación de CJ no se apunta nadie')
 
 // Foto de perfil de la casa: solo la escribe el servidor
 ok(await patch(J, 'clients/jansen', { photo: { nullValue: null } }), 403, 'el cliente no escribe su ficha directamente')

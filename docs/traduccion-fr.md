@@ -118,6 +118,7 @@ Vérifiez que chaque texte est naturel et correct en français. Notez vos correc
 | `benefits.validUntil` | Válido hasta el {date} | Valid until {date} | Valable jusqu'au {date} | |
 | `benefits.validRange` | Válido del {from} al {until} | Valid from {from} to {until} | Valable du {from} au {until} | |
 | `common.back` | Volver | Back | Retour | |
+| `social.byCj` | Recomendación de CJ | CJ recommends | CJ recommande | |
 | `photo.add` | Añadir foto de su casa o familia | Add a photo of your home or family | Ajouter une photo de votre maison ou de votre famille | |
 | `photo.change` | Cambiar foto | Change photo | Changer la photo | |
 | `photo.remove` | Quitar foto | Remove photo | Retirer la photo | |

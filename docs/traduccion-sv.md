@@ -118,6 +118,7 @@ Kontrollera att varje text är naturlig och korrekt på svenska. Skriv dina rät
 | `benefits.validUntil` | Válido hasta el {date} | Valid until {date} | Gäller till {date} | |
 | `benefits.validRange` | Válido del {from} al {until} | Valid from {from} to {until} | Gäller från {from} till {until} | |
 | `common.back` | Volver | Back | Tillbaka | |
+| `social.byCj` | Recomendación de CJ | CJ recommends | CJ tipsar | |
 | `photo.add` | Añadir foto de su casa o familia | Add a photo of your home or family | Lägg till ett foto på ert hus eller er familj | |
 | `photo.change` | Cambiar foto | Change photo | Byt foto | |
 | `photo.remove` | Quitar foto | Remove photo | Ta bort foto | |

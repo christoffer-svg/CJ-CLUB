@@ -173,6 +173,8 @@ const sp = await upSocial(J, {})
 ok(typeof sp === 'object' && sp.path.startsWith('social/jansen/nuevoPost1234567/'), true, 'el cliente sube la foto de una publicación a la carpeta de su casa')
 ok(await upSocial(J, { postId: '../../otra' }), 'INVALID_ARGUMENT', 'nombre de publicación no válido')
 ok(await upSocial(BZ, {}), 'PERMISSION_DENIED', 'un negocio no sube fotos a Social')
+const cjp = await upSocial(AD, { postId: 'cjPost1234567890' })
+ok(typeof cjp === 'object' && cjp.path.startsWith('social/cj/cjPost1234567890/'), true, 'CJ sube fotos de sus recomendaciones a la carpeta de CJ')
 ok(await upSocial(J, { contentType: 'application/pdf' }), 'INVALID_ARGUMENT', 'en Social solo fotos')
 
 // Foto de perfil de la casa (función setClientPhoto)

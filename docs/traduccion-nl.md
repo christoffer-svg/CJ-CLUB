@@ -118,6 +118,7 @@ Controleer of elke tekst natuurlijk en correct Nederlands is. Noteer correcties 
 | `benefits.validUntil` | Válido hasta el {date} | Valid until {date} | Geldig tot {date} | |
 | `benefits.validRange` | Válido del {from} al {until} | Valid from {from} to {until} | Geldig van {from} tot {until} | |
 | `common.back` | Volver | Back | Terug | |
+| `social.byCj` | Recomendación de CJ | CJ recommends | Tip van CJ | |
 | `photo.add` | Añadir foto de su casa o familia | Add a photo of your home or family | Foto van uw huis of familie toevoegen | |
 | `photo.change` | Cambiar foto | Change photo | Foto wijzigen | |
 | `photo.remove` | Quitar foto | Remove photo | Foto verwijderen | |

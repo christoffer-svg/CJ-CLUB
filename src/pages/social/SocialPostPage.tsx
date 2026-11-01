@@ -3,7 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import Header from '../../components/Header'
 import { ProfileGallery } from '../../components/ProfileView'
 import { useI18n } from '../../i18n'
-import { chatIdOf, deletePost, joinPlan, leavePlan, reportPost, useJoins, useMyChats, useSocialPost } from '../../lib/social'
+import { chatIdOf, isCjPost, deletePost, joinPlan, leavePlan, reportPost, useJoins, useMyChats, useSocialPost } from '../../lib/social'
 import { useViewer } from '../../lib/viewer'
 import { useMe, usePlanDates } from './common'
 import { FamilyAvatar } from '../../components/FamilyAvatar'
@@ -46,7 +46,7 @@ export default function SocialPostPage() {
     <>
       <Header
         back={`${base}/social`}
-        eyebrow={p ? (p.kind === 'plan' ? t(`social.activity.${p.activity}`) : t('social.tip')) : t('social.eyebrow')}
+        eyebrow={p ? (p.kind === 'plan' ? t(`social.activity.${p.activity}`) : isCjPost(p) ? t('social.byCj') : t('social.tip')) : t('social.eyebrow')}
         title={p?.title ?? (post.loading ? '' : t('profile.notFound'))}
         subtitle={p ? `${p.familyName}${p.kind === 'plan' ? ` · ${dates(p)}` : ''}` : undefined}
       />
@@ -55,7 +55,7 @@ export default function SocialPostPage() {
           <>
             {p.hidden && <p className="chat__note">{t('social.hiddenByCj')}</p>}
             <div className="sp-author">
-              <FamilyAvatar url={avatars[p.clientId]} name={p.familyName} size={44} />
+              <FamilyAvatar url={isCjPost(p) ? '/logo.png' : avatars[p.clientId]} name={p.familyName} size={44} />
               <span className="card__title">{p.familyName}</span>
             </div>
             <ProfileGallery photos={p.photos} name={p.title} />
@@ -134,7 +134,7 @@ export default function SocialPostPage() {
               </section>
             )}
 
-            {!mine && !preview && me && (
+            {!mine && !preview && me && !isCjPost(p) && (
               <div className="sp-report">
                 {reported ? (
                   <p className="card__text">{t('social.reported')}</p>

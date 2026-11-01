@@ -934,8 +934,9 @@ export const uploadSocialPhoto = onCall({ memory: '512MiB', timeoutSeconds: 120 
   if (!uid) throw new HttpsError('unauthenticated', 'Inicie sesión de nuevo.')
   const d = (request.data ?? {}) as Record<string, unknown>
   const me = await db.doc(`users/${uid}`).get()
-  const clientId = me.get('clientId')
-  if (me.get('role') !== 'client' || typeof clientId !== 'string' || !clientId) throw new HttpsError('permission-denied', 'Solo los clientes publican en Social.')
+  // Los clientes, en la carpeta de su casa; CJ (sus recomendaciones), en la carpeta "cj"
+  const clientId = me.get('role') === 'admin' ? 'cj' : me.get('clientId')
+  if ((me.get('role') !== 'client' && me.get('role') !== 'admin') || typeof clientId !== 'string' || !clientId) throw new HttpsError('permission-denied', 'Solo los clientes publican en Social.')
   const postId = text(d.postId, 'publicación')
   const contentType = text(d.contentType, 'tipo')
   if (!/^[A-Za-z0-9]{10,40}$/.test(postId)) throw new HttpsError('invalid-argument', 'Publicación no válida.')

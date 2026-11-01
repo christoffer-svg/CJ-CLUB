@@ -205,3 +205,26 @@ export const reportPost = (post: WithId<SocialPost>, me: Me, reason: string) =>
     reason: reason.trim().slice(0, 500),
     createdAt: serverTimestamp(),
   })
+
+/** Las recomendaciones de CJ se publican como la "casa" cj, con el nombre CJ Club */
+export const CJ_ID = 'cj'
+export const CJ_NAME = 'CJ Club'
+export const isCjPost = (p: Pick<SocialPost, 'clientId'>) => p.clientId === CJ_ID
+
+/** CJ publica (o corrige) una recomendación suya */
+export function saveCjPost(id: string, uid: string, d: { title: string; text: string; place: string; photos: Attachment[] }, exists: boolean) {
+  const data = { title: d.title.trim().slice(0, 120), text: d.text.trim().slice(0, 2000), place: d.place.trim().slice(0, 120), photos: d.photos.slice(0, 4) }
+  if (exists) return updateDoc(doc(db, 'socialPosts', id), data)
+  return setDoc(doc(db, 'socialPosts', id), {
+    ...data,
+    kind: 'tip',
+    activity: 'other',
+    dateFrom: '',
+    dateTo: '',
+    clientId: CJ_ID,
+    uid,
+    familyName: CJ_NAME,
+    hidden: false,
+    createdAt: serverTimestamp(),
+  })
+}

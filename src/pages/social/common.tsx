@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import { useAuth } from '../../auth/AuthProvider'
 import { useI18n } from '../../i18n'
 import { useDoc } from '../../lib/data'
-import type { Me, WithId } from '../../lib/social'
+import { isCjPost, type Me, type WithId } from '../../lib/social'
 import type { Client, SocialPost } from '../../lib/types'
 import { FamilyAvatar } from '../../components/FamilyAvatar'
 import { useViewer } from '../../lib/viewer'
@@ -31,13 +31,14 @@ export function PostCard({ p, joins, avatar }: { p: WithId<SocialPost>; joins?: 
   const { t } = useI18n()
   const dates = usePlanDates()
   const cover = p.photos[0]
+  const cj = isCjPost(p)
   return (
-    <Link to={`${base}/social/${p.id}`} className="card sp-card">
+    <Link to={`${base}/social/${p.id}`} className={cj ? 'card sp-card sp-card--cj' : 'card sp-card'}>
       {cover && <img className="sp-card__photo" src={cover.url} alt="" loading="lazy" />}
-      <span className="eyebrow">{p.kind === 'plan' ? t(`social.activity.${p.activity}`) : t('social.tip')}</span>
+      <span className="eyebrow">{p.kind === 'plan' ? t(`social.activity.${p.activity}`) : cj ? t('social.byCj') : t('social.tip')}</span>
       <span className="sp-card__title">{p.title}</span>
       <span className="card__text sp-who">
-        <FamilyAvatar url={avatar} name={p.familyName} size={28} />
+        <FamilyAvatar url={cj ? '/logo.png' : avatar} name={p.familyName} size={28} />
         <span>
           {p.familyName}
           {p.kind === 'plan' ? ` · ${dates(p)}` : ''}
