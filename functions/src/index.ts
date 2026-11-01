@@ -435,6 +435,8 @@ export const deleteClient = onCall(async (request) => {
   const socialJoins = await db.collectionGroup('joins').where('clientId', '==', clientId).get()
   const socialReports = await db.collection('socialReports').where('clientId', '==', clientId).get()
   await (await projectBucket()).deleteFiles({ prefix: `social/${clientId}/` }).catch(() => {})
+  await (await projectBucket()).deleteFiles({ prefix: `clients/${clientId}/` }).catch(() => {})
+  await db.doc(`socialProfiles/${clientId}`).delete().catch(() => {})
   const refs = [
     ...socialJoins.docs.map((d) => d.ref),
     ...socialReports.docs.map((d) => d.ref),
@@ -958,4 +960,51 @@ export const uploadSocialPhoto = onCall({ memory: '512MiB', timeoutSeconds: 120 
   }
   const host = process.env.FUNCTIONS_EMULATOR === 'true' && process.env.STORAGE_EMULATOR_HOST ? process.env.STORAGE_EMULATOR_HOST : 'https://firebasestorage.googleapis.com'
   return { path, name, contentType, size: buffer.length, url: `${host}/v0/b/${BUCKET}/o/${encodeURIComponent(path)}?alt=media&token=${token}` }
+})
+
+/**
+ * Foto de perfil de la casa o la familia. La pone (o la quita, con remove: true) un cliente para su
+ * propia casa. Se guarda en clients/{id}.photo y en socialProfiles/{id}, que es lo que ven los demás
+ * clientes en Social. La foto anterior se borra.
+ */
+export const setClientPhoto = onCall({ memory: '512MiB', timeoutSeconds: 120 }, async (request) => {
+  const uid = request.auth?.uid
+  if (!uid) throw new HttpsError('unauthenticated', 'Inicie sesión de nuevo.')
+  const d = (request.data ?? {}) as Record<string, unknown>
+  const me = await db.doc(`users/${uid}`).get()
+  const clientId = me.get('clientId')
+  if (me.get('role') !== 'client' || typeof clientId !== 'string' || !clientId) throw new HttpsError('permission-denied', 'Solo los clientes tienen foto de perfil.')
+  const clientRef = db.doc(`clients/${clientId}`)
+  const client = await clientRef.get()
+  if (!client.exists) throw new HttpsError('not-found', 'No se encuentra su casa.')
+  const bucket = await projectBucket()
+  const previous = client.get('photo') as { path?: string } | null | undefined
+
+  let photo: { path: string; name: string; contentType: string; size: number; url: string } | null = null
+  if (d.remove !== true) {
+    const contentType = text(d.contentType, 'tipo')
+    if (!contentType.startsWith('image/')) throw new HttpsError('invalid-argument', 'Solo se admiten fotos.')
+    const buffer = Buffer.from(typeof d.data === 'string' ? d.data : '', 'base64')
+    if (!buffer.length || buffer.length > MAX_FILE_BYTES) throw new HttpsError('invalid-argument', 'La foto pasa de 10 MB.')
+    const name =
+      (typeof d.name === 'string' ? d.name : 'foto')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^\w.-]+/g, '_')
+        .slice(-80) || 'foto'
+    const path = `clients/${clientId}/photo/${Date.now()}-${name}`
+    const token = randomUUID()
+    try {
+      await bucket.file(path).save(buffer, { contentType, resumable: false, metadata: { metadata: { firebaseStorageDownloadTokens: token, uploadedBy: uid } } })
+    } catch (e) {
+      console.error('setClientPhoto', e)
+      throw new HttpsError('internal', 'No se pudo guardar la foto.')
+    }
+    const host = process.env.FUNCTIONS_EMULATOR === 'true' && process.env.STORAGE_EMULATOR_HOST ? process.env.STORAGE_EMULATOR_HOST : 'https://firebasestorage.googleapis.com'
+    photo = { path, name, contentType, size: buffer.length, url: `${host}/v0/b/${BUCKET}/o/${encodeURIComponent(path)}?alt=media&token=${token}` }
+  }
+  await clientRef.update({ photo })
+  await db.doc(`socialProfiles/${clientId}`).set({ familyName: String(client.get('familyName') ?? ''), photo })
+  if (previous?.path && previous.path.startsWith(`clients/${clientId}/`)) await bucket.file(previous.path).delete().catch(() => {})
+  return { photo }
 })

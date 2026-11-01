@@ -47,6 +47,8 @@ export type ContactType = string
 
 /** clients/{clientId} */
 export type Client = {
+  /** foto de perfil de la casa o la familia (la sube el cliente; función setClientPhoto) */
+  photo?: Attachment | null
   familyName: string
   property: string
   clientSince: Timestamp
@@ -735,3 +737,6 @@ export type SocialMessage = { clientId: string; uid: string; familyName: string;
 
 /** socialReports/{id}: un cliente avisa a CJ de una publicación inadecuada */
 export type SocialReport = { postId: string; postTitle: string; clientId: string; familyName: string; reason: string; createdAt: Timestamp | null }
+
+/** socialProfiles/{clientId}: lo que los demás clientes ven de una casa en Social (lo escribe el servidor) */
+export type SocialProfile = { familyName: string; photo: Attachment | null }

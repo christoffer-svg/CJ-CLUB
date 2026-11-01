@@ -118,6 +118,12 @@ Controleer of elke tekst natuurlijk en correct Nederlands is. Noteer correcties 
 | `benefits.validUntil` | Válido hasta el {date} | Valid until {date} | Geldig tot {date} | |
 | `benefits.validRange` | Válido del {from} al {until} | Valid from {from} to {until} | Geldig van {from} tot {until} | |
 | `common.back` | Volver | Back | Terug | |
+| `photo.add` | Añadir foto de su casa o familia | Add a photo of your home or family | Foto van uw huis of familie toevoegen | |
+| `photo.change` | Cambiar foto | Change photo | Foto wijzigen | |
+| `photo.remove` | Quitar foto | Remove photo | Foto verwijderen | |
+| `photo.removeConfirm` | ¿Quitar la foto de perfil? | Remove your profile photo? | Profielfoto verwijderen? | |
+| `photo.uploading` | Subiendo… | Uploading… | Uploaden… | |
+| `photo.error` | No se pudo guardar la foto. Use una imagen de hasta 10 MB. | The photo could not be saved. Use an image up to 10 MB. | De foto kon niet worden opgeslagen. Gebruik een afbeelding tot 10 MB. | |
 | `nav.social` | Social | Social | Social | |
 | `social.eyebrow` | Social | Social | Social | |
 | `social.title` | Entre socios | Among members | Onder leden | |

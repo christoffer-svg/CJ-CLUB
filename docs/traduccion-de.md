@@ -118,6 +118,12 @@ Bitte prüfen Sie, ob jeder Text natürlich und korrekt auf Deutsch ist. Korrekt
 | `benefits.validUntil` | Válido hasta el {date} | Valid until {date} | Gültig bis zum {date} | |
 | `benefits.validRange` | Válido del {from} al {until} | Valid from {from} to {until} | Gültig vom {from} bis zum {until} | |
 | `common.back` | Volver | Back | Zurück | |
+| `photo.add` | Añadir foto de su casa o familia | Add a photo of your home or family | Foto Ihres Hauses oder Ihrer Familie hinzufügen | |
+| `photo.change` | Cambiar foto | Change photo | Foto ändern | |
+| `photo.remove` | Quitar foto | Remove photo | Foto entfernen | |
+| `photo.removeConfirm` | ¿Quitar la foto de perfil? | Remove your profile photo? | Profilfoto entfernen? | |
+| `photo.uploading` | Subiendo… | Uploading… | Wird hochgeladen… | |
+| `photo.error` | No se pudo guardar la foto. Use una imagen de hasta 10 MB. | The photo could not be saved. Use an image up to 10 MB. | Das Foto konnte nicht gespeichert werden. Verwenden Sie ein Bild bis 10 MB. | |
 | `nav.social` | Social | Social | Social | |
 | `social.eyebrow` | Social | Social | Social | |
 | `social.title` | Entre socios | Among members | Unter Mitgliedern | |

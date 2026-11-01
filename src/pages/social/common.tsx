@@ -4,6 +4,7 @@ import { useI18n } from '../../i18n'
 import { useDoc } from '../../lib/data'
 import type { Me, WithId } from '../../lib/social'
 import type { Client, SocialPost } from '../../lib/types'
+import { FamilyAvatar } from '../../components/FamilyAvatar'
 import { useViewer } from '../../lib/viewer'
 
 /** Quién soy en Social: mi casa, mi usuario y el nombre de mi familia */
@@ -25,7 +26,7 @@ export function usePlanDates() {
 }
 
 /** Tarjeta de una publicación en la lista */
-export function PostCard({ p, joins }: { p: WithId<SocialPost>; joins?: number }) {
+export function PostCard({ p, joins, avatar }: { p: WithId<SocialPost>; joins?: number; avatar?: string }) {
   const { base } = useViewer()
   const { t } = useI18n()
   const dates = usePlanDates()
@@ -35,10 +36,13 @@ export function PostCard({ p, joins }: { p: WithId<SocialPost>; joins?: number }
       {cover && <img className="sp-card__photo" src={cover.url} alt="" loading="lazy" />}
       <span className="eyebrow">{p.kind === 'plan' ? t(`social.activity.${p.activity}`) : t('social.tip')}</span>
       <span className="sp-card__title">{p.title}</span>
-      <span className="card__text">
-        {p.familyName}
-        {p.kind === 'plan' ? ` · ${dates(p)}` : ''}
-        {p.place ? ` · ${p.place}` : ''}
+      <span className="card__text sp-who">
+        <FamilyAvatar url={avatar} name={p.familyName} size={28} />
+        <span>
+          {p.familyName}
+          {p.kind === 'plan' ? ` · ${dates(p)}` : ''}
+          {p.place ? ` · ${p.place}` : ''}
+        </span>
       </span>
       {p.text && <span className="sp-card__text">{p.text}</span>}
       {p.kind === 'plan' && joins !== undefined && joins > 0 && <span className="sp-card__joins">{t(joins === 1 ? 'social.joins.one' : 'social.joins.other', { n: joins })}</span>}

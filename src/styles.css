@@ -4187,3 +4187,98 @@ button {
 .sp-chat-row .eyebrow {
   font-size: 10px;
 }
+
+/* Foto de perfil de la casa o la familia */
+.fam-avatar {
+  display: inline-block;
+  flex: none;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--card-border);
+  background: var(--card);
+}
+
+.fam-avatar--empty {
+  display: inline-grid;
+  place-items: center;
+  font-family: var(--font-title);
+  color: var(--gold-dark);
+  background: var(--sand);
+}
+
+.fam-photo {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 16px;
+}
+
+.fam-photo__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  color: var(--gold);
+}
+
+.fam-photo__btn .fam-avatar {
+  border: 2px solid var(--gold);
+}
+
+.fam-photo__label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.fam-photo__remove {
+  color: var(--stone);
+  font-size: 12px;
+}
+
+.fam-photo__error {
+  color: #e8c4b0;
+  font-size: 12px;
+}
+
+.sp-who {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sp-author {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.sp-author--chat {
+  justify-content: center;
+}
+
+.sp-joined {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 15px;
+  color: var(--text);
+}
+
+.sp-joined li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sp-chat-row {
+  gap: 12px;
+}

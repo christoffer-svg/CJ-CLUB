@@ -6,6 +6,8 @@ import { useI18n } from '../../i18n'
 import { chatIdOf, deletePost, joinPlan, leavePlan, reportPost, useJoins, useMyChats, useSocialPost } from '../../lib/social'
 import { useViewer } from '../../lib/viewer'
 import { useMe, usePlanDates } from './common'
+import { FamilyAvatar } from '../../components/FamilyAvatar'
+import { useSocialProfiles } from '../../lib/familyPhoto'
 
 /** Una publicación de Social: apuntarse a un plan (y chatear con quien lo publica), o avisar a CJ */
 export default function SocialPostPage() {
@@ -18,6 +20,7 @@ export default function SocialPostPage() {
   const joins = useJoins(postId)
   const chats = useMyChats(me?.clientId ?? null)
   const dates = usePlanDates()
+  const avatars = useSocialProfiles()
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
   const [reporting, setReporting] = useState<string | null>(null)
@@ -51,6 +54,10 @@ export default function SocialPostPage() {
         {p && (
           <>
             {p.hidden && <p className="chat__note">{t('social.hiddenByCj')}</p>}
+            <div className="sp-author">
+              <FamilyAvatar url={avatars[p.clientId]} name={p.familyName} size={44} />
+              <span className="card__title">{p.familyName}</span>
+            </div>
             <ProfileGallery photos={p.photos} name={p.title} />
             <section className="card pf-block">
               {p.place && (
@@ -64,7 +71,18 @@ export default function SocialPostPage() {
             {p.kind === 'plan' && (
               <section className="card pf-block">
                 <span className="eyebrow">{t('social.joined')}</span>
-                {joins.length === 0 ? <p className="card__text">{t('social.nobodyYet')}</p> : <p className="pf-text">{joins.map((j) => j.familyName).join(', ')}</p>}
+                {joins.length === 0 ? (
+                  <p className="card__text">{t('social.nobodyYet')}</p>
+                ) : (
+                  <ul className="sp-joined">
+                    {joins.map((j) => (
+                      <li key={j.id}>
+                        <FamilyAvatar url={avatars[j.clientId]} name={j.familyName} size={28} />
+                        {j.familyName}
+                      </li>
+                    ))}
+                  </ul>
+                )}
                 {!mine && !preview && me && !joined && (
                   <button className="btn" disabled={busy} onClick={() => run(async () => navigate(`${base}/social/chat/${await joinPlan(p, me)}`))}>
                     {t('social.join')}

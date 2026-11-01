@@ -347,6 +347,13 @@ ok(await serverTime(P, 'socialPosts/sp1/joins/jansen', joinF('jansen', pareja.lo
 ok(await patch(AD, 'socialPosts/sp1', { title: str('Otro') }), 403, 'CJ no cambia el texto de los clientes')
 ok(await req(J, 'socialPosts/tip1', 'DELETE'), 200, 'quien publica la borra')
 
+// Foto de perfil de la casa: solo la escribe el servidor
+ok(await patch(J, 'clients/jansen', { photo: { nullValue: null } }), 403, 'el cliente no escribe su ficha directamente')
+ok(await req(J, 'socialProfiles/jansen', 'PATCH', { fields: { familyName: str('Familia Jansen'), photo: { nullValue: null } } }), 403, 'el cliente no escribe su perfil social directamente')
+await ownerPatch('socialProfiles/lindqvist', { familyName: str('Familia Lindqvist'), photo: { nullValue: null } })
+ok(await req(J, 'socialProfiles/lindqvist'), 200, 'los clientes ven la foto de las demás casas en Social')
+ok(await req(B, 'socialProfiles/lindqvist'), 403, 'un negocio no ve los perfiles de Social')
+
 // Servicios de CJ y peticiones de un servicio
 const svc = (extra = {}) => ({ name_es: str('Key holding'), name_en: str('Key holding'), description_es: str(''), description_en: str(''), price: num(25), priceNote_es: str('al mes'), priceNote_en: str('per month'), active: bool(true), order: num(10), ...extra })
 ok(await req(AD, 'services/s-t1', 'PATCH', { fields: svc() }), 200, 'CJ crea un servicio')

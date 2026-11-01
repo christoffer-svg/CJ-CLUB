@@ -84,6 +84,10 @@ Todo está denegado salvo lo que se permite expresamente.
   - Solo esas dos casas leen y escriben; **CJ no lee los chats**.
   - Cada mensaje lleva el nombre real de su familia. Cada casa solo marca como leído lo suyo.
 - **Avisos** (`socialReports/{id}`): los crea un cliente; solo CJ los lee y los borra.
+- **Foto de perfil de la casa o familia**:
+  - La pone o la quita solo la función `setClientPhoto`, y cada cliente solo puede cambiar la de su propia casa. Solo admite imágenes de hasta 10 MB. Al cambiarla, se borra la anterior.
+  - Se guarda en `clients/{id}.photo` y en `socialProfiles/{id}`. Ese segundo documento lo leen los clientes para ver la foto de cada familia en Social; nadie puede escribirlo desde la app.
+  - Los archivos van en `clients/{id}/photo/` y se borran al dar de baja al cliente.
 - **Baja de un cliente:** `deleteClient` borra sus publicaciones (con quién se apuntó), sus chats, sus apuntes, sus avisos y sus fotos de Social. Para encontrar los apuntes se usa una búsqueda de tipo *collection group* sobre `joins.clientId`, con su índice en `firestore.indexes.json`.
 
 ### Servicios de CJ y peticiones

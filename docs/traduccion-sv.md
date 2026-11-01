@@ -118,6 +118,12 @@ Kontrollera att varje text är naturlig och korrekt på svenska. Skriv dina rät
 | `benefits.validUntil` | Válido hasta el {date} | Valid until {date} | Gäller till {date} | |
 | `benefits.validRange` | Válido del {from} al {until} | Valid from {from} to {until} | Gäller från {from} till {until} | |
 | `common.back` | Volver | Back | Tillbaka | |
+| `photo.add` | Añadir foto de su casa o familia | Add a photo of your home or family | Lägg till ett foto på ert hus eller er familj | |
+| `photo.change` | Cambiar foto | Change photo | Byt foto | |
+| `photo.remove` | Quitar foto | Remove photo | Ta bort foto | |
+| `photo.removeConfirm` | ¿Quitar la foto de perfil? | Remove your profile photo? | Ta bort profilfotot? | |
+| `photo.uploading` | Subiendo… | Uploading… | Laddar upp… | |
+| `photo.error` | No se pudo guardar la foto. Use una imagen de hasta 10 MB. | The photo could not be saved. Use an image up to 10 MB. | Fotot kunde inte sparas. Använd en bild på högst 10 MB. | |
 | `nav.social` | Social | Social | Socialt | |
 | `social.eyebrow` | Social | Social | Socialt | |
 | `social.title` | Entre socios | Among members | Bland medlemmar | |

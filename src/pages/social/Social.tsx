@@ -8,6 +8,8 @@ import { isChatUnread, isPostCurrent, useMyChats, useSocialPosts } from '../../l
 import { useViewer } from '../../lib/viewer'
 import { messageTime } from '../../lib/when'
 import { PostCard } from './common'
+import { FamilyAvatar } from '../../components/FamilyAvatar'
+import { useSocialProfiles } from '../../lib/familyPhoto'
 
 type Tab = 'all' | 'plan' | 'tip' | 'chats'
 
@@ -33,6 +35,7 @@ export default function Social() {
   const chats = useMyChats(preview ? null : clientId)
   const shown = posts.data.filter((p) => isPostCurrent(p) && (tab === 'all' || p.kind === tab))
   const counts = useJoinCounts(shown.filter((p) => p.kind === 'plan').map((p) => p.id))
+  const avatars = useSocialProfiles()
   const unread = clientId ? chats.data.filter((c) => isChatUnread(c, clientId)).length : 0
 
   return (
@@ -56,6 +59,7 @@ export default function Social() {
               const isNew = clientId ? isChatUnread(c, clientId) : false
               return (
                 <Link key={c.id} to={`${base}/social/chat/${c.id}`} className="team__row sp-chat-row">
+                  <FamilyAvatar url={avatars[other]} name={c.names[other] ?? ''} size={40} />
                   <span className="card__body">
                     <span className="card__title">{c.names[other] ?? ''}</span>
                     <span className="eyebrow">{c.postTitle}</span>
@@ -79,7 +83,7 @@ export default function Social() {
             {!posts.loading && shown.length === 0 && <p className="empty">{t('social.empty')}</p>}
             <div className="place-list sp-list">
               {shown.map((p) => (
-                <PostCard key={p.id} p={p} joins={counts[p.id]} />
+                <PostCard key={p.id} p={p} joins={counts[p.id]} avatar={avatars[p.clientId]} />
               ))}
             </div>
           </>

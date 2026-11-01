@@ -175,5 +175,22 @@ ok(await upSocial(J, { postId: '../../otra' }), 'INVALID_ARGUMENT', 'nombre de p
 ok(await upSocial(BZ, {}), 'PERMISSION_DENIED', 'un negocio no sube fotos a Social')
 ok(await upSocial(J, { contentType: 'application/pdf' }), 'INVALID_ARGUMENT', 'en Social solo fotos')
 
+// Foto de perfil de la casa (función setClientPhoto)
+const CFN = FN.replace('uploadProjectFile', 'setClientPhoto')
+const setPhoto = async (t, d) => {
+  const r = await fetch(CFN, { method: 'POST', headers: { ...H, ...(t ? { authorization: 'Bearer ' + t } : {}) }, body: JSON.stringify({ data: { name: 'familia.jpg', contentType: 'image/jpeg', data: b64(2048), ...d } }) })
+  const j = await r.json(); return j.error ? j.error.status : j.result
+}
+const ph1 = await setPhoto(J, {})
+ok(ph1?.photo?.path?.startsWith('clients/jansen/photo/'), true, 'el cliente pone la foto de su casa')
+const prof = await fsGet('socialProfiles/jansen')
+ok(prof.fields?.familyName?.stringValue === 'Familia Jansen' && prof.fields?.photo?.mapValue?.fields?.url?.stringValue === ph1.photo.url, true, 'la foto se ve en Social con el nombre de la familia')
+const ph2 = await setPhoto(J, { name: 'casa.jpg' })
+ok(await fetch(ph1.photo.url).then(r => r.status) !== 200 && await fetch(ph2.photo.url).then(r => r.status) === 200, true, 'al cambiarla se borra la anterior')
+ok((await setPhoto(J, { remove: true }))?.photo, null, 'el cliente quita su foto')
+ok((await fsGet('clients/jansen')).fields?.photo?.nullValue, null, 'la ficha queda sin foto')
+ok(await setPhoto(BZ, {}), 'PERMISSION_DENIED', 'un negocio no pone fotos de perfil de casas')
+ok(await setPhoto(J, { contentType: 'application/pdf' }), 'INVALID_ARGUMENT', 'la foto de perfil solo puede ser una imagen')
+
 console.log(`Archivos: ${pass} OK, ${fail} FAIL`)
 if (fail) process.exit(1)

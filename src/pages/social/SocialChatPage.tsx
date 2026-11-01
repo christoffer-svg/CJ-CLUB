@@ -6,6 +6,8 @@ import { markSocialRead, sendSocialMessage, useSocialChat } from '../../lib/soci
 import { useViewer } from '../../lib/viewer'
 import { messageTime } from '../../lib/when'
 import { useMe } from './common'
+import { FamilyAvatar } from '../../components/FamilyAvatar'
+import { useSocialProfiles } from '../../lib/familyPhoto'
 
 /** Chat privado entre quien publica un plan y una familia que se apunta */
 export default function SocialChatPage() {
@@ -18,6 +20,7 @@ export default function SocialChatPage() {
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState(false)
   const end = useRef<HTMLDivElement>(null)
+  const avatars = useSocialProfiles()
   const c = chat.data
   const other = c && me ? (c.members.find((m) => m !== me.clientId) ?? '') : ''
 
@@ -46,6 +49,11 @@ export default function SocialChatPage() {
     <>
       <Header back={`${base}/social?ver=chats`} eyebrow={t('social.chat')} title={c ? (c.names[other] ?? '') : ''} />
       <main className="page chat">
+        {c && (
+          <div className="sp-author sp-author--chat">
+            <FamilyAvatar url={avatars[other]} name={c.names[other] ?? ''} size={44} />
+          </div>
+        )}
         {c && (
           <p className="chat__note">
             <Link to={`${base}/social/${c.postId}`}>{c.postTitle}</Link> · {t('social.chatNote')}

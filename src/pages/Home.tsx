@@ -3,6 +3,7 @@ import { useAuth } from '../auth/AuthProvider'
 import { useViewer } from '../lib/viewer'
 import Header from '../components/Header'
 import HouseSwitcher from '../components/HouseSwitcher'
+import { EditableFamilyPhoto } from '../components/FamilyAvatar'
 import RoleSwitcher from '../components/RoleSwitcher'
 import WeatherCard from '../components/WeatherCard'
 import { AlertIcon, ChatIcon, ChevronIcon, CrossIcon, DishIcon, KeyIcon, NoteIcon, PhoneIcon, StarIcon, WhatsAppIcon, WrenchIcon } from '../components/Icons'
@@ -37,6 +38,7 @@ export default function Home() {
   return (
     <>
       <Header title={title} subtitle={subtitle} overlap>
+        {c && <EditableFamilyPhoto url={c.photo?.url} name={c.familyName} readOnly={preview} />}
         <HouseSwitcher />
         {!preview && <RoleSwitcher variant="home" />}
       </Header>

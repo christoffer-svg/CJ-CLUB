@@ -659,6 +659,12 @@ service cloud.firestore {
       }
     }
 
+    // Foto y nombre de cada casa en Social: los leen los clientes; solo los escribe el servidor (setClientPhoto)
+    match /socialProfiles/{cid} {
+      allow read: if isAdmin() || isClient();
+      allow write: if false;
+    }
+
     // Aviso de una publicación inadecuada: lo crea un cliente, lo lee y lo borra CJ
     match /socialReports/{id} {
       allow read, delete: if isAdmin();
