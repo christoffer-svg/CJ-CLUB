@@ -4,13 +4,19 @@ import { httpsCallable } from 'firebase/functions'
 import { MAX_BYTES, prepare, toBase64 } from './attachments'
 import { db, functions } from './firebase'
 import { PROFILE_FIELDS, type Attachment, type PublicProfile } from './types'
+import { autoTranslate } from './autoTranslate'
 
 export type ProfileCollection = 'places' | 'partners'
 
 type Req = { collection: ProfileCollection; id: string; kind: 'photos' | 'menu'; name: string; contentType: string; data: string }
 
 /** Sube fotos de la presentación (reducidas a 1600 px), o de la carta (fotos o PDF), y devuelve sus fichas */
-export async function uploadProfilePhotos(coll: ProfileCollection, id: string, files: File[], kind: 'photos' | 'menu' | 'logo' = 'photos'): Promise<Attachment[]> {
+export async function uploadProfilePhotos(
+  coll: ProfileCollection,
+  id: string,
+  files: File[],
+  kind: 'photos' | 'menu' | 'logo' = 'photos',
+): Promise<Attachment[]> {
   const call = httpsCallable<Req, Attachment>(functions, 'uploadProfilePhoto', { timeout: 120_000 })
   const out: Attachment[] = []
   for (const file of files) {
@@ -36,7 +42,10 @@ export function cleanProfile(p: PublicProfile): PublicProfile {
     phone: tr(p.phone, 40),
     email: tr(p.email, 120),
     website,
-    instagram: tr(p.instagram, 100).replace(/^@/, '').replace(/^https?:\/\/(www\.)?instagram\.com\//i, '').replace(/\/$/, ''),
+    instagram: tr(p.instagram, 100)
+      .replace(/^@/, '')
+      .replace(/^https?:\/\/(www\.)?instagram\.com\//i, '')
+      .replace(/\/$/, ''),
     address: tr(p.address, 300),
     logo: p.logo ?? null,
     photos: (p.photos ?? []).slice(0, 10),
@@ -53,7 +62,7 @@ export function saveProfile(coll: ProfileCollection, id: string, p: PublicProfil
   const data = cleanProfile(p) as Record<string, unknown>
   // En los colaboradores de servicios, el teléfono es el de su ficha y lo cambia CJ ahí
   if (!keepPhone) delete data.phone
-  return updateDoc(doc(db, coll, id), data)
+  return updateDoc(doc(db, coll, id), data).then(() => autoTranslate(`${coll}/${id}`))
 }
 
 export const profileOf = (item: object | null | undefined): PublicProfile => {
@@ -63,7 +72,19 @@ export const profileOf = (item: object | null | undefined): PublicProfile => {
 
 /** ¿Tiene algo que enseñar más allá del nombre? */
 export const hasProfile = (p: PublicProfile) =>
-  Boolean(p.about_es || p.about_en || p.photos?.length || p.menu?.length || p.takeaway || p.delivery || p.hours_es || p.website || p.instagram || p.email || p.address)
+  Boolean(
+    p.about_es ||
+    p.about_en ||
+    p.photos?.length ||
+    p.menu?.length ||
+    p.takeaway ||
+    p.delivery ||
+    p.hours_es ||
+    p.website ||
+    p.instagram ||
+    p.email ||
+    p.address,
+  )
 
 export const instagramUrl = (user: string) => `https://www.instagram.com/${encodeURIComponent(user)}/`
 export const websiteLabel = (url: string) => url.replace(/^https?:\/\/(www\.)?/i, '').replace(/\/$/, '')

@@ -42,5 +42,6 @@ Los textos están en la app, en «Política de privacidad» y «Aviso legal», e
    - Solo se envía el texto, sin el nombre ni otros datos. Google no garantiza que la traducción se procese dentro de la UE.
    - Las traducciones de las publicaciones se guardan para no repetirlas. Las de los mensajes privados no se guardan.
    - Conviene revisar el párrafo nuevo de la política de privacidad (apartado 5) y si el encargo con Google cubre este servicio.
+   - La información pública de los negocios (presentación, horarios, descuentos, eventos, platos) también se traduce automáticamente con Google a todos los idiomas de la app. No incluye datos de clientes.
 
 Cuando el texto esté aprobado, basta con enviarlo y se sustituye en la app, quitando el aviso de borrador.

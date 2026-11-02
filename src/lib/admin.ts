@@ -17,6 +17,7 @@ import { httpsCallable } from 'firebase/functions'
 import { useEffect, useState } from 'react'
 import { auth, db, functions } from './firebase'
 import type { Trade, Language } from './types'
+import { autoTranslate } from './autoTranslate'
 
 export type WithId<T> = T & { id: string }
 
@@ -53,9 +54,14 @@ export function useLiveDoc<T>(path: string | null) {
   return state
 }
 
-export const saveDoc = (path: string, data: DocumentData) => setDoc(doc(db, path), data, { merge: true })
-export const patchDoc = (path: string, data: DocumentData) => updateDoc(doc(db, path), data)
-export const addToCollection = (name: string, data: DocumentData) => addDoc(collection(db, name), data)
+// Al guardar información de negocios, descuentos, eventos…, el servidor la traduce a los demás idiomas
+export const saveDoc = (path: string, data: DocumentData) => setDoc(doc(db, path), data, { merge: true }).then(() => autoTranslate(path))
+export const patchDoc = (path: string, data: DocumentData) => updateDoc(doc(db, path), data).then(() => autoTranslate(path))
+export const addToCollection = (name: string, data: DocumentData) =>
+  addDoc(collection(db, name), data).then((ref) => {
+    autoTranslate(ref.path)
+    return ref
+  })
 export const removeDoc = (path: string) => deleteDoc(doc(db, path))
 
 /** Usos de cada descuento desde el día 1 del mes actual */

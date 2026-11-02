@@ -1,4 +1,4 @@
-import { doc, updateDoc } from 'firebase/firestore'
+import { collection, doc, onSnapshot, query, updateDoc, where } from 'firebase/firestore'
 import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from 'react'
 import { useAuth } from '../auth/AuthProvider'
 import { auth, db } from '../lib/firebase'
@@ -13,6 +13,8 @@ type I18n = {
   t: (key: TranslationKey, params?: Record<string, string | number>) => string
   /** Campo de datos en el idioma actual (p. ej. name_en); si falta, en inglés y después en español */
   pick: (item: object | null | undefined, field: string) => string
+  /** Texto escrito en un solo idioma (título de un descuento, plato…): su traducción automática, si la hay */
+  tx: (text: string | null | undefined) => string
   locale: string
 }
 
@@ -32,7 +34,7 @@ function initialLanguage(): Language {
   return isLanguage(browser) ? browser : defaultLanguage
 }
 
-function build(lang: Language, setLang: (l: Language) => void): I18n {
+function build(lang: Language, setLang: (l: Language) => void, auto: Map<string, string> = new Map()): I18n {
   const dict = translations[lang]
   return {
     lang,
@@ -45,13 +47,42 @@ function build(lang: Language, setLang: (l: Language) => void): I18n {
     },
     pick: (item, field) => {
       const rec = (item ?? {}) as Record<string, unknown>
+      const own = rec[`${field}_${lang}`]
+      if (typeof own === 'string' && own.trim()) return own
+      // Sin texto en este idioma: la traducción automática del español (o del inglés)
+      const es = rec[`${field}_es`]
+      const en = rec[`${field}_en`]
+      const src = typeof es === 'string' && es.trim() ? es.trim() : typeof en === 'string' ? en.trim() : ''
+      const auto_ = src ? auto.get(src) : undefined
+      if (auto_) return auto_
       for (const l of dataFallback(lang)) {
         const value = rec[`${field}_${l}`]
         if (typeof value === 'string' && value.trim()) return value
       }
       return ''
     },
+    tx: (text) => (text ? (auto.get(text.trim()) ?? text) : ''),
   }
+}
+
+/**
+ * Traducciones automáticas de la información de los negocios (autoTranslations, las escribe el servidor)
+ * en el idioma de la app: texto original → traducción.
+ */
+function useAutoTranslations(lang: Language, signedIn: boolean) {
+  const [map, setMap] = useState<Map<string, string>>(new Map())
+  useEffect(() => {
+    if (!signedIn) {
+      setMap(new Map())
+      return
+    }
+    return onSnapshot(
+      query(collection(db, 'autoTranslations'), where('lang', '==', lang)),
+      (snap) => setMap(new Map(snap.docs.map((d) => [String(d.get('src') ?? ''), String(d.get('text') ?? '')]))),
+      () => setMap(new Map()),
+    )
+  }, [lang, signedIn])
+  return map
 }
 
 /**
@@ -112,14 +143,16 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     [user, profile],
   )
 
-  return <I18nContext.Provider value={build(lang, setLang)}>{children}</I18nContext.Provider>
+  const auto = useAutoTranslations(lang, Boolean(user))
+  return <I18nContext.Provider value={build(lang, setLang, auto)}>{children}</I18nContext.Provider>
 }
 
 /** Idioma fijo para "Ver como cliente": no guarda nada en el perfil del cliente */
 export function PreviewLanguage({ initial, children }: { initial: Language; children: ReactNode }) {
   const [lang, setLang] = useState<Language>(initial)
   useEffect(() => setLang(initial), [initial])
-  return <I18nContext.Provider value={build(lang, setLang)}>{children}</I18nContext.Provider>
+  const auto = useAutoTranslations(lang, true)
+  return <I18nContext.Provider value={build(lang, setLang, auto)}>{children}</I18nContext.Provider>
 }
 
 // oxlint-disable-next-line react/only-export-components

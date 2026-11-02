@@ -3,6 +3,7 @@ import { collection, deleteDoc, doc, onSnapshot, setDoc } from 'firebase/firesto
 import { useEffect, useState } from 'react'
 import { db } from './firebase'
 import { BUILTIN_PLACE_CATEGORIES, type PlaceCategory } from './types'
+import { autoTranslate } from './autoTranslate'
 
 export type CategoryItem = { id: string; builtin: boolean; order: number; active: boolean; name_es: string; name_en: string }
 
@@ -22,7 +23,14 @@ export function usePlaceCategories(includeHidden = false) {
       ),
     [],
   )
-  const builtin: CategoryItem[] = BUILTIN_PLACE_CATEGORIES.map((id, i) => ({ id, builtin: true, order: (i + 1) * 10, active: true, name_es: builtinNameEs[id], name_en: builtinNameEn[id] }))
+  const builtin: CategoryItem[] = BUILTIN_PLACE_CATEGORIES.map((id, i) => ({
+    id,
+    builtin: true,
+    order: (i + 1) * 10,
+    active: true,
+    name_es: builtinNameEs[id],
+    name_en: builtinNameEn[id],
+  }))
   return [...builtin, ...custom].filter((c) => includeHidden || c.active).sort((a, b) => a.order - b.order || a.name_es.localeCompare(b.name_es))
 }
 
@@ -39,7 +47,12 @@ export function categoryIdFrom(name: string) {
 }
 
 export const savePlaceCategory = (id: string, c: PlaceCategory) =>
-  setDoc(doc(db, 'placeCategories', id), { name_es: c.name_es.trim().slice(0, 40), name_en: c.name_en.trim().slice(0, 40), order: Math.max(0, Math.round(c.order)), active: c.active })
+  setDoc(doc(db, 'placeCategories', id), {
+    name_es: c.name_es.trim().slice(0, 40),
+    name_en: c.name_en.trim().slice(0, 40),
+    order: Math.max(0, Math.round(c.order)),
+    active: c.active,
+  }).then(() => autoTranslate(`placeCategories/${id}`))
 
 export const deletePlaceCategory = (id: string) => deleteDoc(doc(db, 'placeCategories', id))
 

@@ -21,7 +21,7 @@ export function useEventWhen() {
 
 /** Un evento para el cliente, con su solicitud de reserva (si la tiene) o el formulario para pedirla */
 export default function EventCard({ e, bookings, showPlace }: { e: WithId<PlaceEvent>; bookings: WithId<EventBooking>[]; showPlace?: boolean }) {
-  const { t, pick, locale } = useI18n()
+  const { t, pick, tx, locale } = useI18n()
   const { clientId, base, preview } = useViewer()
   const { user } = useAuth()
   const client = useDoc<Client>(clientId ? `clients/${clientId}` : null)
@@ -52,7 +52,7 @@ export default function EventCard({ e, bookings, showPlace }: { e: WithId<PlaceE
     <article className="card ev">
       {e.photo && <img className="ev__photo" src={e.photo.url} alt="" loading="lazy" />}
       <span className="eyebrow">{t(`events.kind.${e.kind}`)}</span>
-      <h3 className="ev__title">{e.title}</h3>
+      <h3 className="ev__title">{tx(e.title)}</h3>
       {showPlace && (
         <Link className="ev__place" to={`${base}/descubrir/${e.placeId}`}>
           {e.businessName}

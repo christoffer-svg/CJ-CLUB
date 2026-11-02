@@ -28,7 +28,7 @@ export default function OrderPage() {
   const { placeId = '' } = useParams()
   const { base, clientId, preview } = useViewer()
   const { user } = useAuth()
-  const { t, pick, locale } = useI18n()
+  const { t, pick, tx, locale } = useI18n()
   const money = (n: number) => formatMoney(n, locale)
   const place = useDoc<Place>(`places/${placeId}`)
   const client = useDoc<Client>(clientId ? `clients/${clientId}` : null)
@@ -116,26 +116,26 @@ export default function OrderPage() {
             {!items.loading && items.data.length === 0 && <p className="empty">{t('orders.empty')}</p>}
             {sections(items.data).map(([section, list]) => (
               <section key={section} className="ord-section">
-                {section && <h2 className="section__title">{section}</h2>}
+                {section && <h2 className="section__title">{tx(section)}</h2>}
                 <div className="card ord-list">
                   {list.map((it) => (
                     <div key={it.id} className={it.available ? 'ord-item' : 'ord-item ord-item--off'}>
                       <div className="ord-item__body">
-                        <span className="card__title">{it.name}</span>
-                        {it.description && <span className="card__text">{it.description}</span>}
+                        <span className="card__title">{tx(it.name)}</span>
+                        {it.description && <span className="card__text">{tx(it.description)}</span>}
                         <span className="ord-item__price">{it.available ? money(it.price) : `${money(it.price)} · ${t('orders.soldOut')}`}</span>
                       </div>
                       {open && it.available && !preview && (
                         <div className="ord-qty">
                           {(cart[it.id] ?? 0) > 0 && (
                             <>
-                              <button className="ord-qty__btn" aria-label={t('orders.less', { name: it.name })} onClick={() => add(it.id, -1)}>
+                              <button className="ord-qty__btn" aria-label={t('orders.less', { name: tx(it.name) })} onClick={() => add(it.id, -1)}>
                                 −
                               </button>
                               <span className="ord-qty__n">{cart[it.id]}</span>
                             </>
                           )}
-                          <button className="ord-qty__btn ord-qty__btn--add" aria-label={t('orders.more', { name: it.name })} onClick={() => add(it.id, 1)}>
+                          <button className="ord-qty__btn ord-qty__btn--add" aria-label={t('orders.more', { name: tx(it.name) })} onClick={() => add(it.id, 1)}>
                             +
                           </button>
                         </div>
@@ -167,7 +167,7 @@ export default function OrderPage() {
               {lines.map((l) => (
                 <li key={l.it.id}>
                   <span>
-                    {l.qty} × {l.it.name}
+                    {l.qty} × {tx(l.it.name)}
                   </span>
                   <span>{money(l.it.price * l.qty)}</span>
                 </li>

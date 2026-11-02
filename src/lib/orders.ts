@@ -4,6 +4,7 @@ import { httpsCallable } from 'firebase/functions'
 import { useEffect, useState } from 'react'
 import { db, functions } from './firebase'
 import type { FoodOrder, OrderItem, OrderMode, OrderStatus } from './types'
+import { autoTranslate } from './autoTranslate'
 
 export type WithId<T> = T & { id: string }
 
@@ -14,7 +15,11 @@ export function useOrderItems(placeId: string | null) {
     if (!placeId) return
     return onSnapshot(
       collection(db, 'places', placeId, 'orderItems'),
-      (snap) => setState({ loading: false, data: snap.docs.map((d) => ({ ...(d.data() as OrderItem), id: d.id })).sort((a, b) => a.order - b.order || a.name.localeCompare(b.name)) }),
+      (snap) =>
+        setState({
+          loading: false,
+          data: snap.docs.map((d) => ({ ...(d.data() as OrderItem), id: d.id })).sort((a, b) => a.order - b.order || a.name.localeCompare(b.name)),
+        }),
       () => setState({ loading: false, data: [] }),
     )
   }, [placeId])
@@ -42,7 +47,10 @@ export function saveOrderItem(placeId: string, id: string | null, item: OrderIte
     available: item.available,
     order: Math.max(0, Math.min(100000, Math.round(item.order))),
   }
-  return id ? setDoc(doc(db, 'places', placeId, 'orderItems', id), data) : addDoc(collection(db, 'places', placeId, 'orderItems'), data)
+  const saved = id
+    ? setDoc(doc(db, 'places', placeId, 'orderItems', id), data).then(() => id)
+    : addDoc(collection(db, 'places', placeId, 'orderItems'), data).then((ref) => ref.id)
+  return saved.then((itemId) => autoTranslate(`places/${placeId}/orderItems/${itemId}`))
 }
 
 export const setItemAvailable = (placeId: string, id: string, available: boolean) => updateDoc(doc(db, 'places', placeId, 'orderItems', id), { available })
@@ -103,4 +111,8 @@ export const isOrderOpen = (o: FoodOrder) => o.status === 'new' || o.status === 
 
 /** Ajustes de pedidos del restaurante (solo estos campos de su ficha) */
 export const saveOrderSettings = (placeId: string, s: { ordersOpen: boolean; deliveryFee: number; minOrder: number }) =>
-  updateDoc(doc(db, 'places', placeId), { ordersOpen: s.ordersOpen, deliveryFee: Math.round(s.deliveryFee * 100) / 100, minOrder: Math.round(s.minOrder * 100) / 100 })
+  updateDoc(doc(db, 'places', placeId), {
+    ordersOpen: s.ordersOpen,
+    deliveryFee: Math.round(s.deliveryFee * 100) / 100,
+    minOrder: Math.round(s.minOrder * 100) / 100,
+  })

@@ -690,6 +690,12 @@ service cloud.firestore {
     }
 
     // Foto y nombre de cada casa en Social: los leen los clientes; solo los escribe el servidor (setClientPhoto)
+    // Traducciones automáticas de la información pública de negocios, descuentos, eventos… (las escribe el servidor)
+    match /autoTranslations/{id} {
+      allow read: if signedIn();
+      allow write: if false;
+    }
+
     match /socialProfiles/{cid} {
       allow read: if isAdmin() || isClient();
       allow write: if false;

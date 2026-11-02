@@ -33,7 +33,7 @@ function memberSince(ts: Timestamp) {
 
 export default function Benefits() {
   const { clientId, preview } = useViewer()
-  const { t, pick, locale } = useI18n()
+  const { t, pick, tx, locale } = useI18n()
   // "Gratis" se guarda en español; el resto de etiquetas (20%, 2x1...) no se traducen
   const label = (l: string) => (l.trim().toLowerCase() === 'gratis' ? t('benefits.free') : l)
   const client = useDoc<Client>(clientId ? `clients/${clientId}` : null)
@@ -85,7 +85,7 @@ export default function Benefits() {
               <div key={d.id} className="deal">
                 <span className="deal__value">{label(d.discountLabel)}</span>
                 <div className="deal__body">
-                  <span className="card__title">{d.title}</span>
+                  <span className="card__title">{tx(d.title)}</span>
                   {businessName && <span className="deal__by">{t('benefits.offeredBy', { name: businessName })}</span>}
                   {pick(d, 'description') && <span className="card__text">{pick(d, 'description')}</span>}
                   {pick(d, 'conditions') && <span className="card__text">{pick(d, 'conditions')}</span>}
@@ -96,7 +96,7 @@ export default function Benefits() {
                   className="use-btn"
                   onClick={() => {
                     setShown({
-                      name: d.title,
+                      name: tx(d.title),
                       code: d.code,
                       businessName: d.source === 'business' ? d.businessName : undefined,
                     })

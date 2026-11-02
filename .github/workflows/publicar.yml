@@ -100,6 +100,13 @@ jobs:
         if: vars.DEPLOY_FUNCTIONS == 'true'
         run: npx firebase deploy --project cj-club --only functions --non-interactive --force
 
+      # Traduce a todos los idiomas la información de negocios, descuentos, eventos… que aún no lo esté.
+      # Solo lo nuevo (lo ya traducido no se vuelve a pagar). Si falla, la publicación sigue adelante.
+      - name: Poner al día las traducciones automáticas
+        if: vars.DEPLOY_FUNCTIONS == 'true'
+        continue-on-error: true
+        run: node functions/lib/translateAll.js
+
       # Va al final: si Storage aún no está creado en Firebase, la web y las funciones ya se han publicado
       - name: Publicar las reglas de los archivos (Storage)
         run: npx firebase deploy --project cj-club --only storage --non-interactive

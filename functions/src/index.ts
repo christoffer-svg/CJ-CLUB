@@ -3,7 +3,7 @@
  * Se ejecutan con permisos de administrador de Firebase, por eso comprueban siempre
  * quién llama y qué puede hacer.
  */
-import { applicationDefault, initializeApp } from 'firebase-admin/app'
+import { initializeApp } from 'firebase-admin/app'
 import { getStorage } from 'firebase-admin/storage'
 import { getAuth } from 'firebase-admin/auth'
 import { FieldValue, getFirestore, Timestamp } from 'firebase-admin/firestore'
@@ -11,6 +11,7 @@ import { defineSecret } from 'firebase-functions/params'
 import { setGlobalOptions } from 'firebase-functions/v2'
 import { HttpsError, onCall } from 'firebase-functions/v2/https'
 import { createHash, randomBytes, randomUUID } from 'node:crypto'
+import { googleTranslate, translateDoc, TRANSLATE_LANGS } from './autoTranslate.js'
 import { invitationEmail, isMailLanguage, noticeEmail, sendWithResend, type MailRole } from './email.js'
 
 initializeApp()
@@ -1020,28 +1021,7 @@ export const setClientPhoto = onCall({ memory: '512MiB', timeoutSeconds: 120 }, 
  * Tope de seguridad: TRANSLATE_DAILY_LIMIT peticiones por persona y día.
  * En el Firebase de pruebas local no se llama a Google: se simula.
  */
-const TRANSLATE_LANGS = ['es', 'en', 'nl', 'sv', 'de', 'fr', 'pl']
 const TRANSLATE_DAILY_LIMIT = 300
-
-type Translated = { text: string; detected: string }
-
-async function googleTranslate(texts: string[], target: string): Promise<Translated[]> {
-  if (process.env.FUNCTIONS_EMULATOR === 'true') return texts.map((t) => ({ text: `[${target}] ${t}`, detected: t.startsWith(`[${target}] `) ? target : 'xx' }))
-  const { access_token } = await applicationDefault().getAccessToken()
-  const res = await fetch('https://translation.googleapis.com/language/translate/v2', {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${access_token}`, 'Content-Type': 'application/json', 'x-goog-user-project': 'cj-club' },
-    body: JSON.stringify({ q: texts, target, format: 'text' }),
-  })
-  if (!res.ok) {
-    console.error('translate', res.status, (await res.text()).slice(0, 500))
-    if (res.status === 403) throw new HttpsError('failed-precondition', 'La traducción aún no está activada en Google Cloud.')
-    throw new HttpsError('unavailable', 'No se pudo traducir ahora.')
-  }
-  const body = (await res.json()) as { data?: { translations?: { translatedText?: string; detectedSourceLanguage?: string }[] } }
-  const out = body.data?.translations ?? []
-  return texts.map((t, i) => ({ text: out[i]?.translatedText ?? t, detected: (out[i]?.detectedSourceLanguage ?? '').slice(0, 2) }))
-}
 
 async function countTranslation(uid: string) {
   const ref = db.doc(`translateUsage/${uid}`)
@@ -1113,4 +1093,20 @@ export const translateSocial = onCall(async (request) => {
     )
   }
   return { texts: results, same }
+})
+
+/**
+ * Traducción automática de un documento (información de un negocio, descuento, evento, plato…).
+ * La llama el panel justo después de guardar. Solo CJ y los negocios; el servidor lee el documento
+ * guardado y traduce lo que falte (ver autoTranslate.ts).
+ */
+export const autoTranslateDoc = onCall({ timeoutSeconds: 120 }, async (request) => {
+  const uid = request.auth?.uid
+  if (!uid) throw new HttpsError('unauthenticated', 'Inicie sesión de nuevo.')
+  const me = await db.doc(`users/${uid}`).get()
+  const roles = rolesOf(me)
+  if (!roles.includes('admin') && !roles.includes('business')) throw new HttpsError('permission-denied', 'Solo CJ y los negocios.')
+  const path = typeof request.data?.path === 'string' ? request.data.path : ''
+  if (!/^[A-Za-z0-9_/-]{1,200}$/.test(path) || path.includes('//')) throw new HttpsError('invalid-argument', 'Documento no válido.')
+  return { translated: await translateDoc(db, path) }
 })

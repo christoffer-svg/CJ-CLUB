@@ -20,7 +20,7 @@ import { useViewer } from '../lib/viewer'
 export default function PlaceDetail() {
   const { placeId = '' } = useParams()
   const { base, favorites, toggleFavorite, clientId } = useViewer()
-  const { t, pick, locale } = useI18n()
+  const { t, pick, tx, locale } = useI18n()
   const place = useDoc<Place>(`places/${placeId}`)
   const cats = usePlaceCategories(true)
   const client = useDoc<Client>(clientId ? `clients/${clientId}` : null)
@@ -100,7 +100,7 @@ export default function PlaceDetail() {
                   {p.discountPercent ? <span className="tag">{t('discover.discount', { n: p.discountPercent })}</span> : null}
                   {myDeals.map((d) => (
                     <Link key={d.id} to={`${base}/ventajas`} className="pf-deal">
-                      <span className="card__title">{d.title}</span>
+                      <span className="card__title">{tx(d.title)}</span>
                       <span className="pf-deal__label">{d.discountLabel}</span>
                     </Link>
                   ))}

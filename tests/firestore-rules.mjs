@@ -338,6 +338,9 @@ ok(await req(AD, 'socialChats/sp1_jansen/messages/m1'), 403, 'CJ no lee los mens
 ok(await req(B, 'socialChats/sp1_jansen/messages/m1'), 403, 'un negocio no lee los mensajes')
 
 ok(await req(J, 'translationCache/abc'), 403, 'nadie lee las traducciones guardadas')
+ok(await req(J, 'autoTranslations/abc'), 404, 'los clientes leen las traducciones automáticas de los negocios')
+ok(await req(null, 'autoTranslations/abc'), 403, 'sin sesión no se leen')
+ok(await req(J, 'autoTranslations/abc', 'PATCH', { fields: { lang: str('pl'), src: str('x'), text: str('y') } }), 403, 'solo el servidor escribe traducciones')
 ok(await req(J, 'translateUsage/' + j.localId), 403, 'el contador de traducciones solo lo usa el servidor')
 ok(await serverTime(J, 'socialChats/sp1_jansen', { lastText: str('Hola'), lastClientId: str('jansen'), readAt: { mapValue: { fields: { jansen: { timestampValue: new Date().toISOString() } } } } }, ['lastAt'], true, ['lastText', 'lastClientId', 'readAt']), 200, 'Jansen actualiza el último mensaje y su lectura')
 ok(await serverTime(J, 'socialChats/sp1_jansen', { readAt: { mapValue: { fields: { jansen: { timestampValue: new Date().toISOString() }, lindqvist: { timestampValue: new Date().toISOString() } } } } }, [], true, ['readAt']), 403, 'no se marca como leído por la otra casa')

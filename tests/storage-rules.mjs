@@ -216,5 +216,29 @@ ok(await tr(AD, { chatId: 'sp1_jansen', messageId: 'm2' }), 'PERMISSION_DENIED',
 ok(await tr(X, { chatId: 'sp1_jansen', messageId: 'm2' }), 'PERMISSION_DENIED', 'alguien de fuera no traduce mensajes')
 ok(await cacheCount(), before, 'los mensajes de chat no se guardan traducidos')
 
+// Traducción automática de la información de los negocios (función autoTranslateDoc)
+const AFN = FN.replace('uploadProjectFile', 'autoTranslateDoc')
+const autoTr = async (t, path) => {
+  const r = await fetch(AFN, { method: 'POST', headers: { ...H, ...(t ? { authorization: 'Bearer ' + t } : {}) }, body: JSON.stringify({ data: { path } }) })
+  const j = await r.json(); return j.error ? j.error.status : j.result
+}
+const autoList = async (lang) => ((await fetch('http://127.0.0.1:8080/v1/projects/cj-club/databases/(default)/documents:runQuery', { method: 'POST', headers: { authorization: 'Bearer owner', 'content-type': 'application/json' }, body: JSON.stringify({ structuredQuery: { from: [{ collectionId: 'autoTranslations' }], where: { fieldFilter: { field: { fieldPath: 'lang' }, op: 'EQUAL', value: { stringValue: lang } } } } }) }).then(r => r.json())).filter(x => x.document).map(x => x.document.fields))
+const first = await autoTr(BZ, 'places/rest-la-terraza')
+ok(typeof first?.translated === 'number' && first.translated > 0, true, 'el negocio guarda su ficha y se traduce sola')
+const pl = await autoList('pl')
+const terraza = await fsGet('places/rest-la-terraza')
+const aboutEs = terraza.fields?.about_es?.stringValue ?? ''
+ok(pl.some(d => d.src.stringValue === aboutEs.trim() && d.text.stringValue === '[pl] ' + aboutEs.trim()), true, 'la presentación queda traducida al polaco')
+ok((await autoTr(BZ, 'places/rest-la-terraza'))?.translated, 0, 'lo ya traducido no se vuelve a pagar')
+const en = await autoList('en')
+const aboutEn = terraza.fields?.about_en?.stringValue ?? ''
+ok(!aboutEn || !en.some(d => d.src.stringValue === aboutEs.trim()), true, 'lo que el negocio escribió en inglés no se traduce encima')
+ok(await autoTr(J, 'places/rest-la-terraza'), 'PERMISSION_DENIED', 'un cliente no pide traducciones de fichas')
+ok(await autoTr(null, 'places/rest-la-terraza'), 'UNAUTHENTICATED', 'sin sesión no se traduce')
+ok((await autoTr(AD, 'clients/jansen'))?.translated, 0, 'datos privados (clientes) nunca se traducen')
+ok(await autoTr(AD, '../x'), 'INVALID_ARGUMENT', 'ruta no válida')
+const items = await autoTr(BZ, 'places/rest-la-terraza/orderItems/d1')
+ok(items?.translated > 0, true, 'los platos de la carta se traducen')
+
 console.log(`Archivos: ${pass} OK, ${fail} FAIL`)
 if (fail) process.exit(1)

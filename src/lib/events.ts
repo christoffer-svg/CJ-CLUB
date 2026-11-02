@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 import { todayKey } from './data'
 import { db, functions } from './firebase'
 import type { BookingStatus, EventBooking, PlaceEvent } from './types'
+import { autoTranslate } from './autoTranslate'
 
 export type WithId<T> = T & { id: string }
 
@@ -49,7 +50,10 @@ export function usePlaceEvents(placeId: string | null) {
   return state
 }
 
-export type EventDraft = Pick<PlaceEvent, 'kind' | 'title' | 'about_es' | 'about_en' | 'date' | 'time' | 'endTime' | 'price' | 'capacity' | 'bookable' | 'active' | 'photo'>
+export type EventDraft = Pick<
+  PlaceEvent,
+  'kind' | 'title' | 'about_es' | 'about_en' | 'date' | 'time' | 'endTime' | 'price' | 'capacity' | 'bookable' | 'active' | 'photo'
+>
 
 /** Crea o cambia un evento (negocio o CJ) */
 export async function saveEvent(id: string | null, placeId: string, businessName: string, uid: string, d: EventDraft, existing?: PlaceEvent) {
@@ -74,11 +78,13 @@ export async function saveEvent(id: string | null, placeId: string, businessName
     updatedAt: serverTimestamp(),
   }
   if (id) await setDoc(doc(db, 'events', id), data)
-  else await addDoc(collection(db, 'events'), data)
+  else id = (await addDoc(collection(db, 'events'), data)).id
+  autoTranslate(`events/${id}`)
 }
 
 export const deleteEvent = (id: string) => deleteDoc(doc(db, 'events', id))
-export const setEventHidden = (id: string, hidden: boolean) => updateDoc(doc(db, 'events', id), { hiddenByAdmin: hidden })
+export const setEventHidden = (id: string, hidden: boolean) =>
+  updateDoc(doc(db, 'events', id), { hiddenByAdmin: hidden }).then(() => autoTranslate(`events/${id}`))
 
 /** Reservas: las del cliente (clientId), las de un negocio (placeId) o todas (CJ) */
 export function useBookings(filter: { clientId?: string | null; placeId?: string | null; all?: boolean }) {
