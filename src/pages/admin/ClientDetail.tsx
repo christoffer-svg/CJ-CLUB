@@ -69,7 +69,7 @@ export default function ClientDetail() {
       const name = c.familyName
       await deleteClient(id)
       toast(`${name} dada de baja. Sus datos se han borrado.`)
-      navigate('/admin/clientes')
+      navigate('/admin/clientes', { replace: true })
     } catch (err) {
       const msg = err instanceof FirebaseError ? err.message.replace(/\s*\[\d+\]$/, '') : ''
       setRemoveError(msg && !msg.startsWith('internal') ? msg : 'No se pudo dar de baja. Inténtelo de nuevo.')

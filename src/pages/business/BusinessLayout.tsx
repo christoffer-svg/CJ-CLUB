@@ -5,6 +5,7 @@ import { ToastProvider } from '../../components/admin/Toast'
 import { useLiveDoc } from '../../lib/admin'
 import type { Place } from '../../lib/types'
 import { useBookings } from '../../lib/events'
+import BackButton from '../../components/admin/BackButton'
 import { useOrders } from '../../lib/orders'
 
 const sections = [
@@ -53,6 +54,7 @@ export default function BusinessLayout() {
         </nav>
       </header>
       <main className="a-page">
+        <BackButton home="/negocio" />
         <Outlet context={{ placeName, place: place.data, placeId: profile?.placeId ?? '' }} />
       </main>
     </ToastProvider>

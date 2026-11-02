@@ -1,4 +1,4 @@
-import { Link, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { PageTitle } from '../../components/admin/AdminLayout'
 import ProfileEditor from '../../components/ProfileEditor'
 import { useLiveDoc } from '../../lib/admin'
@@ -9,12 +9,8 @@ import type { Partner, Place } from '../../lib/types'
 export default function AdminProfile({ coll }: { coll: ProfileCollection }) {
   const { id = '' } = useParams()
   const item = useLiveDoc<Place | Partner>(`${coll}/${id}`)
-  const back = coll === 'places' ? '/admin/lugares' : '/admin/colaboradores'
   return (
     <>
-      <Link to={back} className="a-link">
-        ‹ Volver
-      </Link>
       <PageTitle eyebrow={coll === 'places' ? 'Lugares · Presentación' : 'Colaboradores · Presentación'} title={item.data?.name ?? '…'} />
       {item.loading ? null : !item.data ? (
         <p className="a-empty">No existe.</p>

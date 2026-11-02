@@ -39,7 +39,7 @@ export default function ClientNew() {
           ? `${form.familyName} creada. ${invitationNotice(form.email, res.via)}`
           : `Casa añadida a la cuenta de ${form.email}. Ya puede verla en la app (en «Mi CJ Club»), sin nueva invitación.`,
       )
-      navigate(`/admin/clientes/${res.clientId}`)
+      navigate(`/admin/clientes/${res.clientId}`, { replace: true })
     } catch (err) {
       // Los mensajes de la función de servidor ya vienen en español
       const msg = err instanceof FirebaseError ? err.message.replace(/\s*\[\d+\]$/, '') : ''

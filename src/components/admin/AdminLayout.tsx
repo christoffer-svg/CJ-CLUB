@@ -5,6 +5,7 @@ import RoleSwitcher from '../../components/RoleSwitcher'
 import { useLiveCollection } from '../../lib/admin'
 import { isUnread } from '../../lib/messaging'
 import type { ClientRequest, Conversation } from '../../lib/types'
+import BackButton from './BackButton'
 import { ToastProvider } from './Toast'
 
 const S = (to: string, label: string, text: string) => ({ to, label, text })
@@ -108,6 +109,7 @@ export default function AdminLayout() {
         </header>
         <aside className="a-sidebar">{menu}</aside>
         <main className="a-page">
+          <BackButton home="/admin" sections={adminSections.map((s) => s.to)} />
           <Outlet />
         </main>
       </div>

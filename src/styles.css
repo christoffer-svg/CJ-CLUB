@@ -4555,3 +4555,23 @@ button {
 .bubble .translate {
   font-size: 11px;
 }
+
+/* Paneles: «‹ Volver» a la pantalla anterior */
+.a-back {
+  align-self: flex-start;
+  margin-bottom: -6px;
+  border: 0;
+  padding: 4px 0;
+  background: none;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--gold-dark);
+  cursor: pointer;
+}
+
+.a-back:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
