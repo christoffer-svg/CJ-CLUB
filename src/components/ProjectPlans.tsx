@@ -6,6 +6,7 @@ import type { Author } from '../lib/projects'
 import { addReformPlan, useReformPlans } from '../lib/reforms'
 import type { ReformPlan } from '../lib/types'
 import { shortDate } from '../lib/when'
+import { useTr } from '../lib/reformTranslate'
 
 const KINDS: ReformPlan['kind'][] = ['plan', 'design', 'render', 'other']
 
@@ -15,6 +16,7 @@ const KINDS: ReformPlan['kind'][] = ['plan', 'design', 'render', 'other']
  */
 export default function ProjectPlans({ reformId, author, canWrite }: { reformId?: string; author: Author; canWrite: boolean }) {
   const { t, locale } = useI18n()
+  const tr = useTr()
   const roleName = useRoleName()
   const plans = useReformPlans(reformId)
   const [form, setForm] = useState<{ title: string; kind: ReformPlan['kind']; note: string; files: File[] } | null>(null)
@@ -103,10 +105,10 @@ export default function ProjectPlans({ reformId, author, canWrite }: { reformId?
       {list.map((p) => (
         <article key={p.id} className="card request">
           <div className="request__head">
-            <span className="card__title">{p.title}</span>
+            <span className="card__title">{tr(p.title)}</span>
             <span className="status">{t(`plans.kind.${p.kind}`)}</span>
           </div>
-          {p.note && <p className="request__text">{p.note}</p>}
+          {p.note && <p className="request__text">{tr(p.note)}</p>}
           <AttachmentList items={p.attachments} />
           <span className="card__text">{t('plans.by', { name: `${p.authorName} (${roleName(p.authorRole)})`, date: shortDate(p.createdAt, locale) })}</span>
         </article>

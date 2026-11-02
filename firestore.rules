@@ -1199,6 +1199,12 @@ service cloud.firestore {
       }
 
       // Plan de pagos: lo escriben el constructor o CJ junto con el presupuesto, y se firma con él
+      // Traducción de los textos de la obra al idioma del cliente (la escribe el servidor: translateReform)
+      match /translations/{lang} {
+        allow read: if inDeal(pid);
+        allow write: if false;
+      }
+
       match /plan/main {
         allow read: if inDeal(pid);
         allow create, update: if projectRole(pid) in ['builder', 'cj']

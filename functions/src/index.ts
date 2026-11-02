@@ -12,6 +12,7 @@ import { setGlobalOptions } from 'firebase-functions/v2'
 import { HttpsError, onCall } from 'firebase-functions/v2/https'
 import { createHash, randomBytes, randomUUID } from 'node:crypto'
 import { googleTranslate, translateDoc, TRANSLATE_LANGS } from './autoTranslate.js'
+import { REFORM_LANGS, translateProject } from './projectTranslate.js'
 import { invitationEmail, isMailLanguage, noticeEmail, sendWithResend, type MailRole } from './email.js'
 
 initializeApp()
@@ -1109,4 +1110,33 @@ export const autoTranslateDoc = onCall({ timeoutSeconds: 120 }, async (request) 
   const path = typeof request.data?.path === 'string' ? request.data.path : ''
   if (!/^[A-Za-z0-9_/-]{1,200}$/.test(path) || path.includes('//')) throw new HttpsError('invalid-argument', 'Documento no válido.')
   return { translated: await translateDoc(db, path) }
+})
+
+/**
+ * Traducción de «Mi reforma» al idioma del cliente (ver projectTranslate.ts). La pide la app al abrir una
+ * reforma en un idioma que no es el español. Solo las partes del contrato (cliente, profesional y CJ).
+ * Traductor: la IA de Claude cuando REFORM_TRANSLATOR=claude (functions/.env) y existe el secreto
+ * ANTHROPIC_API_KEY; si no, Google.
+ */
+const anthropicApiKey = process.env.REFORM_TRANSLATOR === 'claude' ? defineSecret('ANTHROPIC_API_KEY') : null
+
+export const translateReform = onCall({ timeoutSeconds: 300, memory: '512MiB', secrets: anthropicApiKey ? [anthropicApiKey] : [] }, async (request) => {
+  const uid = request.auth?.uid
+  if (!uid) throw new HttpsError('unauthenticated', 'Inicie sesión de nuevo.')
+  const d = (request.data ?? {}) as Record<string, unknown>
+  const lang = typeof d.target === 'string' && REFORM_LANGS.includes(d.target) ? d.target : ''
+  if (!lang) throw new HttpsError('invalid-argument', 'Idioma no válido.')
+  const pid = typeof d.projectId === 'string' && /^[A-Za-z0-9_-]{1,80}$/.test(d.projectId) ? d.projectId : ''
+  if (!pid) throw new HttpsError('invalid-argument', 'Reforma no válida.')
+  const [me, project] = await Promise.all([db.doc(`users/${uid}`).get(), db.doc(`projects/${pid}`).get()])
+  if (!project.exists) throw new HttpsError('not-found', 'La reforma ya no existe.')
+  const roles = rolesOf(me)
+  const clientIds = [me.get('clientId'), ...((me.get('clientIds') as string[] | undefined) ?? [])]
+  const allowed =
+    roles.includes('admin') ||
+    ((roles.includes('builder') || roles.includes('designer')) && project.get('builderUid') === uid) ||
+    (roles.includes('client') && clientIds.includes(project.get('clientId')))
+  if (!allowed) throw new HttpsError('permission-denied', 'No forma parte de este contrato.')
+  await countTranslation(uid)
+  return { translated: await translateProject(db, pid, lang, anthropicApiKey?.value() ?? '') }
 })

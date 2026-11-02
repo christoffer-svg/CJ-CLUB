@@ -338,6 +338,8 @@ ok(await req(AD, 'socialChats/sp1_jansen/messages/m1'), 403, 'CJ no lee los mens
 ok(await req(B, 'socialChats/sp1_jansen/messages/m1'), 403, 'un negocio no lee los mensajes')
 
 ok(await req(J, 'translationCache/abc'), 403, 'nadie lee las traducciones guardadas')
+ok(await req(J, 'projects/p-jansen-cocina/translations/sv'), 404, 'el cliente lee la traducción de su reforma')
+ok(await req(J, 'projects/p-jansen-cocina/translations/sv', 'PATCH', { fields: { provider: str('x') } }), 403, 'solo el servidor escribe la traducción de la reforma')
 ok(await req(J, 'autoTranslations/abc'), 404, 'los clientes leen las traducciones automáticas de los negocios')
 ok(await req(null, 'autoTranslations/abc'), 403, 'sin sesión no se leen')
 ok(await req(J, 'autoTranslations/abc', 'PATCH', { fields: { lang: str('pl'), src: str('x'), text: str('y') } }), 403, 'solo el servidor escribe traducciones')

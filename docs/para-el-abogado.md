@@ -43,5 +43,9 @@ Los textos están en la app, en «Política de privacidad» y «Aviso legal», e
    - Las traducciones de las publicaciones se guardan para no repetirlas. Las de los mensajes privados no se guardan.
    - Conviene revisar el párrafo nuevo de la política de privacidad (apartado 5) y si el encargo con Google cubre este servicio.
    - La información pública de los negocios (presentación, horarios, descuentos, eventos, platos) también se traduce automáticamente con Google a todos los idiomas de la app. No incluye datos de clientes.
+9. **Traducción de «Mi reforma»**
+   - Los textos de la obra (presupuesto, extras, avances, pagos, desperfectos…) se traducen al idioma del cliente con la IA de Anthropic (Claude) o con Google. Ambos actúan como encargados del tratamiento.
+   - Se envían solo esos textos, sin nombre, correo ni fotos.
+   - La app avisa de que el original en español es el que vale, también al firmar. Conviene confirmar esta fórmula y si el contrato debe decirlo expresamente.
 
 Cuando el texto esté aprobado, basta con enviarlo y se sustituye en la app, quitando el aviso de borrador.

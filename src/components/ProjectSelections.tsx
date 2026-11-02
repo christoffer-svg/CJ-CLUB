@@ -8,6 +8,7 @@ import { formatMoney, proposeProjectExtra, type Author, type WithId } from '../l
 import { addSelection, confirmSelection } from '../lib/selections'
 import type { BudgetLine, ProductSelection, ProjectExtra } from '../lib/types'
 import { shortDate } from '../lib/when'
+import { useTr } from '../lib/reformTranslate'
 
 type Draft = { title: string; store: string; price: string; reference: string; note: string; lineId: string; files: File[] }
 
@@ -36,6 +37,7 @@ export default function ProjectSelections({
   extras: WithId<ProjectExtra>[]
 }) {
   const { t, locale } = useI18n()
+  const tr = useTr()
   const roleName = useRoleName()
   const money = (n: number) => formatMoney(n, locale)
   const [form, setForm] = useState<Draft | null>(null)
@@ -178,7 +180,7 @@ export default function ProjectSelections({
         return (
           <article key={s.id} className={mine && canWrite ? 'card request pv-extra--pending' : 'card request'}>
             <div className="request__head">
-              <span className="card__title">{s.title}</span>
+              <span className="card__title">{tr(s.title)}</span>
               <span className={`status status--${both ? 'done' : 'new'}`}>{t(both ? 'sel.agreed' : 'sel.waiting')}</span>
             </div>
             <span className="pv-amount">
@@ -236,7 +238,7 @@ export default function ProjectSelections({
                 </>
               )
             })()}
-            {s.note && <p className="request__text">{s.note}</p>}
+            {s.note && <p className="request__text">{tr(s.note)}</p>}
             <AttachmentList items={s.attachments} />
             <span className="card__text">{t('sel.addedBy', { name: `${s.authorName} (${roleName(s.authorRole)})`, date: shortDate(s.createdAt, locale) })}</span>
             <ul className="sel-oks">

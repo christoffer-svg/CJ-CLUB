@@ -240,5 +240,23 @@ ok(await autoTr(AD, '../x'), 'INVALID_ARGUMENT', 'ruta no válida')
 const items = await autoTr(BZ, 'places/rest-la-terraza/orderItems/d1')
 ok(items?.translated > 0, true, 'los platos de la carta se traducen')
 
+// Traducción de «Mi reforma» (función translateReform; en pruebas se simula)
+const RFN = FN.replace('uploadProjectFile', 'translateReform')
+const trRef = async (t, d) => {
+  const r = await fetch(RFN, { method: 'POST', headers: { ...H, ...(t ? { authorization: 'Bearer ' + t } : {}) }, body: JSON.stringify({ data: { projectId: 'p-jansen-cocina', target: 'sv', ...d } }) })
+  const j = await r.json(); return j.error ? j.error.status : j.result
+}
+const rf1 = await trRef(J, {})
+ok(rf1?.translated > 0, true, 'el cliente abre su reforma en sueco y se traduce')
+const rdoc = await fsGet('projects/p-jansen-cocina/translations/sv')
+const ritems = rdoc.fields?.items?.arrayValue?.values ?? []
+const titleR = (await fsGet('projects/p-jansen-cocina')).fields.title.stringValue
+ok(ritems.some(v => v.mapValue.fields.s.stringValue === titleR && v.mapValue.fields.t.stringValue.startsWith('[sv')), true, 'el título de la reforma queda traducido')
+ok((await trRef(J, {}))?.translated, 0, 'lo ya traducido no se vuelve a pagar')
+ok(await trRef(J, { target: 'es' }), 'INVALID_ARGUMENT', 'al español no se traduce (es el original)')
+ok(await trRef(BZ, {}), 'PERMISSION_DENIED', 'un negocio no traduce reformas ajenas')
+ok(await trRef(X, {}), 'PERMISSION_DENIED', 'alguien de fuera tampoco')
+ok(typeof (await trRef(B, {}))?.translated, 'number', 'el constructor de la obra también puede')
+
 console.log(`Archivos: ${pass} OK, ${fail} FAIL`)
 if (fail) process.exit(1)

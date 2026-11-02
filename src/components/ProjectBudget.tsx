@@ -11,6 +11,7 @@ import { formatMoney, type Author, type WithId } from '../lib/projects'
 import type { Attachment, BudgetLine, BudgetSignature, IdDocType, Milestone } from '../lib/types'
 import { uploadIdentity, useIdentity } from '../lib/identity'
 import { shortDate } from '../lib/when'
+import { useTr } from '../lib/reformTranslate'
 
 type Draft = {
   id: string | null
@@ -53,6 +54,7 @@ export default function ProjectBudget({
   plan: Milestone[]
 }) {
   const { t, locale } = useI18n()
+  const tr = useTr()
   const roleName = useRoleName()
   const money = (n: number) => formatMoney(n, locale)
   const [form, setForm] = useState<Draft | null>(null)
@@ -308,7 +310,7 @@ export default function ProjectBudget({
     return (
       <div key={l.id} className="budget-item">
         <div className="request__head">
-          <span className="budget-item__title">{l.title}</span>
+          <span className="budget-item__title">{tr(l.title)}</span>
           {isReference(l) ? (
             <span className="budget-item__price budget-item__price--ref">
               {money(lineTotal(l))} <span className="pv-vat">{t('budget.reference')}</span>
@@ -324,7 +326,7 @@ export default function ProjectBudget({
             {l.quantity.toLocaleString(locale)} {l.unit} × {money(l.unitPrice)}
           </span>
         )}
-        {l.description && <p className="request__text">{l.description}</p>}
+        {l.description && <p className="request__text">{tr(l.description)}</p>}
         <AttachmentList items={l.attachments} />
         {canEdit && (
           <div className="budget-line__actions">
@@ -368,12 +370,12 @@ export default function ProjectBudget({
             ) : (
               <>
                 <div className="request__head">
-                  <span className="card__title budget-group__title">{g.title}</span>
+                  <span className="card__title budget-group__title">{tr(g.title)}</span>
                   <span className="pv-amount">
                     {money(lineTotal(g))} <span className="pv-vat">{t('project.plusVat')}</span>
                   </span>
                 </div>
-                {g.description && <p className="request__text">{g.description}</p>}
+                {g.description && <p className="request__text">{tr(g.description)}</p>}
                 {canEdit && (
                   <div className="budget-line__actions">
                     <button className="link-btn link-btn--dark" onClick={() => setForm(draftOf(g))}>

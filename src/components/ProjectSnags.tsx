@@ -7,6 +7,7 @@ import type { Author, WithId } from '../lib/projects'
 import { acceptSnag, addSnag, markSnagFixed, reopenSnag } from '../lib/snags'
 import type { RetentionRelease, Snag } from '../lib/types'
 import { shortDate } from '../lib/when'
+import { useTr } from '../lib/reformTranslate'
 
 /**
  * Lista de repasos: lo que el constructor tiene que mejorar antes del pago final. El cliente o CJ lo apuntan
@@ -32,6 +33,7 @@ export default function ProjectSnags({
   retention: string
 }) {
   const { t, locale } = useI18n()
+  const tr = useTr()
   const roleName = useRoleName()
   const [form, setForm] = useState<{ title: string; text: string; files: File[] } | null>(null)
   const [fixing, setFixing] = useState<{ id: string; note: string; files: File[] } | null>(null)
@@ -121,17 +123,17 @@ export default function ProjectSnags({
       {snags.map((s) => (
         <article key={s.id} className={s.status === 'open' && role === 'builder' ? 'card request pv-extra--pending' : 'card request'}>
           <div className="request__head">
-            <span className="card__title">{s.title}</span>
+            <span className="card__title">{tr(s.title)}</span>
             {status(s.status)}
           </div>
-          {s.text && <p className="request__text">{s.text}</p>}
+          {s.text && <p className="request__text">{tr(s.text)}</p>}
           <AttachmentList items={s.attachments} />
           <span className="card__text">{t('snag.by', { name: `${s.authorName} (${roleName(s.authorRole)})`, date: shortDate(s.createdAt, locale) })}</span>
           {s.status === 'open' && s.reopenNote && <p className="composer__error">{t('snag.reopenedNote', { note: s.reopenNote })}</p>}
           {s.fixedByName && (
             <div className="snag-fix">
               <span className="eyebrow">{t('snag.fix')}</span>
-              {s.fixNote && <p className="request__text">{s.fixNote}</p>}
+              {s.fixNote && <p className="request__text">{tr(s.fixNote)}</p>}
               <AttachmentList items={s.fixAttachments} />
               <span className="card__text">{t('snag.fixedBy', { name: s.fixedByName, date: shortDate(s.fixedAt, locale) })}</span>
             </div>

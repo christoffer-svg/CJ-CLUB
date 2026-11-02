@@ -3,6 +3,7 @@ import { useI18n } from '../i18n'
 import { PLAN_PERCENT, RETENTION, deletePlan, newMilestoneId, planSum, savePlan } from '../lib/plan'
 import { formatMoney, type Author } from '../lib/projects'
 import type { Milestone } from '../lib/types'
+import { useTr } from '../lib/reformTranslate'
 
 type Row = { id: string; title: string; percent: string }
 
@@ -24,6 +25,7 @@ export default function PaymentPlan({
   totalWithVat: number
 }) {
   const { t, locale } = useI18n()
+  const tr = useTr()
   const money = (n: number) => formatMoney(n, locale)
   const [rows, setRows] = useState<Row[] | null>(null)
   const [busy, setBusy] = useState(false)
@@ -78,7 +80,7 @@ export default function PaymentPlan({
               {milestones.map((m) => (
                 <div key={m.id} className="plan__row">
                   <dt>
-                    {m.title} <span className="pv-vat">{m.percent} %</span>
+                    {tr(m.title)} <span className="pv-vat">{m.percent} %</span>
                   </dt>
                   <dd>{amount(m.percent)}</dd>
                 </div>

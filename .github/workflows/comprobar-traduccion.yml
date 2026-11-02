@@ -31,3 +31,15 @@ jobs:
           echo "$RES" | jq -c '{translations: .data.translations, error: (.error | if . then {status, message: .message[0:200], reason: [.details[]?.reason]} else null end)}'
           if echo "$RES" | grep -q SERVICE_DISABLED; then echo "::error::La traducción NO está activada en el proyecto cj-club."; exit 1; fi
           if echo "$RES" | grep -q translatedText; then echo "La traducción está activada y funciona."; else echo "La traducción está activada (la cuenta de publicación no tiene permiso para traducir, lo cual es normal: traduce la cuenta del servidor)."; fi
+
+      - name: Comprobar la IA de Claude (traducción de Mi reforma)
+        run: |
+          KEY=$(gcloud secrets versions access latest --secret=ANTHROPIC_API_KEY --project=cj-club 2>/dev/null || true)
+          if [ -z "$KEY" ]; then echo "La IA de Claude aún no está configurada (falta el secreto ANTHROPIC_API_KEY). Mientras tanto traduce Google."; exit 0; fi
+          echo "::add-mask::$KEY"
+          RES=$(curl -sS https://api.anthropic.com/v1/messages \
+            -H "x-api-key: $KEY" -H "anthropic-version: 2023-06-01" -H "content-type: application/json" \
+            -d '{"model":"claude-opus-5-5","max_tokens":2000,"output_config":{"effort":"low"},"messages":[{"role":"user","content":"Translate this Spanish renovation budget item into Swedish. Reply with the translation only: Alicatado de baño con azulejo 30x60, incluye rozas y enlucido."}]}')
+          echo "$RES" | jq -c '{model, stop_reason, text: [.content[]? | select(.type=="text") | .text], error: .error}'
+          if echo "$RES" | jq -e '.error' >/dev/null; then echo "::error::La clave de Claude no funciona (mire el error de arriba)."; exit 1; fi
+          echo "La IA de Claude funciona."
