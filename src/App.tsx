@@ -5,6 +5,8 @@ import AdminLayout from './components/admin/AdminLayout'
 import { ClientViewer } from './lib/viewer'
 import Login from './pages/Login'
 import SetPassword from './pages/SetPassword'
+import JoinRequest from './pages/JoinRequest'
+import AdminJoinRequests from './pages/admin/AdminJoinRequests'
 import Legal from './pages/Legal'
 import Home from './pages/Home'
 import Guide from './pages/Guide'
@@ -65,6 +67,7 @@ export default function App() {
       <Routes>
         <Route path="/acceso" element={<Login />} />
         <Route path="/contrasena" element={<SetPassword />} />
+        <Route path="/unirse" element={<JoinRequest />} />
         <Route path="/privacidad" element={<Legal page="privacy" />} />
         <Route path="/aviso-legal" element={<Legal page="legal" />} />
         <Route element={<RequireRole role="client" />}>
@@ -128,6 +131,7 @@ export default function App() {
             <Route path="constructores" element={<Builders />} />
             <Route path="clientes" element={<Clients />} />
             <Route path="clientes/nuevo" element={<ClientNew />} />
+            <Route path="solicitudes" element={<AdminJoinRequests />} />
             <Route path="clientes/:id" element={<ClientDetail />} />
             <Route path="colaboradores" element={<Partners />} />
             <Route path="colaboradores/:id/presentacion" element={<AdminProfile coll="partners" />} />

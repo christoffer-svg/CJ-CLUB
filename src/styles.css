@@ -4575,3 +4575,55 @@ button {
   text-decoration: underline;
   text-underline-offset: 3px;
 }
+
+/* «Formar parte de CJ Club» (pantalla de acceso) */
+.login__join {
+  margin-top: 4px;
+  text-align: center;
+  white-space: normal;
+  line-height: 1.4;
+  text-transform: none;
+  letter-spacing: 0.02em;
+  font-size: 13px;
+  text-decoration: none;
+}
+
+/* Correos y teléfonos en el panel: tal cual, sin mayúsculas */
+.a-link--plain {
+  text-transform: none;
+  letter-spacing: normal;
+  font-weight: 500;
+}
+
+.join__message {
+  min-height: 84px;
+  padding-top: 12px;
+  resize: vertical;
+  font: inherit;
+}
+
+.join__trap {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.join__consent {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: 12px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.join__consent input {
+  margin-top: 3px;
+  accent-color: var(--gold);
+}
+
+.join__consent a {
+  color: var(--gold);
+}

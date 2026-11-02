@@ -13,7 +13,7 @@ export default function ClientNew() {
   const toast = useToast()
   // "Añadir otra casa" desde una ficha: llega con el correo, la familia y el idioma rellenos
   const [params] = useSearchParams()
-  const otherHouse = Boolean(params.get('email'))
+  const otherHouse = Boolean(params.get('email')) && params.get('origen') !== 'solicitud'
   const [form, setForm] = useState<NewClient>({
     familyName: params.get('familia') || 'Familia ',
     email: params.get('email') || '',

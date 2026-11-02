@@ -124,6 +124,11 @@ export default function Login() {
           {mode === 'login' ? t('login.forgot') : t('login.back')}
         </button>
         <p className="login__note">{t('login.note')}</p>
+        {mode === 'login' && (
+          <Link className="btn btn--ghost login__join" to="/unirse">
+            {t('join.cta')}
+          </Link>
+        )}
       </form>
       <nav className="login__legal" aria-label={t('legal.links')}>
         <Link to="/privacidad">{t('legal.privacy')}</Link>

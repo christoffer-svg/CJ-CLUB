@@ -747,6 +747,19 @@ export type SocialMessage = { clientId: string; uid: string; familyName: string;
 /** socialReports/{id}: un cliente avisa a CJ de una publicación inadecuada */
 export type SocialReport = { postId: string; postTitle: string; clientId: string; familyName: string; reason: string; createdAt: Timestamp | null }
 
+/** membershipRequests/{id}: alguien que no es cliente pide formar parte de CJ Club (lo escribe el servidor) */
+export type MembershipStatus = 'new' | 'contacted' | 'member' | 'declined'
+export type MembershipRequest = {
+  name: string
+  email: string
+  phone: string
+  country: string
+  message: string
+  language: string
+  status: MembershipStatus
+  createdAt: Timestamp | null
+}
+
 /** socialProfiles/{clientId}: lo que los demás clientes ven de una casa en Social (lo escribe el servidor) */
 export type SocialProfile = { familyName: string; photo: Attachment | null }
 

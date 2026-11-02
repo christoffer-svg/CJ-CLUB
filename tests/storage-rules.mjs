@@ -258,5 +258,25 @@ ok(await trRef(BZ, {}), 'PERMISSION_DENIED', 'un negocio no traduce reformas aje
 ok(await trRef(X, {}), 'PERMISSION_DENIED', 'alguien de fuera tampoco')
 ok(typeof (await trRef(B, {}))?.translated, 'number', 'el constructor de la obra también puede')
 
+// «Formar parte de CJ Club» (función requestMembership, sin sesión)
+const JFN = FN.replace('uploadProjectFile', 'requestMembership')
+const join = async (d) => {
+  const r = await fetch(JFN, { method: 'POST', headers: H, body: JSON.stringify({ data: { name: 'Anna Berg', email: 'anna@prueba.test', phone: '+46 70 123 45 67', country: 'Suecia', message: 'Tenemos casa en Moraira.', consent: true, language: 'sv', ...d } }) })
+  const j = await r.json(); return j.error ? j.error.message : j.result
+}
+ok((await join({}))?.ok, true, 'alguien sin cuenta pide formar parte de CJ Club')
+const reqs = await fetch('http://127.0.0.1:8080/v1/projects/cj-club/databases/(default)/documents/membershipRequests', { headers: { authorization: 'Bearer owner' } }).then(r => r.json())
+ok(reqs.documents?.some(d => d.fields.email.stringValue === 'anna@prueba.test' && d.fields.status.stringValue === 'new'), true, 'la solicitud queda en el panel de CJ')
+const mails = await fetch('http://127.0.0.1:8080/v1/projects/cj-club/databases/(default)/documents/mailLog?pageSize=300', { headers: { authorization: 'Bearer owner' } }).then(r => r.json())
+ok(mails.documents?.some(d => d.fields.kind?.stringValue === 'join' && d.fields.to?.stringValue === 'info@cjclub.eu' && d.fields.replyTo?.stringValue === 'anna@prueba.test' && d.fields.html?.stringValue.includes('Moraira')), true, 'a CJ le llega el correo con los datos (responder va a la persona)')
+ok(await join({ email: 'no-es-correo' }), 'email', 'correo no válido')
+ok(await join({ consent: false }), 'consent', 'sin aceptar la privacidad no se envía')
+ok(await join({ phone: '12' }), 'phone', 'teléfono no válido')
+ok((await join({ website: 'http://spam' }))?.ok, true, 'los robots creen que ha ido bien…')
+const reqs2 = await fetch('http://127.0.0.1:8080/v1/projects/cj-club/databases/(default)/documents/membershipRequests', { headers: { authorization: 'Bearer owner' } }).then(r => r.json())
+ok(reqs2.documents.length, reqs.documents.length, '…pero no se guarda nada')
+await join({}); await join({})
+ok(await join({}), 'limit', 'máximo 3 solicitudes por conexión y día')
+
 console.log(`Archivos: ${pass} OK, ${fail} FAIL`)
 if (fail) process.exit(1)

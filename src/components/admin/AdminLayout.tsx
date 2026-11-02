@@ -26,6 +26,7 @@ export const adminGroups = [
     title: 'Clientes',
     items: [
       S('/admin/clientes', 'Clientes', 'Fichas, contactos asignados e invitaciones'),
+      S('/admin/solicitudes', 'Solicitudes para unirse', 'Personas que aún no son clientes y quieren formar parte'),
       S('/admin/reformas', 'Reformas', 'Obras: presupuestos, pagos, extras y repasos'),
       S('/admin/constructores', 'Profesionales', 'Constructores, oficios, arquitectos y diseñadores'),
       S('/admin/servicios', 'Servicios de CJ', 'Key holding, reformas, vigilancia… con o sin precio'),
@@ -121,10 +122,12 @@ export function useBadges(): Record<string, number> {
   const convs = useLiveCollection<Conversation>('conversations')
   const requests = useLiveCollection<ClientRequest>('requests')
   const reports = useLiveCollection<{ postId: string }>('socialReports')
+  const joins = useLiveCollection<{ status: string }>('membershipRequests')
   return {
     '/admin/mensajes': convs.data.filter((c) => isUnread(c, 'cj')).length,
     '/admin/peticiones': requests.data.filter((r) => r.status === 'new').length,
     '/admin/social': reports.data.length,
+    '/admin/solicitudes': joins.data.filter((r) => r.status === 'new').length,
   }
 }
 

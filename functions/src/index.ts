@@ -1140,3 +1140,75 @@ export const translateReform = onCall({ timeoutSeconds: 300, memory: '512MiB', s
   await countTranslation(uid)
   return { translated: await translateProject(db, pid, lang, anthropicApiKey?.value() ?? '') }
 })
+
+/**
+ * «Quiero formar parte de CJ Club»: formulario público de la pantalla de acceso (sin cuenta).
+ * Guarda la solicitud en membershipRequests (solo CJ la ve en el panel) y avisa por correo a CJ
+ * (JOIN_NOTICE_EMAIL, por defecto info@cjclub.eu), con «Responder» dirigido a quien lo pide.
+ * Protección contra abusos: campo trampa para robots, 3 solicitudes por conexión y día, 100 al día en total.
+ */
+export const requestMembership = onCall({ secrets: resendApiKey ? [resendApiKey] : [] }, async (request) => {
+  const d = (request.data ?? {}) as Record<string, unknown>
+  // Campo invisible: solo lo rellenan los robots. Se responde como si todo fuera bien.
+  if (typeof d.website === 'string' && d.website.trim()) return { ok: true }
+  const clean = (v: unknown, max: number) => (typeof v === 'string' ? v.replace(/\s+/g, ' ').trim().slice(0, max) : '')
+  const name = clean(d.name, 120)
+  const email = clean(d.email, 160).toLowerCase()
+  const phone = clean(d.phone, 40)
+  const country = clean(d.country, 80)
+  const message = typeof d.message === 'string' ? d.message.trim().slice(0, 1500) : ''
+  const language = isMailLanguage(d.language) ? d.language : 'en'
+  if (name.length < 3) throw new HttpsError('invalid-argument', 'name')
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new HttpsError('invalid-argument', 'email')
+  if (phone.replace(/\D/g, '').length < 6) throw new HttpsError('invalid-argument', 'phone')
+  if (d.consent !== true) throw new HttpsError('invalid-argument', 'consent')
+
+  // Límites (por conexión y en total, cada día)
+  const day = new Date().toISOString().slice(0, 10)
+  const ip = createHash('sha256').update(String(request.rawRequest?.ip ?? 'x')).digest('hex').slice(0, 32)
+  const ipRef = db.doc(`joinLimits/${day}_${ip}`)
+  const allRef = db.doc(`joinLimits/${day}_all`)
+  await db.runTransaction(async (tx) => {
+    const [a, b] = await Promise.all([tx.get(ipRef), tx.get(allRef)])
+    if (Number(a.get('n') ?? 0) >= 3 || Number(b.get('n') ?? 0) >= 100) throw new HttpsError('resource-exhausted', 'limit')
+    tx.set(ipRef, { n: Number(a.get('n') ?? 0) + 1, day })
+    tx.set(allRef, { n: Number(b.get('n') ?? 0) + 1, day })
+  })
+
+  const ref = await db.collection('membershipRequests').add({ name, email, phone, country, message, language, status: 'new', createdAt: FieldValue.serverTimestamp() })
+
+  // Aviso a CJ (si falla, la solicitud ya está guardada en el panel)
+  try {
+    const base = appUrl().replace(/\/$/, '')
+    const to = process.env.JOIN_NOTICE_EMAIL || 'info@cjclub.eu'
+    const languageName: Record<string, string> = { es: 'Español', en: 'Inglés', nl: 'Neerlandés', sv: 'Sueco', de: 'Alemán', fr: 'Francés', pl: 'Polaco' }
+    const mail = noticeEmail({
+      title: `Solicitud para CJ Club: ${name}`,
+      intro: 'Una persona que aún no es cliente quiere formar parte de CJ Club. Puede contestarle respondiendo a este correo.',
+      rows: [
+        ['Nombre', name],
+        ['Correo', email],
+        ['Teléfono', phone],
+        ...(country ? ([['País', country]] as [string, string][]) : []),
+        ['Idioma de la app', languageName[language] ?? language],
+      ],
+      lines: message ? [message] : [],
+      button: 'Ver en el panel',
+      link: `${base}/admin/solicitudes`,
+      appUrl: base,
+    })
+    const key = resendApiKey?.value() ?? ''
+    const simulated = emailEnabled && process.env.FUNCTIONS_EMULATOR === 'true' && (!key || key === 'test')
+    const log = db.collection('mailLog').doc()
+    const entry = { kind: 'join', to, refId: ref.id, subject: mail.subject, createdAt: FieldValue.serverTimestamp() }
+    if (!emailEnabled || (!key && !simulated)) await log.set({ ...entry, status: 'not_configured' })
+    else if (simulated) await log.set({ ...entry, status: 'sent', provider: 'simulated', html: mail.html, replyTo: email })
+    else {
+      const id = await sendWithResend({ apiKey: key, from: emailFrom(), replyTo: email, to, subject: mail.subject, html: mail.html, text: mail.text })
+      await log.set({ ...entry, status: 'sent', provider: 'resend', providerId: id })
+    }
+  } catch (e) {
+    console.error('requestMembership mail', e)
+  }
+  return { ok: true }
+})

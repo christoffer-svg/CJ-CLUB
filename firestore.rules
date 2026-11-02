@@ -690,6 +690,14 @@ service cloud.firestore {
     }
 
     // Foto y nombre de cada casa en Social: los leen los clientes; solo los escribe el servidor (setClientPhoto)
+    // Solicitudes para unirse a CJ Club (las crea el servidor: requestMembership). Solo CJ.
+    match /membershipRequests/{id} {
+      allow read, delete: if isAdmin();
+      allow update: if isAdmin() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status'])
+        && request.resource.data.status in ['new', 'contacted', 'member', 'declined'];
+      allow create: if false;
+    }
+
     // Traducciones automáticas de la información pública de negocios, descuentos, eventos… (las escribe el servidor)
     match /autoTranslations/{id} {
       allow read: if signedIn();
