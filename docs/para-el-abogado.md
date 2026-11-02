@@ -37,5 +37,10 @@ Los textos están en la app, en «Política de privacidad» y «Aviso legal», e
    - Si alguien se apunta a un plan, puede chatear en privado con quien lo publicó. CJ no lee esos chats.
    - Conviene revisar el consentimiento para mostrar el nombre de la familia, las normas de uso y la responsabilidad por lo que publican.
 7. **Correos que envía la app:** invitaciones y avisos a los negocios. Se envían con Resend, que actúa como encargado del tratamiento.
+8. **Traducción automática en Social**
+   - Si un cliente pulsa «Traducir» en una publicación o en un mensaje privado, el texto se envía a Google Cloud Translation (Google Ireland Limited), que actúa como encargado del tratamiento.
+   - Solo se envía el texto, sin el nombre ni otros datos. Google no garantiza que la traducción se procese dentro de la UE.
+   - Las traducciones de las publicaciones se guardan para no repetirlas. Las de los mensajes privados no se guardan.
+   - Conviene revisar el párrafo nuevo de la política de privacidad (apartado 5) y si el encargo con Google cubre este servicio.
 
 Cuando el texto esté aprobado, basta con enviarlo y se sustituye en la app, quitando el aviso de borrador.

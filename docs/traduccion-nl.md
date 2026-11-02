@@ -118,6 +118,13 @@ Controleer of elke tekst natuurlijk en correct Nederlands is. Noteer correcties 
 | `benefits.validUntil` | Válido hasta el {date} | Valid until {date} | Geldig tot {date} | |
 | `benefits.validRange` | Válido del {from} al {until} | Valid from {from} to {until} | Geldig van {from} tot {until} | |
 | `common.back` | Volver | Back | Terug | |
+| `translate.do` | Traducir | Translate | Vertalen | |
+| `translate.original` | Ver original | Show original | Origineel tonen | |
+| `translate.busy` | Traduciendo… | Translating… | Bezig met vertalen… | |
+| `translate.by` | Traducido automáticamente | Automatically translated | Automatisch vertaald | |
+| `translate.same` | Ya está en su idioma | Already in your language | Al in uw taal | |
+| `translate.error` | No se ha podido traducir. Inténtelo de nuevo. | Could not translate. Please try again. | Vertalen is niet gelukt. Probeer het opnieuw. | |
+| `translate.limit` | Ha llegado al máximo de traducciones de hoy. | You have reached today’s translation limit. | U heeft het maximum aantal vertalingen voor vandaag bereikt. | |
 | `reform.totalPlanned` | Total previsto de la obra | Expected total for the works | Verwacht totaal van de werken | |
 | `designer.yourContract` | Su contrato: presupuesto, pagos y extras | Your contract: budget, payments and extras | Uw contract: offerte, betalingen en extra’s | |
 | `trade.architect` | Arquitecto | Architect | Architect | |

@@ -4511,3 +4511,47 @@ button {
 .rf-note {
   font-size: 12px;
 }
+
+/* Social: botón «Traducir» / «Ver original» */
+.translate {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 12px;
+  font-size: 12px;
+  color: var(--text-2);
+}
+
+.translate__btn {
+  border: 0;
+  padding: 4px 0;
+  background: none;
+  font: inherit;
+  font-weight: 600;
+  color: var(--gold-dark);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.translate__btn:disabled {
+  cursor: default;
+  opacity: 0.7;
+}
+
+.translate__note {
+  font-style: italic;
+}
+
+.translate__error {
+  flex-basis: 100%;
+  color: var(--emergency);
+}
+
+.pf-block .translate {
+  margin-top: 4px;
+}
+
+.bubble .translate {
+  font-size: 11px;
+}

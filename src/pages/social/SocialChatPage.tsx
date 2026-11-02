@@ -8,6 +8,7 @@ import { messageTime } from '../../lib/when'
 import { useMe } from './common'
 import { FamilyAvatar } from '../../components/FamilyAvatar'
 import { useSocialProfiles } from '../../lib/familyPhoto'
+import { useTranslatable } from '../../lib/translate'
 
 /** Chat privado entre quien publica un plan y una familia que se apunta */
 export default function SocialChatPage() {
@@ -65,7 +66,7 @@ export default function SocialChatPage() {
           {messages.map((m) => (
             <div key={m.id} className={m.clientId === me?.clientId ? 'bubble bubble--mine' : 'bubble'}>
               <span className="bubble__author">{m.clientId === me?.clientId ? t('chat.you') : m.familyName}</span>
-              <p className="bubble__text">{m.text}</p>
+              <MessageText chatId={chatId} messageId={m.id} text={m.text} translatable={!preview && m.clientId !== me?.clientId} />
               <span className="bubble__time">{m.createdAt ? messageTime(m.createdAt, locale) : t('chat.sending')}</span>
             </div>
           ))}
@@ -95,6 +96,17 @@ export default function SocialChatPage() {
           </form>
         )}
       </main>
+    </>
+  )
+}
+
+/** Texto de un mensaje; los de la otra familia se pueden traducir al idioma de la app */
+function MessageText({ chatId, messageId, text, translatable }: { chatId: string; messageId: string; text: string; translatable: boolean }) {
+  const tr = useTranslatable(translatable ? { chatId, messageId } : null, [text])
+  return (
+    <>
+      <p className="bubble__text">{tr.shown[0]}</p>
+      {tr.control}
     </>
   )
 }

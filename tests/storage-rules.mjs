@@ -194,5 +194,27 @@ ok((await fsGet('clients/jansen')).fields?.photo?.nullValue, null, 'la ficha que
 ok(await setPhoto(BZ, {}), 'PERMISSION_DENIED', 'un negocio no pone fotos de perfil de casas')
 ok(await setPhoto(J, { contentType: 'application/pdf' }), 'INVALID_ARGUMENT', 'la foto de perfil solo puede ser una imagen')
 
+// Traducción de Social (función translateSocial; en pruebas se simula con "[idioma] texto")
+const TFN = FN.replace('uploadProjectFile', 'translateSocial')
+const tr = async (t, d) => {
+  const r = await fetch(TFN, { method: 'POST', headers: { ...H, ...(t ? { authorization: 'Bearer ' + t } : {}) }, body: JSON.stringify({ data: { target: 'pl', ...d } }) })
+  const j = await r.json(); return j.error ? j.error.status : j.result
+}
+const tp = await tr(J, { postId: 'sp-golf' })
+ok(tp?.texts?.[0] === '[pl] Golf en La Sella' && tp.texts[2].startsWith('[pl] Estaremos') && tp.same === false, true, 'el cliente traduce una publicación al polaco')
+const cacheCount = async () => ((await fetch('http://127.0.0.1:8080/v1/projects/cj-club/databases/(default)/documents/translationCache?pageSize=300', { headers: { authorization: 'Bearer owner' } }).then(r => r.json())).documents ?? []).length
+const before = await cacheCount()
+ok((await tr(J, { postId: 'sp-golf' }))?.texts?.[0], '[pl] Golf en La Sella', 'la segunda vez sale de lo ya traducido')
+ok(await cacheCount(), before, 'no se vuelve a pagar por el mismo texto')
+ok(await tr(J, { postId: 'sp-golf', target: 'xx' }), 'INVALID_ARGUMENT', 'solo idiomas de la app')
+ok(await tr(BZ, { postId: 'sp-golf' }), 'PERMISSION_DENIED', 'un negocio no usa la traducción de Social')
+ok(await tr(null, { postId: 'sp-golf' }), 'UNAUTHENTICATED', 'sin sesión no se traduce')
+ok(await tr(J, { postId: 'noExiste' }), 'NOT_FOUND', 'publicación que no existe')
+const tm = await tr(J, { chatId: 'sp1_jansen', messageId: 'm2' })
+ok(tm?.texts?.[0], '[pl] A las 9, mi móvil es 600 000 000', 'una casa del chat traduce un mensaje')
+ok(await tr(AD, { chatId: 'sp1_jansen', messageId: 'm2' }), 'PERMISSION_DENIED', 'CJ no puede traducir (ni leer) los chats privados')
+ok(await tr(X, { chatId: 'sp1_jansen', messageId: 'm2' }), 'PERMISSION_DENIED', 'alguien de fuera no traduce mensajes')
+ok(await cacheCount(), before, 'los mensajes de chat no se guardan traducidos')
+
 console.log(`Archivos: ${pass} OK, ${fail} FAIL`)
 if (fail) process.exit(1)

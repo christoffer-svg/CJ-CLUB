@@ -8,6 +8,7 @@ import { useViewer } from '../../lib/viewer'
 import { useMe, usePlanDates } from './common'
 import { FamilyAvatar } from '../../components/FamilyAvatar'
 import { useSocialProfiles } from '../../lib/familyPhoto'
+import { useTranslatable } from '../../lib/translate'
 
 /** Una publicación de Social: apuntarse a un plan (y chatear con quien lo publica), o avisar a CJ */
 export default function SocialPostPage() {
@@ -29,6 +30,9 @@ export default function SocialPostPage() {
   const mine = Boolean(p && me && p.clientId === me.clientId)
   const joined = Boolean(me && joins.some((j) => j.clientId === me.clientId))
   const myChats = chats.data.filter((c) => c.postId === postId)
+  // CJ escribe sus recomendaciones en el idioma que quiera: también se pueden traducir
+  const tr = useTranslatable(p ? { postId } : null, [p?.title ?? '', p?.place ?? '', p?.text ?? ''])
+  const [title, place, body] = tr.shown
 
   async function run(action: () => Promise<unknown>) {
     setBusy(true)
@@ -47,7 +51,7 @@ export default function SocialPostPage() {
       <Header
         back={`${base}/social`}
         eyebrow={p ? (p.kind === 'plan' ? t(`social.activity.${p.activity}`) : isCjPost(p) ? t('social.byCj') : t('social.tip')) : t('social.eyebrow')}
-        title={p?.title ?? (post.loading ? '' : t('profile.notFound'))}
+        title={p ? title : post.loading ? '' : t('profile.notFound')}
         subtitle={p ? `${p.familyName}${p.kind === 'plan' ? ` · ${dates(p)}` : ''}` : undefined}
       />
       <main className="page">
@@ -62,11 +66,12 @@ export default function SocialPostPage() {
             <section className="card pf-block">
               {p.place && (
                 <p className="sp-place">
-                  <span className="eyebrow">{p.kind === 'plan' ? t('social.where') : t('social.placeName')}</span> {p.place}
+                  <span className="eyebrow">{p.kind === 'plan' ? t('social.where') : t('social.placeName')}</span> {place}
                 </p>
               )}
               {p.address && !isMapLink(p.address) && <p className="card__text">{p.address}</p>}
-              {p.text && <p className="pf-text">{p.text}</p>}
+              {body && <p className="pf-text">{body}</p>}
+              {tr.control}
               {postMapUrl(p) && (
                 <a className="btn btn--ghost sp-directions" href={postMapUrl(p)!} target="_blank" rel="noopener noreferrer">
                   {t('discover.directions')}

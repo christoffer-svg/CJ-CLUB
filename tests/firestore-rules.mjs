@@ -336,6 +336,9 @@ ok(await serverTime(L, 'socialChats/sp1_jansen/messages/m2', msgF('lindqvist', l
 ok(await serverTime(L, 'socialChats/sp1_jansen/messages/m3', msgF('jansen', l.localId, 'Familia Jansen'), ['createdAt'], false), 403, 'nadie escribe en nombre de la otra casa')
 ok(await req(AD, 'socialChats/sp1_jansen/messages/m1'), 403, 'CJ no lee los mensajes privados')
 ok(await req(B, 'socialChats/sp1_jansen/messages/m1'), 403, 'un negocio no lee los mensajes')
+
+ok(await req(J, 'translationCache/abc'), 403, 'nadie lee las traducciones guardadas')
+ok(await req(J, 'translateUsage/' + j.localId), 403, 'el contador de traducciones solo lo usa el servidor')
 ok(await serverTime(J, 'socialChats/sp1_jansen', { lastText: str('Hola'), lastClientId: str('jansen'), readAt: { mapValue: { fields: { jansen: { timestampValue: new Date().toISOString() } } } } }, ['lastAt'], true, ['lastText', 'lastClientId', 'readAt']), 200, 'Jansen actualiza el último mensaje y su lectura')
 ok(await serverTime(J, 'socialChats/sp1_jansen', { readAt: { mapValue: { fields: { jansen: { timestampValue: new Date().toISOString() }, lindqvist: { timestampValue: new Date().toISOString() } } } } }, [], true, ['readAt']), 403, 'no se marca como leído por la otra casa')
 ok(await serverTime(J, 'socialChats/sp1_jansen', { lastClientId: str('lindqvist') }, [], true, ['lastClientId']), 403, 'el último mensaje no se atribuye a la otra casa')

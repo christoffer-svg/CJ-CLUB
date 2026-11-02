@@ -3,14 +3,14 @@
  * Se ejecutan con permisos de administrador de Firebase, por eso comprueban siempre
  * quién llama y qué puede hacer.
  */
-import { initializeApp } from 'firebase-admin/app'
+import { applicationDefault, initializeApp } from 'firebase-admin/app'
 import { getStorage } from 'firebase-admin/storage'
 import { getAuth } from 'firebase-admin/auth'
 import { FieldValue, getFirestore, Timestamp } from 'firebase-admin/firestore'
 import { defineSecret } from 'firebase-functions/params'
 import { setGlobalOptions } from 'firebase-functions/v2'
 import { HttpsError, onCall } from 'firebase-functions/v2/https'
-import { randomBytes, randomUUID } from 'node:crypto'
+import { createHash, randomBytes, randomUUID } from 'node:crypto'
 import { invitationEmail, isMailLanguage, noticeEmail, sendWithResend, type MailRole } from './email.js'
 
 initializeApp()
@@ -1009,4 +1009,108 @@ export const setClientPhoto = onCall({ memory: '512MiB', timeoutSeconds: 120 }, 
   await db.doc(`socialProfiles/${clientId}`).set({ familyName: String(client.get('familyName') ?? ''), photo })
   if (previous?.path && previous.path.startsWith(`clients/${clientId}/`)) await bucket.file(previous.path).delete().catch(() => {})
   return { photo }
+})
+
+/**
+ * Traducción de Social con el servicio de traducción de Google (Cloud Translation), a petición del
+ * cliente (botón «Traducir»). El servidor comprueba que quien pide puede leer el texto.
+ * - Publicaciones: la traducción se guarda en translationCache (solo el servidor la lee), para no pagar
+ *   dos veces por el mismo texto.
+ * - Mensajes de chat: no se guardan; la traducción solo vuelve a quien la pide.
+ * Tope de seguridad: TRANSLATE_DAILY_LIMIT peticiones por persona y día.
+ * En el Firebase de pruebas local no se llama a Google: se simula.
+ */
+const TRANSLATE_LANGS = ['es', 'en', 'nl', 'sv', 'de', 'fr', 'pl']
+const TRANSLATE_DAILY_LIMIT = 300
+
+type Translated = { text: string; detected: string }
+
+async function googleTranslate(texts: string[], target: string): Promise<Translated[]> {
+  if (process.env.FUNCTIONS_EMULATOR === 'true') return texts.map((t) => ({ text: `[${target}] ${t}`, detected: t.startsWith(`[${target}] `) ? target : 'xx' }))
+  const { access_token } = await applicationDefault().getAccessToken()
+  const res = await fetch('https://translation.googleapis.com/language/translate/v2', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${access_token}`, 'Content-Type': 'application/json', 'x-goog-user-project': 'cj-club' },
+    body: JSON.stringify({ q: texts, target, format: 'text' }),
+  })
+  if (!res.ok) {
+    console.error('translate', res.status, (await res.text()).slice(0, 500))
+    if (res.status === 403) throw new HttpsError('failed-precondition', 'La traducción aún no está activada en Google Cloud.')
+    throw new HttpsError('unavailable', 'No se pudo traducir ahora.')
+  }
+  const body = (await res.json()) as { data?: { translations?: { translatedText?: string; detectedSourceLanguage?: string }[] } }
+  const out = body.data?.translations ?? []
+  return texts.map((t, i) => ({ text: out[i]?.translatedText ?? t, detected: (out[i]?.detectedSourceLanguage ?? '').slice(0, 2) }))
+}
+
+async function countTranslation(uid: string) {
+  const ref = db.doc(`translateUsage/${uid}`)
+  const day = new Date().toISOString().slice(0, 10)
+  await db.runTransaction(async (tx) => {
+    const snap = await tx.get(ref)
+    const count = snap.get('day') === day ? Number(snap.get('count') ?? 0) : 0
+    if (count >= TRANSLATE_DAILY_LIMIT) throw new HttpsError('resource-exhausted', 'Ha llegado al máximo de traducciones de hoy.')
+    tx.set(ref, { day, count: count + 1 })
+  })
+}
+
+export const translateSocial = onCall(async (request) => {
+  const uid = request.auth?.uid
+  if (!uid) throw new HttpsError('unauthenticated', 'Inicie sesión de nuevo.')
+  const d = (request.data ?? {}) as Record<string, unknown>
+  const target = typeof d.target === 'string' && TRANSLATE_LANGS.includes(d.target) ? d.target : ''
+  if (!target) throw new HttpsError('invalid-argument', 'Idioma no válido.')
+  const me = await db.doc(`users/${uid}`).get()
+  const role = me.get('role')
+  const clientId = me.get('clientId')
+  if (role !== 'client' && role !== 'admin') throw new HttpsError('permission-denied', 'Solo para clientes.')
+  const validId = (v: unknown) => typeof v === 'string' && /^[A-Za-z0-9_-]{1,80}$/.test(v)
+
+  // Mensaje de un chat: solo las dos casas del chat
+  if (d.chatId !== undefined) {
+    if (!validId(d.chatId) || !validId(d.messageId)) throw new HttpsError('invalid-argument', 'Mensaje no válido.')
+    const chat = await db.doc(`socialChats/${d.chatId}`).get()
+    const members = chat.get('members')
+    if (role !== 'client' || !chat.exists || !Array.isArray(members) || !members.includes(clientId))
+      throw new HttpsError('permission-denied', 'No puede leer este chat.')
+    const msg = await db.doc(`socialChats/${d.chatId}/messages/${d.messageId}`).get()
+    const text = String(msg.get('text') ?? '').slice(0, 2000)
+    if (!msg.exists || !text.trim()) throw new HttpsError('not-found', 'El mensaje ya no existe.')
+    await countTranslation(uid)
+    const [t] = await googleTranslate([text], target)
+    return { texts: [t.text], same: t.detected === target }
+  }
+
+  // Publicación: título, sitio y texto
+  if (!validId(d.postId)) throw new HttpsError('invalid-argument', 'Publicación no válida.')
+  const post = await db.doc(`socialPosts/${d.postId}`).get()
+  if (!post.exists || (post.get('hidden') === true && role !== 'admin' && post.get('clientId') !== clientId))
+    throw new HttpsError('not-found', 'La publicación ya no existe.')
+  const fields = ['title', 'place', 'text'].map((f) => String(post.get(f) ?? '').slice(0, 5000))
+  const results: string[] = [...fields]
+  const keys = fields.map((f) => createHash('sha256').update(`${target}\n${f}`).digest('hex'))
+  const cached = await Promise.all(keys.map((k, i) => (fields[i].trim() ? db.doc(`translationCache/${k}`).get() : null)))
+  const missing = fields.map((f, i) => (f.trim() && !cached[i]?.exists ? i : -1)).filter((i) => i >= 0)
+  let same = true
+  for (const [i, c] of cached.entries())
+    if (c?.exists) {
+      results[i] = String(c.get('text'))
+      if (c.get('detected') !== target) same = false
+    }
+  if (missing.length) {
+    await countTranslation(uid)
+    const done = await googleTranslate(
+      missing.map((i) => fields[i]),
+      target,
+    )
+    await Promise.all(
+      done.map((t, j) => {
+        const i = missing[j]
+        results[i] = t.text
+        if (t.detected !== target) same = false
+        return db.doc(`translationCache/${keys[i]}`).set({ text: t.text, detected: t.detected, target, createdAt: FieldValue.serverTimestamp() })
+      }),
+    )
+  }
+  return { texts: results, same }
 })

@@ -118,6 +118,13 @@ Kontrollera att varje text är naturlig och korrekt på svenska. Skriv dina rät
 | `benefits.validUntil` | Válido hasta el {date} | Valid until {date} | Gäller till {date} | |
 | `benefits.validRange` | Válido del {from} al {until} | Valid from {from} to {until} | Gäller från {from} till {until} | |
 | `common.back` | Volver | Back | Tillbaka | |
+| `translate.do` | Traducir | Translate | Översätt | |
+| `translate.original` | Ver original | Show original | Visa original | |
+| `translate.busy` | Traduciendo… | Translating… | Översätter… | |
+| `translate.by` | Traducido automáticamente | Automatically translated | Automatiskt översatt | |
+| `translate.same` | Ya está en su idioma | Already in your language | Redan på ditt språk | |
+| `translate.error` | No se ha podido traducir. Inténtelo de nuevo. | Could not translate. Please try again. | Det gick inte att översätta. Försök igen. | |
+| `translate.limit` | Ha llegado al máximo de traducciones de hoy. | You have reached today’s translation limit. | Du har nått dagens gräns för översättningar. | |
 | `reform.totalPlanned` | Total previsto de la obra | Expected total for the works | Beräknad totalsumma för arbetet | |
 | `designer.yourContract` | Su contrato: presupuesto, pagos y extras | Your contract: budget, payments and extras | Ert avtal: offert, betalningar och tillägg | |
 | `trade.architect` | Arquitecto | Architect | Arkitekt | |

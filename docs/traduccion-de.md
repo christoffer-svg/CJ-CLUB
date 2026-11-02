@@ -118,6 +118,13 @@ Bitte prüfen Sie, ob jeder Text natürlich und korrekt auf Deutsch ist. Korrekt
 | `benefits.validUntil` | Válido hasta el {date} | Valid until {date} | Gültig bis zum {date} | |
 | `benefits.validRange` | Válido del {from} al {until} | Valid from {from} to {until} | Gültig vom {from} bis zum {until} | |
 | `common.back` | Volver | Back | Zurück | |
+| `translate.do` | Traducir | Translate | Übersetzen | |
+| `translate.original` | Ver original | Show original | Original anzeigen | |
+| `translate.busy` | Traduciendo… | Translating… | Wird übersetzt… | |
+| `translate.by` | Traducido automáticamente | Automatically translated | Automatisch übersetzt | |
+| `translate.same` | Ya está en su idioma | Already in your language | Bereits in Ihrer Sprache | |
+| `translate.error` | No se ha podido traducir. Inténtelo de nuevo. | Could not translate. Please try again. | Übersetzung nicht möglich. Bitte versuchen Sie es erneut. | |
+| `translate.limit` | Ha llegado al máximo de traducciones de hoy. | You have reached today’s translation limit. | Sie haben die maximale Anzahl an Übersetzungen für heute erreicht. | |
 | `reform.totalPlanned` | Total previsto de la obra | Expected total for the works | Voraussichtliche Gesamtsumme der Arbeiten | |
 | `designer.yourContract` | Su contrato: presupuesto, pagos y extras | Your contract: budget, payments and extras | Ihr Vertrag: Angebot, Zahlungen und Extras | |
 | `trade.architect` | Arquitecto | Architect | Architekt | |
