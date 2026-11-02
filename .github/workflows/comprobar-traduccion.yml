@@ -1,0 +1,33 @@
+# Comprueba que el servicio de traducción de Google (Cloud Translation) está activado en cj-club.
+# Solo se ejecuta a mano (botón "Run workflow"). Traduce una palabra: coste prácticamente cero.
+name: Comprobar la traducción
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  comprobar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Entrar en Google Cloud
+        uses: google-github-actions/auth@v3
+        with:
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          project_id: cj-club
+
+      - name: Preparar gcloud
+        uses: google-github-actions/setup-gcloud@v3
+
+      - name: Traducir "Hola" al inglés
+        run: |
+          TOKEN=$(gcloud auth print-access-token)
+          RES=$(curl -sS -X POST https://translation.googleapis.com/language/translate/v2 \
+            -H "Authorization: Bearer $TOKEN" -H "x-goog-user-project: cj-club" -H "Content-Type: application/json" \
+            -d '{"q":["Hola"],"target":"en","format":"text"}')
+          echo "$RES" | jq -c '{translations: .data.translations, error: (.error | if . then {status, message: .message[0:200], reason: [.details[]?.reason]} else null end)}'
+          if echo "$RES" | grep -q SERVICE_DISABLED; then echo "::error::La traducción NO está activada en el proyecto cj-club."; exit 1; fi
+          if echo "$RES" | grep -q translatedText; then echo "La traducción está activada y funciona."; else echo "La traducción está activada (la cuenta de publicación no tiene permiso para traducir, lo cual es normal: traduce la cuenta del servidor)."; fi
