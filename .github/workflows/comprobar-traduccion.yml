@@ -37,9 +37,12 @@ jobs:
           KEY=$(gcloud secrets versions access latest --secret=ANTHROPIC_API_KEY --project=cj-club 2>/dev/null || true)
           if [ -z "$KEY" ]; then echo "La IA de Claude aún no está configurada (falta el secreto ANTHROPIC_API_KEY). Mientras tanto traduce Google."; exit 0; fi
           echo "::add-mask::$KEY"
+          # La misma petición que hace la app (functions/src/projectTranslate.ts)
+          BODY='{"model":"claude-opus-5-5","max_tokens":4000,"fallbacks":"default","output_config":{"effort":"low","format":{"type":"json_schema","schema":{"type":"object","properties":{"translations":{"type":"array","items":{"type":"string"}}},"required":["translations"],"additionalProperties":false}}},"system":"You translate texts from a home-renovation project in Spain for the foreign homeowner. Use correct construction terminology. Return one translation per input, in the same order.","messages":[{"role":"user","content":"Target language: Swedish.\nTranslate each of these 2 texts (JSON array):\n[\"Alicatado de baño con azulejo 30x60, incluye rozas y enlucido.\",\"Solado de cocina con gres porcelánico\"]"}]}'
           RES=$(curl -sS https://api.anthropic.com/v1/messages \
-            -H "x-api-key: $KEY" -H "anthropic-version: 2023-06-01" -H "content-type: application/json" \
-            -d '{"model":"claude-opus-5-5","max_tokens":2000,"output_config":{"effort":"low"},"messages":[{"role":"user","content":"Translate this Spanish renovation budget item into Swedish. Reply with the translation only: Alicatado de baño con azulejo 30x60, incluye rozas y enlucido."}]}')
+            -H "x-api-key: $KEY" -H "anthropic-version: 2023-06-01" -H "anthropic-beta: server-side-fallback-2026-07-01" -H "content-type: application/json" \
+            -d "$BODY")
           echo "$RES" | jq -c '{model, stop_reason, text: [.content[]? | select(.type=="text") | .text], error: .error}'
-          if echo "$RES" | jq -e '.error' >/dev/null; then echo "::error::La clave de Claude no funciona (mire el error de arriba)."; exit 1; fi
+          if echo "$RES" | jq -e '.error' >/dev/null; then echo "::error::La petición a Claude no funciona (mire el error de arriba)."; exit 1; fi
+          echo "$RES" | jq -r '[.content[] | select(.type=="text") | .text] | join("")' | jq -e '.translations | length == 2' >/dev/null || { echo "::error::La respuesta de Claude no tiene el formato esperado."; exit 1; }
           echo "La IA de Claude funciona."
