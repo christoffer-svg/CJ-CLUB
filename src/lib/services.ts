@@ -24,7 +24,7 @@ export const categoryIconChoices: { id: CategoryIcon; label: string }[] = [
   { id: 'home', label: 'Casa' },
 ]
 
-const nameLangs = ['es', 'en', 'nl', 'sv', 'de', 'fr'] as const
+const nameLangs = ['es', 'en', 'nl', 'sv', 'de', 'fr', 'pl'] as const
 export type CategoryNameField = `name_${(typeof nameLangs)[number]}`
 
 /** Los seis servicios de siempre. Si Firestore aún no los tiene, la app los muestra igual. */
@@ -37,6 +37,7 @@ export const builtinCategoryList: (PartnerCategory & { id: string })[] = [
     name_sv: 'Advokat',
     name_de: 'Anwalt',
     name_fr: 'Avocat',
+    name_pl: 'Prawnik',
     icon: 'scales',
     order: 1,
     active: true,
@@ -49,6 +50,7 @@ export const builtinCategoryList: (PartnerCategory & { id: string })[] = [
     name_sv: 'Gestoría',
     name_de: 'Gestoría',
     name_fr: 'Gestoría',
+    name_pl: 'Gestoría',
     icon: 'shield',
     order: 2,
     active: true,
@@ -61,6 +63,7 @@ export const builtinCategoryList: (PartnerCategory & { id: string })[] = [
     name_sv: 'Pool',
     name_de: 'Pool',
     name_fr: 'Piscine',
+    name_pl: 'Basen',
     icon: 'wave',
     order: 3,
     active: true,
@@ -73,6 +76,7 @@ export const builtinCategoryList: (PartnerCategory & { id: string })[] = [
     name_sv: 'Underhåll',
     name_de: 'Instandhaltung',
     name_fr: 'Entretien',
+    name_pl: 'Konserwacja',
     icon: 'wrench',
     order: 4,
     active: true,
@@ -85,6 +89,7 @@ export const builtinCategoryList: (PartnerCategory & { id: string })[] = [
     name_sv: 'Trädgård',
     name_de: 'Garten',
     name_fr: 'Jardin',
+    name_pl: 'Ogród',
     icon: 'sun',
     order: 5,
     active: true,
@@ -97,6 +102,7 @@ export const builtinCategoryList: (PartnerCategory & { id: string })[] = [
     name_sv: 'Förvaltare',
     name_de: 'Hausverwaltung',
     name_fr: 'Syndic',
+    name_pl: 'Zarządca wspólnoty',
     icon: 'key',
     order: 6,
     active: true,
@@ -113,6 +119,7 @@ export type MergedCategory = {
   name_sv: string
   name_de: string
   name_fr: string
+  name_pl: string
   icon: CategoryIcon
   order: number
   active: boolean
@@ -158,6 +165,7 @@ export function mergeCategories(stored: (PartnerCategory & { id: string })[]): M
       name_sv: name('sv'),
       name_de: name('de'),
       name_fr: name('fr'),
+      name_pl: name('pl'),
       icon: normalizeIcon(typeof doc?.icon === 'string' && doc.icon ? doc.icon : base?.icon),
       order: typeof doc?.order === 'number' ? doc.order : (base?.order ?? 100),
       active: doc && typeof doc.active === 'boolean' ? doc.active : (base?.active ?? true),
@@ -225,6 +233,7 @@ export function storedFromMerged(cat: MergedCategory, patch?: { order?: number; 
     name_sv: cat.name_sv.trim(),
     name_de: cat.name_de.trim(),
     name_fr: cat.name_fr.trim(),
+    name_pl: cat.name_pl.trim(),
     icon: cat.icon,
     order: patch?.order ?? cat.order,
     active: patch?.active ?? cat.active,

@@ -112,24 +112,24 @@ service cloud.firestore {
       allow update: if isClient() && request.auth.uid == uid
         && changedKeys().hasOnly(['language', 'favorites', 'clientId'])
         && (!changedKeys().hasAny(['clientId']) || request.resource.data.clientId in resource.data.get('clientIds', []))
-        && request.resource.data.language in ['es', 'en', 'nl', 'sv', 'de', 'fr']
+        && request.resource.data.language in ['es', 'en', 'nl', 'sv', 'de', 'fr', 'pl']
         && (!('favorites' in request.resource.data)
             || (request.resource.data.favorites is list && request.resource.data.favorites.size() <= 200));
 
       // Un arquitecto o diseñador solo puede cambiar su idioma
       allow update: if isDesigner() && request.auth.uid == uid
         && changedKeys().hasOnly(['language'])
-        && request.resource.data.language in ['es', 'en', 'nl', 'sv', 'de', 'fr'];
+        && request.resource.data.language in ['es', 'en', 'nl', 'sv', 'de', 'fr', 'pl'];
 
       // Un constructor solo puede cambiar su idioma
       allow update: if isBuilder() && request.auth.uid == uid
         && changedKeys().hasOnly(['language'])
-        && request.resource.data.language in ['es', 'en', 'nl', 'sv', 'de', 'fr'];
+        && request.resource.data.language in ['es', 'en', 'nl', 'sv', 'de', 'fr', 'pl'];
 
       // Un negocio solo puede cambiar su idioma
       allow update: if isBusiness() && request.auth.uid == uid
         && changedKeys().hasOnly(['language'])
-        && request.resource.data.language in ['es', 'en', 'nl', 'sv', 'de', 'fr'];
+        && request.resource.data.language in ['es', 'en', 'nl', 'sv', 'de', 'fr', 'pl'];
 
       // El equipo de CJ gestiona las fichas, pero nadie puede darse accesos a sí mismo ni borrarse
       allow update: if isAdmin()

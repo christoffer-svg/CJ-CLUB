@@ -21,6 +21,7 @@ const translationFields: [Exclude<Language, 'es'>, string][] = [
   ['sv', 'Sueco'],
   ['de', 'Alemán'],
   ['fr', 'Francés'],
+  ['pl', 'Polaco'],
 ]
 
 type Draft = {
@@ -32,6 +33,7 @@ type Draft = {
   name_sv: string
   name_de: string
   name_fr: string
+  name_pl: string
   icon: string
   order: number
   active: boolean
@@ -47,6 +49,7 @@ function toDraft(cat: MergedCategory): Draft {
     name_sv: editableTranslation(cat, 'sv'),
     name_de: editableTranslation(cat, 'de'),
     name_fr: editableTranslation(cat, 'fr'),
+    name_pl: editableTranslation(cat, 'pl'),
     icon: cat.icon,
     order: cat.order,
     active: cat.active,
@@ -61,6 +64,7 @@ function toStored(draft: Draft): PartnerCategory {
     name_sv: draft.name_sv.trim(),
     name_de: draft.name_de.trim(),
     name_fr: draft.name_fr.trim(),
+    name_pl: draft.name_pl.trim(),
     icon: draft.icon,
     order: draft.order,
     active: draft.active,
@@ -128,6 +132,7 @@ export default function ServiceCategories({
       name_sv: '',
       name_de: '',
       name_fr: '',
+      name_pl: '',
       icon: 'default',
       order: max + 1,
       active: true,

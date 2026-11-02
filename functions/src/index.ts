@@ -94,7 +94,7 @@ export const createClient = onCall(async (request) => {
   const agentName = text(data.agentName, 'agente', false)
   const agentPhone = text(data.agentPhone, 'teléfono del agente', false)
   const agentWhatsapp = text(data.agentWhatsapp, 'WhatsApp del agente', false)
-  const languages = ['es', 'en', 'nl', 'sv', 'de', 'fr']
+  const languages = ['es', 'en', 'nl', 'sv', 'de', 'fr', 'pl']
   const language = typeof data.language === 'string' && languages.includes(data.language) ? data.language : 'en'
   const since = new Date(text(data.clientSince, 'fecha de alta'))
   if (Number.isNaN(since.getTime())) throw new HttpsError('invalid-argument', 'La fecha de alta no es válida.')
@@ -194,7 +194,7 @@ export const createBusiness = onCall(async (request) => {
   const contactName = text(data.contactName, 'nombre de la persona')
   const email = text(data.email, 'correo').toLowerCase()
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new HttpsError('invalid-argument', 'El correo no es válido.')
-  const languages = ['es', 'en', 'nl', 'sv', 'de', 'fr']
+  const languages = ['es', 'en', 'nl', 'sv', 'de', 'fr', 'pl']
   const language = typeof data.language === 'string' && languages.includes(data.language) ? data.language : 'es'
 
   const place = await db.doc(`places/${placeId}`).get()
@@ -253,7 +253,7 @@ export const createBuilder = onCall(async (request) => {
   const trade = typeof data.trade === 'string' && trades.includes(data.trade) ? data.trade : 'construction'
   const email = text(data.email, 'correo').toLowerCase()
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new HttpsError('invalid-argument', 'El correo no es válido.')
-  const languages = ['es', 'en', 'nl', 'sv', 'de', 'fr']
+  const languages = ['es', 'en', 'nl', 'sv', 'de', 'fr', 'pl']
   const language = typeof data.language === 'string' && languages.includes(data.language) ? data.language : 'es'
 
   const auth = getAuth()
@@ -289,7 +289,7 @@ export const createDesigner = onCall(async (request) => {
   const profession = data.profession === 'designer' ? 'designer' : 'architect'
   const email = text(data.email, 'correo').toLowerCase()
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new HttpsError('invalid-argument', 'El correo no es válido.')
-  const languages = ['es', 'en', 'nl', 'sv', 'de', 'fr']
+  const languages = ['es', 'en', 'nl', 'sv', 'de', 'fr', 'pl']
   const language = typeof data.language === 'string' && languages.includes(data.language) ? data.language : 'es'
 
   const auth = getAuth()

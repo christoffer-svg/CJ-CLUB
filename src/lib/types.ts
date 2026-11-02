@@ -131,6 +131,7 @@ export type PartnerCategory = {
   name_sv?: string
   name_de?: string
   name_fr?: string
+  name_pl?: string
   /** Clave de icono de línea. Vacío o desconocido: icono por defecto. */
   icon?: string
   order: number

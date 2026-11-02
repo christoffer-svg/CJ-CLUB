@@ -4,7 +4,7 @@ Cuando el equipo de CJ crea un cliente o un negocio, o pulsa «Reenviar invitaci
 un correo **de CJ Club** para elegir la contraseña:
 
 - con el logo y los colores de CJ;
-- en el idioma de la persona (español, inglés, neerlandés, sueco, alemán o francés);
+- en el idioma de la persona (español, inglés, neerlandés, sueco, alemán, francés o polaco);
 - desde una dirección de CJ, por ejemplo `CJ Club <info@cjclub.eu>`;
 - con un botón que lleva a elegir la contraseña y, después, a `cjclub.eu`.
 

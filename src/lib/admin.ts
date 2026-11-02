@@ -208,6 +208,7 @@ export const languageOptions: [Language, string][] = [
   ['sv', 'Sueco'],
   ['de', 'Alemán'],
   ['fr', 'Francés'],
+  ['pl', 'Polaco'],
 ]
 
 /** Fecha de un Timestamp en formato de campo de fecha: "2026-04-17" */

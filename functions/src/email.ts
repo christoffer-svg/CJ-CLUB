@@ -3,7 +3,7 @@
  * y en el idioma de cada persona. Se envían con Resend (https://resend.com).
  */
 
-export type MailLanguage = 'es' | 'en' | 'nl' | 'sv' | 'de' | 'fr'
+export type MailLanguage = 'es' | 'en' | 'nl' | 'sv' | 'de' | 'fr' | 'pl'
 export type MailRole = 'client' | 'business' | 'admin' | 'builder' | 'designer'
 
 type Texts = {
@@ -140,6 +140,25 @@ const texts: Record<MailLanguage, Texts> = {
     ignore: 'Si vous n’attendiez pas cet e-mail, vous pouvez l’ignorer.',
     signoff: 'Bien cordialement,',
     team: 'L’équipe de CJ Real Estate & Services',
+    footer: 'CJ Real Estate & Services · Costa Blanca',
+  },
+  pl: {
+    subject: 'Dostęp do CJ Club',
+    preheader: 'Proszę ustawić hasło, aby zalogować się do CJ Club.',
+    hello: 'Dzień dobry, {name},',
+    familyHello: 'Szanowni Państwo, Rodzino {name},',
+    introClient: 'Witamy w CJ Club, prywatnej aplikacji CJ Real Estate & Services dla naszych klientów na Costa Blanca: zaufane kontakty, nasze rekomendacje i wyjątkowe korzyści.',
+    introBusiness: 'Udostępniamy Państwu CJ Club dla firm partnerskich. Można tam publikować korzyści oferowane klientom CJ.',
+    introAdmin: 'Udostępniamy Państwu panel zespołu CJ Club.',
+    introDesigner: 'Udostępniamy Państwu CJ Club dla architektów i projektantów. Można tam udostępniać plany i projekty klientowi, fachowcom na budowie i CJ oraz śledzić rozmowę i postępy prac.',
+    introBuilder: 'Udostępniamy Państwu CJ Club dla fachowców na budowie. Można tam udostępniać klientowi i CJ kosztorys, postępy prac, płatności i prace dodatkowe.',
+    button: 'Ustaw hasło',
+    linkHint: 'Jeśli przycisk nie działa, proszę skopiować ten link do przeglądarki:',
+    expiry: 'Ze względów bezpieczeństwa link wygasa po godzinie. Jeśli wygasł, proszę wejść na {url} i wybrać „Nie pamiętam hasła”.',
+    install: 'Następnie proszę zalogować się na {url}. Na telefonie można dodać aplikację do ekranu głównego.',
+    ignore: 'Jeśli nie spodziewali się Państwo tej wiadomości, można ją zignorować.',
+    signoff: 'Z wyrazami szacunku',
+    team: 'Zespół CJ Real Estate & Services',
     footer: 'CJ Real Estate & Services · Costa Blanca',
   },
 }
