@@ -529,10 +529,10 @@ export const sendInvitationEmail = onCall({ secrets: resendApiKey ? [resendApiKe
 
   try {
     const generated = await getAuth().generatePasswordResetLink(email, { url: `${base}/acceso` })
-    // La página de Firebase donde se elige la contraseña, en el idioma de la persona
-    const url = new URL(generated)
-    url.searchParams.set('lang', language)
-    const link = url.toString()
+    // La persona elige la contraseña en CJ Club (/contrasena) y entra directamente, en su idioma
+    const oobCode = new URL(generated).searchParams.get('oobCode')
+    if (!oobCode) throw new Error('Firebase no ha devuelto el código del enlace.')
+    const link = `${base}/contrasena?${new URLSearchParams({ code: oobCode, lang: language }).toString()}`
     const mail = invitationEmail({ language, role, name, link, appUrl: base })
     if (simulated) {
       // Firebase de pruebas: no se envía nada; se guarda el correo para poder revisarlo

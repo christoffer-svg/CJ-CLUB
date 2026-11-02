@@ -6,7 +6,7 @@ un correo **de CJ Club** para elegir la contraseña:
 - con el logo y los colores de CJ;
 - en el idioma de la persona (español, inglés, neerlandés, sueco, alemán, francés o polaco);
 - desde una dirección de CJ, por ejemplo `CJ Club <info@cjclub.eu>`;
-- con un botón que lleva a elegir la contraseña y, después, a `cjclub.eu`.
+- con un botón que abre `cjclub.eu/contrasena`, donde la persona elige su contraseña en la propia app y entra directamente (su app o su panel).
 
 Los textos están en `functions/src/email.ts`. El remitente y la dirección de la app, en `functions/.env`.
 

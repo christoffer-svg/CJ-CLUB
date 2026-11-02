@@ -44,7 +44,8 @@ export default function Login() {
       if (mode === 'login') {
         await signInWithEmailAndPassword(auth, email.trim(), password)
       } else {
-        await sendPasswordResetEmail(auth, email.trim())
+        // Tras elegir la nueva contraseña, la página de Firebase ofrece volver a CJ Club
+        await sendPasswordResetEmail(auth, email.trim(), { url: `${window.location.origin}/acceso` })
         setNotice('login.resetSent')
       }
     } catch (err) {

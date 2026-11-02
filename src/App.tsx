@@ -4,6 +4,7 @@ import Layout from './components/Layout'
 import AdminLayout from './components/admin/AdminLayout'
 import { ClientViewer } from './lib/viewer'
 import Login from './pages/Login'
+import SetPassword from './pages/SetPassword'
 import Legal from './pages/Legal'
 import Home from './pages/Home'
 import Guide from './pages/Guide'
@@ -63,6 +64,7 @@ export default function App() {
     <div className={wide ? 'app-frame app-frame--wide' : 'app-frame'}>
       <Routes>
         <Route path="/acceso" element={<Login />} />
+        <Route path="/contrasena" element={<SetPassword />} />
         <Route path="/privacidad" element={<Legal page="privacy" />} />
         <Route path="/aviso-legal" element={<Legal page="legal" />} />
         <Route element={<RequireRole role="client" />}>
