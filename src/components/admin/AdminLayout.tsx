@@ -95,6 +95,9 @@ export default function AdminLayout() {
           {/* Menú: tres grupos; al pulsar uno se despliegan sus secciones */}
           <div className="a-topnav" ref={bar}>
             <nav className="a-topnav__bar" aria-label="Secciones del panel">
+              <NavLink to="/admin" end className={({ isActive }) => (isActive ? 'a-topnav__group a-topnav__group--current' : 'a-topnav__group')}>
+                Inicio
+              </NavLink>
               {adminGroups.map((g) => {
                 const pending = pendingIn(g)
                 const cls = ['a-topnav__group', g.title === currentGroup ? 'a-topnav__group--current' : '', g.title === open ? 'a-topnav__group--open' : '']

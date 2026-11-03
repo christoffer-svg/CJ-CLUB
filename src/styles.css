@@ -4335,6 +4335,15 @@ button {
   cursor: pointer;
 }
 
+a.a-topnav__group {
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+a.a-topnav__group.a-topnav__group--current {
+  color: var(--gold);
+}
+
 .a-topnav__group:hover {
   border-color: var(--gold);
   color: var(--white);
