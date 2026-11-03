@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import { useAuth } from '../../auth/AuthProvider'
 import RoleSwitcher from '../../components/RoleSwitcher'
@@ -53,30 +53,24 @@ export default function AdminLayout() {
   const { profile, logout } = useAuth()
   const badges = useBadges()
   const { pathname } = useLocation()
-  const [open, setOpen] = useState(false)
-  // Al cambiar de sección, el menú del móvil se cierra
-  useEffect(() => setOpen(false), [pathname])
-  const current = adminSections.find((s) => pathname.startsWith(s.to))
-  const pending = Object.values(badges).reduce((n, b) => n + (b || 0), 0)
-
-  const menu = (
-    <nav className="a-nav" aria-label="Secciones del panel">
-      <NavLink to="/admin" end className="a-nav__item a-nav__home">
-        Inicio del panel
-      </NavLink>
-      {adminGroups.map((g) => (
-        <div key={g.title} className="a-nav__group">
-          <span className="a-nav__title">{g.title}</span>
-          {g.items.map((s) => (
-            <NavLink key={s.to} to={s.to} className="a-nav__item">
-              <span>{s.label}</span>
-              {badges[s.to] ? <span className="a-badge-count">{badges[s.to]}</span> : null}
-            </NavLink>
-          ))}
-        </div>
-      ))}
-    </nav>
-  )
+  // Grupo desplegado (Día a día, Clientes, Guía y Descubrir); se cierra al cambiar de página
+  const [open, setOpen] = useState<string | null>(null)
+  const bar = useRef<HTMLDivElement>(null)
+  useEffect(() => setOpen(null), [pathname])
+  useEffect(() => {
+    if (!open) return
+    const onDown = (e: PointerEvent) => !bar.current?.contains(e.target as Node) && setOpen(null)
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setOpen(null)
+    document.addEventListener('pointerdown', onDown)
+    document.addEventListener('keydown', onKey)
+    return () => {
+      document.removeEventListener('pointerdown', onDown)
+      document.removeEventListener('keydown', onKey)
+    }
+  }, [open])
+  const currentGroup = adminGroups.find((g) => g.items.some((s) => pathname.startsWith(s.to)))?.title
+  const pendingIn = (g: (typeof adminGroups)[number]) => g.items.reduce((n, s) => n + (badges[s.to] || 0), 0)
+  const shown = adminGroups.find((g) => g.title === open)
 
   return (
     <ToastProvider>
@@ -98,17 +92,44 @@ export default function AdminLayout() {
             </div>
           </div>
           <RoleSwitcher variant="header" />
-          {/* Móvil: botón que abre el menú completo */}
-          <button type="button" className="a-menu-toggle" aria-expanded={open} onClick={() => setOpen(!open)}>
-            <span className="a-menu-toggle__icon" aria-hidden="true">
-              {open ? '×' : '☰'}
-            </span>
-            <span>{open ? 'Cerrar menú' : current ? current.label : 'Menú'}</span>
-            {!open && pending > 0 && <span className="a-badge-count">{pending}</span>}
-          </button>
-          {open && <div className="a-nav-drawer">{menu}</div>}
+          {/* Menú: tres grupos; al pulsar uno se despliegan sus secciones */}
+          <div className="a-topnav" ref={bar}>
+            <nav className="a-topnav__bar" aria-label="Secciones del panel">
+              {adminGroups.map((g) => {
+                const pending = pendingIn(g)
+                const cls = ['a-topnav__group', g.title === currentGroup ? 'a-topnav__group--current' : '', g.title === open ? 'a-topnav__group--open' : '']
+                return (
+                  <button
+                    key={g.title}
+                    type="button"
+                    className={cls.filter(Boolean).join(' ')}
+                    aria-expanded={g.title === open}
+                    onClick={() => setOpen(g.title === open ? null : g.title)}
+                  >
+                    <span>{g.title}</span>
+                    {pending > 0 && <span className="a-badge-count">{pending}</span>}
+                    <span className="a-topnav__caret" aria-hidden="true">
+                      ▾
+                    </span>
+                  </button>
+                )
+              })}
+            </nav>
+            {shown && (
+              <div className="a-topnav__panel">
+                {shown.items.map((s) => (
+                  <NavLink key={s.to} to={s.to} className="a-topnav__item">
+                    <span className="a-topnav__label">
+                      {s.label}
+                      {badges[s.to] ? <span className="a-badge-count">{badges[s.to]}</span> : null}
+                    </span>
+                    <span className="a-topnav__text">{s.text}</span>
+                  </NavLink>
+                ))}
+              </div>
+            )}
+          </div>
         </header>
-        <aside className="a-sidebar">{menu}</aside>
         <main className="a-page">
           <BackButton home="/admin" sections={adminSections.map((s) => s.to)} />
           <Outlet />
