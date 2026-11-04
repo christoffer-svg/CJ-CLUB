@@ -1,4 +1,5 @@
 import { confirmPasswordReset, signInWithEmailAndPassword, verifyPasswordResetCode } from 'firebase/auth'
+import { httpsCallable } from 'firebase/functions'
 import { FirebaseError } from 'firebase/app'
 import { useEffect, useState, type FormEvent } from 'react'
 import { Link, Navigate, useSearchParams } from 'react-router-dom'
@@ -7,7 +8,10 @@ import { homeFor } from '../auth/guards'
 import LanguagePills from '../components/LanguagePills'
 import { languages, useI18n } from '../i18n'
 import type { TranslationKey } from '../i18n/translations'
-import { auth } from '../lib/firebase'
+import { auth, functions } from '../lib/firebase'
+
+const checkInvite = httpsCallable<{ token: string }, { email: string }>(functions, 'checkInvite')
+const completeInvite = httpsCallable<{ token: string; password: string }, { email: string }>(functions, 'completeInvite')
 
 /**
  * Elegir contraseña desde el correo de invitación de CJ (enlace /contrasena?code=…&lang=…).
@@ -15,6 +19,8 @@ import { auth } from '../lib/firebase'
  */
 export default function SetPassword() {
   const [params] = useSearchParams()
+  // Enlace de CJ Club (invite, 24 horas) o, en invitaciones antiguas, el código de Firebase (code)
+  const invite = params.get('invite') ?? ''
   const code = params.get('code') ?? ''
   const { user, profile } = useAuth()
   const { t, lang, setLang } = useI18n()
@@ -35,6 +41,12 @@ export default function SetPassword() {
   }, [])
 
   useEffect(() => {
+    if (invite) {
+      checkInvite({ token: invite })
+        .then((r) => setEmail(r.data.email))
+        .catch(() => setInvalid(true))
+      return
+    }
     if (!code) {
       setInvalid(true)
       return
@@ -42,7 +54,7 @@ export default function SetPassword() {
     verifyPasswordResetCode(auth, code)
       .then(setEmail)
       .catch(() => setInvalid(true))
-  }, [code])
+  }, [code, invite])
 
   // Contraseña guardada y sesión abierta: a su página de inicio
   if (done && user && profile) return <Navigate to={homeFor(profile.role)} replace />
@@ -54,11 +66,14 @@ export default function SetPassword() {
     if (password !== repeat) return setError('setpw.mismatch')
     setBusy(true)
     try {
-      await confirmPasswordReset(auth, code, password)
+      if (invite) await completeInvite({ token: invite, password })
+      else await confirmPasswordReset(auth, code, password)
     } catch (err) {
       const c = err instanceof FirebaseError ? err.code : ''
-      if (c === 'auth/weak-password') setError('setpw.weak')
-      else if (c === 'auth/expired-action-code' || c === 'auth/invalid-action-code') setInvalid(true)
+      const m = err instanceof FirebaseError ? err.message : ''
+      if (c === 'auth/weak-password' || (c === 'functions/invalid-argument' && m === 'weak')) setError('setpw.weak')
+      else if (c === 'functions/invalid-argument' && m === 'short') setError('setpw.short')
+      else if (c === 'auth/expired-action-code' || c === 'auth/invalid-action-code' || c === 'functions/not-found') setInvalid(true)
       else if (c === 'auth/network-request-failed') setError('login.error.network')
       else setError('setpw.error')
       setBusy(false)

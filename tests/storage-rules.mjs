@@ -278,5 +278,31 @@ ok(reqs2.documents.length, reqs.documents.length, '…pero no se guarda nada')
 await join({}); await join({})
 ok(await join({}), 'limit', 'máximo 3 solicitudes por conexión y día')
 
+// Invitación con enlace propio de CJ Club (24 horas, un solo uso)
+const call = async (name, t, data) => {
+  const r = await fetch(FN.replace('uploadProjectFile', name), { method: 'POST', headers: { ...H, ...(t ? { authorization: 'Bearer ' + t } : {}) }, body: JSON.stringify({ data }) })
+  const j = await r.json(); return j.error ? j.error.status : j.result
+}
+ok((await call('sendInvitationEmail', AD, { email: 'lindqvist@prueba.test' }))?.sent, true, 'CJ envía la invitación')
+const invMails = await fetch('http://127.0.0.1:8080/v1/projects/cj-club/databases/(default)/documents/mailLog?pageSize=300', { headers: { authorization: 'Bearer owner' } }).then(r => r.json())
+const invHtml = invMails.documents.filter(d => d.fields.kind?.stringValue === 'invitation' && d.fields.to?.stringValue === 'lindqvist@prueba.test' && d.fields.html).map(d => d.fields.html.stringValue).pop() ?? ''
+const tok = (invHtml.match(/contrasena\?invite=([A-Za-z0-9_-]+)/) ?? [])[1]
+ok(Boolean(tok) && invHtml.includes('24'), true, 'el correo lleva el enlace de CJ Club y dice que vale 24 horas')
+const invDocs = await fetch('http://127.0.0.1:8080/v1/projects/cj-club/databases/(default)/documents/invites', { headers: { authorization: 'Bearer owner' } }).then(r => r.json())
+const inv = invDocs.documents.find(d => d.fields.email.stringValue === 'lindqvist@prueba.test')
+const hours = (new Date(inv.fields.expiresAt.timestampValue) - Date.now()) / 3600000
+ok(hours > 23.9 && hours <= 24, true, 'el enlace caduca dentro de 24 horas')
+ok(!inv.name.endsWith(tok), true, 'el código no se guarda tal cual (solo su huella)')
+ok((await call('checkInvite', null, { token: tok }))?.email, 'lindqvist@prueba.test', 'la pantalla sabe para qué correo es')
+ok(await call('checkInvite', null, { token: 'x'.repeat(43) }), 'NOT_FOUND', 'un código inventado no vale')
+ok(await call('completeInvite', null, { token: tok, password: 'corta' }), 'INVALID_ARGUMENT', 'contraseña de menos de 8 caracteres')
+ok((await call('completeInvite', null, { token: tok, password: 'Prueba1234' }))?.email, 'lindqvist@prueba.test', 'la persona elige su contraseña')
+ok(await call('completeInvite', null, { token: tok, password: 'Otra12345' }), 'NOT_FOUND', 'el enlace solo se puede usar una vez')
+ok(typeof (await signIn('lindqvist@prueba.test', 'Prueba1234')), 'string', 'entra con la contraseña elegida')
+ok((await call('sendInvitationEmail', AD, { email: 'lindqvist@prueba.test' }))?.sent, true, 'reenviar invitación…')
+const invDocs2 = await fetch('http://127.0.0.1:8080/v1/projects/cj-club/databases/(default)/documents/invites', { headers: { authorization: 'Bearer owner' } }).then(r => r.json())
+ok(invDocs2.documents.filter(d => d.fields.email.stringValue === 'lindqvist@prueba.test').length, 1, '…deja una sola invitación válida por persona')
+ok(await call('sendInvitationEmail', J, { email: 'lindqvist@prueba.test' }), 'PERMISSION_DENIED', 'solo CJ envía invitaciones')
+
 console.log(`Archivos: ${pass} OK, ${fail} FAIL`)
 if (fail) process.exit(1)

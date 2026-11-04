@@ -399,6 +399,8 @@ export const deleteClient = onCall(async (request) => {
     }
   }
   const users = { docs: usersToDelete, size: usersToDelete.length }
+  // Invitaciones pendientes de las cuentas que se borran
+  for (const u of usersToDelete) for (const inv of (await db.collection('invites').where('uid', '==', u.id).get()).docs) await inv.ref.delete()
 
   // Borrado en lotes (máx. 500 operaciones por lote)
   const uses = await db.collection('dealUses').where('clientId', '==', clientId).get()
@@ -529,11 +531,10 @@ export const sendInvitationEmail = onCall({ secrets: resendApiKey ? [resendApiKe
   }
 
   try {
-    const generated = await getAuth().generatePasswordResetLink(email, { url: `${base}/acceso` })
-    // La persona elige la contraseña en CJ Club (/contrasena) y entra directamente, en su idioma
-    const oobCode = new URL(generated).searchParams.get('oobCode')
-    if (!oobCode) throw new Error('Firebase no ha devuelto el código del enlace.')
-    const link = `${base}/contrasena?${new URLSearchParams({ code: oobCode, lang: language }).toString()}`
+    // Enlace propio de CJ Club, válido 24 horas y de un solo uso (el de Firebase solo dura una hora).
+    // La persona elige la contraseña en /contrasena y entra directamente, en su idioma.
+    const token = await createInvite(user.uid, email)
+    const link = `${base}/contrasena?${new URLSearchParams({ invite: token, lang: language }).toString()}`
     const mail = invitationEmail({ language, role, name, link, appUrl: base })
     if (simulated) {
       // Firebase de pruebas: no se envía nada; se guarda el correo para poder revisarlo
@@ -1211,4 +1212,54 @@ export const requestMembership = onCall({ secrets: resendApiKey ? [resendApiKey]
     console.error('requestMembership mail', e)
   }
   return { ok: true }
+})
+
+/**
+ * Invitaciones para elegir contraseña: enlace propio de CJ Club, válido 24 horas y de un solo uso.
+ * En invites/{huella del código} (solo el servidor; el código en sí solo va en el correo).
+ * Al crear una nueva para la misma persona, las anteriores dejan de valer.
+ */
+const INVITE_HOURS = 24
+const inviteRef = (token: string) => db.doc(`invites/${createHash('sha256').update(token).digest('hex')}`)
+
+async function createInvite(uid: string, email: string) {
+  const old = await db.collection('invites').where('uid', '==', uid).get()
+  await Promise.all(old.docs.map((d) => d.ref.delete()))
+  const token = randomBytes(32).toString('base64url')
+  await inviteRef(token).set({ uid, email, expiresAt: Timestamp.fromMillis(Date.now() + INVITE_HOURS * 3600_000), createdAt: FieldValue.serverTimestamp() })
+  return token
+}
+
+async function validInvite(token: unknown) {
+  if (typeof token !== 'string' || !/^[A-Za-z0-9_-]{30,80}$/.test(token)) throw new HttpsError('not-found', 'invalid')
+  const snap = await inviteRef(token).get()
+  if (!snap.exists || (snap.get('expiresAt') as Timestamp).toMillis() < Date.now()) throw new HttpsError('not-found', 'invalid')
+  return snap
+}
+
+/** La pantalla /contrasena comprueba el enlace y muestra a qué correo corresponde */
+export const checkInvite = onCall(async (request) => {
+  const snap = await validInvite((request.data ?? {}).token)
+  return { email: String(snap.get('email')) }
+})
+
+/** Guarda la contraseña elegida y anula el enlace. Después la app entra con el correo y esa contraseña. */
+export const completeInvite = onCall(async (request) => {
+  const d = (request.data ?? {}) as Record<string, unknown>
+  const password = typeof d.password === 'string' ? d.password : ''
+  if (password.length < 8 || password.length > 128) throw new HttpsError('invalid-argument', 'short')
+  const snap = await validInvite(d.token)
+  const uid = String(snap.get('uid'))
+  try {
+    await getAuth().updateUser(uid, { password, emailVerified: true })
+  } catch (e) {
+    if ((e as { code?: string }).code === 'auth/invalid-password') throw new HttpsError('invalid-argument', 'weak')
+    if ((e as { code?: string }).code === 'auth/user-not-found') {
+      await snap.ref.delete()
+      throw new HttpsError('not-found', 'invalid')
+    }
+    throw e
+  }
+  await snap.ref.delete()
+  return { email: String(snap.get('email')) }
 })

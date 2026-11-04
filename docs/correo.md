@@ -6,7 +6,7 @@ un correo **de CJ Club** para elegir la contraseña:
 - con el logo y los colores de CJ;
 - en el idioma de la persona (español, inglés, neerlandés, sueco, alemán, francés o polaco);
 - desde una dirección de CJ, por ejemplo `CJ Club <info@cjclub.eu>`;
-- con un botón que abre `cjclub.eu/contrasena`, donde la persona elige su contraseña en la propia app y entra directamente (su app o su panel).
+- con un botón que abre `cjclub.eu/contrasena`, donde la persona elige su contraseña en la propia app y entra directamente (su app o su panel). El enlace es de CJ Club (no de Firebase), vale 24 horas y se puede usar una sola vez; al reenviar la invitación, el anterior deja de valer.
 
 Los textos están en `functions/src/email.ts`. El remitente y la dirección de la app, en `functions/.env`.
 
