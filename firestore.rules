@@ -31,6 +31,16 @@ service cloud.firestore {
       return isMember() && me().role == 'admin';
     }
 
+    // Empleado de CJ que edita el contenido (lugares, colaboradores, fotos, eventos…). No ve nada de los clientes.
+    function isEditor() {
+      return isMember() && me().role == 'editor';
+    }
+
+    // Quien puede editar el contenido de la app: CJ (admin) o un empleado de contenido
+    function isStaff() {
+      return isAdmin() || isEditor();
+    }
+
     function isClient() {
       return isMember() && me().role == 'client' && me().clientId is string;
     }
@@ -83,11 +93,11 @@ service cloud.firestore {
     }
 
     function validRoles() {
-      return request.resource.data.role in ['admin', 'client', 'business', 'builder', 'designer']
+      return request.resource.data.role in ['admin', 'client', 'business', 'builder', 'designer', 'editor']
         && rolesIn(request.resource.data) is list
         && rolesIn(request.resource.data).size() >= 1
         && rolesIn(request.resource.data).size() <= 4
-        && rolesIn(request.resource.data).hasOnly(['admin', 'client', 'business', 'builder', 'designer'])
+        && rolesIn(request.resource.data).hasOnly(['admin', 'client', 'business', 'builder', 'designer', 'editor'])
         && request.resource.data.role in rolesIn(request.resource.data);
     }
 
@@ -152,9 +162,9 @@ service cloud.firestore {
     // ---------- partners/{id} ----------
     // Un cliente solo lee, de uno en uno, los colaboradores asignados a él; nunca la lista completa
     match /partners/{id} {
-      allow get: if isAdmin() || isMyPartner(id);
-      allow list: if isAdmin();
-      allow write: if isAdmin() && (request.resource == null || profileOk('partners', id));
+      allow get: if isStaff() || isMyPartner(id);
+      allow list: if isStaff();
+      allow write: if isStaff() && (request.resource == null || profileOk('partners', id));
     }
 
     // ---------- partnerCategories/{id} ----------
@@ -162,14 +172,15 @@ service cloud.firestore {
     // Los clientes los leen para ver el nombre. El negocio no los necesita.
     // Solo el equipo de CJ los cambia. Borrar uno que está en uso lo impide el panel.
     match /partnerCategories/{id} {
-      allow read: if isAdmin() || isClient();
-      allow write: if isAdmin();
+      allow read: if isStaff() || isClient();
+      allow create, update: if isStaff();
+      allow delete: if isAdmin();
     }
 
     // ---------- Contenido común: los socios lo leen; el negocio no ----------
     match /generalContacts/{id} {
-      allow read: if isAdmin() || isClient();
-      allow write: if isAdmin();
+      allow read: if isStaff() || isClient();
+      allow write: if isStaff();
     }
 
     // Presentación pública de un colaborador (ver PublicProfile en src/lib/types.ts). Todo opcional.
@@ -223,6 +234,11 @@ service cloud.firestore {
         && (list.size() < 10 || menuFileOk(list[9], coll, id));
     }
 
+    // Al editar, lo que no cambia no se vuelve a revisar (las listas de fotos largas agotan el límite de cálculo)
+    function unchangedField(f) {
+      return resource != null && request.resource.data.get(f, null) == resource.data.get(f, null);
+    }
+
     function profileOk(coll, id) {
       return profileText('about_es', 4000) && profileText('about_en', 4000)
         && profileText('orderInfo_es', 600) && profileText('orderInfo_en', 600)
@@ -231,21 +247,21 @@ service cloud.firestore {
         && number(request.resource.data.get('deliveryFee', 0), 0, 100)
         && number(request.resource.data.get('minOrder', 0), 0, 1000)
         && request.resource.data.get('delivery', false) is bool
-        && menuOk(coll, id)
+        && (unchangedField('menu') || menuOk(coll, id))
         && profileText('hours_es', 600) && profileText('hours_en', 600)
         && profileText('phone', 40) && profileText('email', 120)
         && profileText('instagram', 100) && profileText('address', 300)
         && profileText('website', 300)
         && (request.resource.data.get('website', '') == '' || request.resource.data.website.matches('https://[^ ]+'))
-        && profilePhotosOk(coll, id)
-        && (request.resource.data.get('logo', null) == null || profilePhotoOk(request.resource.data.logo, coll, id));
+        && (unchangedField('photos') || profilePhotosOk(coll, id))
+        && (unchangedField('logo') || request.resource.data.get('logo', null) == null || profilePhotoOk(request.resource.data.logo, coll, id));
     }
 
     // ---------- placeCategories/{id} ----------
     // Categorías de Descubrir que añade CJ (además de las cuatro de siempre)
     match /placeCategories/{id} {
-      allow read: if isAdmin() || isClient() || isBusiness();
-      allow write: if isAdmin() && (request.resource == null || (
+      allow read: if isStaff() || isClient() || isBusiness();
+      allow write: if isStaff() && (request.resource == null || (
         request.resource.data.keys().hasOnly(['name_es', 'name_en', 'order', 'active'])
         && validText(request.resource.data.name_es, 40)
         && request.resource.data.name_en is string && request.resource.data.name_en.size() <= 40
@@ -255,9 +271,9 @@ service cloud.firestore {
     }
 
     match /places/{id} {
-      allow get: if isAdmin() || isClient() || (isBusiness() && id == myPlaceId());
-      allow list: if isAdmin() || isClient();
-      allow write: if isAdmin() && (request.resource == null || profileOk('places', id));
+      allow get: if isStaff() || isClient() || (isBusiness() && id == myPlaceId());
+      allow list: if isStaff() || isClient();
+      allow write: if isStaff() && (request.resource == null || profileOk('places', id));
       // El negocio escribe su presentación (y nada más de la ficha, que es de CJ)
       allow update: if isBusiness() && id == myPlaceId()
         && request.resource.data.diff(resource.data).affectedKeys()
@@ -290,26 +306,26 @@ service cloud.firestore {
     }
 
     match /events/{id} {
-      allow read: if isAdmin() || isClient()
+      allow read: if isStaff() || isClient()
         || (isBusiness() && resource.data.placeId == myPlaceId());
-      allow create: if (isAdmin() && eventOk(request.resource.data.placeId))
+      allow create: if (isStaff() && eventOk(request.resource.data.placeId))
         || (isBusiness() && eventOk(myPlaceId())
             && request.resource.data.hiddenByAdmin == false
             && request.resource.data.createdByUid == request.auth.uid);
       // El negocio no quita la ocultación de CJ ni lo cambia de lugar
-      allow update: if (isAdmin() && eventOk(resource.data.placeId))
+      allow update: if (isStaff() && eventOk(resource.data.placeId))
         || (isBusiness() && resource.data.placeId == myPlaceId() && eventOk(myPlaceId())
             && request.resource.data.hiddenByAdmin == resource.data.hiddenByAdmin
             && request.resource.data.createdByUid == resource.data.createdByUid);
-      allow delete: if isAdmin() || (isBusiness() && resource.data.placeId == myPlaceId());
+      allow delete: if isStaff() || (isBusiness() && resource.data.placeId == myPlaceId());
     }
 
     // ---------- places/{id}/orderItems y orders/{id} ----------
     // Platos que se pueden pedir en la app. Los escribe el restaurante (o CJ); los clientes los leen.
     match /places/{pid}/orderItems/{itemId} {
-      allow read: if isAdmin() || isClient() || (isBusiness() && pid == myPlaceId());
-      allow delete: if isAdmin() || (isBusiness() && pid == myPlaceId());
-      allow create, update: if (isAdmin() || (isBusiness() && pid == myPlaceId()))
+      allow read: if isStaff() || isClient() || (isBusiness() && pid == myPlaceId());
+      allow delete: if isStaff() || (isBusiness() && pid == myPlaceId());
+      allow create, update: if (isStaff() || (isBusiness() && pid == myPlaceId()))
         && request.resource.data.keys().hasOnly(['section', 'name', 'description', 'price', 'available', 'order'])
         && request.resource.data.section is string && request.resource.data.section.size() <= 60
         && validText(request.resource.data.name, 120)
@@ -441,7 +457,7 @@ service cloud.firestore {
     }
 
     match /deals/{id} {
-      allow read: if isAdmin() || isClient()
+      allow read: if isStaff() || isClient()
         || (isBusiness() && resource.data.placeId == myPlaceId());
 
       // Solo el negocio crea ofertas, a su nombre y con el nombre real del lugar
@@ -465,7 +481,7 @@ service cloud.firestore {
 
       // CJ no redacta ofertas nuevas. En las del negocio solo puede ocultarlas.
       // En las antiguas (sin source business) puede seguir corrigiéndolas.
-      allow update: if isAdmin() && (
+      allow update: if isStaff() && (
         (resource.data.get('source', 'cj') == 'business'
           && changedKeys().hasOnly(['hiddenByAdmin'])
           && request.resource.data.hiddenByAdmin is bool)
@@ -481,8 +497,8 @@ service cloud.firestore {
 
     // Ajustes generales, p. ej. settings/tipOfTheWeek
     match /settings/{id} {
-      allow read: if isAdmin() || isClient();
-      allow write: if isAdmin();
+      allow read: if isStaff() || isClient();
+      allow write: if isAdmin() || (isEditor() && id == 'tipOfTheWeek');
     }
 
     // ---------- dealUses/{id} ----------
@@ -727,8 +743,8 @@ service cloud.firestore {
     // ---------- services/{id} ----------
     // Servicios que CJ ofrece (key holding, reforma…). Los crea CJ; los clientes los leen y los piden.
     match /services/{id} {
-      allow read: if isAdmin() || isClient();
-      allow write: if isAdmin() && (request.resource == null || (
+      allow read: if isStaff() || isClient();
+      allow write: if isStaff() && (request.resource == null || (
         request.resource.data.keys().hasOnly(['name_es', 'name_en', 'description_es', 'description_en', 'price', 'priceNote_es', 'priceNote_en', 'active', 'order'])
         && validText(request.resource.data.name_es, 80)
         && request.resource.data.name_en is string && request.resource.data.name_en.size() <= 80

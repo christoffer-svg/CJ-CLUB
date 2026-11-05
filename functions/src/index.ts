@@ -61,7 +61,7 @@ async function nextMemberNumber(date: Date) {
   throw new HttpsError('resource-exhausted', 'No se pudo generar el número de socio.')
 }
 
-type Role = 'admin' | 'client' | 'business' | 'builder' | 'designer'
+type Role = 'admin' | 'client' | 'business' | 'builder' | 'designer' | 'editor'
 
 /** Accesos de una persona. Las fichas antiguas solo tienen "role". */
 function rolesOf(profile: FirebaseFirestore.DocumentSnapshot): Role[] {
@@ -506,7 +506,9 @@ export const sendInvitationEmail = onCall({ secrets: resendApiKey ? [resendApiKe
   const user = await getAuth().getUserByEmail(email).catch(() => null)
   if (!user) throw new HttpsError('not-found', 'No hay ninguna cuenta con ese correo.')
   const profile = await db.doc(`users/${user.uid}`).get()
-  const role = (['client', 'business', 'admin', 'builder', 'designer'].includes(profile.get('role')) ? profile.get('role') : 'client') as MailRole
+  // El empleado de contenido recibe el mismo texto que el equipo de CJ
+  const rawRole = profile.get('role') === 'editor' ? 'admin' : profile.get('role')
+  const role = (['client', 'business', 'admin', 'builder', 'designer'].includes(rawRole) ? rawRole : 'client') as MailRole
   const language = isMailLanguage(profile.get('language')) ? profile.get('language') : 'en'
   const name = (profile.get('name') as string | undefined) || user.displayName || ''
 
@@ -730,7 +732,7 @@ export const uploadProfilePhoto = onCall({ memory: '512MiB', timeoutSeconds: 120
   const [me, target] = await Promise.all([db.doc(`users/${uid}`).get(), db.doc(`${coll}/${id}`).get()])
   if (!target.exists) throw new HttpsError('not-found', 'Ese colaborador no existe.')
   const role = me.get('role')
-  const allowed = role === 'admin' || (coll === 'places' && role === 'business' && me.get('placeId') === id)
+  const allowed = role === 'admin' || role === 'editor' || (coll === 'places' && role === 'business' && me.get('placeId') === id)
   if (!allowed) throw new HttpsError('permission-denied', 'No puede añadir fotos aquí.')
 
   const name =
@@ -1107,7 +1109,7 @@ export const autoTranslateDoc = onCall({ timeoutSeconds: 120 }, async (request) 
   if (!uid) throw new HttpsError('unauthenticated', 'Inicie sesión de nuevo.')
   const me = await db.doc(`users/${uid}`).get()
   const roles = rolesOf(me)
-  if (!roles.includes('admin') && !roles.includes('business')) throw new HttpsError('permission-denied', 'Solo CJ y los negocios.')
+  if (!roles.includes('admin') && !roles.includes('editor') && !roles.includes('business')) throw new HttpsError('permission-denied', 'Solo CJ y los negocios.')
   const path = typeof request.data?.path === 'string' ? request.data.path : ''
   if (!/^[A-Za-z0-9_/-]{1,200}$/.test(path) || path.includes('//')) throw new HttpsError('invalid-argument', 'Documento no válido.')
   return { translated: await translateDoc(db, path) }
@@ -1262,4 +1264,53 @@ export const completeInvite = onCall(async (request) => {
   }
   await snap.ref.delete()
   return { email: String(snap.get('email')) }
+})
+
+/**
+ * Equipo de CJ: empleados que editan el contenido (rol "editor"): lugares, colaboradores, fotos, eventos,
+ * descuentos, servicios, contactos generales y consejo de la semana. No ven nada de los clientes.
+ * Solo CJ (admin) los crea y les quita el acceso. La invitación la envía después la app.
+ */
+export const createTeamMember = onCall(async (request) => {
+  await requireAdmin(request.auth?.uid)
+  const data = (request.data ?? {}) as Record<string, unknown>
+  const name = text(data.name, 'nombre de la persona')
+  const email = text(data.email, 'correo').toLowerCase()
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new HttpsError('invalid-argument', 'El correo no es válido.')
+  const language = typeof data.language === 'string' && ['es', 'en', 'nl', 'sv', 'de', 'fr', 'pl'].includes(data.language) ? data.language : 'es'
+  const auth = getAuth()
+  const existing = await auth.getUserByEmail(email).catch(() => null)
+  if (existing) {
+    const profile = await existingProfile(existing.uid)
+    const roles = rolesOf(profile)
+    if (roles.includes('editor') || roles.includes('admin')) throw new HttpsError('already-exists', 'Ese correo ya tiene acceso al panel.')
+    await profile.ref.update({ roles: [...roles, 'editor'] })
+    return { uid: existing.uid, addedToExisting: true }
+  }
+  const user = await auth.createUser({ email, displayName: name, password: randomBytes(24).toString('base64url') })
+  try {
+    await db.doc(`users/${user.uid}`).set({ role: 'editor', roles: ['editor'], name, email, language })
+  } catch (e) {
+    await auth.deleteUser(user.uid).catch(() => {})
+    throw e
+  }
+  return { uid: user.uid, addedToExisting: false }
+})
+
+/** Quitar el acceso de contenido a un empleado. Si no tiene otro acceso, se borra su cuenta. */
+export const removeTeamMember = onCall(async (request) => {
+  await requireAdmin(request.auth?.uid)
+  const uid = text((request.data ?? {}).uid, 'persona')
+  if (uid === request.auth!.uid) throw new HttpsError('failed-precondition', 'No puede quitarse su propio acceso.')
+  const profile = await db.doc(`users/${uid}`).get()
+  if (!profile.exists || !rolesOf(profile).includes('editor')) throw new HttpsError('not-found', 'Esa persona no es del equipo de contenido.')
+  const others = rolesOf(profile).filter((r) => r !== 'editor')
+  for (const inv of (await db.collection('invites').where('uid', '==', uid).get()).docs) await inv.ref.delete()
+  if (others.length) {
+    await profile.ref.update({ roles: others, role: profile.get('role') === 'editor' ? others[0] : profile.get('role') })
+    return { removed: 'role' }
+  }
+  await profile.ref.delete()
+  await getAuth().deleteUser(uid).catch(() => {})
+  return { removed: 'account' }
 })

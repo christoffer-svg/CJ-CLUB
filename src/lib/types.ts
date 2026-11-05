@@ -1,6 +1,6 @@
 import type { Timestamp } from 'firebase/firestore'
 
-export type Role = 'admin' | 'client' | 'business' | 'builder' | 'designer'
+export type Role = 'admin' | 'client' | 'business' | 'builder' | 'designer' | 'editor'
 
 /** Coordenadas de un punto en el mapa */
 export type GeoPoint = { lat: number; lng: number }

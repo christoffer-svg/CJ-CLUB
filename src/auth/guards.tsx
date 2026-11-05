@@ -11,16 +11,16 @@ export function Splash() {
 }
 
 /** Deja pasar solo a usuarios con sesión, ficha en Firestore y el rol indicado. */
-export function RequireRole({ role }: { role: Role }) {
+export function RequireRole({ role }: { role: Role | Role[] }) {
   const { loading, user, profile } = useAuth()
   if (loading) return <Splash />
   if (!user || !profile) return <Navigate to="/acceso" replace />
-  if (profile.role !== role) return <Navigate to={homeFor(profile.role)} replace />
+  if (!(Array.isArray(role) ? role : [role]).includes(profile.role)) return <Navigate to={homeFor(profile.role)} replace />
   return <Outlet />
 }
 
 export function homeFor(role: Role) {
-  if (role === 'admin') return '/admin'
+  if (role === 'admin' || role === 'editor') return '/admin'
   if (role === 'business') return '/negocio'
   if (role === 'builder') return '/obra'
   if (role === 'designer') return '/estudio'

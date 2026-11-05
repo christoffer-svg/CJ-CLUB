@@ -7,6 +7,7 @@ import Login from './pages/Login'
 import SetPassword from './pages/SetPassword'
 import JoinRequest from './pages/JoinRequest'
 import AdminJoinRequests from './pages/admin/AdminJoinRequests'
+import AdminTeam from './pages/admin/AdminTeam'
 import Legal from './pages/Legal'
 import Home from './pages/Home'
 import Guide from './pages/Guide'
@@ -97,7 +98,7 @@ export default function App() {
             <Route path="casa" element={<House />} />
           </Route>
         </Route>
-        <Route element={<RequireRole role="admin" />}>
+        <Route element={<RequireRole role={['admin', 'editor']} />}>
           <Route path="admin/clientes/:id/vista" element={<ClientPreview />}>
             <Route index element={<Home />} />
             <Route path="guia" element={<Guide />} />
@@ -132,6 +133,7 @@ export default function App() {
             <Route path="clientes" element={<Clients />} />
             <Route path="clientes/nuevo" element={<ClientNew />} />
             <Route path="solicitudes" element={<AdminJoinRequests />} />
+            <Route path="equipo" element={<AdminTeam />} />
             <Route path="clientes/:id" element={<ClientDetail />} />
             <Route path="colaboradores" element={<Partners />} />
             <Route path="colaboradores/:id/presentacion" element={<AdminProfile coll="partners" />} />

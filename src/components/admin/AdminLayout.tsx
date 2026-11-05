@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { NavLink, Outlet, useLocation } from 'react-router-dom'
+import { Navigate, NavLink, Outlet, useLocation } from 'react-router-dom'
 import { useAuth } from '../../auth/AuthProvider'
 import RoleSwitcher from '../../components/RoleSwitcher'
 import { useLiveCollection } from '../../lib/admin'
@@ -20,6 +20,7 @@ export const adminGroups = [
       S('/admin/peticiones', 'Peticiones', 'Servicios, presupuestos, llaves, reparaciones y más'),
       S('/admin/reservas', 'Reservas', 'Pinchazos y reservas de los restaurantes'),
       S('/admin/pedidos', 'Pedidos de comida', 'Pedidos para llevar y a domicilio de los restaurantes'),
+      S('/admin/equipo', 'Equipo de CJ', 'Empleados que editan lugares, fotos y contenido'),
     ],
   },
   {
@@ -49,10 +50,30 @@ export const adminGroups = [
 
 export const adminSections = adminGroups.flatMap((g) => g.items)
 
+/** Lo que puede editar un empleado de contenido (rol "editor"): nada de clientes */
+export const EDITOR_SECTIONS = [
+  '/admin/lugares',
+  '/admin/colaboradores',
+  '/admin/contactos',
+  '/admin/eventos',
+  '/admin/descuentos',
+  '/admin/servicios',
+  '/admin/consejo',
+]
+
+/** Grupos y secciones del menú según quién entra */
+export function groupsFor(role: string | undefined) {
+  if (role !== 'editor') return adminGroups
+  // Un solo grupo para el empleado de contenido
+  return [{ title: 'Contenido', items: adminSections.filter((s) => EDITOR_SECTIONS.includes(s.to)) }]
+}
+
 export default function AdminLayout() {
   const { profile, logout } = useAuth()
-  const badges = useBadges()
+  const badges = useBadges(profile?.role === 'admin')
   const { pathname } = useLocation()
+  const groups = groupsFor(profile?.role)
+  const editor = profile?.role === 'editor'
   // Grupo desplegado (Día a día, Clientes, Guía y Descubrir); se cierra al cambiar de página
   const [open, setOpen] = useState<string | null>(null)
   const bar = useRef<HTMLDivElement>(null)
@@ -68,9 +89,9 @@ export default function AdminLayout() {
       document.removeEventListener('keydown', onKey)
     }
   }, [open])
-  const currentGroup = adminGroups.find((g) => g.items.some((s) => pathname.startsWith(s.to)))?.title
+  const currentGroup = groups.find((g) => g.items.some((s) => pathname.startsWith(s.to)))?.title
   const pendingIn = (g: (typeof adminGroups)[number]) => g.items.reduce((n, s) => n + (badges[s.to] || 0), 0)
-  const shown = adminGroups.find((g) => g.title === open)
+  const shown = groups.find((g) => g.title === open)
 
   return (
     <ToastProvider>
@@ -80,7 +101,7 @@ export default function AdminLayout() {
             <NavLink to="/admin" end className="header__brand a-header__brand">
               <img className="header__logo" src="/logo.png" alt="CJ" />
               <span className="eyebrow header__tagline">
-                Panel CJ Club
+                {editor ? 'Contenido CJ Club' : 'Panel CJ Club'}
                 <br />
                 {profile?.name}
               </span>
@@ -98,7 +119,7 @@ export default function AdminLayout() {
               <NavLink to="/admin" end className={({ isActive }) => (isActive ? 'a-topnav__group a-topnav__group--current' : 'a-topnav__group')}>
                 Inicio
               </NavLink>
-              {adminGroups.map((g) => {
+              {groups.map((g) => {
                 const pending = pendingIn(g)
                 const cls = ['a-topnav__group', g.title === currentGroup ? 'a-topnav__group--current' : '', g.title === open ? 'a-topnav__group--open' : '']
                 return (
@@ -135,18 +156,20 @@ export default function AdminLayout() {
         </header>
         <main className="a-page">
           <BackButton home="/admin" sections={adminSections.map((s) => s.to)} />
-          <Outlet />
+          {/* Un empleado de contenido no entra en las secciones de clientes */}
+          {editor && pathname !== '/admin' && !EDITOR_SECTIONS.some((s) => pathname.startsWith(s)) ? <Navigate to="/admin" replace /> : <Outlet />}
         </main>
       </div>
     </ToastProvider>
   )
 }
 
-export function useBadges(): Record<string, number> {
-  const convs = useLiveCollection<Conversation>('conversations')
-  const requests = useLiveCollection<ClientRequest>('requests')
-  const reports = useLiveCollection<{ postId: string }>('socialReports')
-  const joins = useLiveCollection<{ status: string }>('membershipRequests')
+/** Avisos pendientes (solo para CJ; un empleado de contenido no ve mensajes ni peticiones) */
+export function useBadges(enabled = true): Record<string, number> {
+  const convs = useLiveCollection<Conversation>(enabled ? 'conversations' : null)
+  const requests = useLiveCollection<ClientRequest>(enabled ? 'requests' : null)
+  const reports = useLiveCollection<{ postId: string }>(enabled ? 'socialReports' : null)
+  const joins = useLiveCollection<{ status: string }>(enabled ? 'membershipRequests' : null)
   return {
     '/admin/mensajes': convs.data.filter((c) => isUnread(c, 'cj')).length,
     '/admin/peticiones': requests.data.filter((r) => r.status === 'new').length,

@@ -1,18 +1,6 @@
 /** Lecturas y escrituras del panel de administración (solo rol "admin") */
 import { sendPasswordResetEmail } from 'firebase/auth'
-import {
-  addDoc,
-  collection,
-  deleteDoc,
-  doc,
-  onSnapshot,
-  query,
-  setDoc,
-  Timestamp,
-  updateDoc,
-  where,
-  type DocumentData,
-} from 'firebase/firestore'
+import { addDoc, collection, deleteDoc, doc, onSnapshot, query, setDoc, Timestamp, updateDoc, where, type DocumentData } from 'firebase/firestore'
 import { httpsCallable } from 'firebase/functions'
 import { useEffect, useState } from 'react'
 import { auth, db, functions } from './firebase'
@@ -22,7 +10,7 @@ import { autoTranslate } from './autoTranslate'
 export type WithId<T> = T & { id: string }
 
 /** Colección completa, actualizada en directo */
-export function useLiveCollection<T>(name: string) {
+export function useLiveCollection<T>(name: string | null) {
   const [state, setState] = useState<{ loading: boolean; data: WithId<T>[]; error: boolean }>({
     loading: true,
     data: [],
@@ -30,11 +18,13 @@ export function useLiveCollection<T>(name: string) {
   })
   useEffect(
     () =>
-      onSnapshot(
-        collection(db, name),
-        (snap) => setState({ loading: false, error: false, data: snap.docs.map((d) => ({ ...(d.data() as T), id: d.id })) }),
-        () => setState({ loading: false, error: true, data: [] }),
-      ),
+      !name
+        ? setState({ loading: false, error: false, data: [] })
+        : onSnapshot(
+            collection(db, name),
+            (snap) => setState({ loading: false, error: false, data: snap.docs.map((d) => ({ ...(d.data() as T), id: d.id })) }),
+            () => setState({ loading: false, error: true, data: [] }),
+          ),
     [name],
   )
   return state
@@ -99,10 +89,7 @@ export type NewClient = {
 
 /** Crea la cuenta y la ficha del cliente en el servidor (función createClient) */
 export async function createClient(data: NewClient) {
-  const call = httpsCallable<NewClient, { clientId: string; uid: string; memberNumber: string; addedToExisting?: boolean }>(
-    functions,
-    'createClient',
-  )
+  const call = httpsCallable<NewClient, { clientId: string; uid: string; memberNumber: string; addedToExisting?: boolean }>(functions, 'createClient')
   const res = await call(data)
   // Si el correo ya era de un cliente, la casa se añade a su cuenta: ya tiene acceso, no hace falta invitación
   if (res.data.addedToExisting) return { ...res.data, via: null }

@@ -1,14 +1,14 @@
 import { Link } from 'react-router-dom'
-import { adminGroups, PageTitle, useBadges } from '../../components/admin/AdminLayout'
+import { groupsFor, PageTitle, useBadges } from '../../components/admin/AdminLayout'
 import { useAuth } from '../../auth/AuthProvider'
 
 export default function AdminHome() {
   const { profile } = useAuth()
-  const badges = useBadges()
+  const badges = useBadges(profile?.role === 'admin')
   return (
     <>
       <PageTitle eyebrow="Panel CJ Club" title={profile ? `Hola, ${profile.name}` : 'Panel'} />
-      {adminGroups.map((g) => (
+      {groupsFor(profile?.role).map((g) => (
         <section key={g.title} className="a-home-group">
           <h2 className="a-subtitle">{g.title}</h2>
           <div className="a-menu-grid">
