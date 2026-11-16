@@ -1,0 +1,56 @@
+# Importa las playas de Xàbia a Cartagena a Descubrir › Playas (scripts/import-beaches.ts).
+# Solo se ejecuta a mano: Actions → "Importar playas" → Run workflow, eligiendo el modo.
+# Usa la misma clave que la publicación (secreto FIREBASE_SERVICE_ACCOUNT); no hay que instalar nada.
+
+name: Importar playas
+
+on:
+  workflow_dispatch:
+    inputs:
+      modo:
+        description: 'Qué hacer'
+        type: choice
+        default: 'vista previa (no escribe nada)'
+        options:
+          - 'vista previa (no escribe nada)'
+          - 'prueba: 3 playas'
+          - 'todas las playas'
+          - 'borrar las playas importadas'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: importar-playas
+  cancel-in-progress: false
+
+jobs:
+  importar:
+    name: Importar playas
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Descargar el código
+        uses: actions/checkout@v7
+
+      - name: Preparar Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Importar
+        env:
+          FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          MODO: ${{ inputs.modo }}
+        run: |
+          case "$MODO" in
+            'prueba: 3 playas') npm run import:beaches -- --write --limit=3 ;;
+            'todas las playas') npm run import:beaches -- --write ;;
+            'borrar las playas importadas') npm run import:beaches -- --remove --write ;;
+            *) npm run import:beaches ;;
+          esac
