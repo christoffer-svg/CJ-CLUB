@@ -1,0 +1,56 @@
+# Importa los mercadillos de Dénia a Murcia a Descubrir › Mercadillos (scripts/import-markets.ts).
+# Solo se ejecuta a mano: Actions → "Importar mercadillos" → Run workflow, eligiendo el modo.
+# Usa la misma clave que la publicación (secreto FIREBASE_SERVICE_ACCOUNT).
+
+name: Importar mercadillos
+
+on:
+  workflow_dispatch:
+    inputs:
+      modo:
+        description: 'Qué hacer'
+        type: choice
+        default: 'vista previa (no escribe nada)'
+        options:
+          - 'vista previa (no escribe nada)'
+          - 'prueba: 3 mercadillos'
+          - 'todos los mercadillos'
+          - 'borrar los mercadillos importados'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: importar-mercadillos
+  cancel-in-progress: false
+
+jobs:
+  importar:
+    name: Importar mercadillos
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - name: Descargar el código
+        uses: actions/checkout@v7
+
+      - name: Preparar Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Importar
+        env:
+          FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          MODO: ${{ inputs.modo }}
+        run: |
+          case "$MODO" in
+            'prueba: 3 mercadillos') npm run import:markets -- --write --limit=3 ;;
+            'todos los mercadillos') npm run import:markets -- --write ;;
+            'borrar los mercadillos importados') npm run import:markets -- --remove --write ;;
+            *) npm run import:markets ;;
+          esac
