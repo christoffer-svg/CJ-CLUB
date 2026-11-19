@@ -79,7 +79,7 @@ export default function Places() {
           key={list.id}
           list={list}
           existing={new Set(places.data.map((p) => p.id))}
-          categoryExists={cats.some((c) => c.id === list.category.id)}
+          existingCategory={matchingCategory(cats, list)}
           loading={places.loading}
         />
       ))}
@@ -369,12 +369,12 @@ function CategoriesManager({ cats, counts }: { cats: CategoryItem[]; counts: Rec
 function SuggestedListCard({
   list,
   existing,
-  categoryExists,
+  existingCategory,
   loading,
 }: {
   list: SuggestedList
   existing: Set<string>
-  categoryExists: boolean
+  existingCategory: CategoryItem | null
   loading: boolean
 }) {
   const toast = useToast()
@@ -389,25 +389,28 @@ function SuggestedListCard({
   const [open, setOpen] = useState(false)
   const [busy, setBusy] = useState(false)
   const missing = list.places.filter((p) => !existing.has(p.id))
+  const categoryId = existingCategory?.id ?? list.category.id
+  const categoryName = existingCategory?.name_es ?? list.category.name_es
   if (loading || hidden || missing.length === 0) return null
 
   async function addAll() {
     setBusy(true)
     try {
-      if (!categoryExists)
+      // Si CJ ya creó la categoría (aunque se llame un poco distinto), se usa esa
+      if (!existingCategory)
         await savePlaceCategory(list.category.id, { name_es: list.category.name_es, name_en: list.category.name_en, order: list.category.order, active: true })
       for (const p of missing) {
         const { id, ...data } = p
         await saveDoc(`places/${id}`, {
           ...data,
-          category: list.category.id,
+          category: categoryId,
           active: true,
           discountPercent: null,
           reservationChannel: null,
           reservationTarget: null,
         })
       }
-      toast(`Añadidos ${missing.length} lugares en «${list.category.name_es}». Ya los ven los clientes en Descubrir.`)
+      toast(`Añadidos ${missing.length} lugares en «${categoryName}». Ya los ven los clientes en Descubrir.`)
     } catch {
       toast('No se pudieron añadir todos. Inténtelo de nuevo: solo se añadirán los que falten.', 'error')
     } finally {
@@ -420,8 +423,9 @@ function SuggestedListCard({
       <span className="eyebrow">Lista preparada</span>
       <span className="card__title">{list.title}</span>
       <p className="card__text">
-        {list.description} {missing.length === list.places.length ? `${missing.length} lugares.` : `Faltan ${missing.length} de ${list.places.length}.`} Se crea
-        la categoría «{list.category.name_es}» en Descubrir. Después puede añadir fotos, cambiar textos u ocultar los que no quiera.
+        {list.description} {missing.length === list.places.length ? `${missing.length} lugares.` : `Faltan ${missing.length} de ${list.places.length}.`} Van a
+        la categoría «{categoryName}» de Descubrir{existingCategory ? '' : ', que se crea ahora'}. Después puede añadir fotos, cambiar textos u ocultar los que
+        no quiera.
       </p>
       {open && (
         <ul className="a-suggest__list">
@@ -455,4 +459,20 @@ function SuggestedListCard({
       </div>
     </section>
   )
+}
+
+/** Una categoría que CJ ya tenga con un nombre parecido (p. ej. «Centro comerciales» = «Centros comerciales») */
+function matchingCategory(cats: CategoryItem[], list: SuggestedList): CategoryItem | null {
+  const norm = (t: string) =>
+    t
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase()
+      .replace(/[^a-z ]/g, '')
+      .split(' ')
+      .filter(Boolean)
+      .map((w) => w.replace(/s$/, ''))
+      .join(' ')
+  const want = norm(list.category.name_es)
+  return cats.find((c) => c.id === list.category.id) ?? cats.find((c) => !c.builtin && norm(c.name_es) === want) ?? null
 }
