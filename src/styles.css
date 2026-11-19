@@ -4664,3 +4664,13 @@ a.a-topnav__group.a-topnav__group--current {
   color: var(--text);
   font-weight: 600;
 }
+
+/* En el ordenador (ratón) no se puede deslizar la fila de filtros: se reparten en varias líneas */
+@media (hover: hover) and (pointer: fine) {
+  .pills {
+    flex-wrap: wrap;
+    overflow-x: visible;
+    margin: 0;
+    padding: 0;
+  }
+}
