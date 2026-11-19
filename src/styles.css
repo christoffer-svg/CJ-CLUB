@@ -4643,3 +4643,24 @@ a.a-topnav__group.a-topnav__group--current {
     display: none;
   }
 }
+
+/* Lugares: lista preparada para añadir de una vez */
+.a-suggest {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border-color: var(--gold);
+}
+
+.a-suggest__list {
+  margin: 4px 0;
+  padding-left: 18px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-2);
+}
+
+.a-suggest__list b {
+  color: var(--text);
+  font-weight: 600;
+}

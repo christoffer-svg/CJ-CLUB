@@ -11,7 +11,8 @@ import { reservationError } from '../../lib/reservations'
 import type { GeoPoint, Place, ReservationChannel } from '../../lib/types'
 import { useState } from 'react'
 import { categoryIdFrom, deletePlaceCategory, savePlaceCategory, usePlaceCategories, type CategoryItem } from '../../lib/placeCategories'
-
+import { saveDoc } from '../../lib/admin'
+import { suggestedLists, type SuggestedList } from '../../data/suggestedPlaces'
 
 const reservationOptions: ['' | ReservationChannel, string][] = [
   ['', 'Sin botón de reserva'],
@@ -73,7 +74,19 @@ export default function Places() {
         </button>
       </PageTitle>
 
-      {showCats && <CategoriesManager cats={cats} counts={Object.fromEntries(cats.map((c) => [c.id, places.data.filter((p) => p.category === c.id).length]))} />}
+      {suggestedLists.map((list) => (
+        <SuggestedListCard
+          key={list.id}
+          list={list}
+          existing={new Set(places.data.map((p) => p.id))}
+          categoryExists={cats.some((c) => c.id === list.category.id)}
+          loading={places.loading}
+        />
+      ))}
+
+      {showCats && (
+        <CategoriesManager cats={cats} counts={Object.fromEntries(cats.map((c) => [c.id, places.data.filter((p) => p.category === c.id).length]))} />
+      )}
 
       {categories.map(([cat, label]) => {
         const items = places.data.filter((p) => p.category === cat).sort((a, b) => a.name.localeCompare(b.name))
@@ -84,7 +97,11 @@ export default function Places() {
               {items.map((p) => (
                 <div key={p.id} className={p.active ? 'a-row' : 'a-row a-row--off'}>
                   <Link to={`/admin/lugares/${p.id}/presentacion`} className="place-thumb" aria-label={`Fotos de ${p.name}`}>
-                    {p.photos?.[0] ? <img src={p.photos[0].url} alt="" onError={(e) => (e.currentTarget.style.visibility = 'hidden')} /> : <span>Sin fotos</span>}
+                    {p.photos?.[0] ? (
+                      <img src={p.photos[0].url} alt="" onError={(e) => (e.currentTarget.style.visibility = 'hidden')} />
+                    ) : (
+                      <span>Sin fotos</span>
+                    )}
                   </Link>
                   <div className="a-row__body">
                     <span className="card__title">
@@ -96,7 +113,11 @@ export default function Places() {
                         p.meta_es,
                         p.photos?.length ? `${p.photos.length} ${p.photos.length === 1 ? 'foto' : 'fotos'}` : 'sin fotos',
                         p.location ? null : 'sin ubicación en el mapa',
-                        p.category === 'restaurants' ? (p.reservationChannel ? `reserva por ${reservationLabel[p.reservationChannel]}` : 'sin botón de reserva') : null,
+                        p.category === 'restaurants'
+                          ? p.reservationChannel
+                            ? `reserva por ${reservationLabel[p.reservationChannel]}`
+                            : 'sin botón de reserva'
+                          : null,
                       ]
                         .filter(Boolean)
                         .join(' · ')}
@@ -186,13 +207,7 @@ export default function Places() {
               </Select>
             </Field>
           </div>
-          <Bilingual
-            label="Línea secundaria"
-            es={d.meta_es}
-            en={d.meta_en}
-            onEs={(v) => editor.set('meta_es', v)}
-            onEn={(v) => editor.set('meta_en', v)}
-          />
+          <Bilingual label="Línea secundaria" es={d.meta_es} en={d.meta_en} onEs={(v) => editor.set('meta_es', v)} onEn={(v) => editor.set('meta_en', v)} />
           <Bilingual
             label="Nota de CJ"
             multiline
@@ -279,7 +294,8 @@ function CategoriesManager({ cats, counts }: { cats: CategoryItem[]; counts: Rec
     <section className="card a-form">
       <span className="a-field__label">Categorías de Descubrir</span>
       <p className="card__text">
-        Cada categoría sale como filtro en Descubrir, en el orden indicado. Las cuatro de siempre no se pueden cambiar; Restaurantes es la única con botón de reserva, carta y pedidos. Las nuevas funcionan como Golf o Planes.
+        Cada categoría sale como filtro en Descubrir, en el orden indicado. Las cuatro de siempre no se pueden cambiar; Restaurantes es la única con botón de
+        reserva, carta y pedidos. Las nuevas funcionan como Golf o Planes.
       </p>
       <div className="a-list">
         {cats.map((c) => (
@@ -317,18 +333,126 @@ function CategoriesManager({ cats, counts }: { cats: CategoryItem[]; counts: Rec
           </div>
         ))}
       </div>
-      <button className="btn a-btn profile-editor__add" onClick={() => setForm({ id: null, name_es: '', name_en: '', order: Math.max(40, ...cats.map((c) => c.order)) + 10, active: true })}>
+      <button
+        className="btn a-btn profile-editor__add"
+        onClick={() => setForm({ id: null, name_es: '', name_en: '', order: Math.max(40, ...cats.map((c) => c.order)) + 10, active: true })}
+      >
         Añadir categoría
       </button>
       {form && (
         <Dialog title={form.id ? 'Editar categoría' : 'Nueva categoría'} busy={busy} onClose={() => setForm(null)} onSubmit={save}>
-          <Bilingual label="Nombre" es={form.name_es} en={form.name_en} onEs={(v) => setForm({ ...form, name_es: v })} onEn={(v) => setForm({ ...form, name_en: v })} />
+          <Bilingual
+            label="Nombre"
+            es={form.name_es}
+            en={form.name_en}
+            onEs={(v) => setForm({ ...form, name_es: v })}
+            onEn={(v) => setForm({ ...form, name_en: v })}
+          />
           <Field label="Posición" hint="Las de siempre van en 10, 20, 30 y 40. Un número más bajo sale antes.">
-            <Input inputMode="numeric" value={String(form.order)} onChange={(e) => setForm({ ...form, order: Number(e.target.value.replace(/\D/g, '')) || 0 })} />
+            <Input
+              inputMode="numeric"
+              value={String(form.order)}
+              onChange={(e) => setForm({ ...form, order: Number(e.target.value.replace(/\D/g, '')) || 0 })}
+            />
           </Field>
           <Toggle checked={form.active} onChange={(v) => setForm({ ...form, active: v })} label={form.active ? 'Visible en la app' : 'Oculta'} />
         </Dialog>
       )}
+    </section>
+  )
+}
+
+/**
+ * Lista preparada (p. ej. centros comerciales de Dénia a Murcia): con un botón se crean la categoría y los
+ * lugares que falten. Se pueden quitar después uno a uno; «No mostrar más» esconde el aviso en este navegador.
+ */
+function SuggestedListCard({
+  list,
+  existing,
+  categoryExists,
+  loading,
+}: {
+  list: SuggestedList
+  existing: Set<string>
+  categoryExists: boolean
+  loading: boolean
+}) {
+  const toast = useToast()
+  const key = `cj.suggested.${list.id}.hidden`
+  const [hidden, setHidden] = useState(() => {
+    try {
+      return localStorage.getItem(key) === '1'
+    } catch {
+      return false
+    }
+  })
+  const [open, setOpen] = useState(false)
+  const [busy, setBusy] = useState(false)
+  const missing = list.places.filter((p) => !existing.has(p.id))
+  if (loading || hidden || missing.length === 0) return null
+
+  async function addAll() {
+    setBusy(true)
+    try {
+      if (!categoryExists)
+        await savePlaceCategory(list.category.id, { name_es: list.category.name_es, name_en: list.category.name_en, order: list.category.order, active: true })
+      for (const p of missing) {
+        const { id, ...data } = p
+        await saveDoc(`places/${id}`, {
+          ...data,
+          category: list.category.id,
+          active: true,
+          discountPercent: null,
+          reservationChannel: null,
+          reservationTarget: null,
+        })
+      }
+      toast(`Añadidos ${missing.length} lugares en «${list.category.name_es}». Ya los ven los clientes en Descubrir.`)
+    } catch {
+      toast('No se pudieron añadir todos. Inténtelo de nuevo: solo se añadirán los que falten.', 'error')
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  return (
+    <section className="card a-suggest">
+      <span className="eyebrow">Lista preparada</span>
+      <span className="card__title">{list.title}</span>
+      <p className="card__text">
+        {list.description} {missing.length === list.places.length ? `${missing.length} lugares.` : `Faltan ${missing.length} de ${list.places.length}.`} Se crea
+        la categoría «{list.category.name_es}» en Descubrir. Después puede añadir fotos, cambiar textos u ocultar los que no quiera.
+      </p>
+      {open && (
+        <ul className="a-suggest__list">
+          {missing.map((p) => (
+            <li key={p.id}>
+              <b>{p.name}</b> · {p.meta_es}
+            </li>
+          ))}
+        </ul>
+      )}
+      <div className="sp-actions">
+        <button className="btn a-btn" disabled={busy} onClick={() => void addAll()}>
+          {busy ? 'Añadiendo…' : `Añadir ${missing.length} a la app`}
+        </button>
+        <button className="a-link" onClick={() => setOpen(!open)}>
+          {open ? 'Ocultar la lista' : 'Ver la lista'}
+        </button>
+        <button
+          className="link-btn link-btn--dark"
+          onClick={() => {
+            try {
+              localStorage.setItem(key, '1')
+            } catch {
+              // sin almacenamiento local: solo se oculta ahora
+            }
+            setHidden(true)
+          }}
+        >
+          No mostrar más
+        </button>
+      </div>
     </section>
   )
 }
