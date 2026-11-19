@@ -44,6 +44,12 @@ export default function PartnerDetail() {
                 </a>
               </div>
             )}
+            {pick(p, 'offer') && (
+              <section className="card pf-block pf-offer">
+                <span className="eyebrow">{t('partner.offer')}</span>
+                <p className="pf-text">{pick(p, 'offer')}</p>
+              </section>
+            )}
             <ProfileDetails profile={profileOf(p)} phone={p.phone} />
           </>
         )}

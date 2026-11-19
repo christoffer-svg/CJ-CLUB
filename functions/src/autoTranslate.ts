@@ -50,7 +50,7 @@ type Spec = { pattern: RegExp; suffixed: string[]; plain: string[] }
 const SPECS: Spec[] = [
   { pattern: /^places\/[^/]+$/, suffixed: ['meta', 'cjNote', 'about', 'hours', 'orderInfo'], plain: [] },
   { pattern: /^places\/[^/]+\/orderItems\/[^/]+$/, suffixed: [], plain: ['section', 'name', 'description'] },
-  { pattern: /^partners\/[^/]+$/, suffixed: ['description', 'about', 'hours', 'orderInfo'], plain: [] },
+  { pattern: /^partners\/[^/]+$/, suffixed: ['description', 'about', 'hours', 'orderInfo', 'offer'], plain: [] },
   { pattern: /^generalContacts\/[^/]+$/, suffixed: ['name', 'description'], plain: [] },
   { pattern: /^deals\/[^/]+$/, suffixed: ['conditions', 'description'], plain: ['title'] },
   { pattern: /^events\/[^/]+$/, suffixed: ['about'], plain: ['title'] },

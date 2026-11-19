@@ -1,6 +1,6 @@
 import type { Timestamp } from 'firebase/firestore'
 
-export type Role = 'admin' | 'client' | 'business' | 'builder' | 'designer' | 'editor'
+export type Role = 'admin' | 'client' | 'business' | 'builder' | 'designer' | 'editor' | 'partner'
 
 /** Coordenadas de un punto en el mapa */
 export type GeoPoint = { lat: number; lng: number }
@@ -37,6 +37,9 @@ export type UserProfile = {
   placeId?: string
   /** nombre del lugar en el momento del alta */
   businessName?: string
+  /** ficha de la Guía vinculada (partners/{id}); solo el rol "partner" */
+  partnerId?: string
+  partnerName?: string
   /** ids de places guardados como favoritos */
   favorites?: string[]
 }
@@ -121,6 +124,9 @@ export type Partner = {
   description_en: string
   /** false = desactivado por CJ (no se muestra a los clientes) */
   active?: boolean
+  /** ventaja para los socios de CJ Club, escrita por el colaborador */
+  offer_es?: string
+  offer_en?: string
 } & Omit<PublicProfile, 'phone'>
 
 /** partnerCategories/{id}: oficios que puede ofrecer un colaborador. Los crea CJ, sin cambiar la app. */

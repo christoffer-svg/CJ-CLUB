@@ -62,6 +62,8 @@ export function saveProfile(coll: ProfileCollection, id: string, p: PublicProfil
   const data = cleanProfile(p) as Record<string, unknown>
   // En los colaboradores de servicios, el teléfono es el de su ficha y lo cambia CJ ahí
   if (!keepPhone) delete data.phone
+  // Los colaboradores de servicios no tienen carta ni pedidos (y su propio acceso no puede tocarlos)
+  if (coll === 'partners') for (const f of ['menu', 'takeaway', 'delivery', 'orderInfo_es', 'orderInfo_en']) delete data[f]
   return updateDoc(doc(db, coll, id), data).then(() => autoTranslate(`${coll}/${id}`))
 }
 

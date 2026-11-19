@@ -4674,3 +4674,8 @@ a.a-topnav__group.a-topnav__group--current {
     padding: 0;
   }
 }
+
+/* Ficha de un colaborador: ventaja para socios */
+.pf-offer {
+  border-color: var(--gold);
+}

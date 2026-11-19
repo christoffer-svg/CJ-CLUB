@@ -61,7 +61,7 @@ async function nextMemberNumber(date: Date) {
   throw new HttpsError('resource-exhausted', 'No se pudo generar el número de socio.')
 }
 
-type Role = 'admin' | 'client' | 'business' | 'builder' | 'designer' | 'editor'
+type Role = 'admin' | 'client' | 'business' | 'builder' | 'designer' | 'editor' | 'partner'
 
 /** Accesos de una persona. Las fichas antiguas solo tienen "role". */
 function rolesOf(profile: FirebaseFirestore.DocumentSnapshot): Role[] {
@@ -507,7 +507,7 @@ export const sendInvitationEmail = onCall({ secrets: resendApiKey ? [resendApiKe
   if (!user) throw new HttpsError('not-found', 'No hay ninguna cuenta con ese correo.')
   const profile = await db.doc(`users/${user.uid}`).get()
   // El empleado de contenido recibe el mismo texto que el equipo de CJ
-  const rawRole = profile.get('role') === 'editor' ? 'admin' : profile.get('role')
+  const rawRole = profile.get('role') === 'editor' ? 'admin' : profile.get('role') === 'partner' ? 'business' : profile.get('role')
   const role = (['client', 'business', 'admin', 'builder', 'designer'].includes(rawRole) ? rawRole : 'client') as MailRole
   const language = isMailLanguage(profile.get('language')) ? profile.get('language') : 'en'
   const name = (profile.get('name') as string | undefined) || user.displayName || ''
@@ -732,7 +732,11 @@ export const uploadProfilePhoto = onCall({ memory: '512MiB', timeoutSeconds: 120
   const [me, target] = await Promise.all([db.doc(`users/${uid}`).get(), db.doc(`${coll}/${id}`).get()])
   if (!target.exists) throw new HttpsError('not-found', 'Ese colaborador no existe.')
   const role = me.get('role')
-  const allowed = role === 'admin' || role === 'editor' || (coll === 'places' && role === 'business' && me.get('placeId') === id)
+  const allowed =
+    role === 'admin' ||
+    role === 'editor' ||
+    (coll === 'places' && role === 'business' && me.get('placeId') === id) ||
+    (coll === 'partners' && role === 'partner' && me.get('partnerId') === id && folder === 'photos')
   if (!allowed) throw new HttpsError('permission-denied', 'No puede añadir fotos aquí.')
 
   const name =
@@ -1109,7 +1113,7 @@ export const autoTranslateDoc = onCall({ timeoutSeconds: 120 }, async (request) 
   if (!uid) throw new HttpsError('unauthenticated', 'Inicie sesión de nuevo.')
   const me = await db.doc(`users/${uid}`).get()
   const roles = rolesOf(me)
-  if (!roles.includes('admin') && !roles.includes('editor') && !roles.includes('business')) throw new HttpsError('permission-denied', 'Solo CJ y los negocios.')
+  if (!roles.includes('admin') && !roles.includes('editor') && !roles.includes('business') && !roles.includes('partner')) throw new HttpsError('permission-denied', 'Solo CJ y los negocios.')
   const path = typeof request.data?.path === 'string' ? request.data.path : ''
   if (!/^[A-Za-z0-9_/-]{1,200}$/.test(path) || path.includes('//')) throw new HttpsError('invalid-argument', 'Documento no válido.')
   return { translated: await translateDoc(db, path) }
@@ -1313,4 +1317,38 @@ export const removeTeamMember = onCall(async (request) => {
   await profile.ref.delete()
   await getAuth().deleteUser(uid).catch(() => {})
   return { removed: 'account' }
+})
+
+/**
+ * Acceso propio de un colaborador de la Guía (abogado, gestoría, piscina…): rol "partner" ligado a su ficha
+ * (partners/{id}). Solo escribe su anuncio; lo ven los clientes que lo tienen asignado. La invitación la envía la app.
+ */
+export const createPartnerAccount = onCall(async (request) => {
+  await requireAdmin(request.auth?.uid)
+  const data = (request.data ?? {}) as Record<string, unknown>
+  const partnerId = text(data.partnerId, 'colaborador')
+  if (!/^[A-Za-z0-9_-]{1,100}$/.test(partnerId)) throw new HttpsError('invalid-argument', 'El colaborador no es válido.')
+  const contactName = text(data.contactName, 'nombre de la persona')
+  const email = text(data.email, 'correo').toLowerCase()
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new HttpsError('invalid-argument', 'El correo no es válido.')
+  const language = typeof data.language === 'string' && ['es', 'en', 'nl', 'sv', 'de', 'fr', 'pl'].includes(data.language) ? data.language : 'es'
+  const partner = await db.doc(`partners/${partnerId}`).get()
+  if (!partner.exists) throw new HttpsError('not-found', 'Ese colaborador no existe.')
+  const partnerName = String(partner.get('name') ?? '').trim().slice(0, 200)
+  const auth = getAuth()
+  const existing = await auth.getUserByEmail(email).catch(() => null)
+  if (existing) {
+    const profile = await existingProfile(existing.uid)
+    if (rolesOf(profile).includes('partner')) throw new HttpsError('already-exists', 'Ese correo ya es el acceso de un colaborador. Cada correo puede llevar uno solo.')
+    await profile.ref.update({ roles: [...rolesOf(profile), 'partner'], partnerId, partnerName })
+    return { uid: existing.uid, addedToExisting: true }
+  }
+  const user = await auth.createUser({ email, displayName: contactName, password: randomBytes(24).toString('base64url') })
+  try {
+    await db.doc(`users/${user.uid}`).set({ role: 'partner', roles: ['partner'], name: contactName, email, language, partnerId, partnerName })
+  } catch (e) {
+    await auth.deleteUser(user.uid).catch(() => {})
+    throw e
+  }
+  return { uid: user.uid, addedToExisting: false }
 })

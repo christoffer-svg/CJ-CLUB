@@ -5,6 +5,7 @@ import AdminLayout from './components/admin/AdminLayout'
 import { ClientViewer } from './lib/viewer'
 import Login from './pages/Login'
 import SetPassword from './pages/SetPassword'
+import PartnerPanel from './pages/partner/PartnerPanel'
 import JoinRequest from './pages/JoinRequest'
 import AdminJoinRequests from './pages/admin/AdminJoinRequests'
 import AdminTeam from './pages/admin/AdminTeam'
@@ -61,7 +62,12 @@ import AdminRequests from './pages/admin/AdminRequests'
 export default function App() {
   const { pathname } = useLocation()
   // El panel usa más ancho en ordenador; la vista previa del cliente mantiene el ancho de móvil
-  const wide = (pathname.startsWith('/admin') && !pathname.includes('/vista')) || pathname.startsWith('/negocio') || pathname.startsWith('/obra') || pathname.startsWith('/estudio')
+  const wide =
+    (pathname.startsWith('/admin') && !pathname.includes('/vista')) ||
+    pathname.startsWith('/negocio') ||
+    pathname.startsWith('/colaborador') ||
+    pathname.startsWith('/obra') ||
+    pathname.startsWith('/estudio')
 
   return (
     <div className={wide ? 'app-frame app-frame--wide' : 'app-frame'}>
@@ -158,6 +164,9 @@ export default function App() {
             <Route index element={<DesignerProjects />} />
             <Route path=":id" element={<DesignerProjects />} />
           </Route>
+        </Route>
+        <Route element={<RequireRole role="partner" />}>
+          <Route path="colaborador" element={<PartnerPanel />} />
         </Route>
         <Route element={<RequireRole role="business" />}>
           <Route path="negocio" element={<BusinessLayout />}>

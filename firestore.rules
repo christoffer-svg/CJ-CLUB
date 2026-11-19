@@ -73,14 +73,21 @@ service cloud.firestore {
 
     // Si el rol es negocio, tiene que quedar vinculado a un lugar que existe
     function businessLinked() {
-      return request.resource.data.role != 'business'
+      return (request.resource.data.role != 'partner' || (request.resource.data.partnerId is string
+            && exists(/databases/$(database)/documents/partners/$(request.resource.data.partnerId))))
+        && (request.resource.data.role != 'business'
         || (request.resource.data.placeId is string
             && request.resource.data.placeId.size() > 0
             && request.resource.data.placeId.size() <= 200
-            && exists(/databases/$(database)/documents/places/$(request.resource.data.placeId)));
+            && exists(/databases/$(database)/documents/places/$(request.resource.data.placeId))));
     }
 
     // Colaborador asignado en el mapa contacts de la ficha del cliente
+    // Colaborador de la Guía (abogado, gestoría…) con acceso propio a su anuncio
+    function isPartner() {
+      return isMember() && me().role == 'partner' && me().partnerId is string;
+    }
+
     function isMyPartner(partnerId) {
       return isClient()
         && partnerId in get(/databases/$(database)/documents/clients/$(me().clientId)).data.contacts.values();
@@ -93,11 +100,11 @@ service cloud.firestore {
     }
 
     function validRoles() {
-      return request.resource.data.role in ['admin', 'client', 'business', 'builder', 'designer', 'editor']
+      return request.resource.data.role in ['admin', 'client', 'business', 'builder', 'designer', 'editor', 'partner']
         && rolesIn(request.resource.data) is list
         && rolesIn(request.resource.data).size() >= 1
         && rolesIn(request.resource.data).size() <= 4
-        && rolesIn(request.resource.data).hasOnly(['admin', 'client', 'business', 'builder', 'designer', 'editor'])
+        && rolesIn(request.resource.data).hasOnly(['admin', 'client', 'business', 'builder', 'designer', 'editor', 'partner'])
         && request.resource.data.role in rolesIn(request.resource.data);
     }
 
@@ -162,9 +169,16 @@ service cloud.firestore {
     // ---------- partners/{id} ----------
     // Un cliente solo lee, de uno en uno, los colaboradores asignados a él; nunca la lista completa
     match /partners/{id} {
-      allow get: if isStaff() || isMyPartner(id);
+      allow get: if isStaff() || isMyPartner(id) || (isPartner() && id == me().partnerId);
       allow list: if isStaff();
       allow write: if isStaff() && (request.resource == null || profileOk('partners', id));
+      // El colaborador escribe su anuncio (presentación, fotos, logo, contacto y ventaja para socios); el resto lo lleva CJ
+      allow update: if isPartner() && id == me().partnerId
+        && request.resource.data.diff(resource.data).affectedKeys()
+             .hasOnly(['about_es', 'about_en', 'hours_es', 'hours_en', 'email', 'website', 'instagram', 'address', 'photos', 'logo',
+                       'offer_es', 'offer_en'])
+        && profileText('offer_es', 300) && profileText('offer_en', 300)
+        && profileOk('partners', id);
     }
 
     // ---------- partnerCategories/{id} ----------

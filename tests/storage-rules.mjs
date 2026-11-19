@@ -318,5 +318,14 @@ ok(await call('removeTeamMember', J, { uid: team.uid }), 'PERMISSION_DENIED', 'u
 ok((await call('removeTeamMember', AD, { uid: team.uid }))?.removed, 'account', 'CJ le quita el acceso')
 ok((await fsGet('users/' + team.uid)).error?.code, 404, 'su ficha desaparece')
 
+// Acceso propio de un colaborador de la Guía (createPartnerAccount)
+ok(await call('createPartnerAccount', J, { partnerId: 'lawyer-ruiz', contactName: 'X', email: 'x2@prueba.test' }), 'PERMISSION_DENIED', 'un cliente no da accesos')
+ok(await call('createPartnerAccount', AD, { partnerId: 'no-existe', contactName: 'X', email: 'x2@prueba.test' }), 'NOT_FOUND', 'el colaborador tiene que existir')
+const pacc = await call('createPartnerAccount', AD, { partnerId: 'lawyer-ruiz', contactName: 'Laura Ruiz', email: 'laura.ruiz@prueba.test', language: 'es' })
+ok(typeof pacc?.uid, 'string', 'CJ da acceso al abogado')
+const paccDoc = await fsGet('users/' + pacc.uid)
+ok(paccDoc.fields?.role?.stringValue === 'partner' && paccDoc.fields?.partnerId?.stringValue === 'lawyer-ruiz', true, 'queda ligado a su ficha')
+ok((await call('sendInvitationEmail', AD, { email: 'laura.ruiz@prueba.test' }))?.sent, true, 'le llega la invitación')
+
 console.log(`Archivos: ${pass} OK, ${fail} FAIL`)
 if (fail) process.exit(1)

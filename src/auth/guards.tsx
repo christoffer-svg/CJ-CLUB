@@ -22,6 +22,7 @@ export function RequireRole({ role }: { role: Role | Role[] }) {
 export function homeFor(role: Role) {
   if (role === 'admin' || role === 'editor') return '/admin'
   if (role === 'business') return '/negocio'
+  if (role === 'partner') return '/colaborador'
   if (role === 'builder') return '/obra'
   if (role === 'designer') return '/estudio'
   return '/'
