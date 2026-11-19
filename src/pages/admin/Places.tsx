@@ -74,15 +74,18 @@ export default function Places() {
         </button>
       </PageTitle>
 
-      {suggestedLists.map((list) => (
-        <SuggestedListCard
-          key={list.id}
-          list={list}
-          existing={new Set(places.data.map((p) => p.id))}
-          existingCategory={matchingCategory(cats, list)}
-          loading={places.loading}
-        />
-      ))}
+      {/* Listas preparadas sin categoría todavía: arriba. Si la categoría existe, el aviso va dentro de ella. */}
+      {suggestedLists
+        .filter((list) => !matchingCategory(cats, list))
+        .map((list) => (
+          <SuggestedListCard
+            key={list.id}
+            list={list}
+            existing={new Set(places.data.map((p) => p.id))}
+            existingCategory={matchingCategory(cats, list)}
+            loading={places.loading}
+          />
+        ))}
 
       {showCats && (
         <CategoriesManager cats={cats} counts={Object.fromEntries(cats.map((c) => [c.id, places.data.filter((p) => p.category === c.id).length]))} />
@@ -151,7 +154,20 @@ export default function Places() {
                   </button>
                 </div>
               ))}
-              {items.length === 0 && <p className="a-empty">Sin lugares en esta categoría.</p>}
+              {suggestedLists
+                .filter((list) => matchingCategory(cats, list)?.id === cat)
+                .map((list) => (
+                  <SuggestedListCard
+                    key={list.id}
+                    list={list}
+                    existing={new Set(places.data.map((p) => p.id))}
+                    existingCategory={matchingCategory(cats, list)}
+                    loading={places.loading}
+                  />
+                ))}
+              {items.length === 0 && !suggestedLists.some((l) => matchingCategory(cats, l)?.id === cat) && (
+                <p className="a-empty">Sin lugares en esta categoría.</p>
+              )}
             </div>
           </section>
         )
