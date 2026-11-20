@@ -13,6 +13,7 @@
     "import:beaches": "tsx scripts/import-beaches.ts",
     "import:markets": "tsx scripts/import-markets.ts",
     "import:list": "tsx scripts/import-lists.ts",
+    "import:golf": "tsx scripts/import-golf.ts",
     "seed:emulator": "FIRESTORE_EMULATOR_HOST=127.0.0.1:8080 FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099 tsx scripts/seed.ts",
     "deploy:rules": "tsx scripts/deploy-rules.ts",
     "build:emulator": "tsc -b && vite build --mode emulator",

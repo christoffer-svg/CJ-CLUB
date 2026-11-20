@@ -1,0 +1,54 @@
+# Importa las fichas completas de los campos de golf a Descubrir › Golf (scripts/import-golf.ts).
+# Solo se ejecuta a mano: Actions → "Importar campos de golf" → Run workflow, eligiendo el modo.
+# Usa la misma clave que la publicación (secreto FIREBASE_SERVICE_ACCOUNT).
+
+name: Importar campos de golf
+
+on:
+  workflow_dispatch:
+    inputs:
+      modo:
+        description: 'Qué hacer'
+        type: choice
+        default: 'vista previa (no escribe nada)'
+        options:
+          - 'vista previa (no escribe nada)'
+          - 'todos los campos'
+          - 'borrar los campos importados'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: importar-golf
+  cancel-in-progress: false
+
+jobs:
+  importar:
+    name: Importar campos de golf
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Descargar el código
+        uses: actions/checkout@v7
+
+      - name: Preparar Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Importar
+        env:
+          FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          MODO: ${{ inputs.modo }}
+        run: |
+          case "$MODO" in
+            'todos los campos') npm run import:golf -- --write ;;
+            'borrar los campos importados') npm run import:golf -- --remove --write ;;
+            *) npm run import:golf ;;
+          esac
