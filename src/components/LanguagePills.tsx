@@ -5,7 +5,7 @@ import { languages, useI18n } from '../i18n'
  * Selector de idioma en forma de píldoras. Con dos o tres idiomas se ven todas;
  * con más, una píldora con el idioma actual ("SV ▾") abre el resto.
  */
-export default function LanguagePills() {
+export default function LanguagePills({ showName = false }: { showName?: boolean }) {
   const { lang, setLang, t } = useI18n()
   const [open, setOpen] = useState(false)
   const box = useRef<HTMLDivElement>(null)
@@ -61,6 +61,7 @@ export default function LanguagePills() {
         onClick={() => setOpen(!open)}
       >
         <span className="lang-pill lang-pill--active">{current.label}</span>
+        {showName && <span className="lang-trigger__name">{current.name}</span>}
         <span className="lang-trigger__caret" aria-hidden="true">
           ▾
         </span>

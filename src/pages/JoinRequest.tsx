@@ -44,7 +44,7 @@ export default function JoinRequest() {
   return (
     <main className="login">
       <div className="login__lang">
-        <LanguagePills />
+        <LanguagePills showName />
       </div>
       <div className="login__brand">
         <img className="login__logo" src="/logo.png" alt="CJ Real Estate & Services" />
