@@ -45,6 +45,7 @@ import Social from './pages/social/Social'
 import SocialEdit from './pages/social/SocialEdit'
 import SocialChatPage from './pages/social/SocialChatPage'
 import SocialPostPage from './pages/social/SocialPostPage'
+import SpotEdit from './pages/social/SpotEdit'
 import BusinessOrders from './pages/business/BusinessOrders'
 import AdminOrders from './pages/admin/AdminOrders'
 import Deals from './pages/admin/Deals'
@@ -94,6 +95,7 @@ export default function App() {
             <Route path="ventajas" element={<Benefits />} />
             <Route path="social" element={<Social />} />
             <Route path="social/nuevo" element={<SocialEdit />} />
+            <Route path="social/sitio/nuevo" element={<SpotEdit />} />
             <Route path="social/chat/:chatId" element={<SocialChatPage />} />
             <Route path="social/:postId" element={<SocialPostPage />} />
             <Route path="social/:postId/editar" element={<SocialEdit />} />
@@ -115,6 +117,7 @@ export default function App() {
             <Route path="ventajas" element={<Benefits />} />
             <Route path="social" element={<Social />} />
             <Route path="social/nuevo" element={<SocialEdit />} />
+            <Route path="social/sitio/nuevo" element={<SpotEdit />} />
             <Route path="social/chat/:chatId" element={<SocialChatPage />} />
             <Route path="social/:postId" element={<SocialPostPage />} />
             <Route path="social/:postId/editar" element={<SocialEdit />} />

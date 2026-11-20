@@ -31,7 +31,7 @@ export const adminGroups = [
       S('/admin/reformas', 'Reformas', 'Obras: presupuestos, pagos, extras y repasos'),
       S('/admin/constructores', 'Profesionales', 'Constructores, oficios, arquitectos y diseñadores'),
       S('/admin/servicios', 'Servicios de CJ', 'Key holding, reformas, vigilancia… con o sin precio'),
-      S('/admin/social', 'Social', 'Planes y recomendaciones de los clientes; avisos'),
+      S('/admin/social', 'Social', 'Planes, recomendaciones y fotos de sitios; avisos'),
     ],
   },
   {
@@ -169,11 +169,12 @@ export function useBadges(enabled = true): Record<string, number> {
   const convs = useLiveCollection<Conversation>(enabled ? 'conversations' : null)
   const requests = useLiveCollection<ClientRequest>(enabled ? 'requests' : null)
   const reports = useLiveCollection<{ postId: string }>(enabled ? 'socialReports' : null)
+  const placeReports = useLiveCollection<{ postId: string }>(enabled ? 'placeReports' : null)
   const joins = useLiveCollection<{ status: string }>(enabled ? 'membershipRequests' : null)
   return {
     '/admin/mensajes': convs.data.filter((c) => isUnread(c, 'cj')).length,
     '/admin/peticiones': requests.data.filter((r) => r.status === 'new').length,
-    '/admin/social': reports.data.length,
+    '/admin/social': reports.data.length + placeReports.data.length,
     '/admin/solicitudes': joins.data.filter((r) => r.status === 'new').length,
   }
 }

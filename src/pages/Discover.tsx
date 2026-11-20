@@ -12,6 +12,7 @@ import { useBookings, useUpcomingEvents } from '../lib/events'
 import { categoryLabel, usePlaceCategories } from '../lib/placeCategories'
 import type { Client, GeoPoint, Place } from '../lib/types'
 import { useViewer } from '../lib/viewer'
+import { CategoryMoments } from '../components/PlaceMoments'
 
 type Filter = string
 type PlaceItem = Place & { id: string }
@@ -188,6 +189,7 @@ export default function Discover() {
                 {selectedPlace ? <PlaceCard p={selectedPlace} home={home} /> : <p className="empty">{t('discover.mapHint')}</p>}
               </div>
             )}
+            {active !== 'all' && active !== 'saved' && <CategoryMoments category={active} />}
           </>
         )}
       </main>

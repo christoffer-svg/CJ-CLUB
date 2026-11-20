@@ -4304,6 +4304,140 @@ button {
   text-decoration: none;
 }
 
+/* Fotos y comentarios de un sitio */
+.spots-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 22px;
+}
+
+.spots-new {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.spots-hint {
+  margin-bottom: 12px;
+}
+
+.spots-list {
+  margin-top: 0;
+}
+
+.spots-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.spots-card .pf-gallery {
+  margin: -16px -16px 4px;
+  border: 0;
+  border-radius: var(--radius) var(--radius) 0 0;
+  border-bottom: 1px solid var(--card-border);
+}
+
+.spots-card__title {
+  font-family: var(--font-title);
+  font-size: 20px;
+  line-height: 1.25;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.spots-card__text {
+  margin: 0;
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
+.spots-stars {
+  display: inline-flex;
+  gap: 2px;
+}
+
+.spots-star {
+  color: var(--card-border);
+  display: inline-flex;
+}
+
+.spots-star--on {
+  color: var(--gold);
+}
+
+.spots-star--on svg path {
+  fill: currentColor;
+}
+
+.spots-star--btn {
+  padding: 4px;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.spots-rate {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.spots-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.spots-chosen {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.spots-chosen__item {
+  margin: 0;
+  width: 92px;
+}
+
+.spots-chosen__item img {
+  width: 92px;
+  height: 92px;
+  object-fit: cover;
+  border-radius: var(--radius);
+  border: 1px solid var(--card-border);
+}
+
+.spots-admin-photos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.spots-admin-photos img {
+  width: 72px;
+  height: 72px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid var(--card-border);
+}
+
+select.composer__input {
+  appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, var(--stone) 50%), linear-gradient(135deg, var(--stone) 50%, transparent 50%);
+  background-position: calc(100% - 16px) 50%, calc(100% - 11px) 50%;
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+  padding-right: 28px;
+}
+
 /* Menú del panel de CJ: tres grupos arriba; al pulsar uno se despliegan sus secciones */
 .a-topnav {
   position: relative;

@@ -89,11 +89,16 @@ Todo está denegado salvo lo que se permite expresamente.
   - Solo esas dos casas leen y escriben; **CJ no lee los chats**.
   - Cada mensaje lleva el nombre real de su familia. Cada casa solo marca como leído lo suyo.
 - **Avisos** (`socialReports/{id}`): los crea un cliente; solo CJ los lee y los borra.
+- **Fotos y comentarios de un sitio** (`placePosts/{id}`): un cliente escribe sobre un lugar de Descubrir (playa, restaurante, plan, mercadillo…) o, sin lugar, sobre una categoría. Lleva comentario, hasta 4 fotos y una valoración opcional del 1 al 5.
+  - El nombre de la familia es el real. Si indica un lugar, la categoría y el nombre tienen que coincidir con la ficha.
+  - Las fotos van en `social/{casa}/{publicación}/` y se suben con la función que ya existe, `uploadSocialPhoto` (se reducen en el teléfono; solo imágenes, 10 MB).
+  - Las ven todos los clientes, salvo las que CJ oculta (`hidden`): esas solo las ve quien las publicó. Quien publica puede borrar la suya. CJ puede ocultarla o borrarla, no cambiar el texto.
+- **Avisos de esas fotos** (`placeReports/{id}`): los crea un cliente; solo CJ los lee y los borra.
 - **Foto de perfil de la casa o familia**:
   - La pone o la quita solo la función `setClientPhoto`, y cada cliente solo puede cambiar la de su propia casa. Solo admite imágenes de hasta 10 MB. Al cambiarla, se borra la anterior.
   - Se guarda en `clients/{id}.photo` y en `socialProfiles/{id}`. Ese segundo documento lo leen los clientes para ver la foto de cada familia en Social; nadie puede escribirlo desde la app.
   - Los archivos van en `clients/{id}/photo/` y se borran al dar de baja al cliente.
-- **Baja de un cliente:** `deleteClient` borra sus publicaciones (con quién se apuntó), sus chats, sus apuntes, sus avisos y sus fotos de Social. Para encontrar los apuntes se usa una búsqueda de tipo *collection group* sobre `joins.clientId`, con su índice en `firestore.indexes.json`.
+- **Baja de un cliente:** `deleteClient` borra sus publicaciones (con quién se apuntó), sus chats, sus apuntes, sus avisos, sus fotos y comentarios de sitios, y sus fotos de Social. Para encontrar los apuntes se usa una búsqueda de tipo *collection group* sobre `joins.clientId`, con su índice en `firestore.indexes.json`.
 
 ### Categorías de Descubrir
 

@@ -8,10 +8,11 @@ import { isChatUnread, isPostCurrent, useMyChats, useSocialPosts } from '../../l
 import { useViewer } from '../../lib/viewer'
 import { messageTime } from '../../lib/when'
 import { PostCard } from './common'
+import { PlaceFeed } from '../../components/PlaceMoments'
 import { FamilyAvatar } from '../../components/FamilyAvatar'
 import { useSocialProfiles } from '../../lib/familyPhoto'
 
-type Tab = 'all' | 'plan' | 'tip' | 'chats'
+type Tab = 'all' | 'plan' | 'tip' | 'sitios' | 'chats'
 
 /** Número de familias apuntadas a cada plan */
 function useJoinCounts(ids: string[]) {
@@ -30,7 +31,7 @@ export default function Social() {
   const { base, clientId, preview } = useViewer()
   const { t, locale } = useI18n()
   const [params, setParams] = useSearchParams()
-  const tab = (['plan', 'tip', 'chats'].includes(params.get('ver') ?? '') ? params.get('ver') : 'all') as Tab
+  const tab = (['plan', 'tip', 'sitios', 'chats'].includes(params.get('ver') ?? '') ? params.get('ver') : 'all') as Tab
   const posts = useSocialPosts()
   const chats = useMyChats(preview ? null : clientId)
   const shown = posts.data.filter((p) => isPostCurrent(p) && (tab === 'all' || p.kind === tab))
@@ -43,7 +44,7 @@ export default function Social() {
       <Header eyebrow={t('social.eyebrow')} title={t('social.title')} subtitle={t('social.subtitle')} />
       <main className="page">
         <div className="pills" role="tablist">
-          {(['all', 'plan', 'tip', 'chats'] as Tab[]).map((k) => (
+          {(['all', 'plan', 'tip', 'sitios', 'chats'] as Tab[]).map((k) => (
             <button key={k} role="tab" aria-selected={tab === k} className={tab === k ? 'pill pill--active' : 'pill'} onClick={() => setParams(k === 'all' ? {} : { ver: k }, { replace: true })}>
               {t(`social.tab.${k}`)}
               {k === 'chats' && unread > 0 && <span className="pill__badge">{unread}</span>}
@@ -51,7 +52,9 @@ export default function Social() {
           ))}
         </div>
 
-        {tab === 'chats' ? (
+        {tab === 'sitios' ? (
+          <PlaceFeed />
+        ) : tab === 'chats' ? (
           <div className="card sp-chats">
             {!chats.loading && chats.data.length === 0 && <p className="empty">{t('social.noChats')}</p>}
             {chats.data.map((c) => {

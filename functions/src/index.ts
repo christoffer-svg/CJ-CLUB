@@ -438,12 +438,16 @@ export const deleteClient = onCall(async (request) => {
   for (const sc of socialChats.docs) await db.recursiveDelete(sc.ref)
   const socialJoins = await db.collectionGroup('joins').where('clientId', '==', clientId).get()
   const socialReports = await db.collection('socialReports').where('clientId', '==', clientId).get()
+  const placePosts = await db.collection('placePosts').where('clientId', '==', clientId).get()
+  const placeReports = await db.collection('placeReports').where('clientId', '==', clientId).get()
   await (await projectBucket()).deleteFiles({ prefix: `social/${clientId}/` }).catch(() => {})
   await (await projectBucket()).deleteFiles({ prefix: `clients/${clientId}/` }).catch(() => {})
   await db.doc(`socialProfiles/${clientId}`).delete().catch(() => {})
   const refs = [
     ...socialJoins.docs.map((d) => d.ref),
     ...socialReports.docs.map((d) => d.ref),
+    ...placePosts.docs.map((d) => d.ref),
+    ...placeReports.docs.map((d) => d.ref),
     ...users.docs.map((d) => d.ref),
     ...uses.docs.map((d) => d.ref),
     ...requests.docs.map((d) => d.ref),
@@ -474,6 +478,7 @@ export const deleteClient = onCall(async (request) => {
     eventBookings: eventBookings.size,
     orders: orders.size,
     socialPosts: socialPosts.size,
+    placePosts: placePosts.size,
     ownContacts: ownContacts.size + sharedContacts.size,
     houseNotes: houseNotes.size + sharedHouseNotes.size,
   }
