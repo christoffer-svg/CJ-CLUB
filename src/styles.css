@@ -4813,3 +4813,105 @@ a.a-topnav__group.a-topnav__group--current {
 .pf-offer {
   border-color: var(--gold);
 }
+
+/* Pantalla de acceso: qué ofrece CJ Club, contacto, instalación y cookies */
+.login__benefits {
+  list-style: none;
+  margin: 6px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-width: 340px;
+  text-align: left;
+}
+
+.login__benefits li {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.login__benefits svg {
+  flex: none;
+  margin-top: 2px;
+  color: var(--gold);
+}
+
+.login__benefits b {
+  display: block;
+  color: var(--white);
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 1px;
+}
+
+.login__footer {
+  margin-top: 26px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  text-align: center;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.login__footer a {
+  color: var(--gold);
+}
+
+.login__footer .login__legal {
+  margin-top: 4px;
+}
+
+.login__install {
+  color: var(--gold);
+  font-size: 12px;
+}
+
+.login__cookies {
+  max-width: 300px;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+/* Etiquetas doradas pequeñas sobre fondo oscuro: algo más grandes y legibles */
+.login__tagline {
+  font-size: 12px;
+  font-weight: 600;
+  color: #c9ae7f;
+}
+
+.login__note {
+  color: rgba(255, 255, 255, 0.68);
+}
+
+.login__legal {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.login__legal a {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* Selector de idioma de la pantalla de acceso: con el nombre del idioma, más visible */
+.lang-trigger__name {
+  margin-left: 6px;
+  color: var(--white);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+}
+
+.login__lang .lang-trigger {
+  padding: 4px 10px 4px 4px;
+}
+
+.login__lang .lang-pill {
+  height: 28px;
+  font-size: 11px;
+}

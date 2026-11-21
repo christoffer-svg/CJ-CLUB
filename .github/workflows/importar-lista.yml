@@ -1,0 +1,62 @@
+# Importa a Descubrir una lista preparada (scripts/import-lists.ts): campos de golf, centros comerciales…
+# Solo se ejecuta a mano: Actions → "Importar lista preparada" → Run workflow.
+# Usa la misma clave que la publicación (secreto FIREBASE_SERVICE_ACCOUNT).
+
+name: Importar lista preparada
+
+on:
+  workflow_dispatch:
+    inputs:
+      lista:
+        description: 'Qué lista'
+        type: choice
+        default: 'golf-denia-murcia'
+        options:
+          - 'golf-denia-murcia'
+          - 'centros-comerciales-denia-murcia'
+      modo:
+        description: 'Qué hacer'
+        type: choice
+        default: 'vista previa (no escribe nada)'
+        options:
+          - 'vista previa (no escribe nada)'
+          - 'añadir los que falten'
+          - 'borrar los importados de esta lista'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: importar-lista
+  cancel-in-progress: false
+
+jobs:
+  importar:
+    name: Importar lista
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Descargar el código
+        uses: actions/checkout@v7
+
+      - name: Preparar Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Importar
+        env:
+          FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          LISTA: ${{ inputs.lista }}
+          MODO: ${{ inputs.modo }}
+        run: |
+          case "$MODO" in
+            'añadir los que falten') npm run import:list -- --list="$LISTA" --write ;;
+            'borrar los importados de esta lista') npm run import:list -- --list="$LISTA" --remove --write ;;
+            *) npm run import:list -- --list="$LISTA" ;;
+          esac

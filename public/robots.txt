@@ -1,0 +1,8 @@
+# CJ Club es una app privada: solo se puede indexar la pantalla de acceso y los textos legales
+User-agent: *
+Allow: /$
+Allow: /acceso
+Allow: /unirse
+Allow: /privacidad
+Allow: /aviso-legal
+Disallow: /

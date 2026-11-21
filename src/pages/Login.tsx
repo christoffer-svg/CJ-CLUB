@@ -5,6 +5,8 @@ import { Link, Navigate } from 'react-router-dom'
 import { useAuth } from '../auth/AuthProvider'
 import { homeFor, Splash } from '../auth/guards'
 import LanguagePills from '../components/LanguagePills'
+import { CompassIcon, KeyIcon, StarIcon } from '../components/Icons'
+import Sheet from '../components/Sheet'
 import { useI18n } from '../i18n'
 import type { TranslationKey } from '../i18n/translations'
 import { auth } from '../lib/firebase'
@@ -28,6 +30,7 @@ export default function Login() {
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<TranslationKey | ''>('')
   const [notice, setNotice] = useState<TranslationKey | ''>('')
+  const [install, setInstall] = useState(false)
 
   if (loading && !busy) return <Splash />
   if (user && profile) return <Navigate to={homeFor(profile.role)} replace />
@@ -60,7 +63,7 @@ export default function Login() {
   return (
     <main className="login">
       <div className="login__lang">
-        <LanguagePills />
+        <LanguagePills showName />
       </div>
       <div className="login__brand">
         <img className="login__logo" src="/logo.png" alt="CJ Real Estate & Services" />
@@ -71,12 +74,34 @@ export default function Login() {
         </span>
         <hr className="gold-rule" />
         <h1 className="login__title">{t('login.title')}</h1>
+        {/* Qué ofrece CJ Club, para quien llega por primera vez */}
+        <ul className="login__benefits">
+          <li>
+            <KeyIcon size={20} />
+            <span>
+              <b>{t('login.b1t')}</b>
+              {t('login.b1x')}
+            </span>
+          </li>
+          <li>
+            <CompassIcon size={20} />
+            <span>
+              <b>{t('login.b2t')}</b>
+              {t('login.b2x')}
+            </span>
+          </li>
+          <li>
+            <StarIcon size={20} />
+            <span>
+              <b>{t('login.b3t')}</b>
+              {t('login.b3x')}
+            </span>
+          </li>
+        </ul>
       </div>
 
       <form className="login__form" onSubmit={submit} noValidate>
-        {mode === 'reset' && (
-          <p className="login__intro">{t('login.resetIntro')}</p>
-        )}
+        {mode === 'reset' && <p className="login__intro">{t('login.resetIntro')}</p>}
         <label className="field">
           <span className="field__label">{t('login.email')}</span>
           <input
@@ -130,11 +155,28 @@ export default function Login() {
           </Link>
         )}
       </form>
-      <nav className="login__legal" aria-label={t('legal.links')}>
-        <Link to="/privacidad">{t('legal.privacy')}</Link>
-        <span aria-hidden="true">·</span>
-        <Link to="/aviso-legal">{t('legal.notice')}</Link>
-      </nav>
+      <footer className="login__footer">
+        <p>
+          {t('login.contact')} <a href="mailto:info@cjclub.eu">info@cjclub.eu</a>
+        </p>
+        <button type="button" className="link-btn login__install" onClick={() => setInstall(true)}>
+          {t('install.link')}
+        </button>
+        <nav className="login__legal" aria-label={t('legal.links')}>
+          <Link to="/privacidad">{t('legal.privacy')}</Link>
+          <span aria-hidden="true">·</span>
+          <Link to="/aviso-legal">{t('legal.notice')}</Link>
+        </nav>
+        <p className="login__cookies">{t('login.cookies')}</p>
+      </footer>
+      {install && (
+        <Sheet title={t('install.title')} closeLabel={t('install.close')} onClose={() => setInstall(false)}>
+          <h2 className="sheet__title">{t('install.title')}</h2>
+          <p className="sheet__text">{t('install.ios')}</p>
+          <p className="sheet__text">{t('install.android')}</p>
+          <p className="sheet__text">{t('install.after')}</p>
+        </Sheet>
+      )}
     </main>
   )
 }
