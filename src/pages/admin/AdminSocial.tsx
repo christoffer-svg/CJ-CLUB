@@ -8,6 +8,7 @@ import { useAuth } from '../../auth/AuthProvider'
 import Dialog from '../../components/admin/Dialog'
 import { Field, Input, Textarea } from '../../components/admin/Fields'
 import { deletePost, isCjPost, newPostId, saveCjPost, setPostHidden, uploadSocialPhotos, useSocialPosts } from '../../lib/social'
+import { deletePlacePost, setPlacePostHidden, usePlacePosts, usePlaceReports } from '../../lib/placePosts'
 import type { Attachment, SocialReport } from '../../lib/types'
 
 type CjForm = { id: string; exists: boolean; title: string; place: string; address: string; text: string; photos: Attachment[] }
@@ -58,6 +59,9 @@ export default function AdminSocial() {
       ),
     [],
   )
+  const placePosts = usePlacePosts(true)
+  const placeReports = usePlaceReports()
+  const placeReportsOf = (id: string) => placeReports.filter((r) => r.postId === id)
   const reportsOf = (id: string) => reports.filter((r) => r.postId === id)
   const flagged = posts.data.filter((p) => reportsOf(p.id).length > 0)
   const rest = posts.data.filter((p) => reportsOf(p.id).length === 0)
@@ -119,6 +123,54 @@ export default function AdminSocial() {
       <div className="card a-list">
         {rest.map(row)}
         {!posts.loading && posts.data.length === 0 && <p className="a-empty">Aún no hay publicaciones.</p>}
+      </div>
+
+      <h2 className="a-subtitle">Fotos y comentarios de sitios</h2>
+      <p className="card__text">Lo que los clientes publican en playas, restaurantes, mercadillos, planes y el resto de sitios. Puede ocultarlo o borrarlo. El autor también puede borrar lo suyo.</p>
+      <div className="card a-list">
+        {placePosts.data.map((p) => (
+          <div key={p.id} className={p.hidden ? 'a-row a-row--off' : 'a-row'}>
+            <div className="a-row__body">
+              <span className="card__title">{p.placeName || p.category}</span>
+              <span className="card__text">
+                {p.familyName} · {shortDate(p.createdAt, 'es-ES')}
+                {p.rating ? ` · ${p.rating}/5` : ''}
+                {p.photos.length ? ` · ${p.photos.length} foto${p.photos.length === 1 ? '' : 's'}` : ''}
+              </span>
+              {p.text && <span className="card__text">{p.text.slice(0, 200)}</span>}
+              {p.photos.length > 0 && (
+                <span className="spots-admin-photos">
+                  {p.photos.map((a) => (
+                    <img key={a.path} src={a.url} alt="" />
+                  ))}
+                </span>
+              )}
+              {placeReportsOf(p.id).map((r) => (
+                <span key={r.id} className="a-error">
+                  Aviso de {r.familyName}: {r.reason || 'sin motivo'}{' '}
+                  <button className="a-link" onClick={() => deleteDoc(doc(db, 'placeReports', r.id)).catch(() => toast('No se pudo borrar.', 'error'))}>
+                    Descartar aviso
+                  </button>
+                </span>
+              ))}
+            </div>
+            <Toggle
+              checked={!p.hidden}
+              label={p.hidden ? 'Oculta' : 'Visible'}
+              onChange={(v) => setPlacePostHidden(p.id, !v).then(() => toast(v ? 'Publicación visible.' : 'Publicación oculta para los clientes.')).catch(() => toast('No se pudo guardar.', 'error'))}
+            />
+            <button
+              className="a-link"
+              onClick={() =>
+                window.confirm(`¿Borrar el comentario de ${p.familyName}? No se puede deshacer.`) &&
+                deletePlacePost(p.id).then(() => toast('Publicación borrada.')).catch(() => toast('No se pudo borrar.', 'error'))
+              }
+            >
+              Borrar
+            </button>
+          </div>
+        ))}
+        {!placePosts.loading && placePosts.data.length === 0 && <p className="a-empty">Aún no hay fotos ni comentarios de sitios.</p>}
       </div>
 
       {form && (

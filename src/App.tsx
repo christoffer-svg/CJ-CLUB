@@ -50,6 +50,7 @@ const Social = lazy(() => import('./pages/social/Social'))
 const SocialEdit = lazy(() => import('./pages/social/SocialEdit'))
 const SocialChatPage = lazy(() => import('./pages/social/SocialChatPage'))
 const SocialPostPage = lazy(() => import('./pages/social/SocialPostPage'))
+const SpotEdit = lazy(() => import('./pages/social/SpotEdit'))
 const BusinessOrders = lazy(() => import('./pages/business/BusinessOrders'))
 const AdminOrders = lazy(() => import('./pages/admin/AdminOrders'))
 const Deals = lazy(() => import('./pages/admin/Deals'))
@@ -100,6 +101,7 @@ export default function App() {
               <Route path="ventajas" element={<Benefits />} />
               <Route path="social" element={<Social />} />
               <Route path="social/nuevo" element={<SocialEdit />} />
+              <Route path="social/sitio/nuevo" element={<SpotEdit />} />
               <Route path="social/chat/:chatId" element={<SocialChatPage />} />
               <Route path="social/:postId" element={<SocialPostPage />} />
               <Route path="social/:postId/editar" element={<SocialEdit />} />
@@ -121,6 +123,7 @@ export default function App() {
               <Route path="ventajas" element={<Benefits />} />
               <Route path="social" element={<Social />} />
               <Route path="social/nuevo" element={<SocialEdit />} />
+              <Route path="social/sitio/nuevo" element={<SpotEdit />} />
               <Route path="social/chat/:chatId" element={<SocialChatPage />} />
               <Route path="social/:postId" element={<SocialPostPage />} />
               <Route path="social/:postId/editar" element={<SocialEdit />} />

@@ -15,6 +15,7 @@ import { profileOf } from '../lib/profiles'
 import { categoryLabel, usePlaceCategories } from '../lib/placeCategories'
 import type { Client, Place } from '../lib/types'
 import { useViewer } from '../lib/viewer'
+import { PlaceMoments } from '../components/PlaceMoments'
 
 /** Ficha de un lugar de Descubrir: fotos, presentación del negocio, nota de CJ, ventajas y contacto */
 export default function PlaceDetail() {
@@ -116,6 +117,7 @@ export default function PlaceDetail() {
               </section>
             )}
             {location && home && <p className="card__text pf-distance">{t('discover.distance', { km: formatKm(distanceKm(home, location), locale) })}</p>}
+            <PlaceMoments placeId={placeId} />
           </>
         )}
       </main>

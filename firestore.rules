@@ -739,6 +739,62 @@ service cloud.firestore {
       allow write: if false;
     }
 
+    // ---------- placePosts y placeReports: fotos y comentarios sobre un sitio ----------
+    // Un cliente publica en un lugar de Descubrir (o en una categoría, sin sitio) con texto y hasta 4 fotos.
+    // Las fotos usan la misma carpeta que Social (social/{casa}/{id}/), subidas con uploadSocialPhoto.
+    function placePostOk(pid) {
+      let d = request.resource.data;
+      return d.placeId is string && d.placeId.size() <= 80
+        && (d.placeId == '' || d.placeId.matches('[A-Za-z0-9_-]{1,80}'))
+        && d.category is string && d.category.matches('[a-z0-9-]{1,40}')
+        && d.placeName is string && d.placeName.size() <= 200
+        && d.text is string && d.text.size() <= 2000
+        && d.photos is list && d.photos.size() <= 4
+        && (d.text.size() > 0 || d.photos.size() > 0)
+        && (d.rating == null || (d.rating is int && d.rating >= 1 && d.rating <= 5))
+        && (d.photos.size() < 1 || socialPhotoOk(d.photos[0], d.clientId, pid))
+        && (d.photos.size() < 2 || socialPhotoOk(d.photos[1], d.clientId, pid))
+        && (d.photos.size() < 3 || socialPhotoOk(d.photos[2], d.clientId, pid))
+        && (d.photos.size() < 4 || socialPhotoOk(d.photos[3], d.clientId, pid))
+        && (d.placeId == ''
+            || (exists(/databases/$(database)/documents/places/$(d.placeId))
+                && placeOf(d.placeId).category == d.category));
+    }
+
+    match /placePosts/{id} {
+      allow read: if isAdmin() || (isClient() && (resource.data.hidden == false || resource.data.clientId == me().clientId));
+      allow create: if isClient()
+        && request.resource.data.keys().hasOnly(['placeId', 'category', 'placeName', 'text', 'rating', 'photos', 'clientId', 'uid', 'familyName', 'hidden', 'createdAt'])
+        && request.resource.data.clientId == me().clientId
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.familyName == familyNameOf(me().clientId)
+        && request.resource.data.hidden == false
+        && request.resource.data.createdAt == request.time
+        && placePostOk(id)
+        && (request.resource.data.placeId == '' || placeOf(request.resource.data.placeId).name == request.resource.data.placeName);
+      // Quien la publica corrige el texto, la valoración y las fotos. CJ solo la oculta o la muestra.
+      allow update: if (isClient() && resource.data.clientId == me().clientId
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['text', 'rating', 'photos'])
+          && placePostOk(id))
+        || (isAdmin() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['hidden']) && request.resource.data.hidden is bool);
+      allow delete: if isAdmin() || (isClient() && resource.data.clientId == me().clientId);
+    }
+
+    // Aviso de una foto o un comentario inadecuado: lo crea un cliente, lo lee y lo borra CJ
+    match /placeReports/{id} {
+      allow read, delete: if isAdmin();
+      allow create: if isClient()
+        && request.resource.data.keys().hasOnly(['postId', 'placeName', 'clientId', 'familyName', 'reason', 'createdAt'])
+        && request.resource.data.clientId == me().clientId
+        && request.resource.data.familyName == familyNameOf(me().clientId)
+        && request.resource.data.postId is string
+        && exists(/databases/$(database)/documents/placePosts/$(request.resource.data.postId))
+        && request.resource.data.placeName is string && request.resource.data.placeName.size() <= 120
+        && request.resource.data.reason is string && request.resource.data.reason.size() <= 500
+        && request.resource.data.createdAt == request.time;
+      allow update: if false;
+    }
+
     // Aviso de una publicación inadecuada: lo crea un cliente, lo lee y lo borra CJ
     match /socialReports/{id} {
       allow read, delete: if isAdmin();

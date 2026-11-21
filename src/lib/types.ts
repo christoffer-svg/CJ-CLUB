@@ -753,6 +753,33 @@ export type SocialMessage = { clientId: string; uid: string; familyName: string;
 /** socialReports/{id}: un cliente avisa a CJ de una publicación inadecuada */
 export type SocialReport = { postId: string; postTitle: string; clientId: string; familyName: string; reason: string; createdAt: Timestamp | null }
 
+/**
+ * placePosts/{id}: foto y comentario de un cliente sobre un sitio de Descubrir (playa, restaurante,
+ * mercadillo, plan…) o, si no elige un sitio, sobre toda una categoría. Lo ven los demás clientes.
+ */
+export type PlacePost = {
+  /** places/{id}. Vacío si el comentario es de toda una categoría */
+  placeId: string
+  /** categoría de Descubrir: restaurants, beaches, plans, mercadillos… */
+  category: string
+  /** nombre del sitio al publicar; vacío si solo habla de la categoría */
+  placeName: string
+  text: string
+  /** de 1 a 5, o null si no ha valorado */
+  rating: number | null
+  /** hasta 4 fotos (función uploadSocialPhoto, carpeta social/{casa}/{id}/) */
+  photos: Attachment[]
+  clientId: string
+  uid: string
+  familyName: string
+  /** CJ la ha ocultado */
+  hidden: boolean
+  createdAt: Timestamp | null
+}
+
+/** placeReports/{id}: un cliente avisa a CJ de una foto o un comentario inadecuado */
+export type PlaceReport = { postId: string; placeName: string; clientId: string; familyName: string; reason: string; createdAt: Timestamp | null }
+
 /** membershipRequests/{id}: alguien que no es cliente pide formar parte de CJ Club (lo escribe el servidor) */
 export type MembershipStatus = 'new' | 'contacted' | 'member' | 'declined'
 export type MembershipRequest = {
