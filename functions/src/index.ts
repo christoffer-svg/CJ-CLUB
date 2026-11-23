@@ -50,6 +50,15 @@ function text(value: unknown, field: string, required = true) {
   return s
 }
 
+/** Móvil para WhatsApp: solo dígitos, con prefijo de país (un móvil español de 9 cifras recibe el 34) */
+function mobile(value: unknown) {
+  let d = typeof value === 'string' ? value.replace(/\D/g, '').replace(/^00/, '') : ''
+  if (!d) return ''
+  if (/^[67]\d{8}$/.test(d)) d = `34${d}`
+  if (d.length < 8 || d.length > 15) throw new HttpsError('invalid-argument', 'El móvil no es válido. Escríbalo con el prefijo del país, por ejemplo +34 600 000 000.')
+  return d
+}
+
 /** "CJ 2026 0417" a partir de la fecha de alta; si ya existe, "CJ 2026 0417-2", "-3"... */
 async function nextMemberNumber(date: Date) {
   const base = `CJ ${date.getFullYear()} ${String(date.getMonth() + 1).padStart(2, '0')}${String(date.getDate()).padStart(2, '0')}`
@@ -257,19 +266,20 @@ export const createBuilder = onCall(async (request) => {
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new HttpsError('invalid-argument', 'El correo no es válido.')
   const languages = ['es', 'en', 'nl', 'sv', 'de', 'fr', 'pl']
   const language = typeof data.language === 'string' && languages.includes(data.language) ? data.language : 'es'
+  const phone = mobile(data.phone)
 
   const auth = getAuth()
   const existing = await auth.getUserByEmail(email).catch(() => null)
   if (existing) {
     const profile = await existingProfile(existing.uid)
     if (rolesOf(profile).includes('builder')) throw new HttpsError('already-exists', 'Ese correo ya es el acceso de un constructor.')
-    await profile.ref.update({ roles: [...rolesOf(profile), 'builder'], companyName, trade })
+    await profile.ref.update({ roles: [...rolesOf(profile), 'builder'], companyName, trade, ...(phone ? { phone } : {}) })
     return { uid: existing.uid, addedToExisting: true }
   }
 
   const user = await auth.createUser({ email, displayName: name, password: randomBytes(24).toString('base64url') })
   try {
-    await db.doc(`users/${user.uid}`).set({ role: 'builder', roles: ['builder'], name, companyName, trade, email, language })
+    await db.doc(`users/${user.uid}`).set({ role: 'builder', roles: ['builder'], name, companyName, trade, email, language, ...(phone ? { phone } : {}) })
   } catch (e) {
     await auth.deleteUser(user.uid).catch(() => {})
     throw e
@@ -293,19 +303,20 @@ export const createDesigner = onCall(async (request) => {
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new HttpsError('invalid-argument', 'El correo no es válido.')
   const languages = ['es', 'en', 'nl', 'sv', 'de', 'fr', 'pl']
   const language = typeof data.language === 'string' && languages.includes(data.language) ? data.language : 'es'
+  const phone = mobile(data.phone)
 
   const auth = getAuth()
   const existing = await auth.getUserByEmail(email).catch(() => null)
   if (existing) {
     const profile = await existingProfile(existing.uid)
     if (rolesOf(profile).includes('designer')) throw new HttpsError('already-exists', 'Ese correo ya es el acceso de un arquitecto o diseñador.')
-    await profile.ref.update({ roles: [...rolesOf(profile), 'designer'], companyName, profession })
+    await profile.ref.update({ roles: [...rolesOf(profile), 'designer'], companyName, profession, ...(phone ? { phone } : {}) })
     return { uid: existing.uid, addedToExisting: true }
   }
 
   const user = await auth.createUser({ email, displayName: name, password: randomBytes(24).toString('base64url') })
   try {
-    await db.doc(`users/${user.uid}`).set({ role: 'designer', roles: ['designer'], name, companyName, profession, email, language })
+    await db.doc(`users/${user.uid}`).set({ role: 'designer', roles: ['designer'], name, companyName, profession, email, language, ...(phone ? { phone } : {}) })
   } catch (e) {
     await auth.deleteUser(user.uid).catch(() => {})
     throw e
@@ -1242,6 +1253,30 @@ async function validInvite(token: unknown) {
   if (!snap.exists || (snap.get('expiresAt') as Timestamp).toMillis() < Date.now()) throw new HttpsError('not-found', 'invalid')
   return snap
 }
+
+/**
+ * Invitación por WhatsApp para un profesional de «Mi reforma» (constructor, oficio, arquitecto o diseñador).
+ * Guarda su móvil y devuelve el mismo enlace de 24 horas que va en el correo; el equipo de CJ lo envía
+ * desde su propio WhatsApp (sin coste). Como en el correo, el enlace anterior de esa persona deja de valer.
+ */
+export const whatsappInviteLink = onCall(async (request) => {
+  await requireAdmin(request.auth?.uid)
+  const data = (request.data ?? {}) as Record<string, unknown>
+  const uid = text(data.uid, 'profesional')
+  const phone = mobile(data.phone)
+  if (!phone) throw new HttpsError('invalid-argument', 'Falta: móvil.')
+  const ref = db.doc(`users/${uid}`)
+  const profile = await ref.get()
+  const roles = rolesOf(profile)
+  if (!profile.exists || !(roles.includes('builder') || roles.includes('designer'))) throw new HttpsError('not-found', 'No se encuentra este profesional.')
+  const email = String(profile.get('email') || '')
+  await ref.update({ phone })
+  const languages = ['es', 'en', 'nl', 'sv', 'de', 'fr', 'pl']
+  const language = languages.includes(profile.get('language')) ? (profile.get('language') as string) : 'es'
+  const token = await createInvite(uid, email)
+  const link = `${appUrl().replace(/\/$/, '')}/contrasena?${new URLSearchParams({ invite: token, lang: language }).toString()}`
+  return { link, phone, email, language, name: String(profile.get('name') || '') }
+})
 
 /** La pantalla /contrasena comprueba el enlace y muestra a qué correo corresponde */
 export const checkInvite = onCall(async (request) => {

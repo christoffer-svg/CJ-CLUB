@@ -114,27 +114,39 @@ export async function createBusinessAccount(data: NewBusiness) {
   return (await call(data)).data
 }
 
-export type NewBuilder = { name: string; companyName: string; trade: Trade; email: string; language: Language }
+export type NewBuilder = { name: string; companyName: string; trade: Trade; email: string; language: Language; phone?: string }
 
-/** Crea la cuenta de un constructor en el servidor (función createBuilder) y le envía la invitación */
-export async function createBuilderAccount(data: NewBuilder) {
+/**
+ * Crea la cuenta de un constructor en el servidor (función createBuilder) y le envía la invitación por correo
+ * (con emailInvite = false no se envía: CJ la manda por WhatsApp)
+ */
+export async function createBuilderAccount(data: NewBuilder, emailInvite = true) {
   const call = httpsCallable<NewBuilder, { uid: string; addedToExisting?: boolean }>(functions, 'createBuilder')
   const res = await call(data)
   // Si el correo ya tenía cuenta, se le añade este acceso: entra con su contraseña de siempre
-  if (res.data.addedToExisting) return { ...res.data, via: null }
+  if (res.data.addedToExisting || !emailInvite) return { ...res.data, via: null }
   const via = await sendInvitation(data.email, data.language)
   return { ...res.data, via }
 }
 
-export type NewDesigner = { name: string; companyName: string; profession: 'architect' | 'designer'; email: string; language: Language }
+export type NewDesigner = { name: string; companyName: string; profession: 'architect' | 'designer'; email: string; language: Language; phone?: string }
 
-/** Crea la cuenta de un arquitecto o diseñador (función createDesigner) y le envía la invitación */
-export async function createDesignerAccount(data: NewDesigner) {
+/** Crea la cuenta de un arquitecto o diseñador (función createDesigner) y le envía la invitación (igual que arriba) */
+export async function createDesignerAccount(data: NewDesigner, emailInvite = true) {
   const call = httpsCallable<NewDesigner, { uid: string; addedToExisting?: boolean }>(functions, 'createDesigner')
   const res = await call(data)
-  if (res.data.addedToExisting) return { ...res.data, via: null }
+  if (res.data.addedToExisting || !emailInvite) return { ...res.data, via: null }
   const via = await sendInvitation(data.email, data.language)
   return { ...res.data, via }
+}
+
+/** Enlace de invitación (24 horas) para enviarlo por WhatsApp; guarda el móvil del profesional */
+export async function whatsappInviteLink(uid: string, phone: string) {
+  const call = httpsCallable<{ uid: string; phone: string }, { link: string; phone: string; email: string; language: Language; name: string }>(
+    functions,
+    'whatsappInviteLink',
+  )
+  return (await call({ uid, phone })).data
 }
 
 /** Da de baja a un cliente en el servidor (función deleteClient): borra cuenta, ficha y registros */

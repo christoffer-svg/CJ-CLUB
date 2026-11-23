@@ -4781,3 +4781,35 @@ a.a-topnav__group.a-topnav__group--current {
   height: 28px;
   font-size: 11px;
 }
+
+/* Profesionales: invitar por correo o por WhatsApp */
+.a-row__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  justify-content: flex-end;
+}
+.a-wa-preview {
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: #1a1512;
+  background: #fbf8f3;
+  border: 1px solid #d3c4aa;
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin: 10px 0 14px;
+  max-height: 260px;
+  overflow: auto;
+}
+.a-wa-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 20px;
+}
+.a-wa-actions .btn {
+  text-decoration: none;
+}

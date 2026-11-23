@@ -33,6 +33,8 @@ export type UserProfile = {
   trade?: Trade
   /** arquitecto o diseñador */
   profession?: 'architect' | 'designer'
+  /** móvil para WhatsApp (solo dígitos, con prefijo); profesionales de «Mi reforma» */
+  phone?: string
   /** lugar vinculado; solo el rol "business" */
   placeId?: string
   /** nombre del lugar en el momento del alta */
