@@ -866,7 +866,7 @@ ok(await serverTime(AD, `${PF}/selections/s4`, selc('cj', a.localId, { builderOk
 ok(await serverTime(AD, `${PF}/selections/s5`, selc('cj', a.localId, { store: str('') }), ['createdAt'], false), 403, 'elección sin tienda')
 ok(await serverTime(AD, `${PF}/selections/s6`, selc('cj', a.localId, { price: num(0) }), ['createdAt'], false), 403, 'elección sin precio')
 ok(await serverTime(AD, `${PF}/selections/s7`, selc('cj', a.localId, { attachments: atts([`projects/p-firmas/selections/otra/1-x.jpg`]) }), ['createdAt'], false), 403, 'foto de otra elección')
-ok(await serverTime(AD, `${PR}/selections/s8`, selc('cj', a.localId), ['createdAt'], false), 403, 'sin presupuesto firmado no se anotan elecciones')
+ok(await serverTime(AD, `${PR}/selections/s8`, selc('cj', a.localId), ['createdAt'], false), 200, 'también sin presupuesto firmado se anotan elecciones')
 ok(await serverTime(J, `${PF}/selections/s1`, { clientOkUid: str(j.localId), clientOkName: str('Pieter') }, ['clientOkAt'], true, ['clientOkUid', 'clientOkName']), 200, 'el cliente confirma que está conforme')
 ok(await serverTime(J, `${PF}/selections/s1`, { clientOkUid: str(j.localId), clientOkName: str('Otra vez') }, ['clientOkAt'], true, ['clientOkUid', 'clientOkName']), 403, 'la conformidad no se cambia')
 ok(await serverTime(J, `${PF}/selections/s2`, { builderOkUid: str(j.localId), builderOkName: str('Pieter') }, ['builderOkAt'], true, ['builderOkUid', 'builderOkName']), 403, 'el cliente no confirma por el constructor')

@@ -408,7 +408,6 @@ export default function ProjectView({ projectId, author, readOnly }: { projectId
               projectId={projectId}
               author={author}
               canWrite={canWrite}
-              budgetSigned={budgetSigned}
               vatRate={p.vatRate ?? 21}
               lines={lines.data}
               selections={selections.data}

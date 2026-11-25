@@ -1302,13 +1302,12 @@ service cloud.firestore {
         allow delete: if isAdmin();
       }
 
-      // Elecciones de productos (en tienda, con el cliente), una vez firmado el presupuesto por los dos:
+      // Elecciones de productos (en tienda, con el cliente), también antes de firmar el presupuesto:
       // las anotan CJ o el constructor con foto, precio, tienda y referencia. El cliente y el constructor confirman una vez que están conformes. No se editan;
       // solo CJ puede borrar una anotada por error.
       match /selections/{id} {
         allow read: if inDeal(pid);
         allow create: if projectRole(pid) in ['builder', 'cj']
-          && exists(signaturePath(pid, 'client')) && exists(signaturePath(pid, 'builder'))
           && request.resource.data.keys().hasOnly(['title', 'store', 'price', 'reference', 'note', 'lineId', 'attachments', 'authorUid', 'authorRole', 'authorName', 'createdAt', 'builderOkUid', 'builderOkName', 'builderOkAt'])
           && validText(request.resource.data.title, 200)
           && validText(request.resource.data.store, 200)

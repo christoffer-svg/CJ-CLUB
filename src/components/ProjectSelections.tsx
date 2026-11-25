@@ -13,7 +13,7 @@ import { useTr } from '../lib/reformTranslate'
 type Draft = { title: string; store: string; price: string; reference: string; note: string; lineId: string; files: File[] }
 
 /**
- * Elecciones de productos: cuando el presupuesto ya está firmado, CJ o el constructor anotan lo que se
+ * Elecciones de productos (también antes de firmar el presupuesto): CJ o el constructor anotan lo que se
  * elige en tienda con el cliente (foto, precio, tienda y referencia). El cliente y el constructor dejan
  * constancia de que están conformes, para que después no haya dudas.
  */
@@ -21,7 +21,6 @@ export default function ProjectSelections({
   projectId,
   author,
   canWrite,
-  budgetSigned,
   vatRate,
   lines,
   selections,
@@ -30,7 +29,6 @@ export default function ProjectSelections({
   projectId: string
   author: Author
   canWrite: boolean
-  budgetSigned: boolean
   vatRate: 10 | 21
   lines: WithId<BudgetLine>[]
   selections: WithId<ProductSelection>[]
@@ -43,7 +41,7 @@ export default function ProjectSelections({
   const [form, setForm] = useState<Draft | null>(null)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
-  const canAdd = canWrite && budgetSigned && (author.role === 'cj' || author.role === 'builder')
+  const canAdd = canWrite && (author.role === 'cj' || author.role === 'builder')
   const confirmer = author.role === 'client' || author.role === 'builder' ? author.role : null
 
   // Opciones para "a qué corresponde": partidas y lo que incluye cada una
@@ -105,7 +103,7 @@ export default function ProjectSelections({
     <>
       <section className="card pv-block">
         <span className="eyebrow">{t('sel.eyebrow')}</span>
-        <p className="card__text">{budgetSigned ? t('sel.intro') : t('sel.afterSigning')}</p>
+        <p className="card__text">{t('sel.intro')}</p>
       </section>
 
       {canAdd && !form && (
@@ -172,7 +170,7 @@ export default function ProjectSelections({
         </form>
       )}
 
-      {budgetSigned && selections.length === 0 && !form && <p className="empty">{t('sel.empty')}</p>}
+      {selections.length === 0 && !form && <p className="empty">{t('sel.empty')}</p>}
 
       {[...selections].reverse().map((s) => {
         const both = s.clientOkUid && s.builderOkUid
